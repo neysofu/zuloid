@@ -1,0 +1,61 @@
+Search algo: CUSTOM WITH NEURAL NETWORK but it's similar to MCTS
+
+Possible AlphaZero missing feature: AlphaZero does not understand when to look
+deeper! This is a huge deal and I can take advantage of it. Also, AlphaZero
+doesn't know how to incrementally evaluate, thus making search much slower. The
+program also does not search during the opponent's turn! BTW: thinking during
+the opponent's turn is useful to save time in the next turn, thus one must also
+consider the opponent's strength. Evaluation must also be tunable, i.e. it can
+evaluate only a subset of the chessboard if necessary, to increase speed.
+
+IT NEEDS TO BE ABLE TO LEARN EVERYTHING IT NEEDS TO KNOW TO PLAY FLAWLESSLY.
+
+Invalid moves are approximated within reasonable limits.
+
+ARCHITECTURE
+============
+
+Resignation happens when the probability of winning drops below [0.05].
+
+1. Evaluation function.
+
+   Input:
+	* Square-centric board representation:
+	  64 planes, each with a [5] piece channels and a color [0|1].
+	  Total is [384] feature channels.
+	* Time pressure [0-1]
+	* Halfmove clock [0-1] (n. moves divided by 50)
+	* Audacity score [0-1] (how much to go for a win instead of a draw)
+   Output:
+    * Feature vector [192]:
+	* Predicted score [0-1]
+
+2. MCTS-like search function.
+
+   Input:
+      A sequence of moves, each with an associated score [0-1].
+   Mechanism:
+      For every move suggested by the output of the evaluation function with a
+	  certain probability [0-1], the search function randomly evaluates the
+	  resulting positions from those moves if a random variable is greater than
+	  its probability. The output of a search is also stored to disk according
+	  to that probability, so that it may be more easily retrieved at later
+	  stages.
+   Output:
+      A single move.
+
+Main procedure output:
+----------------------
+Move: the move to perform
+Bool: A draw is desiderable (right now. The chess librabry checks the rules and,
+if a drawn can be offered or claimed, it does it.)
+
+TRAINING STRATEGY
+=================
+Training will use a combination of several learning methods, some supervised and
+others not. I have at my disposal:
+
+* Chess 960 (5%)
+* Endgame tables
+* Mixed opening book and not during training, so that it can learn to use it
+  when useful and not to when it's not.
