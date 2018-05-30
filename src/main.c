@@ -1,6 +1,5 @@
 #include <stdio.h>
-#include "xxhash.h"
-#include "uci.h"
+#include "engine.h"
 
 int
 main(int argc, char *argv[]) {

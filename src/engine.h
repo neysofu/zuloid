@@ -1,5 +1,11 @@
 struct Engine;
 
+enum Status {
+	STATUS_BOOT,
+	STATUS_READY,
+	STATUS_SHUTDOWN,
+};
+
 struct Engine *
 engine_init();
 
@@ -20,6 +26,9 @@ uci_ready_ok();
 
 void
 uci_new_game();
+
+void
+uci_position();
 
 void
 uci_go();

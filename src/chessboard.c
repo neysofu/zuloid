@@ -3,13 +3,14 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include "xxhash.h"
 #include "chessboard.h"
 #include "coordinates.h"
 #include "color.h"
 #include "move.h"
 #include "castling.h"
+#include "vector.h"
 #include "square.h"
-#include "xxhash.h"
 #include "util.h"
 
 const struct Square *
@@ -83,14 +84,30 @@ cb_move(struct Chessboard *cb, const struct Move mv) {
 }
 
 bool
+cb_is_move_en_passant(const struct Chessboard *cb, const struct Move mv) {
+	return coord_eq(mv.to, *(cb->en_passant_target));
+}
+
+bool
+cb_is_move_promotion(const struct Chessboard *cb, const struct Move mv) {
+	return mv.to.rank == color_promoting_rank(cb->active_color);
+}
+
+bool
 cb_is_stalemate(const struct Chessboard *cb, const struct Move mv) {
 	return false; // TODO
 }
 
 bool
 cb_is_check(const struct Chessboard *cb, const struct Move mv) {
-	return false; // TODO
+	struct Move king_capture = mv_init(mv.to, cb->white.king);
+	if (cb_is_move_legal(cb, king_capture)) {
+		return true;
+	} else {
+		return cb_discovers_attack(cb, mv, cb->white.king);
+	}
 }
+
 
 void
 cb_update_en_passant_target(struct Chessboard *cb, struct Move mv) {
