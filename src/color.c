@@ -1,6 +1,5 @@
-#include <stdbool.h>
 #include "color.h"
-#include "coordinates.h"
+#include "coord.h"
 
 Rank
 color_promoting_rank(const enum Color color) {

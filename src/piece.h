@@ -1,7 +1,7 @@
 #pragma once
 
 enum Piece {
-	PIECE_NONE = 0,
+	PIECE_NONE = '1',
 	PIECE_PAWN = 'P',
 	PIECE_KNIGHT = 'N',
 	PIECE_BISHOP = 'B',

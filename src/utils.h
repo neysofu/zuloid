@@ -1,5 +1,8 @@
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
 
-char *
-read_line(char *ptr);
+bool
+atob(char *str);
+
+bool
+is_stdin_empty(void);

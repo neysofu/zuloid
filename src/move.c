@@ -3,45 +3,90 @@
 #include "move.h"
 
 struct Move
-mv_init(const struct Coordinates from, const struct Coordinates to) {
-	struct Move mv = {
-		.from = from,
-		.to = to,
+move_new(const struct Coord source, const struct Coord target) {
+	return (struct Move) {
+		.source = source,
+		.target = target,
+		.dir = coord_dir(source, target),
+		.promotion = PIECE_NONE,
 	};
-	mv_set_direction(mv);
-	return mv;
+}
+
+struct Move
+str_to_move(const char *move) {
+	size_t len = strlen(move);
+	if (len != 4 && len != 5) {
+		return MOVE_NONE;
+	}
+	struct Coord source = str_to_coord(move, 2);
+	struct Coord target = str_to_coord(move + 2, 2);
+	struct Piece promotion = (len == 5) ? str[4] : PIECE_QUEEN;
+	return (struct Move) {
+		.source = source,
+		.target = target,
+		.dir = coord_dir(source, target),
+		.promotion = promotion,
+	};
+}
+
+char *
+move_to_str(const struct Move move) {
+	char *str = malloc(5);
+	if (!str) {
+		return NULL;
+	}
+	str[0] = coord_to_str(move.source);
+	str[2] = coord_to_str(move.target);
+	str[5] = (move.promotion == PIECE_NONE) ? '\0' : move.promotion;
+	return str;
 }
 
 bool
-mv_is_idempotent(const struct Move mv) {
-	return coord_eq(mv.from, mv.to);
-}
-
-enum Direction
-mv_set_direction(struct Move mv) {
-	uint8_t horizontal_movement = mv_rank_change(mv);
-	uint8_t vertical_movement = mv_file_change(mv);
-	if (horizontal_movement == 0) {
-		return DIR_VERTICAL;
-	} else if (vertical_movement == 0) {
-		return DIR_HORIZONTAL;
-	} else if (horizontal_movement == vertical_movement) {
-		return DIR_DIAGONAL;
-	// 'x^y == 3' if and only if 'x==1 && y==2' or 'x==2 && y==1',
-	// assuming that both 'x' and 'y' are less than 8 and posivite.
-	} else if ((horizontal_movement ^ vertical_movement) == 3) {
-		return DIR_L_SHAPED;
-	} else {
-		return DIR_NONE;
+move_is_obstructed(const struct Move move, const struct Board *board) {
+	Rank rank;
+	Rank rank_limit;
+	File file;
+	File file_limit;
+	switch (move.dir) {
+		case DIR_HORIZONTAL:
+			rank = move.source.file;
+			file = MIN(move.source.file, move.target.file);
+			file_limit = MAX(move.source.file, move.target.file);
+			while ((++file), file < file_limit) {
+				if (board->squares[rank][file].piece != PIECE_NONE) {
+					return true;
+				}
+			}
+			break;
+		case DIR_VERTICAL:
+			rank = MIN(move.source.rank, move.target.rank);
+			file = move.source.file;
+			rank_limit = MAX(move.source.rank, move.target.rank);
+			while ((++rank), rank < rank_limit) {
+				if (board->squares[rank][file].piece != PIECE_NONE) {
+					return true;
+				}
+			}
+			break;
+		case DIR_DIAGONAL:
+			rank = MIN(move.source.rank, move.target.rank);
+			file = move.source.file;
+			rank_limit = MAX(move.source.rank, move.target.rank);
+			while ((++rank), (++file), rank < rank_limit) {
+				if (board->squares[rank][file].piece != PIECE_NONE) {
+					return true;
+				}
+			}
+			break;
+		default:
+			break;
 	}
+	return false;
 }
 
-uint8_t
-mv_rank_change(const struct Move mv) {
-	return abs(mv.from.rank - mv.to.rank);
-}
-
-uint8_t
-mv_file_change(const struct Move mv) {
-	return abs(mv.from.file - mv.to.file);
-}
+const struct Move MOVE_NONE = {
+	.source = COORD_NONE,
+	.target = COORD_NONE,
+	.dir = DIR_NONE,
+	.promotion = PIECE_NONE,
+};

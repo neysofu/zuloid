@@ -1,40 +1,18 @@
+#pragma once
+
+#include "chessboard.h"
+#include "move.h"
+
+#define ENGINE_NAME "Z64C"
+#define ENGINE_AUTHOR "Filippo Costa (@neysofu)"
+
 struct Engine;
 
-enum Status {
-	STATUS_BOOT,
-	STATUS_READY,
-	STATUS_SHUTDOWN,
-};
-
 struct Engine *
-engine_init();
+engine_new(void);
 
 void
-engine_establish_connection(struct Engine *engine);
+engine_drop(struct Engine *);
 
-int
-engine_wait(struct Engine *engine);
-
-void
-uci_identify();
-
-void
-uci_ok();
-
-void
-uci_ready_ok();
-
-void
-uci_new_game();
-
-void
-uci_position();
-
-void
-uci_go();
-
-void
-uci_stop();
-
-void
-uci_best_move();
+uint8_t
+engine_wait_until_quitting(struct Engine *engine);

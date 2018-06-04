@@ -1,27 +1,46 @@
 #pragma once
 
-#include "coordinates.h"
-#include "direction.h"
+#include "coord.h"
+#include "dir.h"
 #include "piece.h"
 
 struct Move {
-	struct Coordinates from;
-	struct Coordinates to;
-	enum Direction direction;
+	struct Coord source;
+	struct Coord target;
+	enum Dir dir;
+	// Ignored if the move is not actually a promotion; a common pattern is to
+	// set this field to 'PIECE_NONE' in all the other cases.
 	enum Piece promotion;
 };
 
+char *
+move_to_str(const struct Move move);
+
 struct Move
-mv_init(const struct Coordinates from, const struct Coordinates to);
+str_to_move(const char *move);
 
 bool
-mv_is_idempotent(const struct Move mv);
+move_is_capture(const struct Board *board, const struct Move move);
 
-enum Direction
-mv_set_direction(struct Move mv);
+bool
+move_triggers_draw_by_repetition(const struct Board *board);
 
-uint8_t
-mv_rank_change(const struct Move mv);
+bool
+move_triggers_stalemate(const struct Move move, const struct Board *board);
 
-uint8_t
-mv_file_change(const struct Move mv);
+bool
+move_triggers_check(const struct Move move, const struct Board *board);
+
+bool
+move_is_legal(const struct Move move, const struct Board *board);
+
+bool
+move_is_promotion(const struct Move move);
+
+bool
+move_is_en_passant(const struct Move move, const struct Board *board);
+
+bool
+move_is_obstructed(const struct Move move, const struct Board *board);
+
+extern const struct Move MOVE_NONE;
