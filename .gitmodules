@@ -1,0 +1,9 @@
+[submodule "hiredis"]
+	path = hiredis
+	url = https://github.com/redis/hiredis.git
+[submodule "lib/xxHash"]
+	path = lib/xxHash
+	url = https://github.com/Cyan4973/xxHash
+[submodule "check"]
+	path = check
+	url = https://github.com/libcheck/check.git

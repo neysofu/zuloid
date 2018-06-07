@@ -1,5 +1,8 @@
 #pragma once
 
+#include <stdbool.h>
+
+#include "board.h"
 #include "coord.h"
 #include "dir.h"
 #include "piece.h"
@@ -14,13 +17,31 @@ struct Move {
 };
 
 char *
-move_to_str(const struct Move move);
+move_to_str(const struct Move move, char *str);
 
 struct Move
-str_to_move(const char *move);
+str_to_move(const char *str);
 
 bool
-move_is_capture(const struct Board *board, const struct Move move);
+move_is_legal(const struct Move move, const struct Board *board);
+
+bool
+move_is_obstructed(const struct Move move, const struct Board *board);
+
+bool
+move_is_promotion(const struct Move move, const struct Board *board);
+
+bool
+move_is_en_passant(const struct Move move, const struct Board *board);
+
+bool
+move_is_capture(const struct Move move, const struct Board *board);
+
+bool
+move_is_self_harm(const struct Move move, const struct Board *board);
+
+bool
+move_triggers_attack(const struct Move move, const struct Coord coord, const struct Board *board);
 
 bool
 move_triggers_draw_by_repetition(const struct Board *board);
@@ -32,15 +53,9 @@ bool
 move_triggers_check(const struct Move move, const struct Board *board);
 
 bool
-move_is_legal(const struct Move move, const struct Board *board);
+move_triggers_checkmate(const struct Move move, const struct Board *board);
 
-bool
-move_is_promotion(const struct Move move);
-
-bool
-move_is_en_passant(const struct Move move, const struct Board *board);
-
-bool
-move_is_obstructed(const struct Move move, const struct Board *board);
+void
+board_move(struct Board *board, const struct Move move);
 
 extern const struct Move MOVE_NONE;

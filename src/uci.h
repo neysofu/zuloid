@@ -1,62 +1,58 @@
 #pragma once
 
-#include "engine.h"
 #include "board.h"
-#include "search.h"
 #include "move.h"
 
-struct UciCmd;
+struct UciCmd {
+	size_t argc;
+	char *str;
+	size_t argv_size;
+	size_t argv_by_offset[];
+};
 
 struct UciCmd *
-uci_cmd_new(void);
+uci_cmd_new(struct UciCmd *cmd);
 
 void
 uci_cmd_drop(struct UciCmd *cmd);
 
 struct UciCmd *
-str_to_uci_cmd(struct UciCmd *cmd, char *str, size_t size);
+str_to_uci_cmd(char *str, size_t len, struct UciCmd *cmd);
+
+bool
+uci_cmd_is_full(struct UciCmd *cmd);
 
 void
-uci_cmd_add_arg(struct UciCmd *cmd, char *arg, size_t size);
+uci_cmd_resize_if_full(struct UciCmd *cmd);
+
+char *
+uci_cmd_arg(struct UciCmd *cmd, size_t i);
+
+size_t
+uci_cmd_arg_len(struct UciCmd *cmd, size_t i);
+
+char *
+uci_cmd_arg_set_nul(struct UciCmd *cmd, size_t i);
 
 void
-uci_cmd_arg_merge(struct UciCmd *cmd, size_t from, size_t to);
+uci_cmd_arg_unset_nul(struct UciCmd *cmd, size_t i);
 
 void
-engine_uci_uci(struct Engine *engine);
+uci_cmd_arg_join(struct UciCmd *cmd, size_t i);
 
 void
-engine_uci_debug(struct Engine *engine, bool debug);
+uci_cmd_add_arg(struct UciCmd *cmd, char *arg);
 
-void
-engine_uci_is_ready(struct Engine *engine);
-
-void
-engine_uci_set_option(struct Engine *engine, char *name, char *value);
-
-enum RegistrationMode {
-	REGISTRATION_MODE_LATER,
-	REGISTRATION_MODE_NAME,
-	REGISTRATION_MODE_CODE,
+struct UciCmdIter {
+	struct UciCmd *cmd;
+	size_t i;
 };
 
-void
-engine_uci_register(struct Engine *engine, enum RegistationMode mode);
+struct UciCmdIter *
+uci_cmd_iter_new(struct UciCmdIter *iter, struct UciCmd *cmd, size_t start);
+
+char *
+uci_cmd_iter_next(struct UciCmdIter *iter);
 
 void
-engine_uci_new_game(struct Engine *engine);
-
-void
-engine_uci_position(struct Engine *engine, struct Chessboard *cb, struct Move[] moves);
-
-void
-engine_uci_go(struct Engine *engine, struct SearchParams *params);
-
-void
-engine_uci_stop(struct Engine *engine);
-
-void
-engine_uci_ponder_hit(struct Engine *engine);
-
-void
-engine_uci_quit(struct Engine *engine);
+uci_cmd_iter_drop(struct UciCmdIter *iter);

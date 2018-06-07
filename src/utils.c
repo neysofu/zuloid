@@ -26,3 +26,12 @@ is_stdin_empty(void) {
     FD_SET(fileno(stdin), &read_fs);
     return select(fileno(stdin) + 1, &read_fs, NULL, NULL, NULL);
 }
+
+uint64_t
+hash(void *ptr, size_t size) {
+	uint64_t hash = 5381;
+	while (size-- > 0) {
+		hash = ((hash << 5) + hash) + *(uint64_t *)(ptr++);
+	}
+	return hash;
+}

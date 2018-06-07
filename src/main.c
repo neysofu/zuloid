@@ -1,21 +1,19 @@
 #include <stdio.h>
 #include <sys/select.h>
+#include <sysexits.h>
 #include "engine.h"
+
+#define STDIN_BUF_SIZE 256
 
 int
 main(void) {
-	// The UCI protocol is line-oriented and forbids any command that doesn's
-	// end with a line break, so we make sure that line buffering is turned on
-	// on STDIN.
+	// Turns on line buffering.
 	setvbuf(stdin, NULL, _IOLBF, STDIN_BUF_SIZE);
-	struct Engine *engine = engine_new();
+	struct Engine *engine = engine_new(NULL);
 	if (!engine) {
 		return EX_OSERR;
-	} else if (engine->err) {
-		return engine->exit_code;
 	}
-	engine_wait(engine);
-	exit_code = engine_wait_until_quitting(engine);
+	uint8_t exit_code = engine_wait_until_quitting(engine);
 	engine_drop(engine);
 	return exit_code;
 }

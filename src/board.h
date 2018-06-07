@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "color.h"
-#include "move.h"
 #include "castling.h"
 #include "square.h"
 
@@ -21,13 +20,10 @@ struct Board {
 };
 
 struct Board *
-board_new(void);
+board_new(struct Board *board);
 
 void
 board_drop(struct Board *board);
-
-void
-board_move(struct Board *board, const struct Move move);
 
 struct Square *
 board_square(struct Board *board, const struct Coord coord);
@@ -38,18 +34,11 @@ board_square_const(const struct Board *board, const struct Coord coord);
 void
 board_update_history(struct Board *board);
 
-void
-board_update_en_passant_target(struct Board *board, const struct Move move);
-
-void
-board_remove_en_passant_target(struct Board *board);
-
-void
-board_promote_pawn(struct Board *board, const struct Move move);
-
 uint64_t
 board_hash(const struct Board *board);
 
 // Checks if the game is over and is yes what the result is.
 bool
 board_is_gameover(const struct Board *board);
+
+extern const struct Board BOARD_STARTPOS;

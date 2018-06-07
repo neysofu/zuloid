@@ -1,4 +1,6 @@
+#include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 #include "coord.h"
 #include "board.h"
 
@@ -11,10 +13,12 @@ coord_new(Rank rank, File file) {
 }
 
 char *
-coord_to_str(const struct Coord coord) {
-	char *str = malloc(2);
+coord_to_str(const struct Coord coord, char *str) {
 	if (!str) {
-		return str;
+		char *str = malloc(2);
+		if (!str) {
+			return str;
+		}
 	}
 	str[0] = rank_to_char(coord.rank);
 	str[1] = file_to_char(coord.file);
@@ -26,10 +30,7 @@ str_to_coord(const char *coord) {
 	if (strlen(coord) < 2) {
 		return COORD_NONE;
 	}
-	return (struct Coordinates) {
-		.file = coord[0] - 'a',
-		.rank = coord[1] - '1',
-	};
+	return coord_new(coord[0] - 'a', coord[1] - '1');
 }
 
 char
@@ -71,7 +72,7 @@ coord_dir(const struct Coord coord1, const struct Coord coord2) {
 	}
 }
 
-const struct Coordinates COORD_NONE = {
+const struct Coord COORD_NONE = {
 	.rank = 42,
 	.file = 9,
 };

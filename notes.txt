@@ -26,18 +26,21 @@ Resignation happens when the probability of winning drops below [0.05].
    Time control:
      There are so many time controls that I wouldn't know which ones to choose,
 	 so I represent every time control with a pressure indicator for white [1]
-	 and for black [1], which generally indicates how much more thinking they
-	 can do before they lose the game.
+	 and for black [1], which indicates how intricate the position is for that
+	 player. The MCTS is then tuned according to parameters specific to the time
+	 control. In this way, adding new time controls is straightforward.
 
    Problem statement:
      I have an extremely big graph (infinite for all practical purposes)
-	 representing all the possible chess positions
+	 representing all the possible chess positions. Edges represent moves and
+	 nodes chess positions. This first stage consists in building a database of
+	 chess positions' embeddings [128].
 	 as nodes; each edge is labelled (a certain kind of move) and directed.
 	 By exploring the graph during a training session, Z64C must be able to find
 	 a relatively low-dimensional embedding of each node (and possible even
 	 edges). The only information available to Z64C is the current chess
 	 position vector, it must automatically figure out edges and which ones look
-	 promising. The output of the neural network is a feature vector with [192]
+	 promising. The output of the neural network is a feature vector with [256]
 	 dimensions and a predicted score [1].
 
    Learning process:
@@ -54,9 +57,13 @@ Resignation happens when the probability of winning drops below [0.05].
 
    Input:
 	* Chessboard embedding
-	* Time pressure [0-1]
 	* Halfmove clock [0-1] (n. moves divided by 50)
 	* Audacity score [0-1] (how much to go for a win instead of a draw)
+
+   Output:
+    * Pressure for white [1]
+	* Pressure for black [1]
+	* Evaluation score [1]
 
 2. MCTS-like search function.
 

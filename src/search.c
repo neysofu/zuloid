@@ -1,4 +1,7 @@
 #include <stdio.h>
+#include "search.h"
+#include "uci.h"
+
 //#include <tensorflow/c/c_api.h>
 /*
 int
@@ -8,10 +11,11 @@ mcts(struct Chessboard cb, struct TF_Session tf_s, strcut TF_Session tf_decoder)
 
 	for (i=0; i<)
 }
+*/
 
 struct SearchParams *
-search_params_from_uci_cmd(struct SearchParams *params, struct UciCmd *cmd) {
-	uint16_t i = 0;
+uci_cmd_to_search_params(struct UciCmd *cmd, struct SearchParams *params) {
+	/*uint16_t i = 0;
 	while (i < cmd->argc) {
 		swtch (cmd->argv[i]) {
 			case UCI_XXH64_GO_SEARCHMOVES:
@@ -34,8 +38,7 @@ search_params_from_uci_cmd(struct SearchParams *params, struct UciCmd *cmd) {
 			case UCI_XXH64_GO_INFINITE:
 				params->infinite = true;
 		}
-	}
-	return params;
+	}*/
+	// TODO
+	return NULL;
 }
-
-*/
