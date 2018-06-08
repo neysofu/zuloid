@@ -1,105 +1,98 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <assert.h>
 #include "uci.h"
 
 #define UCI_CMD_SEPARATOR ' '
-#define UCI_CMD_ARGV_BUF_SIZE 16
+#define UCI_CMD_ARGV_MAX 16
+
+struct UciCmdArg {
+	size_t offset;
+	size_t length;
+};
 
 struct UciCmd *
 uci_cmd_new(struct UciCmd *cmd) {
+	size_t argv_size = sizeof(struct UciCmdArg) * UCI_CMD_ARGV_MAX;
 	if (!cmd) {
-		cmd = malloc(sizeof(struct UciCmd) +
-				     sizeof(size_t) * UCI_CMD_ARGV_BUF_SIZE);
+		cmd = malloc(sizeof(struct UciCmd));
 		if (!cmd) {
 			return NULL;
 		}
 	}
-	cmd->argv_size = UCI_CMD_ARGV_BUF_SIZE;
 	cmd->argc = 0;
 	cmd->str = NULL;
-	memset(cmd->argv_by_offset, 0, cmd->argv_size);
-	return cmd;
-}
-
-struct UciCmd *
-str_to_uci_cmd(char *str, size_t line_len, struct UciCmd *cmd) {
-	bool separator_flag = true;
-	size_t i = 0;
-	char c;
-	uci_cmd_new(cmd);
-	cmd->str = str;
-	for (c = str[i]; i < line_len; c = str[++i]) {
-		bool c_is_separator = c == ' ' || c == '\t';
-		bool c_is_end = c == '\n' || c == '\r' || c == '\0';
-		if (c_is_separator) {
-			if (!separator_flag) {
-				cmd->argv_by_offset[++cmd->argc] = i;
-				separator_flag = true;
-			}
-		} else if (c_is_end) {
-			cmd->argv_by_offset[++cmd->argc] = i;
-			break;
-		} else {
-			separator_flag = false;
-		}
-		uci_cmd_resize_if_full(cmd);
+	cmd->argv_max = UCI_CMD_ARGV_MAX;
+	cmd->argv = malloc(argv_size);
+	if (!cmd->argv) {
+		return NULL;
 	}
+	memset(cmd->argv, 0, argv_size);
 	return cmd;
 }
 
 void
 uci_cmd_drop(struct UciCmd *cmd) {
-	free(cmd->str);
+	free(cmd->argv);
 	free(cmd);
 }
 
-bool
-uci_cmd_is_full(struct UciCmd *cmd) {
-	return cmd->argc >= cmd->argv_size;
+struct UciCmd *
+str_to_uci_cmd(char *str, size_t line_len, struct UciCmd *cmd) {
+	bool token_flag = false;
+	bool str_is_terminated = false;
+	size_t i = 0;
+	char c;
+	cmd = uci_cmd_new(cmd);
+	cmd->str = str;
+	for (c = str[i]; i < line_len; c = str[++i]) {
+		bool c_is_space = isspace(c);
+		if (c_is_space && token_flag) {
+			cmd->argv[cmd->argc - 1].length = i - cmd->argv[cmd->argc - 1].offset;
+		}
+		if (c == '\n' || c == '\0') {
+			break;
+		}
+		if (!(c_is_space || token_flag)) {
+			cmd->argv[cmd->argc].offset = i;
+			cmd->argc++;
+		}
+		token_flag = !c_is_space;
+		if (!uci_cmd_resize_if_full(cmd)) {
+			return NULL;
+		}
+	}
+	return cmd;
 }
 
 char *
 uci_cmd_arg(struct UciCmd *cmd, size_t i) {
-	if (i >= cmd->argc) {
-		return NULL;
-	}
-	return cmd->str + cmd->argv_by_offset[i];
+	return cmd->str + cmd->argv[i].offset;
 }
 
 size_t
-uci_cmd_arg_len(struct UciCmd *cmd, size_t i) {
-	if (i >= cmd->argc) {
-		return 0;
-	}
-	return cmd->argv_by_offset[i + 1] - cmd->argv_by_offset[i];
-}
-
-void
-uci_cmd_resize_if_full(struct UciCmd *cmd) {
-	if (!uci_cmd_is_full(cmd)) {
-		return;
-	}
-	// TODO
+uci_cmd_arg_length(struct UciCmd *cmd, size_t i) {
+	return cmd->argv[i].length;
 }
 
 char *
-uci_cmd_arg_with_nul(struct UciCmd *cmd, size_t i) {
-	cmd->str[cmd->argv_by_offset[i + 1] + 1] = '\0';
-	return uci_cmd_arg(cmd, i);
-}
-
-size_t
 uci_cmd_arg_end(struct UciCmd *cmd, size_t i) {
-	while (i-- < cmd->str[cmd->argv_by_offset[i]] != ' ') {
-	}
-	return 0;
+	return uci_cmd_arg(cmd, i) + uci_cmd_arg_length(cmd, i);
 }
 
-void
-uci_cmd_arg_unset_nul(struct UciCmd *cmd, size_t i) {
-	cmd->str[cmd->argv_by_offset[i + 1]] = UCI_CMD_SEPARATOR;
+struct UciCmdArg *
+uci_cmd_resize_if_full(struct UciCmd *cmd) {
+	if (cmd->argc == cmd->argv_max) {
+		cmd->argv_max *= 2;
+		size_t argv_size = sizeof(struct UciCmdArg) * cmd->argv_max;
+		cmd->argv = realloc(cmd->argv, argv_size);
+		if (!cmd->argv) {
+			return NULL;
+		}
+	}
+	return cmd->argv;
 }
 
 struct UciCmdIter *
@@ -117,11 +110,17 @@ uci_cmd_iter_new(struct UciCmdIter *iter, struct UciCmd *cmd, size_t start) {
 
 char *
 uci_cmd_iter_next(struct UciCmdIter *iter) {
-	if (iter->i >= 1) {
-		*(uci_cmd_arg(iter->cmd, iter->i) - 1) = UCI_CMD_SEPARATOR;
+	char *arg;
+	if (iter->i == iter->cmd->argc) {
+		return NULL;
 	}
-	iter->cmd->str[iter->cmd->argv_by_offset[iter->i]] = '\0';
-	return uci_cmd_arg(iter->cmd, iter->i);
+	arg = uci_cmd_arg(iter->cmd, iter->i);
+	*uci_cmd_arg_end(iter->cmd, iter->i) = '\0';
+	if (iter->i > 0) {
+		*(uci_cmd_arg_end(iter->cmd, iter->i - 1)) = UCI_CMD_SEPARATOR;
+	}
+	iter->i++;
+	return arg;
 }
 
 void

@@ -12,3 +12,13 @@ color_promoting_rank(const enum Color color) {
 			return 0;
 	}
 }
+
+enum Color
+color_other(enum Color color) {
+	switch (color) {
+		case COLOR_WHITE:
+			return COLOR_BLACK;
+		default:
+			return COLOR_BLACK;
+	}
+}

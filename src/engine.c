@@ -13,27 +13,6 @@
 #include "uci.h"
 #include "search.h"
 
-#define UCI_HASH_UCI 0x2c572e67c6
-#define UCI_HASH_DEBUG 0xbc4ae6f131d8b22c
-#define UCI_HASH_NEW_GAME 0x428ec30e91e1a9e9
-#define UCI_HASH_IS_READY 0xc87bfcb18021d096
-#define UCI_HASH_POSITION 0xe983bba8402669ba
-#define UCI_HASH_POSITION_FEN 0x20347424d57c4f3e
-#define UCI_HASH_POSITION_STARTPOS 0x68c717dc305fff25
-#define UCI_HASH_GO 0xebd0ee6475b1d0fb
-#define UCI_HASH_GO_SEARCHMOVES 0x6d42f01660871b25
-#define UCI_HASH_GO_PONDER 0xd7315bd44c01f5ad
-#define UCI_HASH_GO_WTIME 0xf7a3c003bc59c62b
-#define UCI_HASH_GO_BTIME 0xf7a3c003baddc396
-#define UCI_HASH_GO_WINC 0x7da1287dbd2fa1d6
-#define UCI_HASH_GO_BINC 0x7da1287dbd241de1
-#define UCI_HASH_GO_MOVESTOGO 0xfbd1a5a5255d21e8
-#define UCI_HASH_STOP 0xb7b5715ee2e9b84b
-#define UCI_HASH_PONDER_HIT 0xd3691fa06f58bff2
-#define UCI_HASH_QUIT 0x5ddd2e9f271a0208
-#define UCI_HASH_SET_OPTION 0x6a9871f352cdadea
-#define UCI_HASH_REGISTER 0xb179be25c5193b8a
-
 enum Status {
 	STATUS_BOOT,
 	STATUS_WAIT,
@@ -42,6 +21,7 @@ enum Status {
 
 struct Engine {
 	struct UciCmd *cmd;
+	struct UciCmdIter *cmd_iter;
 	struct Board *board;
 	bool is_searching;
 	bool debug;
@@ -59,6 +39,7 @@ engine_new(struct Engine *engine) {
 		}
 	}
 	engine->cmd = uci_cmd_new(NULL);
+	engine->cmd_iter = uci_cmd_iter_new(NULL, engine->cmd, 0);
 	engine->board = board_new(NULL);
 	engine->is_searching = false;
 	engine->debug = false;
@@ -72,6 +53,7 @@ engine_new(struct Engine *engine) {
 
 void
 engine_drop(struct Engine *engine) {
+	uci_cmd_iter_drop(engine->cmd_iter);
 	uci_cmd_drop(engine->cmd);
 	board_drop(engine->board);
 	free(engine);
@@ -80,46 +62,32 @@ engine_drop(struct Engine *engine) {
 void
 engine_wait_for_uci_cmd(struct Engine *engine) {
 	size_t line_len = 0;
-	if ((line_len = getline(&(engine->cmd->str), &line_len, stdin)) == 1) {
+	if ((line_len = getline(&(engine->cmd->str), &line_len, stdin)) == -1) {
 		return;
 	}
 	engine->cmd = str_to_uci_cmd(engine->cmd->str, line_len, engine->cmd);
+	engine->cmd_iter = uci_cmd_iter_new(engine->cmd_iter, engine->cmd, 0);
 }
 
 void
 engine_run_uci_cmd(struct Engine *engine) {
-	if (engine->cmd->argc == 0) {
-		return;
-	}
-	char *arg_0 = uci_cmd_arg(engine->cmd, 0);
-	size_t arg_0_len = uci_cmd_arg_len(engine->cmd, 0);
-	switch (hash(arg_0, arg_0_len)) {
-		case UCI_HASH_UCI:
-			engine_uci_uci(engine);
-			break;
-		case UCI_HASH_DEBUG:
-			engine_uci_debug(engine);
-			break;
-		case UCI_HASH_NEW_GAME:
-			engine_uci_new_game(engine);
-			break;
-		case UCI_HASH_POSITION:
-			engine_uci_position(engine);
-			break;
-		case UCI_HASH_GO:
-			engine_uci_go(engine);
-			break;
-		case UCI_HASH_IS_READY:
-			engine_uci_is_ready(engine);
-			break;
-		case UCI_HASH_STOP:
-			engine_uci_stop(engine);
-			break;
-		case UCI_HASH_QUIT:
-			engine_uci_quit(engine);
-			break;
-		default:
-			return;
+	char *arg_0 = uci_cmd_iter_next(engine->cmd_iter);
+	if (strcmp(arg_0, "uci") == 0) {
+		engine_uci_uci(engine);
+	} else if (strcmp(arg_0, "debug") == 0) {
+		engine_uci_debug(engine);
+	} else if (strcmp(arg_0, "newgame") == 0) {
+		engine_uci_new_game(engine);
+	} else if (strcmp(arg_0, "position") == 0) {
+		engine_uci_position(engine);
+	} else if (strcmp(arg_0, "go") == 0) {
+		engine_uci_go(engine);
+	} else if (strcmp(arg_0, "isready") == 0) {
+		engine_uci_is_ready(engine);
+	} else if (strcmp(arg_0, "stop") == 0) {
+		engine_uci_stop(engine);
+	} else if (strcmp(arg_0, "quit") == 0) {
+		engine_uci_quit(engine);
 	}
 }
 
@@ -145,8 +113,12 @@ engine_uci_uci(struct Engine *engine) {
 
 void
 engine_uci_debug(struct Engine *engine) {
-	bool debug = (engine->cmd->argc >= 2) ? (false /* TODO */) : true;
-	engine->debug = debug;
+	char *arg_1 = uci_cmd_iter_next(engine->cmd_iter);
+	if (!arg_1 || strcmp(arg_1, "true") == 1) {
+		engine->debug = true;
+	} else if (strcmp(arg_1, "false") == 1) {
+		engine->debug = false;
+	}
 }
 
 void
@@ -156,7 +128,15 @@ engine_uci_is_ready(struct Engine *engine) {
 
 void
 engine_uci_set_option(struct Engine *engine) {
-	return;
+	char *arg;
+	char *name = NULL;
+	char *value = NULL;
+	if (strcmp(uci_cmd_iter_next(engine->cmd_iter), "name") != 0) {
+		return;
+	}
+	while ((arg = uci_cmd_iter_next(engine->cmd_iter)) && strcmp(arg, "value") == 1) {
+		// TODO
+	}
 }
 
 void
@@ -171,34 +151,51 @@ engine_uci_new_game(struct Engine *engine) {
 
 void
 engine_uci_position(struct Engine *engine) {
-	if (engine->cmd->argc < 2) {
-		return;
+	char *arg = uci_cmd_iter_next(engine->cmd_iter);
+	if (strcmp(arg, "startpos") == 0) {
+		board_new(engine->board);
+	} else if (strcmp(arg, "fen") == 0 && engine->cmd->argc >= 8) {
+		fen_specify_pieces(uci_cmd_iter_next(engine->cmd_iter), engine->board);
+		fen_specify_active_player(uci_cmd_iter_next(engine->cmd_iter), engine->board);
+		fen_specify_castling_rights(uci_cmd_iter_next(engine->cmd_iter), engine->board);
+		fen_specify_en_passant_target(uci_cmd_iter_next(engine->cmd_iter), engine->board);
+		fen_specify_half_moves(uci_cmd_iter_next(engine->cmd_iter), engine->board);
+		fen_specify_full_moves(uci_cmd_iter_next(engine->cmd_iter), engine->board);
 	}
-	char *init_mode = uci_cmd_arg(engine->cmd, 1);
-	size_t init_mode_len = uci_cmd_arg_len(engine->cmd, 1);
-	switch (hash(init_mode, init_mode_len)) {
-		case UCI_HASH_POSITION_STARTPOS:
-			board_new(engine->board);
-			break;
-		case UCI_HASH_POSITION_FEN:
-			if (engine->cmd->argc < 8) {
-				return;
-			}
-			struct UciCmdIter *iter = uci_cmd_iter_new(NULL, engine->cmd, 2);
-			fen_specify_pieces(uci_cmd_iter_next(iter), engine->board);
-			fen_specify_active_player(uci_cmd_iter_next(iter), engine->board);
-			fen_specify_castling_rights(uci_cmd_iter_next(iter), engine->board);
-			fen_specify_en_passant_target(uci_cmd_iter_next(iter), engine->board);
-			fen_specify_half_moves(uci_cmd_iter_next(iter), engine->board);
-			fen_specify_full_moves(uci_cmd_iter_next(iter), engine->board);
-			uci_cmd_iter_drop(iter);
+	while ((arg = uci_cmd_iter_next(engine->cmd_iter))) {
+		// TODO: evaluate additional moves.
+		break;
 	}
-	// TODO: evaluate additional moves.
 }
 
 void
 engine_uci_go(struct Engine *engine) {
-	struct SearchParams *params = uci_cmd_to_search_params(engine->cmd, NULL);
+	char *arg;
+	// TODO/FIXME
+	while ((arg = uci_cmd_iter_next(engine->cmd_iter))) {
+		if (strcmp(arg, "ponder") == 0) {
+			engine->params->ponder = true;
+		} else if (strcmp(arg, "wtime") == 0) {
+			engine->params->white_time = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "btime") == 0) {
+			engine->params->black_time = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "winc") == 0) {
+			engine->params->white_increment = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "binc") == 0) {
+			engine->params->black_increment = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "movestogo") == 0) {
+			engine->params->moves_to_go = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "depth") == 0) {
+			engine->params->depth = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "nodes") == 0) {
+			engine->params->num_nodes = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "mate") == 0) {
+			engine->params->mate_length = atoi(uci_cmd_iter_next(engine->cmd_iter));
+		} else if (strcmp(arg, "movetime") == 0) {
+		} else if (strcmp(arg, "infinite") == 0) {
+			engine->params->infinite = true;
+		}
+	}
 }
 
 void

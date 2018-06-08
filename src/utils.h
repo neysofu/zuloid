@@ -7,5 +7,5 @@ atob(char *str);
 bool
 is_stdin_empty(void);
 
-uint64_t
-hash(void *ptr, size_t size);
+uint32_t
+hash_djb2(char *str);

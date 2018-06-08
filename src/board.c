@@ -3,7 +3,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include "xxHash/xxhash.h"
 #include "board.h"
 #include "coord.h"
 #include "color.h"
@@ -76,7 +75,7 @@ board_hash(const struct Board *board) {
 	    				   sizeof(struct CastlingRights) +
 						   sizeof(uint8_t) +
 						   sizeof(enum Color);
-	return XXH64(board, buffer_lenght, 0);
+	return 1ULL; //hash((void *)(board), buffer_lenght);
 }
 
 void
@@ -95,6 +94,7 @@ board_move(struct Board *board, const struct Move move) {
 	} else if (move_is_promotion(move, board)) {
 		board_square(board, move.target)->piece = move.promotion;
 	}
+	board->active_color = color_other(board->active_color);
 }
 
 bool

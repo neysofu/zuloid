@@ -9,6 +9,14 @@
 #define BOARD_SIDE_LENGTH 8
 #define MAX_HALF_MOVES 75
 
+/*
+#define FOR_SQUARE_IN_BOARD_DO(rank, file) \
+	Rank rank = 0; \
+	File File = 0; \
+	for (; rank < BOARD_SIDE_LENGTH; rank++) \
+		for (; file < BOARD_SIDE_LENGTH; file++)
+*/
+
 struct Board {
 	struct Square squares[BOARD_SIDE_LENGTH][BOARD_SIDE_LENGTH];
 	struct CastlingRights castling_rights;

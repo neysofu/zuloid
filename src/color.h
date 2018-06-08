@@ -9,3 +9,6 @@ enum Color {
 
 Rank
 color_promoting_rank(const enum Color color);
+
+enum Color
+color_other(enum Color color);

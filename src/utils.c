@@ -27,11 +27,12 @@ is_stdin_empty(void) {
     return select(fileno(stdin) + 1, &read_fs, NULL, NULL, NULL);
 }
 
-uint64_t
-hash(void *ptr, size_t size) {
-	uint64_t hash = 5381;
-	while (size-- > 0) {
-		hash = ((hash << 5) + hash) + *(uint64_t *)(ptr++);
+uint32_t
+hash_djb2(char *str) {
+	uint32_t hash = 5381;
+	char c;
+	while ((c = *str++)) {
+		hash = (hash << 5) + hash + c;
 	}
 	return hash;
 }
