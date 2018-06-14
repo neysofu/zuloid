@@ -26,16 +26,21 @@ coord_to_str(const struct Coord coord, char *str) {
 }
 
 struct Coord
-str_to_coord(const char *coord) {
-	if (strlen(coord) < 2) {
+str_to_coord(const char *str) {
+	if (strlen(str) < 2) {
 		return COORD_NONE;
 	}
-	return coord_new(coord[0] - 'a', coord[1] - '1');
+	return coord_new(str[0] - 'a', str[1] - '1');
 }
 
 char
 rank_to_char(Rank rank) {
 	return rank + 'a';
+}
+
+bool
+rank_is_valid(Rank rank) {
+	return rank < 8;
 }
 
 char
@@ -44,8 +49,13 @@ file_to_char(File file) {
 }
 
 bool
-coord_eq(const struct Coord coord1, const struct Coord coord2) {
-	return coord1.rank == coord2.rank && coord1.file == coord2.file;
+file_is_valid(File file) {
+	return file < 8;
+}
+
+bool
+coord_eq(const struct Coord coord_1, const struct Coord coord_2) {
+	return coord_1.rank == coord_2.rank && coord_1.file == coord_2.file;
 }
 
 bool
@@ -54,9 +64,9 @@ coord_is_valid(const struct Coord coord) {
 }
 
 enum Dir
-coord_dir(const struct Coord coord1, const struct Coord coord2) {
-	uint8_t horizontal_movement = abs(coord1.file - coord2.file);
-	uint8_t vertical_movement = abs(coord1.rank - coord2.rank);
+coord_dir(const struct Coord coord_1, const struct Coord coord_2) {
+	uint8_t horizontal_movement = abs(coord_1.file - coord_2.file);
+	uint8_t vertical_movement = abs(coord_1.rank - coord_2.rank);
 	if (horizontal_movement == 0) {
 		return DIR_VERTICAL;
 	} else if (vertical_movement == 0) {
@@ -76,3 +86,6 @@ const struct Coord COORD_NONE = {
 	.rank = 42,
 	.file = 9,
 };
+
+const Rank RANK_NONE = 42;
+const File FILE_NONE = 9;

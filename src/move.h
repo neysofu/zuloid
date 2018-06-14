@@ -44,7 +44,7 @@ bool
 move_triggers_attack(const struct Move move, const struct Coord coord, const struct Board *board);
 
 bool
-move_triggers_draw_by_repetition(const struct Board *board);
+move_triggers_draw_by_repetition(const struct Move move, const struct Board *board);
 
 bool
 move_triggers_stalemate(const struct Move move, const struct Board *board);
@@ -56,6 +56,6 @@ bool
 move_triggers_checkmate(const struct Move move, const struct Board *board);
 
 void
-board_move(struct Board *board, const struct Move move);
+board_push(struct Board *board, const struct Move move);
 
 extern const struct Move MOVE_NONE;

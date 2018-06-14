@@ -28,7 +28,23 @@ Resignation happens when the probability of winning drops below [0.05].
 	 so I represent every time control with a pressure indicator for white [1]
 	 and for black [1], which indicates how intricate the position is for that
 	 player. The MCTS is then tuned according to parameters specific to the time
-	 control. In this way, adding new time controls is straightforward.
+	 control. In this way, adding new time controls is straightforward. Along
+	 the game tree, a future timeline is mantained. Ex. (10 + 5):
+
+	   600
+	   605
+	   610
+	   615
+	   620
+	   625
+	   630
+
+	 While calculating every move, the engine subtracts the past time to the
+	 value.
+
+	   15s hourglass with 5s delay:
+
+	   15
 
    Problem statement:
      I have an extremely big graph (infinite for all practical purposes)
@@ -42,6 +58,12 @@ Resignation happens when the probability of winning drops below [0.05].
 	 position vector, it must automatically figure out edges and which ones look
 	 promising. The output of the neural network is a feature vector with [256]
 	 dimensions and a predicted score [1].
+
+   Note:
+     only the leaves of the search tree must remember game positions and stuff,
+	 all the others can just remember the move to reach that state. The game
+	 position is thus carried down the tree and cloned if necessary. This way
+	 the board representation must also remember the history by hashing.
 
    Learning process:
      First, accumulate many, many vectors of chessboards and store them in a

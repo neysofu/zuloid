@@ -1,12 +1,13 @@
+#include <cstdio>
 #include <cstdlib>
 #include <string>
 #include "catch.hpp"
 extern "C" {
+#include <python2.7/Python.h>
 #include <sysexits.h>
 #include "board.h"
 #include "color.h"
 #include "move.h"
-#include "uci.h"
 }
 
 const char fen_1[] = "r3qbk1/pbp3pp/8/2p5/1rNnPP2/1PQPB3/2P3PP/R4R1K b - -";
@@ -26,18 +27,57 @@ TEST_CASE("'board_new' is idempotent.", "[Board]") {
 	board_drop(board);
 }
 
-TEST_CASE("All moves in the KingBase database are legal.", "[Board]") {
-	// TODO
+TEST_CASE("Stalemate positions are detected as such.", "[Board]") {
+	//FILE *kingbase_file = fopen("resources/KingBase.pgn.stalemate");
+	//while (getline(&line, &len, fp) != -1) {
+	//	if (line == "\n") {}
+	//}
 }
 
-TEST_CASE("") {
+TEST_CASE("All moves in the KingBase database are legal.", "[Board]") {
+	/*
+	FILE *kingbase_file = fopen("resources/KingBase.ucimoves");
+	REQUIRE(kingbase_file);
+	while (getline(&line, &len, fp) != -1) {
+		if (line == "\n") {
+			REQUIRE(move_triggers_checkmate(move, board));
+			board = board_new(board);
+			continue;
+		}
+		struct Move move = str_to_move(uci_cmd_iter_next(iter));
+		bool capture = strcmp(uci_cmd_iter_next(iter), "capture" == 0;
+		bool promotion = strcmp(uci_cmd_iter_next(iter), "promotion" == 0;
+		bool en_passant = strcmp(uci_cmd_iter_next(iter), "en-passant" == 0;
+		bool castling = strcmp(uci_cmd_iter_next(iter), "castling" == 0;
+ 		bool check = strcmp(uci_cmd_iter_next(iter), "check" == 0;
+		bool checkmate = strcmp(uci_cmd_iter_next(iter), "checkmate" == 0;
+		REQUIRE(move_is_legal(move, board));
+		if (capture) {
+			REQUIRE(move_is_capture(move, board));
+		}
+		if (promotion) {
+			REQUIRE(move_is_promotion(move, board));
+		}
+		if (castling) {
+			REQUIRE(move_is_castling(move, board));
+		}
+		if (check) {
+			REQUIRE(move_triggers_check(move, board));
+		}
+		if (checkmate) {
+			REQUIRE(move_triggers_checkmate(move, board));
+		}
+	}*/
+}
+
+TEST_CASE("Moves that result in the game ending because of stalemate are reported as such.", "[Board]") {
 
 }
 
 TEST_CASE("One player cannot move twice in a row.", "[Board]") {
 	struct Board *board = board_new(NULL);
 	REQUIRE(board->active_color == COLOR_WHITE);
-	board_move(board, str_to_move("e2e4"));
+	board_push(board, str_to_move("e2e4"));
 	REQUIRE(board->active_color == COLOR_BLACK);
 	board_drop(board);
 }

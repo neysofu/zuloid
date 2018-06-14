@@ -50,7 +50,7 @@ str_to_move(const char *str) {
 
 bool
 move_is_capture(const struct Move move, const struct Board *board) {
-	return board_square_const(board, move.target)->piece != PIECE_NONE;
+	return board_square(board, move.target)->piece != PIECE_NONE;
 }
 
 bool
@@ -103,7 +103,12 @@ move_is_promotion(const struct Move move, const struct Board *board) {
 
 bool
 move_is_en_passant(const struct Move move, const struct Board *board) {
-	return coord_eq(move.target, board->en_passant_target);
+	return move.target.file == board->en_passant_file;
+}
+
+bool
+move_is_self_harm(const struct Move move, const struct Board *board) {
+	return board_square(board, move.target)->color == board->active_color;
 }
 
 bool
@@ -114,13 +119,13 @@ move_is_legal(const struct Move move, const struct Board *board) {
 	if (coord_eq(move.source, move.target)) {
 		return false;
 	}
-	if (board_square_const(board, move.source)->color != board->active_color) {
+	if (board_square(board, move.source)->color != board->active_color) {
 		return false;
 	}
 	if (move_is_self_harm(move, board)) {
 		return false;
 	}
-	switch (board_square_const(board, move.source)->piece) {
+	switch (board_square(board, move.source)->piece) {
 		case PIECE_PAWN:
 			if (abs(move.source.rank - move.target.rank) != 1) {
 				return false;
@@ -164,6 +169,20 @@ bool
 move_triggers_check(const struct Move move, const struct Board *board) {
 	return false;
 	// TODO
+}
+
+void
+board_push(struct Board *board, const struct Move move) {
+	struct Square *source = board_square(board, move.source);
+	struct Square *target = board_square(board, move.target);
+	source->piece = PIECE_NONE;
+	target = source;
+	if (move_is_en_passant(move, board)) {
+		//board_square(board, board->en_passant_file)->piece = PIECE_NONE; TODO
+	} else if (move_is_promotion(move, board)) {
+		board_square(board, move.target)->piece = move.promotion;
+	}
+	board->active_color = color_other(board->active_color);
 }
 
 const struct Move MOVE_NONE = {

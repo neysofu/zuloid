@@ -7,30 +7,18 @@
 #include "coord.h"
 #include "utils.h"
 
-// See [1] for reference.
-//
-//  64 + | pieces
-//   7 + | slashes
-//   1 + | active color
-//   4 + | castling rights
-//   2 + | en-passant target square
-//   2 + | half-moves clock
-//   3 + | full-moves
-//   5 = | spaces
-// -----
-//  88
-//
-// [1]: https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-#define FEN_LENGTH 88
-
 char *
-board_to_fen(const struct Board *board) {
-	char *fen = malloc(FEN_LENGTH);
-	char *fen_start = fen;
-	Rank rank = 0;
-	File file = 0;
-	for (; rank < BOARD_SIDE_LENGTH; rank++) {
-		for (; file < BOARD_SIDE_LENGTH; file++) {
+board_to_fen(const struct Board *board, char *fen) {
+	if (!fen) {
+		fen = malloc(FEN_MAX_LENGTH);
+		if (!fen) {
+			return NULL;
+		}
+	}
+	Rank rank;
+	File file;
+	for (rank = 0; rank < BOARD_SIDE_LENGTH; rank++) {
+		for (file = 0; file < BOARD_SIDE_LENGTH; file++) {
 			*fen = board->squares[rank][file].piece;
 			if (board->squares[rank][file].piece != PIECE_NONE) {
 				*fen += ('a' - 'A');
@@ -51,36 +39,36 @@ board_to_fen(const struct Board *board) {
 			return NULL;
 	}
 	*(fen++) = ' ';
-	if (board->castling_rights.white_kingside) {
+	if (board->castling_rights & CASTLING_RIGHT_WHITE_KINGSIDE) {
 		*(fen++) = 'K';
 	}
-	if (board->castling_rights.white_kingside) {
-		*(fen++) = 'Q';
-	}
-	if (board->castling_rights.black_kingside) {
+	if (board->castling_rights & CASTLING_RIGHT_BLACK_KINGSIDE) {
 		*(fen++) = 'k';
 	}
-	if (board->castling_rights.black_kingside) {
+	if (board->castling_rights & CASTLING_RIGHT_WHITE_QUEENSIDE) {
+		*(fen++) = 'Q';
+	}
+	if (board->castling_rights & CASTLING_RIGHT_BLACK_QUEENSIDE) {
 		*(fen++) = 'q';
 	}
 	if (*(fen - 1) == ' ') {
 		*(fen++) = '-';
 	}
 	*(fen++) = ' ';
-	if (coord_eq(board->en_passant_target, COORD_NONE)) {
+	if (!file_is_valid(board->en_passant_file)) {
 		*(fen++) = '-';
 	} else {
-		*(fen++) = rank_to_char(board->en_passant_target.rank);
-		*(fen++) = file_to_char(board->en_passant_target.file);
+		*(fen++) = ' '; // FIXME
+		*(fen++) = file_to_char(board->en_passant_file);
 	}
 	*(fen++) = ' ';
-	snprintf(fen++, 2, "%d", board->half_moves);
+	snprintf(fen++, 2, "%d", board->num_half_moves);
 	*(++fen) = '\0';
-	return fen_start;
+	return fen - FEN_MAX_LENGTH;
 }
 
 void
-fen_specify_pieces(char *fen_fragment, struct Board *board) {
+fen_pieces_to_board(char *fen_fragment, struct Board *board) {
 	Rank rank = BOARD_SIDE_LENGTH;
 	File file = 0;
 	char *token;
@@ -100,7 +88,7 @@ fen_specify_pieces(char *fen_fragment, struct Board *board) {
 }
 
 void
-fen_specify_active_player(char *fen_fragment, struct Board *board) {
+fen_active_color_to_board(char *fen_fragment, struct Board *board) {
 	switch (fen_fragment[0]) {
 		case 'w':
 			board->active_color = COLOR_WHITE;
@@ -114,27 +102,27 @@ fen_specify_active_player(char *fen_fragment, struct Board *board) {
 }
 
 void
-fen_specify_castling_rights(char *fen_fragment, struct Board *board) {
+fen_castling_rights_to_board(char *fen_fragment, struct Board *board) {
 	uint8_t i = 0;
 	while (fen_fragment[i] != '\0') {
 		switch (fen_fragment[i]) {
 			case 'K':
-				board->castling_rights.white_kingside = true;
-				break;
-			case 'Q':
-				board->castling_rights.white_queenside = true;
+				board->castling_rights |= CASTLING_RIGHT_WHITE_KINGSIDE;
 				break;
 			case 'k':
-				board->castling_rights.black_kingside = true;
+				board->castling_rights |= CASTLING_RIGHT_BLACK_KINGSIDE;
+				break;
+			case 'Q':
+				board->castling_rights |= CASTLING_RIGHT_WHITE_QUEENSIDE;
 				break;
 			case 'q':
-				board->castling_rights.black_queenside = true;
+				board->castling_rights |= CASTLING_RIGHT_BLACK_QUEENSIDE;
 				break;
 			case '-':
-				board->castling_rights.white_kingside = true;
-				board->castling_rights.white_queenside = true;
-				board->castling_rights.black_kingside = true;
-				board->castling_rights.black_queenside = true;
+				board->castling_rights |= CASTLING_RIGHT_WHITE_KINGSIDE;
+				board->castling_rights |= CASTLING_RIGHT_BLACK_KINGSIDE;
+				board->castling_rights |= CASTLING_RIGHT_WHITE_QUEENSIDE;
+				board->castling_rights |= CASTLING_RIGHT_BLACK_QUEENSIDE;
 				break;
 			default:
 				return;
@@ -144,16 +132,17 @@ fen_specify_castling_rights(char *fen_fragment, struct Board *board) {
 }
 
 void
-fen_specify_en_passant_target(char *fen_fragment, struct Board *board) {
+fen_specify_en_passant_file(char *fen_fragment, struct Board *board) {
 	if (fen_fragment[0] == '-') {
-		board->en_passant_target = COORD_NONE;
+		board->en_passant_file = FILE_NONE;
+	} else {
+		board->en_passant_file = str_to_move(fen_fragment).target.file;
 	}
-	board->en_passant_target = str_to_move(fen_fragment).target;
 }
 
 void
 fen_specify_half_moves(char *fen_fragment, struct Board *board) {
-	board->half_moves = atoi(fen_fragment);
+	board->num_half_moves = atoi(fen_fragment);
 }
 
 void

@@ -3,28 +3,22 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "color.h"
-#include "castling.h"
 #include "square.h"
 
 #define BOARD_SIDE_LENGTH 8
 #define MAX_HALF_MOVES 75
-
-/*
-#define FOR_SQUARE_IN_BOARD_DO(rank, file) \
-	Rank rank = 0; \
-	File File = 0; \
-	for (; rank < BOARD_SIDE_LENGTH; rank++) \
-		for (; file < BOARD_SIDE_LENGTH; file++)
-*/
+#define CASTLING_RIGHT_WHITE_KINGSIDE 0b1000
+#define CASTLING_RIGHT_BLACK_KINGSIDE 0b0100
+#define CASTLING_RIGHT_WHITE_QUEENSIDE 0b0010
+#define CASTLING_RIGHT_BLACK_QUEENSIDE 0b0001
 
 struct Board {
 	struct Square squares[BOARD_SIDE_LENGTH][BOARD_SIDE_LENGTH];
-	struct CastlingRights castling_rights;
-	struct Coord en_passant_target;
+	uint8_t castling_rights;
+	File en_passant_file;
 	enum Color active_color;
-	uint8_t half_moves;
-	uint64_t history_by_hash[MAX_HALF_MOVES];
 	uint8_t num_pieces;
+	uint8_t num_half_moves;
 };
 
 struct Board *
@@ -34,19 +28,6 @@ void
 board_drop(struct Board *board);
 
 struct Square *
-board_square(struct Board *board, const struct Coord coord);
-
-const struct Square *
-board_square_const(const struct Board *board, const struct Coord coord);
-
-void
-board_update_history(struct Board *board);
-
-uint64_t
-board_hash(const struct Board *board);
-
-// Checks if the game is over and is yes what the result is.
-bool
-board_is_gameover(const struct Board *board);
+board_square(const struct Board *board, const struct Coord coord);
 
 extern const struct Board BOARD_STARTPOS;

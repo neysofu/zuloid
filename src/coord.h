@@ -24,8 +24,14 @@ str_to_coord(const char *str);
 char
 rank_to_char(Rank rank);
 
+bool
+rank_is_valid(Rank rank);
+
 char
 file_to_char(File file);
+
+bool
+file_is_valid(File file);
 
 bool
 coord_is_valid(const struct Coord coord);
@@ -37,3 +43,6 @@ enum Dir
 coord_dir(const struct Coord coord1, const struct Coord coord2);
 
 extern const struct Coord COORD_NONE;
+
+extern const Rank RANK_NONE;
+extern const File FILE_NONE;

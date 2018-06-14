@@ -3,8 +3,8 @@
 #include "coord.h"
 
 enum Color {
-	COLOR_WHITE,
-	COLOR_BLACK,
+	COLOR_WHITE = 0,
+	COLOR_BLACK = 1,
 };
 
 Rank

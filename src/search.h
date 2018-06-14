@@ -1,22 +1,46 @@
 #pragma once
 
+#include <stdlib.h>
+#include <stdbool.h>
 #include "move.h"
-#include "uci.h"
+
+struct SearchPriorityQueue;
+
+struct SearchPriorityQueue *
+search_priority_queue_new(struct SearchPriorityQueue *spq);
+
+void
+search_priority_queue_drop(struct SearchPriorityQueue *spq);
+
+uint64_t
+search_priority_queue_pop(struct SearchPriorityQueue *spq);
+
+void
+search_priority_queue_push(struct SearchPriorityQueue *spq, float priority, uint64_t value);
 
 struct SearchParams {
 	bool ponder;
-	uint64_t white_time;
-	uint64_t black_time;
-	uint64_t white_increment;
-	uint64_t black_increment;
 	uint16_t moves_to_go;
 	uint16_t depth;
 	size_t num_nodes;
 	uint16_t mate_length;
-	size_t time;
 	bool infinite;
-	struct Move moves[];
 };
 
-struct SearchParams *
-uci_cmd_to_search_params(struct UciCmd *cmd, struct SearchParams *params);
+struct EvalMove {
+	struct Move move;
+	float score;
+};
+
+struct Leaf {
+	struct Board *board;
+	float score;
+};
+
+struct Node {
+	struct Move move;
+};
+
+struct Scheduler {
+	struct Node *tasks;
+};
