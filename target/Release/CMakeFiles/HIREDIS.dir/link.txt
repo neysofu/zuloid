@@ -1,0 +1,1 @@
+/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ -O3 -DNDEBUG -Wall -dynamiclib -Wl,-headerpad_max_install_names  -o libHIREDIS.dylib -install_name @rpath/libHIREDIS.dylib  

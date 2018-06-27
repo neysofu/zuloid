@@ -20,6 +20,7 @@ TEST_CASE("'engine_new' is idempotent.", "[Engine]") {
 
 TEST_CASE("The engine is responsive to UCI commands.", "[Engine]") {
 	struct Engine *engine = engine_new(NULL);
-	engine_call(engine, " \tuci  ");
+	char cmd[] = " \tuci  ";
+	engine_call(engine, &(cmd[0]));
 	engine_drop(engine);
 }

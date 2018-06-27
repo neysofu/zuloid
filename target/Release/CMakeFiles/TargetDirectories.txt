@@ -1,0 +1,7 @@
+/Users/pippoc/Z64C/target/Release/CMakeFiles/rebuild_cache.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/edit_cache.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/Z64C-test.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/Z64C.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/Z64C_LIB.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/test.dir
+/Users/pippoc/Z64C/target/Release/CMakeFiles/HIREDIS.dir

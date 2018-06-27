@@ -1,0 +1,134 @@
+enum Variant:uint16 {
+	Standard,
+}
+
+enum Piece:int8 {
+	None = 0,
+	WhitePawn = 1,
+	BlackPawn = -1,
+	WhiteKnight = 2,
+	BlackKnight = -2,
+	WhiteBishop = 3,
+	BlackBishop = -3,
+	WhiteRook = 4,
+	BlackRook = -4,
+	WhiteQueen = 5,
+	BlackQueen = -5,
+	WhiteKing = 6,
+	BlackKing = -6,
+}
+
+enum Action:byte {
+	Move,
+	Resign,
+	ClaimDraw,
+}
+
+struct Square {
+	file:uint8;
+	rank:uint8;
+}
+
+table Board {
+	squares:[Piece];
+	en_passant_target_square:Square;
+	active_player:Player;
+	castling_rights:CastlingRights;
+}
+
+struct CastlingRights {
+	white_kingside:bool;
+	white_queenside:bool;
+	black_kingside:bool;
+	black_queenside:bool;
+}
+
+enum Player:bool {
+	White,
+	Black,
+}
+
+table Game {
+	position:Board;
+	history:[Move];
+	variant:Variant;
+}
+
+struct Move {
+	source:Coordinates;
+	target:Coordinates;
+	promotion:Piece;
+}
+
+table RequestAnalysis {
+	game:Game,
+}
+
+table RequestPushMove {
+	move:Move,
+}
+
+table Clock {
+	time_msec:uint32;
+	time_incr_msec:uint32;
+}
+
+table RequestGameNew {
+	game:Game;
+	white_clock:Clock;
+	black_clock:Clock;
+}
+
+table Response {
+	ok:bool;
+	error:string;
+}
+
+table RequestGameChangeSettings {
+	selectivity:float32;
+	resoluteness:float32;
+	depth:uint16;
+	EndgameTables:String;
+	OpeningBook:String;
+}
+
+table ResponseGameChangeSettings {
+	ok:bool;
+	error:string;
+}
+
+table RequestSessionStart {
+	username:String;
+	password:String;
+}
+
+table RequestSessionStart {
+	username:String;
+	password:String;
+}
+
+table ResponseSessionStart {
+	name:string;
+	authors:string;
+	version:string;
+	license:string;
+	website:string;
+}
+
+table RequestSessionQuit {}
+
+table ResponseSessionQuit {}
+
+table RequestAnalysis {
+	settings:Settings;
+}
+
+rpc_service Z64C {
+	GameNew(RequestGameNew):ResponseGameNew;
+	GamePush(RequestGamePush):GamePushResponse;
+	GameRewind(RequestGameRewind):GameRewindResponse;
+	GameSearch(RequestGameSearch):ResponseGameSearch;
+	GameChangeSettings(RequestGameChangeSettings):ResponseGameChangeSettings;
+	SessionStart(RequestSessionStart):ResponseSessionStart;
+	SessionQuit(RequestSessionQuit):ResponseSessionQuit;
+}

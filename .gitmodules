@@ -13,3 +13,6 @@
 [submodule "lib/Catch2"]
 	path = lib/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "lib/tensorflow"]
+	path = lib/tensorflow
+	url = https://github.com/tensorflow/tensorflow.git

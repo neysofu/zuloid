@@ -59,6 +59,13 @@ Resignation happens when the probability of winning drops below [0.05].
 	 promising. The output of the neural network is a feature vector with [256]
 	 dimensions and a predicted score [1].
 
+   Core:
+     vector that analyzes a given position
+	 ANNs:
+	 - one hot of chessboard to analyze vector
+	 - analyze vector and move to analyze vector
+	 - analyze vector to attention-based vector of best moves
+
    Note:
      only the leaves of the search tree must remember game positions and stuff,
 	 all the others can just remember the move to reach that state. The game

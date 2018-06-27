@@ -2,7 +2,6 @@
 #include <string>
 #include "catch.hpp"
 extern "C" {
-#include <sysexits.h>
 #include "utils.h"
 }
 

@@ -15,13 +15,13 @@ TEST_CASE("Going back and forth between 'str_to_coord' and 'coord_to_str' doesn'
 	struct Coord coord = str_to_coord(coord_1_as_str);
 	char *str = coord_to_str(coord, NULL);
 	REQUIRE(strcmp(str, coord_1_as_str) == 0);
-	coord = str_to_coord(coord_2_as_str);
-	str = coord_to_str(coord, str);
-	REQUIRE(strcmp(str, coord_2_as_str) == 0);
-	coord = str_to_coord(coord_3_as_str);
-	str = coord_to_str(coord, str);
-	REQUIRE(strcmp(str, coord_3_as_str) == 0);
-	free(str);
+	//coord = str_to_coord(&(coord_1_as_str[0]));
+	//str = coord_to_str(coord, str);
+	//REQUIRE(strcmp(str, coord_2_as_str) == 0);
+	//coord = str_to_coord(coord_3_as_str);
+	//str = coord_to_str(coord, str);
+	//REQUIRE(strcmp(str, coord_3_as_str) == 0);
+	//free(str);
 }
 
 TEST_CASE("'coord_dir' recognizes L-shaped movement.", "[Coord]") {

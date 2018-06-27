@@ -1,0 +1,6 @@
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/rebuild_cache.dir
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/edit_cache.dir
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C_LIB.dir
+/Users/pippoc/Z64C/target/Debug/CMakeFiles/test.dir

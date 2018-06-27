@@ -34,40 +34,62 @@ TEST_CASE("Stalemate positions are detected as such.", "[Board]") {
 	//}
 }
 
+TEST_CASE("The Fegatello attack is a sequence of legal moves.", "[Board]") {
+	struct Board *board = board_new(NULL);
+	struct Move moves[] = {
+		str_to_move("e2e4"),
+		str_to_move("e7e5"),
+		str_to_move("g1f3"),
+		str_to_move("b8c6"),
+		str_to_move("f1c4"),
+		str_to_move("g8f6"),
+		str_to_move("f3g5"),
+		str_to_move("d7d5"),
+		str_to_move("e4d5"),
+		str_to_move("f6d5"),
+		str_to_move("g5f7"),
+		str_to_move("e8f7"),
+	};
+	uint8_t i = 0;
+	while (i < 12) {
+		REQUIRE(move_is_legal(moves[i], board));
+		board_push(board, moves[i++]);
+	}
+}
+
 TEST_CASE("All moves in the KingBase database are legal.", "[Board]") {
-	/*
-	FILE *kingbase_file = fopen("resources/KingBase.ucimoves");
-	REQUIRE(kingbase_file);
-	while (getline(&line, &len, fp) != -1) {
-		if (line == "\n") {
-			REQUIRE(move_triggers_checkmate(move, board));
-			board = board_new(board);
-			continue;
-		}
-		struct Move move = str_to_move(uci_cmd_iter_next(iter));
-		bool capture = strcmp(uci_cmd_iter_next(iter), "capture" == 0;
-		bool promotion = strcmp(uci_cmd_iter_next(iter), "promotion" == 0;
-		bool en_passant = strcmp(uci_cmd_iter_next(iter), "en-passant" == 0;
-		bool castling = strcmp(uci_cmd_iter_next(iter), "castling" == 0;
- 		bool check = strcmp(uci_cmd_iter_next(iter), "check" == 0;
-		bool checkmate = strcmp(uci_cmd_iter_next(iter), "checkmate" == 0;
-		REQUIRE(move_is_legal(move, board));
-		if (capture) {
-			REQUIRE(move_is_capture(move, board));
-		}
-		if (promotion) {
-			REQUIRE(move_is_promotion(move, board));
-		}
-		if (castling) {
-			REQUIRE(move_is_castling(move, board));
-		}
-		if (check) {
-			REQUIRE(move_triggers_check(move, board));
-		}
-		if (checkmate) {
-			REQUIRE(move_triggers_checkmate(move, board));
-		}
-	}*/
+	//FILE *kingbase_file = fopen("resources/KingBase.ucimoves");
+	//REQUIRE(kingbase_file);
+	//while (getline(&line, &len, fp) != -1) {
+	//	if (line == "\n") {
+	//		REQUIRE(move_triggers_checkmate(move, board));
+	//		board = board_new(board);
+	//		continue;
+	//	}
+	//	struct Move move = str_to_move(uci_cmd_iter_next(iter));
+	//	bool capture = strcmp(uci_cmd_iter_next(iter), "capture" == 0;
+	//	bool promotion = strcmp(uci_cmd_iter_next(iter), "promotion" == 0;
+	//	bool en_passant = strcmp(uci_cmd_iter_next(iter), "en-passant" == 0;
+	//	bool castling = strcmp(uci_cmd_iter_next(iter), "castling" == 0;
+ 	//	bool check = strcmp(uci_cmd_iter_next(iter), "check" == 0;
+	//	bool checkmate = strcmp(uci_cmd_iter_next(iter), "checkmate" == 0;
+	//	REQUIRE(move_is_legal(move, board));
+	//	if (capture) {
+	//		REQUIRE(move_is_capture(move, board));
+	//	}
+	//	if (promotion) {
+	//		REQUIRE(move_is_promotion(move, board));
+	//	}
+	//	if (castling) {
+	//		REQUIRE(move_is_castling(move, board));
+	//	}
+	//	if (check) {
+	//		REQUIRE(move_triggers_check(move, board));
+	//	}
+	//	if (checkmate) {
+	//		REQUIRE(move_triggers_checkmate(move, board));
+	//	}
+	//}
 }
 
 TEST_CASE("Moves that result in the game ending because of stalemate are reported as such.", "[Board]") {
