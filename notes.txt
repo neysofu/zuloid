@@ -15,13 +15,161 @@ Invalid moves are approximated within reasonable limits.
 ARCHITECTURE
 ============
 
+Everything revolves around a chessboard vector. A chessboard vector represents a
+thinking instance about a specific chess position. Many chessboard vectors
+for the same chess position may be spawn, to better focus about certain features
+of the chess position (e.g. central pawns, king safety, material exchange,
+ecc.). When presented with a game, Z64C builds a database of chessboard vectors
+and analyzes them, looking deeper and deeper into its chess position by using an
+attention mechanism, and also by looking into tactics and specific lines. How do
+I then reuse the chessboard vectors after I forced a certain move? This is a
+major problem. In general, the architecture is much less flexible than
+AlphaZero's, but better suited to play real games.
+
+What features does the engine need?
+
+1. Starting a game from arbitrary positions.
+   This I can do. I only need to train a neural network from one-hot encoding of
+   a chess position to a chessboard vector.
+2. Analyze a given position and offer best lines, estimated score, and best
+moves.
+   I can already give an estimated score of any chessboard vector, but I still
+   need to figure out the search algorithm as well as the lines/moves
+   calculations. I need to think about other search algorithms, MCTS doesn't
+   apply here because I have no information on the inside of the tree's
+   information, so I need to have the engine manage it on its own. At the
+   moment, Z64C wouldn't even know how to look for the chosen move *after* the
+   search... something is broken! The chessboard vector is a cool idea, but I
+   need to rethink the whole architecture. The chessboard vectors in the search
+   tree need to at least be "indexable" and associated with a chess position, so
+   that they can be retrieved when the given chess position is met. At the
+   moment, I don't even know what search is guided by!
+   Idea:
+   Every chessboard vector is associated with one (possibly more) actual chess
+   positions. This way the search tree is not completely unstructured and I can
+   peep into it.
+   Ex. I start with a chess position. I create the main chessboard vector
+   associated with that chess position and store it in the Redis instance.
+   At this point, I can either keep looking into the chessboard vector or switch
+   to another chess position and start looking into that.
+   Ideally, I could train the network so that it can handle chessboard vectors
+   that apply to many chess positions.
+
+   Instead of a tree, I look at search as operating on a linked list. This
+   better fits the reasoning that humans perform: we look at a bunch of chess
+   positions, but in an orderly fashion. At the beginning, the chessboard vector
+   is just one:
+
+     A
+
+   Its priority is 1.00 and thus will be exploited. After it is exploited,
+   another chessboard vector is found: possibly another chess position, or maybe
+   the same.
+
+     A
+	 B
+
+   As Z64C searchs the action space, the cached chessboard vectors might look
+   like this:
+
+     A
+	 C
+	 B
+	 F
+	 D
+	 E
+
+   Once the timing mechanism blocks further searching, the move associated with
+   the topmost chessboard vector is performed.
+
+   How does exploitation work?
+
+   Basically, Redis stores every chessboard vector along with certain
+   information:
+
+   - Chessboard vector
+   - Estimated score
+   - Last half-move
+
+   To exploit, we just need to plug the chessboard vector into the neural
+   network, create a new entry for the novel chessbaord vector and update the
+   current entry. This way every chessboard vector is uniquely associated with a
+   single chess position. Is this a good thing or a bad thing? I really don't
+   know... On one hand, it seems like a chessboard vector could possibly be
+   linked to many chess positions. But a chessboard vector always (except maybe
+   in endgames, where it's not important anyway) contains all necessary
+   information to retrieve a specific chess position! This means that it can't
+   generalize. Moreover, I want very good instincts and not deep search (unless
+   required by tacticts and such).
+
+   Idea:
+   how can I look harder at a certain chess position without looking deeper into
+   the search tree? If Z64C is able to do this, then it's the ultimate chess
+   engine and perfectly simulates human play while being superhuman: more human
+   than humans. I need an architecture that allows me to refine and refine a
+   chessboard vector, thus obtaining the perfect chessboard vector for a given
+   chess position. Sometimes a move changes very slightly the chessboard vector
+   and is a "quiet" move, but other times a move is a complete game changer and
+   Z64C should be able to look deeper into that. It's not very clear how such an
+   architecture would work. It can think as long as it wants for any chessboard
+   vector, similarly to a RNN. It's also hard to think where such mechanism
+   would lie in the architecture: at move generation, as an external network, or
+   what? I think it should be a pluggable, separate network, so that the
+   architecture becomes even more flexible (it is currently very flexible and I
+   want to keep it that way). So, I need to finally make a decision regarding
+   the architecture! I feel like I've made a lot of progress and it's finally
+   almost ready. I just need to figure this out, then write learning script.
+
+   Notes about the move generation process: this is the very core of the Z64C
+   engine and needs to be absolute perfect. I cannot afford mistakes. A
+   chessboard vector is not only a chess position, but also a plan with several
+   options and looks for the best options first and the worst later. When a move
+   is finally selected, the chosen plan modifies the whole vector and thus the
+   process perftectly captures the dynamic nature of the game without problems.
+   It's not a hack: the chess position is one thing only with also the plan that
+   Z64C is thinking about carrying out and cannot be separated! This can also be
+   used to compare chessboard vectors to judge a player's strength: if we are
+   given a bunch of chessboard vectors, we can perform clustering and estimate
+   which vectors are from the same players. Now I need to think hard about the
+   exploitan aspect: how to think harder about a chess position without looking
+   deeper into the search tree.
+
+   Features:
+   - Chessboard vector [1024]
+   - Turn [0/1]
+   - Half moves clock [0-1: x/50]
+   - Full half moves counter [0-1: x/(x+80)]
+   - Castling rights [4]
+   - Resoluteness factor [0-1]
+
+   Output:
+   - Chessboard vector [1024]
+   - Rank of source square [0-1]
+   - File of source square [0-1]
+   - Rank of target square [0-1]
+   - File of target square [0-1]
+   - Estimated winning score [0-1]
+
+   Idea:
+   what if I imagine thinking process to happen on a long assembly chain that
+   goes forward and can branch? I don't think it can work.
+
+   I NEED TO FIGURE OUT THE REFINE NETWORK!!! I am short on time. A few days
+   top.
+
+3. Estimate the strength of a given move.
+   This is also possible. First the search the chess position before said move
+   for some time, then perform the move and search for some more time. At this
+   point, the score of the move can be calculated by comparing the estimated
+   score of the game before and after moving.
+4. Incrementally modify a game while retaining all its calculations (moves in a
+normal game.)
+   Seems to be possible while retaining chess position information packed with
+   the associated chessboard vectors.
+
 Resignation happens when the probability of winning drops below [0.05].
 
 1. Evaluation function.
-
-   I just need to find an embedding of chess positions, then for the most part
-   the problem is solved. Also, I need a mapping bewteen the vector space and my
-   internal representation of chess positions.
 
    Time control:
      There are so many time controls that I wouldn't know which ones to choose,
@@ -47,24 +195,6 @@ Resignation happens when the probability of winning drops below [0.05].
 	   15
 
    Problem statement:
-     I have an extremely big graph (infinite for all practical purposes)
-	 representing all the possible chess positions. Edges represent moves and
-	 nodes chess positions. This first stage consists in building a database of
-	 chess positions' embeddings [128].
-	 as nodes; each edge is labelled (a certain kind of move) and directed.
-	 By exploring the graph during a training session, Z64C must be able to find
-	 a relatively low-dimensional embedding of each node (and possible even
-	 edges). The only information available to Z64C is the current chess
-	 position vector, it must automatically figure out edges and which ones look
-	 promising. The output of the neural network is a feature vector with [256]
-	 dimensions and a predicted score [1].
-
-   Core:
-     vector that analyzes a given position
-	 ANNs:
-	 - one hot of chessboard to analyze vector
-	 - analyze vector and move to analyze vector
-	 - analyze vector to attention-based vector of best moves
 
    Note:
      only the leaves of the search tree must remember game positions and stuff,
