@@ -224,6 +224,23 @@ Resignation happens when the probability of winning drops below [0.05].
 	* Pressure for black [1]
 	* Evaluation score [1]
 
+	IDEA!
+	What if I design a new architecture where the recurrent nature of the
+	refiner is extended to move generation? I need to figure out how, but it
+	couold work. My point is that chess is something where feedforward doesn't
+	really work because it a pondering activity: you need to ponder on the board
+	to find good combinations. But it may become very hard to train, even though
+	I can easily see Z64C starting by pushing central pawns and then starting to
+	move better slowly and slowly, finally becoming better. SO: The refiner
+	won't be a standalone module if I do this, which is a shame, but ok. At the
+	end maybe I will find some other answer to this problem, but for now it
+	looks good. How do I convince the net not to spend time where unnecessary? I
+	can train it so that the given move and chessboard vector has EXACTLY x
+	probability to win the game and based on some metric is gives as output, I
+	can decide to make look into it more and more (only at first nodes).
+
+	Note: the chessboard vector is a stack of [64] numbers? Could work.
+
 2. MCTS-like search function.
 
    Input:
@@ -246,8 +263,63 @@ if a drawn can be offered or claimed, it does it.)
 
 TRAINING STRATEGY
 =================
-Training will use a combination of several learning methods, some supervised and
-others not. I have at my disposal:
+Training will use the modular architecture of the engine and train the various
+neural networks with the outputs of the others.
+
+I need to train:
+* Hot2board
+* Board2moves
+* Increment2board
+
+I start by creating a population of Board2moves, each with a starting score
+representing its relative strength. This score is not limited in the 0-1 range.
+For each training iteration, every neural network is trained. The learning rate
+mustn't be adjusted for quite some time to let all the networks learn the
+basics. I also instantiate one model of Hot2board and Increment2board and
+creating one board tensor from a random chess position. The resulting vector is
+cloned and each copy is given to one individual from the Board2moves population,
+which will generate a certain move. If the architecture generates many possible
+moves, just choose one at random and go with that. Push the move to the board
+and increment the other player's board vector using the Increment2board model.
+
+So:
+* Create a population for each neural network that I want to train and try to
+  plug in different individuals in the process, and see which one gives better
+  results. During the "challenge" between two architectures, each one of the two
+  receives a certain score. The one with the lower score is trained and the
+  other is kept the same. This approach is both flexible and efficient, but I
+  should find an optimal algorithm to give even small rewards.
+
+Idea:
+No population, otherwise it can't be proven that it converges. I need a simpler
+RL algorithm that is also more efficient, not multi-agent. There are several
+questions that arise:
+* How do I reinforce learning without many agents? What approach would a human
+  have if they were given a similar problem? They can't spawn more versions of
+  themselves, so how do they do it? They would start by exploring the action
+  space and learning what actions lead to better rewards, see if there are
+  patterns! At the very beginning you would try random moves though, just to
+  explore the space. And it would be a smart idea to keep doing some random
+  stuff here and there just not to fall into local minima. I would train one
+  neural network at the time, and learning would be very fast this way. So, I
+  have this net, how do I judge what moves it does? And how do I teach it? Once
+  I have the algorithm, I can implement something like Tic Tac Toe and see if it
+  works. The algorithm should be optimal. So, what algorithm should I use?!
+* Temporal difference! This allows for extremely fast converging times, without
+  having to play sooo many games.
+
+SO: I have a network from the board hot encoding to moves and winning score, how
+do I train this without dueling? I mustn't think in terms of rewards, but only
+in terms of training.
+
+Action selection strategy: this also depends on what the architecture of the net
+is and what candidate moves I have. For a single move output without search,
+e-greedy (mixed random and best) is the best approach. With this approach, I can
+guarantee that the net will start and keep exploring for better moves.
+
+What's the relation between the estimated score [0-1] and the move strenght
+[0-1]? Given one, one can find the other. So the move strenght is not relative
+to other moves, but only to the estimated score.
 
 * Chess 960 (5%)
 * Endgame tables
