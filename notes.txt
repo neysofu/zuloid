@@ -321,6 +321,54 @@ What's the relation between the estimated score [0-1] and the move strenght
 [0-1]? Given one, one can find the other. So the move strenght is not relative
 to other moves, but only to the estimated score.
 
+I need an optimal algorithm.
+Basically, it start playing moves given board positions. I add an exploration
+component by playing also random or unlikely moves. At every move, I get an
+estimated score and a move.
+
+I'll use A2C and later possibly a modified version (ACKTR and custom solutions,
+specifically tailored for chess).
+
+So my net is at the same time an actor and a critic: gives me an action (or more
+than one), and an estimated winning score. How do I train this? I want to
+bootstrap the winning score. I will train based on the advantage instead, so
+that it's smarter about it.
+
+Ok, maybe I got it. Using a normal optimizer like Adam, I backtrace part of the
+net to maximize the estimated score, and I train the estimated score based on
+the temporal difference learning formula. Now I should be set, I have the
+training figured out, and I can devote my time to implement (and train!) Z64C
+v0.2.
+
+Question: how do I represent the estimated score? I don't want a single value,
+instead I want a fully blown probability distribution. The distribution goes
+from 0 to 1, where 0 and 1 are the fixed scores when the game is over. Anything
+in between means it is not certain. How many values and what distribution to
+choose? For example, I may want to draw a distribution where my enemy can't win,
+I'm very close to winning but I may stalemate. How do I show that? I neet to
+show uncertainty in an asymmetric way. I think I can describe the distribution
+using 2 parameters:
+* My score
+* Uncertanty
+The uncertainty drives the distribution towards the centre because there is
+uncertainty.
+
+The distribution is an S-shaped distribution in a [0-1] box both vertically and
+horizontally.
+
+Critic update algorithm: https://papers.nips.cc/paper/3290-temporal-difference-updating-without-a-learning-rate.pdf
+
+Once I think about the probability distribution, I can use the extra information
+to:
+* Better drive game search: search more the more indecisive positions, don't
+  search in clearly winning or losely positions. This favours quiet positions,
+  just like real engines.
+* Better train the critic.
+* Can it also replace resoluteness factor? Yes. Instead of thinking about the
+  most aggressive move, it outputs a simpler action space and I can select with
+  the algorithm that I want.
+
+
 * Chess 960 (5%)
 * Endgame tables
 * Mixed opening book and not during training, so that it can learn to use it
