@@ -35,21 +35,17 @@ BOARD_INCR_TO_BOARD_FILENAME = "BoardIncr2Board.h5"
 HOT_TO_BOARD_FILENAME = "Hot2board.h5"
 
 __author__ = "Filippo Costa @neysofu"
-__version__ = "0.2"
-
+__version__ = "0.3"
 
 class Board(chess.Board):
     """
     A custom subclass of 'chess.Board' to support some non-standard operations.
     """
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-
     def to_tensor(self):
         return np.array([[
             bit for bitmask in [
-                piece_to_tensor(self.piece_at(square))
+                Piece.to_tensor(self.piece_at(square))
                 for square in chess.SQUARES
             ] for bit in bitmask
         ] + [
@@ -97,6 +93,14 @@ class Board(chess.Board):
                 move_i = i
         return (legal_moves[move_i], min_diff / 139)
 
+    def give_reward(self, move):
+        pass
+        # TODO
+        #if self.is_capture(move):
+        #    return 0.2
+        #if self.is_check(move):
+        #    return 0.05
+
 def numeric_result(board):
     result = board.result()
     if result == "1-0":
@@ -108,15 +112,18 @@ def numeric_result(board):
     raise ValueError("The result of the chess game doesn't yet exist"
                      " (it is {}).".format(result))
 
-def piece_to_tensor(piece):
-    if not piece:
-        return np.zeros(7)
-    return [
-        piece.piece_type == chess.PAWN, piece.piece_type == chess.KNIGHT,
-        piece.piece_type in [chess.BISHOP, chess.QUEEN], piece.piece_type in [
-            chess.ROOK, chess.QUEEN
-        ], piece.piece_type == chess.KING, piece.color, not piece.color
-    ]
+class Piece(chess.Piece):
+
+    def to_tensor(self):
+        if not self:
+            return np.zeros(7)
+        return [self.piece_type == chess.PAWN,
+                self.piece_type == chess.KNIGHT,
+                self.piece_type in [chess.BISHOP, chess.QUEEN],
+                self.piece_type in [chess.ROOK, chess.QUEEN],
+                self.piece_type == chess.KING,
+                self.color,
+                not self.color]
 
 class Agent:
 
@@ -124,28 +131,25 @@ class Agent:
     LEARNING_RATE = 0.0004
     EXPLORATION_RATE = 0.85
     DISCOUNT_VALUE = 1.0
-    BATCH_SIZE = 64
+    BATCH_SIZE = 2
     # All hyperparameter values decay over time to guarantee convergence.
     DECAY_RATE = 2E-5
 
-    def __init__(self, database):
-        self.db = database
-        self.db_i = 0
+    def __init__(self, args):
+        self.batch = []
         self.model = Agent.playing_model()
         self.read_from_disk_if_exists()
-        self.batch = []
-        self.learning_rate = Agent.LEARNING_RATE
-        self.exploration_rate = Agent.EXPLORATION_RATE
-        self.discount_value = Agent.DISCOUNT_VALUE
-        # TODO: hyperparameter values decay.
-        num_episodes = int(ARGS.num_episodes)
+        self.num_episodes = int(args.num_episodes)
         self.episode_i = 0
-        while self.episode_i < num_episodes:
-            self.queue_for_training(*self.play(setup_board()))
+        self.args = args
+        while self.episode_i < self.num_episodes:
+            self.queue_for_training(self.run_episode(setup_board()))
             self.episode_i += 1
+            if self.episode_i % 100 == 0:
+                self.write_to_disk()
         self.write_to_disk()
 
-    def play(self, board):
+    def run_episode(self, board):
         """
         Test the agent at a game of chess against itselt and register what
         happens. These information will then be used to train the model.
@@ -155,23 +159,33 @@ class Agent:
         LOGGER.debug(f"New game (episode n.{self.episode_i + 1}) with "
                     f"initial position '{board.fen()}', "
                     f"resoluteness factor ~{round(resoluteness_factor, 3)}.")
+        tensors_in = []
+        tensors_out = []
+        rewards = []
         i = 0
-        predictions = []
         while not board.is_game_over():
-            if rnd.uniform(0, 1) < RATIO_OF_CHESS_960_GAMES_DURING_TRAINING:
+            tensor_in = board.to_tensor()
+            tensor_out = self.model.predict(tensor_in)
+            if np.random.random() < 0.3:
                 move = rnd.choice(list(board.legal_moves))
-            input_tensor = board.to_tensor()
-            output_tensor = self.model.predict(input_tensor)
-            predictions.append((input_tensor, output_tensor))
-            # FIXME: add move error
-            move = board.adjust_move_tensor(output_tensor)[0]
+                move_error = 0
+            else:
+                # FIXME: add move error
+                move, move_error = board.adjust_move_tensor(tensor_out)
+            reward = -move_error
+            rewards.append(reward)
+            tensors_in.append(tensor_in)
+            tensors_out.append(tensor_out)
+            board.push(move)
             active_color = ("White" if board.turn == chess.WHITE else "Black")
             LOGGER.debug(f"{active_color} moved {move}.")
-            board.push(move)
             i += 1
         LOGGER.debug(f"{i} moves were played. The result is "
                      f"{board.result()}.")
-        return (chess.pgn.Game.from_board(board), predictions)
+        return Episode(chess.pgn.Game.from_board(board),
+                       tensors_in,
+                       tensors_out,
+                       rewards)
 
     def playing_model():
         model = ks.models.Sequential()
@@ -191,101 +205,131 @@ class Agent:
                       metrics=["accuracy"])
         return model
 
-    def queue_for_training(self, game, predictions):
+    def queue_for_training(self, episode):
         """
         Train the model based on a game played by the AI. Its inputs along with
         the relative outputs are included to avoid duplicate computation.
         """
-        state_values = backpropagate_state_value([p[1][0][4] for p in predictions],
-                                                 game)
-        LOGGER.debug(f"The new state values are the following: {state_values}.")
-        best_moves = list(search_for_best_moves(self.model, game, state_values))
-        for i in range(len(predictions)):
-            predictions[i][1][0][0] = best_moves[i][0]
-            predictions[i][1][0][1] = best_moves[i][1]
-            predictions[i][1][0][2] = best_moves[i][2]
-            predictions[i][1][0][3] = best_moves[i][3]
-            predictions[i][1][0][4] = state_values[i]
-            self.batch.append(predictions[i])
+        episode.backpropagate_result()
+        episode.search_for_better_moves(self.model)
+        self.batch.append(episode)
         if len(self.batch) >= Agent.BATCH_SIZE:
-            rnd.shuffle(self.batch)
-            for target_prediction in self.batch:
-                self.model.fit(target_prediction[0], target_prediction[1])
-            self.batch = []
+            self.replay_experience()
+
+    def replay_experience(self):
+        rnd.shuffle(self.batch)
+        for episode in self.batch:
+            for i, t_in in enumerate(episode.tensors_in):
+                self.model.fit(t_in, episode.tensors_out[i])
 
     def read_from_disk_if_exists(self):
         try:
-            self.model.load_weights(ARGS.output_dir + "/model.h5")
+            self.model.load_weights(self.args.output_dir + "/model.h5")
             LOGGER.info("Successfully loaded weights from the last session.")
         except:
             LOGGER.error("The weights of the model couldn't be found. New "
                          "weights will be initialized.")
 
     def write_to_disk(self):
-        self.model.save(ARGS.output_dir + "/model.h5")
+        self.model.save(self.args.output_dir + "/model.h5")
+
+class Episode:
+
+    def __init__(self,
+                 game,
+                 tensors_in,
+                 tensors_out,
+                 move_errors):
+        self.game = game
+        self.tensors_in = tensors_in
+        self.tensors_out = tensors_out
+        self.move_errors = move_errors
+
+    def adjust_tensors_out(self, model):
+        material_imbalance_weights = {-6.5: 5.3,
+                                      -5: 21.7,
+                                      -2: 24.4,
+                                      -0.5: 24.2,
+                                      0: 16.6,
+                                      0.5: 19.8,
+                                      2: 30.7,
+                                      5: 18.6,
+                                      6.5: 3.3}
+        reward = numeric_result(game.end().board())
+        eligibility_traces = np.zeros(len(state_values))
+        trace_decay_parameter = 0.725
+        discount_rate = 1.0
+        for i in range(len(state_values) - 1):
+            error = reward + discount_rate * state_values[i+1] - state_values[i]
+            eligibility_traces[i] += 1
+            eligibility_traces *= discount_rate ** trace_decay_parameter
+            state_values[i] += discount_rate * error * eligibility_traces[i]
+        state_values[-1] = reward
+        return state_values
+
+    def backpropagate_result(self):
+        """
+        Backpropagates the state values estimated during a game of chess according
+        the TD(64) algorithm.
+        See http://www.incompleteideas.net/book/ebook/node75.html for details.
+        """
+        # TODO: find a custom fitting curve specific to chess. See
+        # https://lichess.org/insights/LeelaChess/acpl/material
+        material_imbalance_weights = {-6.5: 0.41549781766,
+                                      -5: 0.8407380037,
+                                      -2: 0.89150898684,
+                                      -0.5: 0.88784774349,
+                                      0: 0.73533435414,
+                                      0.5: 0.80308850076,
+                                      2: 1,
+                                      5: 0.77837214247,
+                                      6.5: 0.32785950753}
+        result = numeric_result(self.game.end().board())
+        eligibility_traces = np.zeros(len(self.tensors_out))
+        trace_decay_parameter = 0.675
+        for i in range(len(self.tensors_out) - 1):
+            error = (result +
+                     self.tensors_out[i+1][0][0] -
+                     self.tensors_out[i][0][0])
+            eligibility_traces[i] += 1
+            self.tensors_out[i][0][0] += (error *
+                                          eligibility_traces[i])
+        self.tensors_out[-1][0][0] = result
+
+    def search_for_better_moves(self, model):
+        board = self.game.root().board()
+        for i, move in enumerate(self.game.main_line()):
+            if board.turn == chess.WHITE:
+                best_state_value = -42
+                comparison_function = np.float32.__ge__
+            else:
+                best_state_value = 42
+                comparison_function = np.float32.__le__
+            for legal_move in board.legal_moves:
+                board.push(legal_move)
+                state_value = model.predict(Board.to_tensor(board))[0][0]
+                if comparison_function(state_value, best_state_value):
+                    best_state_value = state_value
+                    best_move = legal_move
+                board.pop()
+            board.push(move)
+            move_tensor = move_to_tensor(best_move)
+            self.tensors_out[i][0][1] = move_tensor[0]
+            self.tensors_out[i][0][2] = move_tensor[1]
+            self.tensors_out[i][0][3] = move_tensor[2]
+            self.tensors_out[i][0][4] = move_tensor[3]
 
 def setup_board():
-    chess960 = rnd.uniform(0, 1) < RATIO_OF_CHESS_960_GAMES_DURING_TRAINING
-    return Board(chess960=chess960)
-
-def search_for_best_moves(model, game, state_values):
-    board = game.root().board()
-    for i, move in enumerate(game.main_line()):
-        if board.turn == chess.WHITE:
-            best_state_value = 0
-            for legal_move in board.legal_moves:
-                board.push(legal_move)
-                state_value = model.predict(Board.to_tensor(board))[0][4]
-                if state_value > best_state_value:
-                    best_state_value = state_value
-                    best_move = legal_move
-                board.pop()
-        else:
-            best_state_value = 1
-            for legal_move in board.legal_moves:
-                board.push(legal_move)
-                state_value = model.predict(Board.to_tensor(board))[0][4]
-                if state_value < best_state_value:
-                    best_state_value = state_value
-                    best_move = legal_move
-                board.pop()
-        board.push(move)
-        yield move_to_tensor(best_move)
+    if np.random.random() < 0.5:
+        return Board.from_chess960_pos(rnd.randint(0, 959))
+    else:
+        return Board()
 
 def move_to_tensor(move):
     return [chess.square_file(move.from_square) / 8,
             chess.square_rank(move.from_square) / 8,
             chess.square_file(move.to_square) / 8,
             chess.square_rank(move.to_square) / 8]
-
-def backpropagate_state_value(state_values, game):
-    """
-    Backpropagates the state values estimated during a game of chess according
-    the TD(lambda) algorithm.
-    See http://www.incompleteideas.net/book/ebook/node75.html for details.
-    """
-    # TODO: find a custom fitting curve specific to chess. See
-    # https://lichess.org/insights/LeelaChess/acpl/material
-    material_imbalance_weights = {-6.5: 5.3,
-                                  -5: 21.7,
-                                  -2: 24.4,
-                                  -0.5: 24.2,
-                                  0: 16.6,
-                                  0.5: 19.8,
-                                  2: 30.7,
-                                  5: 18.6,
-                                  6.5: 3.3}
-    reward = numeric_result(game.end().board())
-    eligibility_traces = np.zeros(len(state_values))
-    trace_decay_parameter = 0.725
-    discount_rate = 1.0
-    for i in range(len(state_values) - 1):
-        error = reward + discount_rate * state_values[i+1] - state_values[i]
-        eligibility_traces[i] += 1
-        eligibility_traces *= discount_rate ** trace_decay_parameter
-        state_values[i] += discount_rate * error * eligibility_traces[i]
-    state_values[-1] = reward
-    return state_values
 
 def init_logger(log_file_path):
     logger = logging.getLogger()
@@ -312,25 +356,26 @@ def cli():
                         "--num-episodes",
                         type=int,
                         default="1")
+    parser.add_argument("-b",
+                        "--batch-size",
+                        type=int,
+                        default="128")
     return parser
 
 def main():
-    global ARGS
     global LOGGER
     tf.logging.set_verbosity(tf.logging.ERROR)
-    ARGS = cli().parse_args(sys.argv[1:])
-    os.makedirs(ARGS.output_dir, exist_ok=True)
-    LOGGER = init_logger("{}/session.log".format(ARGS.output_dir))
+    args = cli().parse_args(sys.argv[1:])
+    os.makedirs(args.output_dir, exist_ok=True)
+    LOGGER = init_logger("{}/session.log".format(args.output_dir))
     print("")
-    LOGGER.info(f"New training session.")
+    LOGGER.info(f"New training session of {args.num_episodes} episode(s).")
     tf.set_random_seed(SEED)
     np.random.seed(SEED)
     rnd.seed(SEED)
     LOGGER.debug(f"The random seed is set to {SEED}.")
-    LOGGER.info(f"This training session will run for {ARGS.num_episodes} "
-                f"episode(s).")
     tf.reset_default_graph()
-    Agent(Board())
+    Agent(args)
     LOGGER.info("Goodbye.")
 
 def exit_gracefully():
