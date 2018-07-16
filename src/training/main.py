@@ -229,14 +229,23 @@ def setup_board():
 def search_for_best_moves(model, game, state_values):
     board = game.root().board()
     for i, move in enumerate(game.main_line()):
-        max_state_value = 0
-        for legal_move in board.legal_moves:
-            board.push(legal_move)
-            state_value = model.predict(Board.to_tensor(board))[0][4]
-            if state_value > max_state_value:
-                max_state_value = state_value
-                best_move = legal_move
-            board.pop()
+        best_state_value = 0
+        if board.turn == chess.WHITE:
+            for legal_move in board.legal_moves:
+                board.push(legal_move)
+                state_value = model.predict(Board.to_tensor(board))[0][4]
+                if state_value > best_state_value:
+                    best_state_value = state_value
+                    best_move = legal_move
+                board.pop()
+        else:
+            for legal_move in board.legal_moves:
+                board.push(legal_move)
+                state_value = model.predict(Board.to_tensor(board))[0][4]
+                if state_value < best_state_value:
+                    best_state_value = state_value
+                    best_move = legal_move
+                board.pop()
         board.push(move)
         yield move_to_tensor(best_move)
 
