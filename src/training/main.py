@@ -6,15 +6,13 @@ import chess.pgn
 import numpy as np
 import tensorflow as tf
 import keras as ks
-import sqlite3
 import scipy
 import random as rnd
 import logging
 import sys
 import argparse
-import uuid
 import os
-#import numba as nb
+import gym
 from chess import pgn
 from os.path import expanduser
 from multiprocessing import Pool # For A3C (TODO)
@@ -26,9 +24,10 @@ BOARD_TENSOR_WIDTH = 512
 MOVE_TENSOR_WIDTH = 5
 AVERAGE_NUM_OF_MOVES_IN_CHESS_GAME = 54
 MAX_NUM_OF_REVERSIBLE_MOVES_BEFORE_DRAW = 50
-RATIO_OF_CHESS_960_GAMES_DURING_TRAINING = 0.4
+RATIO_OF_CHESS_960_GAMES_DURING_TRAINING = 0.175
 EXPLORATION_RATE_DURING_TRAINING = 0.08
 DISCOUNT_VALUE = 0.96
+LOSS_CLIPPING = 0.2
 LOGGING_FORMAT = "%(asctime)s @ '%(name)s.%(funcName)s:%(lineno)d' [%(levelname)s]: %(message)s"
 LOGGING_DATE_FORMAT = "%Y-%m-%dT%H:%M:%S%z"
 BOARD_TO_MOVE_FILENAME = "Board2move.h5"
@@ -49,8 +48,7 @@ class Board(chess.Board):
 
     def to_tensor(self):
         return np.array([[
-            bit
-            for bitmask in [
+            bit for bitmask in [
                 piece_to_tensor(self.piece_at(square))
                 for square in chess.SQUARES
             ] for bit in bitmask
@@ -104,9 +102,9 @@ def numeric_result(board):
     if result == "1-0":
         return 1
     elif result == "1/2-1/2":
-        return 0
+        return 0.5
     elif result == "0-1":
-        return -1
+        return 0
     raise ValueError("The result of the chess game doesn't yet exist"
                      " (it is {}).".format(result))
 
@@ -126,7 +124,8 @@ class Agent:
     LEARNING_RATE = 0.0004
     EXPLORATION_RATE = 0.85
     DISCOUNT_VALUE = 1.0
-    BATCH_SIZE = 512
+    BATCH_SIZE = 1
+    BATCH_UPDATE_SIZE = 32
     # All hyperparameter values decay over time to guarantee convergence.
     DECAY_RATE = 2E-5
 
@@ -143,7 +142,7 @@ class Agent:
         num_episodes = int(ARGS.num_episodes)
         self.episode_i = 0
         while self.episode_i < num_episodes:
-            self.play(setup_board())
+            self.queue_for_training(*self.play(setup_board()))
             self.episode_i += 1
         self.write_to_disk()
 
@@ -163,13 +162,13 @@ class Agent:
             input_tensor = board.to_tensor()
             output_tensor = self.model.predict(input_tensor)
             predictions.append((input_tensor, output_tensor))
-            # FIXME
+            # FIXME: add move error
             move = board.adjust_move_tensor(output_tensor)[0]
             board.push(move)
             i += 1
         LOGGER.debug(f"{i} moves were played. The result is "
                      f"{board.result()}.")
-        self.queue_for_training(chess.pgn.Game.from_board(board), predictions)
+        return (chess.pgn.Game.from_board(board), predictions)
 
     def playing_model():
         model = ks.models.Sequential()
@@ -196,13 +195,19 @@ class Agent:
         """
         state_values = backpropagate_state_value([p[1][0][4] for p in predictions],
                                                  game)
-        for i, prediction in enumerate(predictions):
-            prediction[1][0][4] = state_values[i]
-        target_predictions = predictions
-        self.batch.append(target_predictions)
+        LOGGER.debug(f"The new state values are the following: {state_values}.")
+        best_moves = list(search_for_best_moves(self.model, game, state_values))
+        for i in range(len(predictions)):
+            predictions[i][1][0][0] = best_moves[i][0]
+            predictions[i][1][0][1] = best_moves[i][1]
+            predictions[i][1][0][2] = best_moves[i][2]
+            predictions[i][1][0][3] = best_moves[i][3]
+            predictions[i][1][0][4] = state_values[i]
+            self.batch.append(predictions[i])
         if len(self.batch) >= Agent.BATCH_SIZE:
-            self.model.fit([x[0] for x in self.batch],
-                           [x[1] for x in self.batch])
+            rnd.shuffle(self.batch)
+            for target_prediction in self.batch:
+                self.model.fit(target_prediction[0], target_prediction[1])
 
     def read_from_disk_if_exists(self):
         try:
@@ -219,14 +224,25 @@ def setup_board():
     chess960 = rnd.uniform(0, 1) < RATIO_OF_CHESS_960_GAMES_DURING_TRAINING
     return Board(chess960=chess960)
 
-def proximal_policy_optimization_loss(actual_value, predicted_value, old_prediction):
-    advantage = actual_value - predicted_value
-    def loss(y_true, y_pred):
-        prob = K.sum(y_true * y_pred)
-        old_prob = K.sum(y_true * old_prediction)
-        r = prob/(old_prob + 1e-10)
-        return -K.log(prob + 1e-10) * K.mean(K.minimum(r * advantage, K.clip(r, min_value=0.8, max_value=1.2) * advantage))
-    return loss
+def search_for_best_moves(model, game, state_values):
+    board = game.root().board()
+    for i, move in enumerate(game.main_line()):
+        max_state_value = 0
+        for legal_move in board.legal_moves:
+            board.push(legal_move)
+            state_value = model.predict(Board.to_tensor(board))[0][4]
+            if state_value > max_state_value:
+                max_state_value = state_value
+                best_move = legal_move
+            board.pop()
+        board.push(move)
+        yield move_to_tensor(best_move)
+
+def move_to_tensor(move):
+    return [chess.square_file(move.from_square) / 8,
+            chess.square_rank(move.from_square) / 8,
+            chess.square_file(move.to_square) / 8,
+            chess.square_rank(move.to_square) / 8]
 
 def backpropagate_state_value(state_values, game):
     """
@@ -236,16 +252,25 @@ def backpropagate_state_value(state_values, game):
     """
     # TODO: find a custom fitting curve specific to chess. See
     # https://lichess.org/insights/LeelaChess/acpl/material
-    result = game.end().board().result()
+    material_imbalance_weights = {-6.5: 5.3,
+                                  -5: 21.7,
+                                  -2: 24.4,
+                                  -0.5: 24.2,
+                                  0: 16.6,
+                                  0.5: 19.8,
+                                  2: 30.7,
+                                  5: 18.6,
+                                  6.5: 3.3}
+    reward = numeric_result(game.end().board())
     eligibility_traces = np.zeros(len(state_values))
-    trace_decay_parameter = 0.01
-    discount_rate = 0.96
-    weight = 0.82
-    for i in range(len(state_values)):
-        eligibility_traces *= trace_decay_parameter * discount_rate
+    trace_decay_parameter = 0.725
+    discount_rate = 1.0
+    for i in range(len(state_values) - 1):
+        error = reward + discount_rate * state_values[i+1] - state_values[i]
         eligibility_traces[i] += 1
-        #error = result + state_values[i+1] - state_values[i]
-        #state_values += alpha * error * eligibility_traces
+        eligibility_traces *= discount_rate ** trace_decay_parameter
+        state_values[i] += discount_rate * error * eligibility_traces[i]
+    state_values[-1] = reward
     return state_values
 
 def init_logger(log_file_path):
@@ -278,17 +303,18 @@ def cli():
 def main():
     global ARGS
     global LOGGER
-    global SESSION_ID
     tf.logging.set_verbosity(tf.logging.ERROR)
     ARGS = cli().parse_args(sys.argv[1:])
     os.makedirs(ARGS.output_dir, exist_ok=True)
     LOGGER = init_logger("{}/session.log".format(ARGS.output_dir))
-    SESSION_ID = uuid.uuid1()
     print("")
-    LOGGER.info(f"New training session with ID {SESSION_ID}.")
+    LOGGER.info(f"New training session.")
     tf.set_random_seed(SEED)
     np.random.seed(SEED)
     rnd.seed(SEED)
+    LOGGER.debug(f"The random seed is set to {SEED}.")
+    LOGGER.info(f"This training session will run for {ARGS.num_episodes} "
+                f"episode(s).")
     tf.reset_default_graph()
     Agent(Board())
     LOGGER.info("Goodbye.")
@@ -296,7 +322,6 @@ def main():
 def exit_gracefully():
     # TODO
     pass
-
 
 if __name__ == "__main__":
     try:
