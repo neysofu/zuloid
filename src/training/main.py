@@ -124,8 +124,7 @@ class Agent:
     LEARNING_RATE = 0.0004
     EXPLORATION_RATE = 0.85
     DISCOUNT_VALUE = 1.0
-    BATCH_SIZE = 1
-    BATCH_UPDATE_SIZE = 32
+    BATCH_SIZE = 256
     # All hyperparameter values decay over time to guarantee convergence.
     DECAY_RATE = 2E-5
 
@@ -208,6 +207,7 @@ class Agent:
             rnd.shuffle(self.batch)
             for target_prediction in self.batch:
                 self.model.fit(target_prediction[0], target_prediction[1])
+            self.batch = []
 
     def read_from_disk_if_exists(self):
         try:
