@@ -124,7 +124,7 @@ class Agent:
     LEARNING_RATE = 0.0004
     EXPLORATION_RATE = 0.85
     DISCOUNT_VALUE = 1.0
-    BATCH_SIZE = 256
+    BATCH_SIZE = 64
     # All hyperparameter values decay over time to guarantee convergence.
     DECAY_RATE = 2E-5
 
@@ -158,6 +158,8 @@ class Agent:
         i = 0
         predictions = []
         while not board.is_game_over():
+            if rnd.uniform(0, 1) < RATIO_OF_CHESS_960_GAMES_DURING_TRAINING:
+                move = rnd.choice(list(board.legal_moves))
             input_tensor = board.to_tensor()
             output_tensor = self.model.predict(input_tensor)
             predictions.append((input_tensor, output_tensor))
@@ -229,8 +231,8 @@ def setup_board():
 def search_for_best_moves(model, game, state_values):
     board = game.root().board()
     for i, move in enumerate(game.main_line()):
-        best_state_value = 0
         if board.turn == chess.WHITE:
+            best_state_value = 0
             for legal_move in board.legal_moves:
                 board.push(legal_move)
                 state_value = model.predict(Board.to_tensor(board))[0][4]
@@ -239,6 +241,7 @@ def search_for_best_moves(model, game, state_values):
                     best_move = legal_move
                 board.pop()
         else:
+            best_state_value = 1
             for legal_move in board.legal_moves:
                 board.push(legal_move)
                 state_value = model.predict(Board.to_tensor(board))[0][4]
