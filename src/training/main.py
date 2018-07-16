@@ -163,6 +163,8 @@ class Agent:
             predictions.append((input_tensor, output_tensor))
             # FIXME: add move error
             move = board.adjust_move_tensor(output_tensor)[0]
+            active_color = ("White" if board.turn == chess.WHITE else "Black")
+            LOGGER.debug(f"{active_color} moved {move}.")
             board.push(move)
             i += 1
         LOGGER.debug(f"{i} moves were played. The result is "
