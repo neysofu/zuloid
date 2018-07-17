@@ -128,7 +128,7 @@ class Piece(chess.Piece):
 class Agent:
 
     # Hyperparameters. Boy, isn't ML fun...
-    LEARNING_RATE = 0.0004
+    LEARNING_RATE = 0.004
     EXPLORATION_RATE = 0.85
     DISCOUNT_VALUE = 1.0
     BATCH_SIZE = 2
@@ -142,11 +142,14 @@ class Agent:
         self.num_episodes = int(args.num_episodes)
         self.episode_i = 0
         self.args = args
-        while self.episode_i < self.num_episodes:
-            self.queue_for_training(self.run_episode(setup_board()))
-            self.episode_i += 1
-            if self.episode_i % 100 == 0:
-                self.write_to_disk()
+        if self.args.database:
+            self.train_on_database(self.args.database)
+        else:
+            while self.episode_i < self.num_episodes:
+                self.queue_for_training(self.run_episode(setup_board()))
+                self.episode_i += 1
+                if self.episode_i % 100 == 0:
+                    self.write_to_disk()
         self.write_to_disk()
 
     def run_episode(self, board):
@@ -194,24 +197,23 @@ class Agent:
                 HOT_BOARD_TENSOR_WIDTH,
                 activation="linear",
                 input_dim=HOT_BOARD_TENSOR_WIDTH))
-        model.add(ks.layers.Dropout(0.2))
         model.add(ks.layers.LeakyReLU())
         model.add(ks.layers.Dense(64, activation="linear"))
         model.add(ks.layers.LeakyReLU())
         model.add(ks.layers.Dense(MOVE_TENSOR_WIDTH, activation="sigmoid"))
         model.compile(loss="categorical_crossentropy",
-                      optimizer=ks.optimizers.Adamax(lr=Agent.LEARNING_RATE,
-                                                        decay=Agent.DECAY_RATE),
+                      optimizer=ks.optimizers.Adamax(lr=Agent.LEARNING_RATE),
                       metrics=["accuracy"])
         return model
 
-    def queue_for_training(self, episode):
+    def queue_for_training(self, episode, policy=True):
         """
         Train the model based on a game played by the AI. Its inputs along with
         the relative outputs are included to avoid duplicate computation.
         """
         episode.backpropagate_result()
-        episode.search_for_better_moves(self.model)
+        if policy:
+            episode.search_for_better_moves(self.model)
         self.batch.append(episode)
         if len(self.batch) >= Agent.BATCH_SIZE:
             self.replay_experience()
@@ -221,6 +223,28 @@ class Agent:
         for episode in self.batch:
             for i, t_in in enumerate(episode.tensors_in):
                 self.model.fit(t_in, episode.tensors_out[i])
+
+    def train_on_database(self, db):
+        with read(db) as db:
+            game = chess.pgn.read_game(db)
+            if not game:
+                return
+            board = game.root().board()
+            for move in game.main_line():
+                t_in = Board.to_tensor(board)
+                t_out = self.model.predict(t_in)
+                move_tensor = move_to_tensor(move)
+                t_out[0][1] = move_tensor[0]
+                t_out[0][2] = move_tensor[1]
+                t_out[0][3] = move_tensor[2]
+                t_out[0][4] = move_tensor[3]
+                tensors_in.append(tensor_in)
+                tensors_out.append(tensor_out)
+            episode = Episode(game,
+                              tensors_in,
+                              tensors_out,
+                              [])
+            self.queue_for_training(episode, policy=False)
 
     def read_from_disk_if_exists(self):
         try:
@@ -287,13 +311,15 @@ class Episode:
         result = numeric_result(self.game.end().board())
         eligibility_traces = np.zeros(len(self.tensors_out))
         trace_decay_parameter = 0.675
+        alpha = 0.1
         for i in range(len(self.tensors_out) - 1):
             error = (result +
                      self.tensors_out[i+1][0][0] -
                      self.tensors_out[i][0][0])
             eligibility_traces[i] += 1
-            self.tensors_out[i][0][0] += (error *
-                                          eligibility_traces[i])
+            eligibility_traces *= trace_decay_parameter
+            for i in range(len(self.tensors_out) - 1):
+                self.tensors_out[i][0][0] += error * alpha * eligibility_traces[i]
         self.tensors_out[-1][0][0] = result
 
     def search_for_better_moves(self, model):
@@ -360,6 +386,9 @@ def cli():
                         "--batch-size",
                         type=int,
                         default="128")
+    parser.add_argument("-d",
+                        "--database",
+                        type=str)
     return parser
 
 def main():
