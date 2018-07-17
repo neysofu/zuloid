@@ -395,6 +395,9 @@ sono stati errori... Ben cio'! Complicato. Anziche' distribuire equamente la
 ricompensa, posso toglierla da una parte. E' plausibile che ci siano degli
 errori in mezzo.
 
+Faccio training sulle mosse di KingBase, e allo stesso tempo alleno con TD(64).
+Mantengo il learning rate lo stesso e dopo comincio il self-play.
+
 Devo anche usare TDleaf con lambda 0.7
 
 

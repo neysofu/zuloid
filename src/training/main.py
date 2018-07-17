@@ -389,6 +389,11 @@ def cli():
     parser.add_argument("-d",
                         "--database",
                         type=str)
+    parser_test = parser.add_parser("test")
+    parser_play = parser.add_parser("play")
+    parser_play.add_argument("-f",
+                             "--fen",
+                             type=str)
     return parser
 
 def main():
