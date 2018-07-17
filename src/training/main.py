@@ -136,12 +136,21 @@ class Agent:
     DECAY_RATE = 2E-5
 
     def __init__(self, args):
+        self.args = args
         self.batch = []
         self.model = Agent.playing_model()
         self.read_from_disk_if_exists()
         self.num_episodes = int(args.num_episodes)
         self.episode_i = 0
-        self.args = args
+        if int(self.args.play):
+            board = Board()
+            while not board.is_game_over():
+                move = board.adjust_move_tensor(self.model.predict(board.to_tensor()))[0]
+                print(move)
+                board.push(move)
+                move = chess.Move.from_uci(input("A move: "))
+                board.push(move)
+            return
         if self.args.database:
             self.train_on_database(self.args.database)
         else:
@@ -223,28 +232,40 @@ class Agent:
         for episode in self.batch:
             for i, t_in in enumerate(episode.tensors_in):
                 self.model.fit(t_in, episode.tensors_out[i])
+        self.batch = []
 
     def train_on_database(self, db):
-        with read(db) as db:
-            game = chess.pgn.read_game(db)
-            if not game:
-                return
-            board = game.root().board()
-            for move in game.main_line():
-                t_in = Board.to_tensor(board)
-                t_out = self.model.predict(t_in)
-                move_tensor = move_to_tensor(move)
-                t_out[0][1] = move_tensor[0]
-                t_out[0][2] = move_tensor[1]
-                t_out[0][3] = move_tensor[2]
-                t_out[0][4] = move_tensor[3]
-                tensors_in.append(tensor_in)
-                tensors_out.append(tensor_out)
-            episode = Episode(game,
-                              tensors_in,
-                              tensors_out,
-                              [])
-            self.queue_for_training(episode, policy=False)
+        with open(db) as db:
+            i = 0
+            while True:
+                game = chess.pgn.read_game(db)
+                if game.end().board().result() == "*":
+                    continue
+                tensors_in = []
+                tensors_out = []
+                if not game:
+                    return
+                board = game.root().board()
+                LOGGER.debug(f"{i} iteration")
+                for move in game.main_line():
+                    t_in = Board.to_tensor(board)
+                    t_out = self.model.predict(t_in)
+                    move_tensor = move_to_tensor(move)
+                    t_out[0][1] = move_tensor[0]
+                    t_out[0][2] = move_tensor[1]
+                    t_out[0][3] = move_tensor[2]
+                    t_out[0][4] = move_tensor[3]
+                    tensors_in.append(t_in)
+                    tensors_out.append(t_out)
+                    board.push(move)
+                episode = Episode(game,
+                                  tensors_in,
+                                  tensors_out,
+                                  [])
+                self.queue_for_training(episode, policy=False)
+                i += 1
+                if i % 100 == 0:
+                    self.write_to_disk()
 
     def read_from_disk_if_exists(self):
         try:
