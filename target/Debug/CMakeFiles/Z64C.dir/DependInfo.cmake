@@ -4,21 +4,20 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_C
-  "/Users/pippoc/Z64C/src/core/ann.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/ann.c.o"
-  "/Users/pippoc/Z64C/src/core/board.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/board.c.o"
-  "/Users/pippoc/Z64C/src/core/clock.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/clock.c.o"
-  "/Users/pippoc/Z64C/src/core/color.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/color.c.o"
-  "/Users/pippoc/Z64C/src/core/coord.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/coord.c.o"
-  "/Users/pippoc/Z64C/src/core/engine.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/engine.c.o"
-  "/Users/pippoc/Z64C/src/core/fen.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/fen.c.o"
-  "/Users/pippoc/Z64C/src/core/main.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/main.c.o"
-  "/Users/pippoc/Z64C/src/core/move.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/move.c.o"
-  "/Users/pippoc/Z64C/src/core/search.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/search.c.o"
-  "/Users/pippoc/Z64C/src/core/server.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/server.c.o"
-  "/Users/pippoc/Z64C/src/core/settings.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/settings.c.o"
-  "/Users/pippoc/Z64C/src/core/square.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/square.c.o"
-  "/Users/pippoc/Z64C/src/core/tensor.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/tensor.c.o"
-  "/Users/pippoc/Z64C/src/core/utils.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/src/core/utils.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/board.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/board.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/clock.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/clock.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/color.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/color.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/coord.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/coord.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/engine.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/engine.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/fen.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/fen.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/main.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/main.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/move.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/move.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/result.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/result.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/search.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/search.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/settings.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/settings.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/square.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/square.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/tensor.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/tensor.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/utils.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/utils.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")
 

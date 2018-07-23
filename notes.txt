@@ -340,6 +340,46 @@ the temporal difference learning formula. Now I should be set, I have the
 training figured out, and I can devote my time to implement (and train!) Z64C
 v0.2.
 
+Action space:
+voglio un action space il piu' compatto possibile. Voglio anche che sia molto
+comprensibile alla rete neurale. Lo spazion compatto vuol tire che ogni feature
+deve cambiare significato geometrico a seconda della scacchiera... pero'
+mantenendo l'unicita' della mossa. 512 mosse sarebbero giuste... a seconda dei
+pezzi intorno?! Sembra interessante. Dovrei usare una sorta di automata
+cellulare.
+
+Cavalli: 8
+Pedoni: 28
+Torri: 14
+Alfieri: 13
+Re: 8
+
+Quindi ho:
+	16 per cavalli (2)
+	48 per torri (3)
+	48 per alfieri (3)
+	32 per pedoni (8)
+	 8 per re (1)
+
+    152 move features
+	3 state values
+	Anche qua, derivo il learning rate da un fattore statistico.
+
+	In input ho la scacchiera o il lstm piu':
+	* Turn [2]
+	* Castling rights [4]
+	* En passant [8]
+	Anziche' avere a che fare con i tempi, metto come output una descrizione
+	piu' precisa dello state value cosi' so quali sono i punti piu' critici e
+	quanto e' sicuro della propria azione.
+
+Ho una architettura GRU con 140 uscite. Creo l'architettura in modo tale che
+sia:
+
+* Facilmente allenabile
+* Pensi nel tempo e modifichi le propie previsioni (opzionale)
+* Riporti la mossa automaticamente al GRU (sara' un GRU particolare, allora).
+
 Question: how do I represent the estimated score? I don't want a single value,
 instead I want a fully blown probability distribution. The distribution goes
 from 0 to 1, where 0 and 1 are the fixed scores when the game is over. Anything
@@ -398,7 +438,7 @@ errori in mezzo.
 Faccio training sulle mosse di KingBase, e allo stesso tempo alleno con TD(64).
 Mantengo il learning rate lo stesso e dopo comincio il self-play.
 
-Devo anche usare TDleaf con lambda 0.7
+Devo anche usare CTDleaf con lambda 0.7
 
 
 * Chess 960 (5%)
