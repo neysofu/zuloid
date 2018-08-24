@@ -1,18 +1,6 @@
-[submodule "hiredis"]
-	path = hiredis
-	url = https://github.com/redis/hiredis.git
 [submodule "lib/xxHash"]
 	path = lib/xxHash
 	url = https://github.com/Cyan4973/xxHash
-[submodule "check"]
-	path = check
-	url = https://github.com/libcheck/check.git
-[submodule "lib/check"]
-	path = lib/check
-	url = https://github.com/libcheck/check
 [submodule "lib/Catch2"]
 	path = lib/Catch2
 	url = https://github.com/catchorg/Catch2.git
-[submodule "lib/tensorflow"]
-	path = lib/tensorflow
-	url = https://github.com/tensorflow/tensorflow.git
