@@ -9,18 +9,28 @@ CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/score.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/square.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/board.c.o: ../../app/engine/src/utils.h
 
 CMakeFiles/Z64C.dir/app/engine/src/clock.c.o: ../../app/engine/src/clock.c
 CMakeFiles/Z64C.dir/app/engine/src/clock.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C.dir/app/engine/src/clock.c.o: ../../app/engine/src/utils.h
 
+CMakeFiles/Z64C.dir/app/engine/src/cmd.c.o: ../../app/engine/src/cmd.c
+CMakeFiles/Z64C.dir/app/engine/src/cmd.c.o: ../../app/engine/src/cmd.h
+CMakeFiles/Z64C.dir/app/engine/src/cmd.c.o: ../../app/engine/src/utils.h
+
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/color.c
 CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/color.h
 CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/coord.h
 CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/color.c.o: ../../app/engine/src/termination.h
 
 CMakeFiles/Z64C.dir/app/engine/src/coord.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C.dir/app/engine/src/coord.c.o: ../../app/engine/src/color.h
@@ -30,8 +40,13 @@ CMakeFiles/Z64C.dir/app/engine/src/coord.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C.dir/app/engine/src/coord.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/coord.c.o: ../../app/engine/src/square.h
 
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../lib/hiredis/hiredis.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../lib/hiredis/read.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../lib/hiredis/sds.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../lib/tensorflow/tensorflow/c/c_api.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/cmd.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/color.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/coord.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/dir.h
@@ -39,12 +54,15 @@ CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/engine.c
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/engine.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/fen.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/move_stack.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/score.h
-CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/search.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/search_node.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/search_params.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/search_tree.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/settings.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/status.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o: ../../app/engine/src/utils.h
 
@@ -57,14 +75,31 @@ CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/fen.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/score.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/square.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o: ../../app/engine/src/utils.h
 
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../lib/hiredis/hiredis.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../lib/hiredis/read.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../lib/hiredis/sds.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../lib/tensorflow/tensorflow/c/c_api.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/engine.h
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/main.c
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/search_node.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/search_params.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/search_tree.h
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/settings.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/status.h
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o: ../../app/engine/src/termination.h
 
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/board.h
@@ -75,32 +110,71 @@ CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/move.c
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/score.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/square.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/utils.h
 
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move_stack.c
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/termination.h
+
+CMakeFiles/Z64C.dir/app/engine/src/piece.c.o: ../../app/engine/src/piece.c
+CMakeFiles/Z64C.dir/app/engine/src/piece.c.o: ../../app/engine/src/piece.h
+
+CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/result.c
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/score.h
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/termination.h
 
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../lib/hiredis/hiredis.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../lib/hiredis/read.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../lib/hiredis/sds.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/board.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/color.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/coord.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/dir.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/move.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/piece.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/score.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/search.c
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/search.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/settings.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/square.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o: ../../app/engine/src/termination.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/search_node.c
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o: ../../app/engine/src/termination.h
+
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../lib/hiredis/hiredis.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../lib/hiredis/read.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../lib/hiredis/sds.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/search_params.c
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/search_params.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o: ../../app/engine/src/settings.h
+
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../lib/hiredis/hiredis.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../lib/hiredis/read.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../lib/hiredis/sds.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../lib/tensorflow/tensorflow/c/c_api.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/search_node.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/search_tree.c
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/search_tree.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/settings.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/square.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o: ../../app/engine/src/termination.h
 
 CMakeFiles/Z64C.dir/app/engine/src/settings.c.o: ../../app/engine/src/settings.c
 CMakeFiles/Z64C.dir/app/engine/src/settings.c.o: ../../app/engine/src/settings.h
@@ -113,6 +187,7 @@ CMakeFiles/Z64C.dir/app/engine/src/square.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/square.c.o: ../../app/engine/src/square.c
 CMakeFiles/Z64C.dir/app/engine/src/square.c.o: ../../app/engine/src/square.h
 
+CMakeFiles/Z64C.dir/app/engine/src/tensor.c.o: ../../lib/tensorflow/tensorflow/c/c_api.h
 CMakeFiles/Z64C.dir/app/engine/src/tensor.c.o: ../../app/engine/src/tensor.c
 
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.o: ../../app/engine/src/utils.c

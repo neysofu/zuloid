@@ -3,21 +3,8 @@
 #include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
-
-bool
-atob(char *str) {
-	if (strcmp(str, "yes") == 0) {
-		return true;
-	} else if (strcmp(str, "true")) {
-		return true;
-	} else if (strcmp(str, "no")) {
-		return false;
-	} else if (strcmp(str, "false")) {
-		return false;
-	} else {
-		return false;
-	}
-}
+#include <sys/time.h>
+#include <pwd.h>
 
 bool
 is_stdin_empty(void) {
@@ -27,12 +14,23 @@ is_stdin_empty(void) {
     return select(fileno(stdin) + 1, &read_fs, NULL, NULL, NULL);
 }
 
-uint32_t
-hash_djb2(char *str) {
-	uint32_t hash = 5381;
-	char c;
-	while ((c = *str++)) {
-		hash = (hash << 5) + hash + c;
+char *
+home_dir(void) {
+	static char *home_dir = getenv("HOME");
+	if (!home_dir) {
+		home_dir = getpwuid(getuid())->pw_dir;
 	}
-	return hash;
+	return home_dir;
+}
+
+size_t
+timestamp_msec(void) {
+	struct timeval tv;
+	gettimeofday(&tv, NULL);
+	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
+
+size_t
+page_size(void) {
+	return sysconf(_SC_PAGESIZE);
 }

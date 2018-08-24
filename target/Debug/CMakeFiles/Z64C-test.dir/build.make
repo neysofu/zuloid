@@ -105,9 +105,33 @@ CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o.provides: CMakeFiles/Z64C-t
 CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
 
 
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o: ../../app/engine/test/engine.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o -c /Users/pippoc/Z64C/app/engine/test/engine.cpp
+
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pippoc/Z64C/app/engine/test/engine.cpp > CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.i
+
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pippoc/Z64C/app/engine/test/engine.cpp -o CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.s
+
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.requires:
+
+.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.requires
+
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.provides: CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.requires
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.provides.build
+.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.provides
+
+CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o
+
+
 CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
 CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o: ../../app/engine/test/fen.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o -c /Users/pippoc/Z64C/app/engine/test/fen.cpp
 
 CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.i: cmake_force
@@ -129,9 +153,33 @@ CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o.provides: CMakeFiles/Z64C-tes
 CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
 
 
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o: ../../app/engine/test/legality.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o -c /Users/pippoc/Z64C/app/engine/test/legality.cpp
+
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pippoc/Z64C/app/engine/test/legality.cpp > CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.i
+
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pippoc/Z64C/app/engine/test/legality.cpp -o CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.s
+
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.requires:
+
+.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.requires
+
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.provides: CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.requires
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.provides.build
+.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.provides
+
+CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o
+
+
 CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
 CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o: ../../app/engine/test/main.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o -c /Users/pippoc/Z64C/app/engine/test/main.cpp
 
 CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.i: cmake_force
@@ -155,7 +203,7 @@ CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o.provides.build: CMakeFiles/Z
 
 CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
 CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o: ../../app/engine/test/result.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_5) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o -c /Users/pippoc/Z64C/app/engine/test/result.cpp
 
 CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.i: cmake_force
@@ -179,7 +227,7 @@ CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o.provides.build: CMakeFiles
 
 CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
 CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o: ../../app/engine/test/square.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_6) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o -c /Users/pippoc/Z64C/app/engine/test/square.cpp
 
 CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.i: cmake_force
@@ -201,33 +249,9 @@ CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o.provides: CMakeFiles/Z64C-
 CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o
 
 
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o: ../../app/engine/test/uci.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_7) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o -c /Users/pippoc/Z64C/app/engine/test/uci.cpp
-
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/pippoc/Z64C/app/engine/test/uci.cpp > CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.i
-
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/pippoc/Z64C/app/engine/test/uci.cpp -o CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.s
-
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.requires:
-
-.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.requires
-
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.provides: CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.requires
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.provides.build
-.PHONY : CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.provides
-
-CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.provides.build: CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o
-
-
 CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o: CMakeFiles/Z64C-test.dir/flags.make
 CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o: ../../app/engine/test/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_8) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Building CXX object CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o -c /Users/pippoc/Z64C/app/engine/test/utils.cpp
 
 CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.i: cmake_force
@@ -253,11 +277,12 @@ CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o.provides.build: CMakeFiles/
 Z64C__test_OBJECTS = \
 "CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o" \
+"CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o" \
+"CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o" \
-"CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o" \
 "CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o"
 
 # External object files for target Z64C-test
@@ -265,17 +290,19 @@ Z64C__test_EXTERNAL_OBJECTS =
 
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
+Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
+Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o
-Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o
 Z64C-test: CMakeFiles/Z64C-test.dir/build.make
 Z64C-test: libZ64C_LIB.a
 Z64C-test: ../../lib/hiredis/libhiredis.a
+Z64C-test: /Users/pippoc/libtensorflow-cpu-darwin-x86_64-1.9.0/lib/libtensorflow.so
 Z64C-test: CMakeFiles/Z64C-test.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_9) "Linking CXX executable Z64C-test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Linking CXX executable Z64C-test"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Z64C-test.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -285,11 +312,12 @@ CMakeFiles/Z64C-test.dir/build: Z64C-test
 
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o.requires
+CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o.requires
+CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o.requires
-CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o.requires
 CMakeFiles/Z64C-test.dir/requires: CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o.requires
 
 .PHONY : CMakeFiles/Z64C-test.dir/requires

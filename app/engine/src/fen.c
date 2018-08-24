@@ -1,6 +1,9 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
+#include <ctype.h>
+#include <assert.h>
 #include "fen.h"
 #include "board.h"
 #include "move.h"
@@ -8,7 +11,7 @@
 #include "utils.h"
 
 char *
-board_to_fen(const struct Board *board, char *fen) {
+board_to_fen(struct Board *board, char *fen) {
 	if (!fen) {
 		fen = malloc(FEN_MAX_LENGTH);
 		if (!fen) {
@@ -16,145 +19,116 @@ board_to_fen(const struct Board *board, char *fen) {
 		}
 	}
 	char *fen_start = fen;
-	Rank rank;
-	File file;
-	for (rank = 0; rank < BOARD_SIDE_LENGTH; rank++) {
-		for (file = 0; file < BOARD_SIDE_LENGTH; file++) {
-			if (board->squares[rank][file].piece == PIECE_NONE) {
-				//*fen = '1';
-			}// else {
-			//	*fen = board->squares[rank][file].piece;
-			//	//if (board->squares[rank][file].color == COLOR_BLACK) {
-			//	//	*fen += ('a' - 'A');
-			//	//}
+	Coord coord = coord_new(0, 7);
+	while (coord_rank(coord) > 0) {
+		while (coord_file(coord) < BOARD_SIDE_LENGTH - 1) {
+			//if (board->bb_occupancy[coord]) {
+			//	*fen = piece_to_char(board_piece_at(board, coord));
+			//	if (board_square(board, coord)->color == COLOR_BLACK) {
+			//		*fen = tolower(*fen);
+			//	}
+			//} else {
+			//	*fen = '1';
 			//}
-			//fen++;
+			coord++;
 		}
+		coord -= BOARD_SIDE_LENGTH;
 		*(fen++) = '/';
 	}
-	//*(fen++) = ' ';
-	//switch (board->active_color) {
-	//	case COLOR_WHITE:
-	//		*(fen++) = 'w';
-	//		break;
-	//	case COLOR_BLACK:
-	//		*(fen++) = 'b';
-	//		break;
-	//	default:
-	//		return NULL;
-	//}
-	//*(fen++) = ' ';
-	//if (board->castling_rights & CASTLING_RIGHT_WHITE_KINGSIDE) {
-	//	*(fen++) = 'K';
-	//}
-	//if (board->castling_rights & CASTLING_RIGHT_BLACK_KINGSIDE) {
-	//	*(fen++) = 'k';
-	//}
-	//if (board->castling_rights & CASTLING_RIGHT_WHITE_QUEENSIDE) {
-	//	*(fen++) = 'Q';
-	//}
-	//if (board->castling_rights & CASTLING_RIGHT_BLACK_QUEENSIDE) {
-	//	*(fen++) = 'q';
-	//}
-	//if (*fen == ' ') {
-	//	*(fen++) = '-';
-	//}
-	//*(fen++) = ' ';
-	//if (!file_is_valid(board->en_passant_file)) {
-	//	*(fen++) = '-';
-	//} else {
-	//	*(fen++) = file_to_char(board->en_passant_file);
-	//	*(fen++) = rank_to_char(board->en_passant_file); // FIXME
-	//}
-	//*(fen++) = ' ';
-	// TODO: bounds checking.
-	//snprintf(fen, 2, "%d", board->num_half_moves);
-	//fen += 2;
+	*(fen - 1) = ' ';
+	*(fen++) = board_active_color(board) ? 'w' : 'b';
+	*(fen++) = ' ';
+	if (board_castling_right(board, GAME_STATE_CASTLING_RIGHT_WK)) {
+		*(fen++) = 'K';
+	}
+	if (board_castling_right(board, GAME_STATE_CASTLING_RIGHT_BK)) {
+		*(fen++) = 'k';
+	}
+	if (board_castling_right(board, GAME_STATE_CASTLING_RIGHT_WQ)) {
+		*(fen++) = 'Q';
+	}
+	if (board_castling_right(board, GAME_STATE_CASTLING_RIGHT_BQ)) {
+		*(fen++) = 'q';
+	}
+	if (*(fen - 1) == ' ') {
+		*(fen++) = '-';
+	}
+	*(fen++) = ' ';
+	if (coord_is_valid(board_en_passant_coord(board))) {
+		coord_to_str(board_en_passant_coord(board), fen);
+		fen += 2;
+	} else {
+		*(fen++) = '-';
+	}
+	*(fen++) = ' ';
+	sprintf(fen, "%u 0", board_num_half_moves(board));
+	fen += 4;
 	*fen = '\0';
 	return fen_start;
 }
 
 void
-fen_specify_pieces(char *fen_fragment, struct Board *board) {
-	/*Rank rank = BOARD_SIDE_LENGTH;
-	File file = 0;
+fen_to_board(char *fen, struct Board *board) {
 	char *token;
-	char *token_iter_ptr;
-	struct Coord coord = COORD_A8;
-	while ((token = strtok_r(fen_fragment, "/", &token_iter_ptr)), rank-->0) {
-		// N.B.: 'atoi' returns 0 when the string is not a valid number.
-		while (file < BOARD_SIDE_LENGTH) {
-			coord.file += MAX(atoi(token + file), 1);
-			if (token[token_index])
-			if (token[file] > 'a') {
-				board_square(board, coord)->color = COLOR_BLACK;
-				token[file] += ('A' - 'a');
-			} else {
-				board_square(board, .color)->color = COLOR_WHITE;
-			}
-			board->squares[rank][file].piece = token[file];
-		}
-	}*/
-}
-
-void
-fen_specify_active_color(char *fen_fragment, struct Board *board) {
-	switch (fen_fragment[0]) {
-		case 'w':
-			board->active_color = COLOR_WHITE;
-			break;
-		case 'b':
-			board->active_color = COLOR_BLACK;
-			break;
-		default:
-			return;
-	}
-}
-
-void
-fen_specify_castling_rights(char *fen_fragment, struct Board *board) {
+	token = strtok_r(fen, WHITESPACE_CHARS, &token);
 	uint8_t i = 0;
-	while (fen_fragment[i]) {
-		switch (fen_fragment[i++]) {
+	while (token[i]) {
+		switch (token[i++]) {
 			case 'K':
-				board->castling_rights |= CASTLING_RIGHT_WHITE_KINGSIDE;
+				board->game_state |= GAME_STATE_CASTLING_RIGHT_WK;
 				break;
 			case 'k':
-				board->castling_rights |= CASTLING_RIGHT_BLACK_KINGSIDE;
+				board->game_state |= GAME_STATE_CASTLING_RIGHT_BK;
 				break;
 			case 'Q':
-				board->castling_rights |= CASTLING_RIGHT_WHITE_QUEENSIDE;
+				board->game_state |= GAME_STATE_CASTLING_RIGHT_WQ;
 				break;
 			case 'q':
-				board->castling_rights |= CASTLING_RIGHT_BLACK_QUEENSIDE;
-				break;
-			case '-':
-				board->castling_rights |= CASTLING_RIGHT_WHITE_KINGSIDE;
-				board->castling_rights |= CASTLING_RIGHT_BLACK_KINGSIDE;
-				board->castling_rights |= CASTLING_RIGHT_WHITE_QUEENSIDE;
-				board->castling_rights |= CASTLING_RIGHT_BLACK_QUEENSIDE;
+				board->game_state |= GAME_STATE_CASTLING_RIGHT_BQ;
 				break;
 			default:
 				break;
 		}
 	}
-}
-
-void
-fen_specify_en_passant_file(char *fen_fragment, struct Board *board) {
-	if (fen_fragment[0] == '-') {
-		board->en_passant_file = FILE_NONE;
-	} else {
-		board->en_passant_file = str_to_coord(fen_fragment).file;
+	token = strtok_r(fen, WHITESPACE_CHARS, &token);
+	if (token[0] != '-') {
+		board->game_state &= !GAME_STATE_EN_PASSANT_AVAILABILITY;
 	}
+	token = strtok_r(fen, WHITESPACE_CHARS, &token);
+	board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
 }
 
 void
-fen_specify_half_moves(char *fen_fragment, struct Board *board) {
-	board->num_half_moves = atoi(fen_fragment);
-}
-
-void
-fen_specify_full_moves(char *fen_fragment, struct Board *board) {
-	// TODO
+fen_specify_pieces(char *fen_fragment, struct Board *board) {
+	//char *token;
+	//Coord coord = coord_new(0, BOARD_SIDE_LENGTH);
+	//while ((token = strtok_r(fen_fragment, "/", &fen_fragment)), coord_rank(coord)-- > 0) {
+	//	uint_fast8_t i = 0;
+	//	while (coord.file < BOARD_SIDE_LENGTH && token[i]) {
+	//		if (isdigit(token[i])) {
+	//			while (token[i]-- >= '1' && coord_file(coord) < BOARD_SIDE_LENGTH) {
+	//				//*board_piece_at(board, coord) = SQUARE_NONE; TODO
+	//				coord.file++;
+	//			}
+	//		} else {
+	//			// TODO: sanitize input.
+	//			if (isupper(token[i])) {
+	//				board_square(board, coord)->color = COLOR_WHITE;
+	//				if (token[i] == 'K') {
+	//					board->game_state[COLOR_WHITE].king = coord;
+	//				}
+	//			} else {
+	//				token[i] = toupper(token[i]);
+	//				board_square(board, coord)->color = COLOR_BLACK;
+	//				if (token[i] == 'k') {
+	//					board->color_info[COLOR_BLACK].king = coord;
+	//				}
+	//			}
+	//			board_square(board, coord)->piece = token[i];
+	//			coord.file++;
+	//		}
+	//		i++;
+	//	}
+	//	coord.file = 0;
+	//}
 }

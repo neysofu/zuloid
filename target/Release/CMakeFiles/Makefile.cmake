@@ -49,5 +49,4 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/Z64C-test.dir/DependInfo.cmake"
   "CMakeFiles/Z64C.dir/DependInfo.cmake"
   "CMakeFiles/Z64C_LIB.dir/DependInfo.cmake"
-  "CMakeFiles/HIREDIS.dir/DependInfo.cmake"
   )

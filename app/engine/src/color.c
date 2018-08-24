@@ -1,40 +1,25 @@
+#include <stdlib.h>
 #include "color.h"
 #include "coord.h"
 
 Rank
-color_promoting_rank(const enum Color color) {
-	switch (color) {
-		case COLOR_WHITE:
-			return 7;
-		case COLOR_BLACK:
-			return 0;
-		default:
-			return 0;
-	}
+color_promoting_rank(enum Color color) {
+	return color_home_rank(color_other(color));
 }
 
 Rank
-color_pawn_rank(const enum Color color) {
-	switch (color) {
-		case COLOR_WHITE:
-			return 1;
-		case COLOR_BLACK:
-			return 6;
-		default:
-			return 0;
-	}
+color_home_rank(enum Color color) {
+	return color ? 7 : 0;
 }
 
 Rank
-color_en_passant_rank(const enum Color color) {
-	switch (color) {
-		case COLOR_WHITE:
-			return 2;
-		case COLOR_BLACK:
-			return 5;
-		default:
-			return 0;
-	}
+color_pawn_rank(enum Color color) {
+	return color ? 6 : 1;
+}
+
+Rank
+color_en_passant_rank(enum Color color) {
+	return color ? 5 : 2;
 }
 
 enum Color

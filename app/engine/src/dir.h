@@ -1,15 +1,16 @@
 #pragma once
 
-// In the context of chess, pieces can move in a number of different
-// directions. Some pieces (pawns, knigths, and bishops) are capable of moving
-// only in one direction, while others have more freedom of movement. It is
-// worth of notice that the direction between two squares is symmetrical, i.e.
-// the direction beween A and B is the same between B and A.
-// A 'DIR_NONE' direction is useful for encoding illegal moves.
+// The direction between two squares on a chessboard.
 enum Dir {
-	DIR_NONE,
-	DIR_HORIZONTAL,
-	DIR_VERTICAL,
-	DIR_DIAGONAL,
-	DIR_L_SHAPED,
+	// Two squares on the same rank.
+	DIR_HORIZONTAL = 0,
+	// Two squares on the same file.
+	DIR_VERTICAL = 1,
+	// Two squares on the same diagonal.
+	DIR_DIAGONAL = 2,
+	// Two squares a knight's move away from each other.
+	DIR_L_SHAPED = 3,
+	// Two squares two queen's moves away from each other. (This is also the
+	// direction between a square to itself.)
+	DIR_NONE = 4,
 };

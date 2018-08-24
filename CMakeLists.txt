@@ -23,6 +23,7 @@ file (GLOB Z64C_SRC "app/engine/src/*.h" "app/engine/src/*.c")
 add_library (Z64C_LIB STATIC ${Z64C_SRC})
 target_include_directories (Z64C_LIB PUBLIC ${INCLUDE_DIR})
 target_link_libraries (Z64C_LIB ${HIREDIS_SRC})
+target_link_libraries (Z64C_LIB "/Users/pippoc/libtensorflow-cpu-darwin-x86_64-1.9.0/lib/libtensorflow.so")
 
 add_executable (Z64C ${Z64C_SRC})
 target_include_directories (Z64C PUBLIC ${INCLUDE_DIR})

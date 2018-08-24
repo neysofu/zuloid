@@ -160,663 +160,671 @@ Z64C_LIB/fast:
 	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/build
 .PHONY : Z64C_LIB/fast
 
-#=============================================================================
-# Target rules for targets named HIREDIS
+app/engine/src/board.o: app/engine/src/board.c.o
 
-# Build rule for target.
-HIREDIS: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 HIREDIS
-.PHONY : HIREDIS
-
-# fast build rule for target.
-HIREDIS/fast:
-	$(MAKE) -f CMakeFiles/HIREDIS.dir/build.make CMakeFiles/HIREDIS.dir/build
-.PHONY : HIREDIS/fast
-
-src/ann.o: src/ann.c.o
-
-.PHONY : src/ann.o
+.PHONY : app/engine/src/board.o
 
 # target to build an object file
-src/ann.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/ann.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/ann.c.o
-.PHONY : src/ann.c.o
+app/engine/src/board.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/board.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o
+.PHONY : app/engine/src/board.c.o
 
-src/ann.i: src/ann.c.i
+app/engine/src/board.i: app/engine/src/board.c.i
 
-.PHONY : src/ann.i
+.PHONY : app/engine/src/board.i
 
 # target to preprocess a source file
-src/ann.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/ann.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/ann.c.i
-.PHONY : src/ann.c.i
+app/engine/src/board.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/board.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.i
+.PHONY : app/engine/src/board.c.i
 
-src/ann.s: src/ann.c.s
+app/engine/src/board.s: app/engine/src/board.c.s
 
-.PHONY : src/ann.s
+.PHONY : app/engine/src/board.s
 
 # target to generate assembly for a file
-src/ann.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/ann.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/ann.c.s
-.PHONY : src/ann.c.s
+app/engine/src/board.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/board.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.s
+.PHONY : app/engine/src/board.c.s
 
-src/board.o: src/board.c.o
+app/engine/src/clock.o: app/engine/src/clock.c.o
 
-.PHONY : src/board.o
+.PHONY : app/engine/src/clock.o
 
 # target to build an object file
-src/board.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/board.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/board.c.o
-.PHONY : src/board.c.o
+app/engine/src/clock.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/clock.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/clock.c.o
+.PHONY : app/engine/src/clock.c.o
 
-src/board.i: src/board.c.i
+app/engine/src/clock.i: app/engine/src/clock.c.i
 
-.PHONY : src/board.i
+.PHONY : app/engine/src/clock.i
 
 # target to preprocess a source file
-src/board.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/board.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/board.c.i
-.PHONY : src/board.c.i
+app/engine/src/clock.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/clock.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/clock.c.i
+.PHONY : app/engine/src/clock.c.i
 
-src/board.s: src/board.c.s
+app/engine/src/clock.s: app/engine/src/clock.c.s
 
-.PHONY : src/board.s
+.PHONY : app/engine/src/clock.s
 
 # target to generate assembly for a file
-src/board.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/board.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/board.c.s
-.PHONY : src/board.c.s
+app/engine/src/clock.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/clock.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/clock.c.s
+.PHONY : app/engine/src/clock.c.s
 
-src/castling.o: src/castling.c.o
+app/engine/src/color.o: app/engine/src/color.c.o
 
-.PHONY : src/castling.o
+.PHONY : app/engine/src/color.o
 
 # target to build an object file
-src/castling.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/castling.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/castling.c.o
-.PHONY : src/castling.c.o
+app/engine/src/color.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/color.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/color.c.o
+.PHONY : app/engine/src/color.c.o
 
-src/castling.i: src/castling.c.i
+app/engine/src/color.i: app/engine/src/color.c.i
 
-.PHONY : src/castling.i
+.PHONY : app/engine/src/color.i
 
 # target to preprocess a source file
-src/castling.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/castling.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/castling.c.i
-.PHONY : src/castling.c.i
+app/engine/src/color.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/color.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/color.c.i
+.PHONY : app/engine/src/color.c.i
 
-src/castling.s: src/castling.c.s
+app/engine/src/color.s: app/engine/src/color.c.s
 
-.PHONY : src/castling.s
+.PHONY : app/engine/src/color.s
 
 # target to generate assembly for a file
-src/castling.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/castling.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/castling.c.s
-.PHONY : src/castling.c.s
+app/engine/src/color.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/color.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/color.c.s
+.PHONY : app/engine/src/color.c.s
 
-src/clock.o: src/clock.c.o
+app/engine/src/coord.o: app/engine/src/coord.c.o
 
-.PHONY : src/clock.o
+.PHONY : app/engine/src/coord.o
 
 # target to build an object file
-src/clock.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/clock.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/clock.c.o
-.PHONY : src/clock.c.o
+app/engine/src/coord.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/coord.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/coord.c.o
+.PHONY : app/engine/src/coord.c.o
 
-src/clock.i: src/clock.c.i
+app/engine/src/coord.i: app/engine/src/coord.c.i
 
-.PHONY : src/clock.i
+.PHONY : app/engine/src/coord.i
 
 # target to preprocess a source file
-src/clock.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/clock.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/clock.c.i
-.PHONY : src/clock.c.i
+app/engine/src/coord.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/coord.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/coord.c.i
+.PHONY : app/engine/src/coord.c.i
 
-src/clock.s: src/clock.c.s
+app/engine/src/coord.s: app/engine/src/coord.c.s
 
-.PHONY : src/clock.s
+.PHONY : app/engine/src/coord.s
 
 # target to generate assembly for a file
-src/clock.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/clock.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/clock.c.s
-.PHONY : src/clock.c.s
+app/engine/src/coord.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/coord.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/coord.c.s
+.PHONY : app/engine/src/coord.c.s
 
-src/color.o: src/color.c.o
+app/engine/src/engine.o: app/engine/src/engine.c.o
 
-.PHONY : src/color.o
+.PHONY : app/engine/src/engine.o
 
 # target to build an object file
-src/color.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/color.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/color.c.o
-.PHONY : src/color.c.o
+app/engine/src/engine.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/engine.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o
+.PHONY : app/engine/src/engine.c.o
 
-src/color.i: src/color.c.i
+app/engine/src/engine.i: app/engine/src/engine.c.i
 
-.PHONY : src/color.i
+.PHONY : app/engine/src/engine.i
 
 # target to preprocess a source file
-src/color.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/color.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/color.c.i
-.PHONY : src/color.c.i
+app/engine/src/engine.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/engine.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.i
+.PHONY : app/engine/src/engine.c.i
 
-src/color.s: src/color.c.s
+app/engine/src/engine.s: app/engine/src/engine.c.s
 
-.PHONY : src/color.s
+.PHONY : app/engine/src/engine.s
 
 # target to generate assembly for a file
-src/color.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/color.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/color.c.s
-.PHONY : src/color.c.s
+app/engine/src/engine.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/engine.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.s
+.PHONY : app/engine/src/engine.c.s
 
-src/coord.o: src/coord.c.o
+app/engine/src/fen.o: app/engine/src/fen.c.o
 
-.PHONY : src/coord.o
+.PHONY : app/engine/src/fen.o
 
 # target to build an object file
-src/coord.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/coord.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/coord.c.o
-.PHONY : src/coord.c.o
+app/engine/src/fen.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/fen.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o
+.PHONY : app/engine/src/fen.c.o
 
-src/coord.i: src/coord.c.i
+app/engine/src/fen.i: app/engine/src/fen.c.i
 
-.PHONY : src/coord.i
+.PHONY : app/engine/src/fen.i
 
 # target to preprocess a source file
-src/coord.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/coord.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/coord.c.i
-.PHONY : src/coord.c.i
+app/engine/src/fen.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/fen.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.i
+.PHONY : app/engine/src/fen.c.i
 
-src/coord.s: src/coord.c.s
+app/engine/src/fen.s: app/engine/src/fen.c.s
 
-.PHONY : src/coord.s
+.PHONY : app/engine/src/fen.s
 
 # target to generate assembly for a file
-src/coord.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/coord.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/coord.c.s
-.PHONY : src/coord.c.s
+app/engine/src/fen.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/fen.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.s
+.PHONY : app/engine/src/fen.c.s
 
-src/engine.o: src/engine.c.o
+app/engine/src/main.o: app/engine/src/main.c.o
 
-.PHONY : src/engine.o
+.PHONY : app/engine/src/main.o
 
 # target to build an object file
-src/engine.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/engine.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/engine.c.o
-.PHONY : src/engine.c.o
+app/engine/src/main.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/main.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o
+.PHONY : app/engine/src/main.c.o
 
-src/engine.i: src/engine.c.i
+app/engine/src/main.i: app/engine/src/main.c.i
 
-.PHONY : src/engine.i
+.PHONY : app/engine/src/main.i
 
 # target to preprocess a source file
-src/engine.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/engine.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/engine.c.i
-.PHONY : src/engine.c.i
+app/engine/src/main.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/main.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.i
+.PHONY : app/engine/src/main.c.i
 
-src/engine.s: src/engine.c.s
+app/engine/src/main.s: app/engine/src/main.c.s
 
-.PHONY : src/engine.s
+.PHONY : app/engine/src/main.s
 
 # target to generate assembly for a file
-src/engine.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/engine.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/engine.c.s
-.PHONY : src/engine.c.s
+app/engine/src/main.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/main.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.s
+.PHONY : app/engine/src/main.c.s
 
-src/fen.o: src/fen.c.o
+app/engine/src/move.o: app/engine/src/move.c.o
 
-.PHONY : src/fen.o
+.PHONY : app/engine/src/move.o
 
 # target to build an object file
-src/fen.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/fen.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/fen.c.o
-.PHONY : src/fen.c.o
+app/engine/src/move.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o
+.PHONY : app/engine/src/move.c.o
 
-src/fen.i: src/fen.c.i
+app/engine/src/move.i: app/engine/src/move.c.i
 
-.PHONY : src/fen.i
+.PHONY : app/engine/src/move.i
 
 # target to preprocess a source file
-src/fen.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/fen.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/fen.c.i
-.PHONY : src/fen.c.i
+app/engine/src/move.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.i
+.PHONY : app/engine/src/move.c.i
 
-src/fen.s: src/fen.c.s
+app/engine/src/move.s: app/engine/src/move.c.s
 
-.PHONY : src/fen.s
+.PHONY : app/engine/src/move.s
 
 # target to generate assembly for a file
-src/fen.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/fen.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/fen.c.s
-.PHONY : src/fen.c.s
+app/engine/src/move.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.s
+.PHONY : app/engine/src/move.c.s
 
-src/game.o: src/game.c.o
+app/engine/src/piece.o: app/engine/src/piece.c.o
 
-.PHONY : src/game.o
+.PHONY : app/engine/src/piece.o
 
 # target to build an object file
-src/game.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/game.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/game.c.o
-.PHONY : src/game.c.o
+app/engine/src/piece.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/piece.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/piece.c.o
+.PHONY : app/engine/src/piece.c.o
 
-src/game.i: src/game.c.i
+app/engine/src/piece.i: app/engine/src/piece.c.i
 
-.PHONY : src/game.i
+.PHONY : app/engine/src/piece.i
 
 # target to preprocess a source file
-src/game.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/game.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/game.c.i
-.PHONY : src/game.c.i
+app/engine/src/piece.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/piece.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/piece.c.i
+.PHONY : app/engine/src/piece.c.i
 
-src/game.s: src/game.c.s
+app/engine/src/piece.s: app/engine/src/piece.c.s
 
-.PHONY : src/game.s
+.PHONY : app/engine/src/piece.s
 
 # target to generate assembly for a file
-src/game.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/game.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/game.c.s
-.PHONY : src/game.c.s
+app/engine/src/piece.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/piece.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/piece.c.s
+.PHONY : app/engine/src/piece.c.s
 
-src/history.o: src/history.c.o
+app/engine/src/result.o: app/engine/src/result.c.o
 
-.PHONY : src/history.o
+.PHONY : app/engine/src/result.o
 
 # target to build an object file
-src/history.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/history.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/history.c.o
-.PHONY : src/history.c.o
+app/engine/src/result.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/result.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/result.c.o
+.PHONY : app/engine/src/result.c.o
 
-src/history.i: src/history.c.i
+app/engine/src/result.i: app/engine/src/result.c.i
 
-.PHONY : src/history.i
+.PHONY : app/engine/src/result.i
 
 # target to preprocess a source file
-src/history.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/history.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/history.c.i
-.PHONY : src/history.c.i
+app/engine/src/result.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/result.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/result.c.i
+.PHONY : app/engine/src/result.c.i
 
-src/history.s: src/history.c.s
+app/engine/src/result.s: app/engine/src/result.c.s
 
-.PHONY : src/history.s
+.PHONY : app/engine/src/result.s
 
 # target to generate assembly for a file
-src/history.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/history.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/history.c.s
-.PHONY : src/history.c.s
+app/engine/src/result.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/result.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/result.c.s
+.PHONY : app/engine/src/result.c.s
 
-src/main.o: src/main.c.o
+app/engine/src/search.o: app/engine/src/search.c.o
 
-.PHONY : src/main.o
+.PHONY : app/engine/src/search.o
 
 # target to build an object file
-src/main.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/main.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/main.c.o
-.PHONY : src/main.c.o
+app/engine/src/search.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/search.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/search.c.o
+.PHONY : app/engine/src/search.c.o
 
-src/main.i: src/main.c.i
+app/engine/src/search.i: app/engine/src/search.c.i
 
-.PHONY : src/main.i
+.PHONY : app/engine/src/search.i
 
 # target to preprocess a source file
-src/main.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/main.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/main.c.i
-.PHONY : src/main.c.i
+app/engine/src/search.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/search.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/search.c.i
+.PHONY : app/engine/src/search.c.i
 
-src/main.s: src/main.c.s
+app/engine/src/search.s: app/engine/src/search.c.s
 
-.PHONY : src/main.s
+.PHONY : app/engine/src/search.s
 
 # target to generate assembly for a file
-src/main.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/main.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/main.c.s
-.PHONY : src/main.c.s
+app/engine/src/search.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/search.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/search.c.s
+.PHONY : app/engine/src/search.c.s
 
-src/move.o: src/move.c.o
+app/engine/src/settings.o: app/engine/src/settings.c.o
 
-.PHONY : src/move.o
+.PHONY : app/engine/src/settings.o
 
 # target to build an object file
-src/move.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/move.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/move.c.o
-.PHONY : src/move.c.o
+app/engine/src/settings.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/settings.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o
+.PHONY : app/engine/src/settings.c.o
 
-src/move.i: src/move.c.i
+app/engine/src/settings.i: app/engine/src/settings.c.i
 
-.PHONY : src/move.i
+.PHONY : app/engine/src/settings.i
 
 # target to preprocess a source file
-src/move.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/move.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/move.c.i
-.PHONY : src/move.c.i
+app/engine/src/settings.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/settings.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.i
+.PHONY : app/engine/src/settings.c.i
 
-src/move.s: src/move.c.s
+app/engine/src/settings.s: app/engine/src/settings.c.s
 
-.PHONY : src/move.s
+.PHONY : app/engine/src/settings.s
 
 # target to generate assembly for a file
-src/move.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/move.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/move.c.s
-.PHONY : src/move.c.s
+app/engine/src/settings.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/settings.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.s
+.PHONY : app/engine/src/settings.c.s
 
-src/piece.o: src/piece.c.o
+app/engine/src/square.o: app/engine/src/square.c.o
 
-.PHONY : src/piece.o
+.PHONY : app/engine/src/square.o
 
 # target to build an object file
-src/piece.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/piece.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/piece.c.o
-.PHONY : src/piece.c.o
+app/engine/src/square.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/square.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/square.c.o
+.PHONY : app/engine/src/square.c.o
 
-src/piece.i: src/piece.c.i
+app/engine/src/square.i: app/engine/src/square.c.i
 
-.PHONY : src/piece.i
+.PHONY : app/engine/src/square.i
 
 # target to preprocess a source file
-src/piece.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/piece.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/piece.c.i
-.PHONY : src/piece.c.i
+app/engine/src/square.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/square.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/square.c.i
+.PHONY : app/engine/src/square.c.i
 
-src/piece.s: src/piece.c.s
+app/engine/src/square.s: app/engine/src/square.c.s
 
-.PHONY : src/piece.s
+.PHONY : app/engine/src/square.s
 
 # target to generate assembly for a file
-src/piece.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/piece.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/piece.c.s
-.PHONY : src/piece.c.s
+app/engine/src/square.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/square.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/square.c.s
+.PHONY : app/engine/src/square.c.s
 
-src/search.o: src/search.c.o
+app/engine/src/tensor.o: app/engine/src/tensor.c.o
 
-.PHONY : src/search.o
+.PHONY : app/engine/src/tensor.o
 
 # target to build an object file
-src/search.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/search.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/search.c.o
-.PHONY : src/search.c.o
+app/engine/src/tensor.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/tensor.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/tensor.c.o
+.PHONY : app/engine/src/tensor.c.o
 
-src/search.i: src/search.c.i
+app/engine/src/tensor.i: app/engine/src/tensor.c.i
 
-.PHONY : src/search.i
+.PHONY : app/engine/src/tensor.i
 
 # target to preprocess a source file
-src/search.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/search.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/search.c.i
-.PHONY : src/search.c.i
+app/engine/src/tensor.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/tensor.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/tensor.c.i
+.PHONY : app/engine/src/tensor.c.i
 
-src/search.s: src/search.c.s
+app/engine/src/tensor.s: app/engine/src/tensor.c.s
 
-.PHONY : src/search.s
+.PHONY : app/engine/src/tensor.s
 
 # target to generate assembly for a file
-src/search.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/search.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/search.c.s
-.PHONY : src/search.c.s
+app/engine/src/tensor.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/tensor.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/tensor.c.s
+.PHONY : app/engine/src/tensor.c.s
 
-src/transpos_table.o: src/transpos_table.c.o
+app/engine/src/utils.o: app/engine/src/utils.c.o
 
-.PHONY : src/transpos_table.o
+.PHONY : app/engine/src/utils.o
 
 # target to build an object file
-src/transpos_table.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/transpos_table.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/transpos_table.c.o
-.PHONY : src/transpos_table.c.o
+app/engine/src/utils.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/utils.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/utils.c.o
+.PHONY : app/engine/src/utils.c.o
 
-src/transpos_table.i: src/transpos_table.c.i
+app/engine/src/utils.i: app/engine/src/utils.c.i
 
-.PHONY : src/transpos_table.i
+.PHONY : app/engine/src/utils.i
 
 # target to preprocess a source file
-src/transpos_table.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/transpos_table.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/transpos_table.c.i
-.PHONY : src/transpos_table.c.i
+app/engine/src/utils.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/utils.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/utils.c.i
+.PHONY : app/engine/src/utils.c.i
 
-src/transpos_table.s: src/transpos_table.c.s
+app/engine/src/utils.s: app/engine/src/utils.c.s
 
-.PHONY : src/transpos_table.s
+.PHONY : app/engine/src/utils.s
 
 # target to generate assembly for a file
-src/transpos_table.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/transpos_table.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/transpos_table.c.s
-.PHONY : src/transpos_table.c.s
+app/engine/src/utils.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/utils.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/utils.c.s
+.PHONY : app/engine/src/utils.c.s
 
-src/uci.o: src/uci.c.o
+app/engine/test/board.o: app/engine/test/board.cpp.o
 
-.PHONY : src/uci.o
+.PHONY : app/engine/test/board.o
 
 # target to build an object file
-src/uci.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/uci.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/uci.c.o
-.PHONY : src/uci.c.o
+app/engine/test/board.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o
+.PHONY : app/engine/test/board.cpp.o
 
-src/uci.i: src/uci.c.i
+app/engine/test/board.i: app/engine/test/board.cpp.i
 
-.PHONY : src/uci.i
+.PHONY : app/engine/test/board.i
 
 # target to preprocess a source file
-src/uci.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/uci.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/uci.c.i
-.PHONY : src/uci.c.i
+app/engine/test/board.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.i
+.PHONY : app/engine/test/board.cpp.i
 
-src/uci.s: src/uci.c.s
+app/engine/test/board.s: app/engine/test/board.cpp.s
 
-.PHONY : src/uci.s
+.PHONY : app/engine/test/board.s
 
 # target to generate assembly for a file
-src/uci.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/uci.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/uci.c.s
-.PHONY : src/uci.c.s
+app/engine/test/board.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.s
+.PHONY : app/engine/test/board.cpp.s
 
-src/utils.o: src/utils.c.o
+app/engine/test/coord.o: app/engine/test/coord.cpp.o
 
-.PHONY : src/utils.o
+.PHONY : app/engine/test/coord.o
 
 # target to build an object file
-src/utils.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/utils.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/utils.c.o
-.PHONY : src/utils.c.o
+app/engine/test/coord.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
+.PHONY : app/engine/test/coord.cpp.o
 
-src/utils.i: src/utils.c.i
+app/engine/test/coord.i: app/engine/test/coord.cpp.i
 
-.PHONY : src/utils.i
+.PHONY : app/engine/test/coord.i
 
 # target to preprocess a source file
-src/utils.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/utils.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/utils.c.i
-.PHONY : src/utils.c.i
+app/engine/test/coord.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.i
+.PHONY : app/engine/test/coord.cpp.i
 
-src/utils.s: src/utils.c.s
+app/engine/test/coord.s: app/engine/test/coord.cpp.s
 
-.PHONY : src/utils.s
+.PHONY : app/engine/test/coord.s
 
 # target to generate assembly for a file
-src/utils.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/src/utils.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/src/utils.c.s
-.PHONY : src/utils.c.s
+app/engine/test/coord.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.s
+.PHONY : app/engine/test/coord.cpp.s
 
-test/board.o: test/board.cpp.o
+app/engine/test/fen.o: app/engine/test/fen.cpp.o
 
-.PHONY : test/board.o
+.PHONY : app/engine/test/fen.o
 
 # target to build an object file
-test/board.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/board.cpp.o
-.PHONY : test/board.cpp.o
+app/engine/test/fen.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
+.PHONY : app/engine/test/fen.cpp.o
 
-test/board.i: test/board.cpp.i
+app/engine/test/fen.i: app/engine/test/fen.cpp.i
 
-.PHONY : test/board.i
+.PHONY : app/engine/test/fen.i
 
 # target to preprocess a source file
-test/board.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/board.cpp.i
-.PHONY : test/board.cpp.i
+app/engine/test/fen.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.i
+.PHONY : app/engine/test/fen.cpp.i
 
-test/board.s: test/board.cpp.s
+app/engine/test/fen.s: app/engine/test/fen.cpp.s
 
-.PHONY : test/board.s
+.PHONY : app/engine/test/fen.s
 
 # target to generate assembly for a file
-test/board.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/board.cpp.s
-.PHONY : test/board.cpp.s
+app/engine/test/fen.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.s
+.PHONY : app/engine/test/fen.cpp.s
 
-test/coord.o: test/coord.cpp.o
+app/engine/test/main.o: app/engine/test/main.cpp.o
 
-.PHONY : test/coord.o
+.PHONY : app/engine/test/main.o
 
 # target to build an object file
-test/coord.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/coord.cpp.o
-.PHONY : test/coord.cpp.o
+app/engine/test/main.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o
+.PHONY : app/engine/test/main.cpp.o
 
-test/coord.i: test/coord.cpp.i
+app/engine/test/main.i: app/engine/test/main.cpp.i
 
-.PHONY : test/coord.i
+.PHONY : app/engine/test/main.i
 
 # target to preprocess a source file
-test/coord.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/coord.cpp.i
-.PHONY : test/coord.cpp.i
+app/engine/test/main.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.i
+.PHONY : app/engine/test/main.cpp.i
 
-test/coord.s: test/coord.cpp.s
+app/engine/test/main.s: app/engine/test/main.cpp.s
 
-.PHONY : test/coord.s
+.PHONY : app/engine/test/main.s
 
 # target to generate assembly for a file
-test/coord.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/coord.cpp.s
-.PHONY : test/coord.cpp.s
+app/engine/test/main.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.s
+.PHONY : app/engine/test/main.cpp.s
 
-test/main.o: test/main.cpp.o
+app/engine/test/result.o: app/engine/test/result.cpp.o
 
-.PHONY : test/main.o
+.PHONY : app/engine/test/result.o
 
 # target to build an object file
-test/main.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/main.cpp.o
-.PHONY : test/main.cpp.o
+app/engine/test/result.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o
+.PHONY : app/engine/test/result.cpp.o
 
-test/main.i: test/main.cpp.i
+app/engine/test/result.i: app/engine/test/result.cpp.i
 
-.PHONY : test/main.i
+.PHONY : app/engine/test/result.i
 
 # target to preprocess a source file
-test/main.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/main.cpp.i
-.PHONY : test/main.cpp.i
+app/engine/test/result.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.i
+.PHONY : app/engine/test/result.cpp.i
 
-test/main.s: test/main.cpp.s
+app/engine/test/result.s: app/engine/test/result.cpp.s
 
-.PHONY : test/main.s
+.PHONY : app/engine/test/result.s
 
 # target to generate assembly for a file
-test/main.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/main.cpp.s
-.PHONY : test/main.cpp.s
+app/engine/test/result.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.s
+.PHONY : app/engine/test/result.cpp.s
 
-test/uci.o: test/uci.cpp.o
+app/engine/test/square.o: app/engine/test/square.cpp.o
 
-.PHONY : test/uci.o
+.PHONY : app/engine/test/square.o
 
 # target to build an object file
-test/uci.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/uci.cpp.o
-.PHONY : test/uci.cpp.o
+app/engine/test/square.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o
+.PHONY : app/engine/test/square.cpp.o
 
-test/uci.i: test/uci.cpp.i
+app/engine/test/square.i: app/engine/test/square.cpp.i
 
-.PHONY : test/uci.i
+.PHONY : app/engine/test/square.i
 
 # target to preprocess a source file
-test/uci.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/uci.cpp.i
-.PHONY : test/uci.cpp.i
+app/engine/test/square.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.i
+.PHONY : app/engine/test/square.cpp.i
 
-test/uci.s: test/uci.cpp.s
+app/engine/test/square.s: app/engine/test/square.cpp.s
 
-.PHONY : test/uci.s
+.PHONY : app/engine/test/square.s
 
 # target to generate assembly for a file
-test/uci.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/uci.cpp.s
-.PHONY : test/uci.cpp.s
+app/engine/test/square.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.s
+.PHONY : app/engine/test/square.cpp.s
 
-test/utils.o: test/utils.cpp.o
+app/engine/test/uci.o: app/engine/test/uci.cpp.o
 
-.PHONY : test/utils.o
+.PHONY : app/engine/test/uci.o
 
 # target to build an object file
-test/utils.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/utils.cpp.o
-.PHONY : test/utils.cpp.o
+app/engine/test/uci.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o
+.PHONY : app/engine/test/uci.cpp.o
 
-test/utils.i: test/utils.cpp.i
+app/engine/test/uci.i: app/engine/test/uci.cpp.i
 
-.PHONY : test/utils.i
+.PHONY : app/engine/test/uci.i
 
 # target to preprocess a source file
-test/utils.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/utils.cpp.i
-.PHONY : test/utils.cpp.i
+app/engine/test/uci.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.i
+.PHONY : app/engine/test/uci.cpp.i
 
-test/utils.s: test/utils.cpp.s
+app/engine/test/uci.s: app/engine/test/uci.cpp.s
 
-.PHONY : test/utils.s
+.PHONY : app/engine/test/uci.s
 
 # target to generate assembly for a file
-test/utils.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/test/utils.cpp.s
-.PHONY : test/utils.cpp.s
+app/engine/test/uci.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.s
+.PHONY : app/engine/test/uci.cpp.s
+
+app/engine/test/utils.o: app/engine/test/utils.cpp.o
+
+.PHONY : app/engine/test/utils.o
+
+# target to build an object file
+app/engine/test/utils.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o
+.PHONY : app/engine/test/utils.cpp.o
+
+app/engine/test/utils.i: app/engine/test/utils.cpp.i
+
+.PHONY : app/engine/test/utils.i
+
+# target to preprocess a source file
+app/engine/test/utils.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.i
+.PHONY : app/engine/test/utils.cpp.i
+
+app/engine/test/utils.s: app/engine/test/utils.cpp.s
+
+.PHONY : app/engine/test/utils.s
+
+# target to generate assembly for a file
+app/engine/test/utils.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.s
+.PHONY : app/engine/test/utils.cpp.s
 
 # Help Target
 help:
@@ -830,73 +838,75 @@ help:
 	@echo "... Z64C"
 	@echo "... Z64C_LIB"
 	@echo "... test"
-	@echo "... HIREDIS"
-	@echo "... src/ann.o"
-	@echo "... src/ann.i"
-	@echo "... src/ann.s"
-	@echo "... src/board.o"
-	@echo "... src/board.i"
-	@echo "... src/board.s"
-	@echo "... src/castling.o"
-	@echo "... src/castling.i"
-	@echo "... src/castling.s"
-	@echo "... src/clock.o"
-	@echo "... src/clock.i"
-	@echo "... src/clock.s"
-	@echo "... src/color.o"
-	@echo "... src/color.i"
-	@echo "... src/color.s"
-	@echo "... src/coord.o"
-	@echo "... src/coord.i"
-	@echo "... src/coord.s"
-	@echo "... src/engine.o"
-	@echo "... src/engine.i"
-	@echo "... src/engine.s"
-	@echo "... src/fen.o"
-	@echo "... src/fen.i"
-	@echo "... src/fen.s"
-	@echo "... src/game.o"
-	@echo "... src/game.i"
-	@echo "... src/game.s"
-	@echo "... src/history.o"
-	@echo "... src/history.i"
-	@echo "... src/history.s"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
-	@echo "... src/move.o"
-	@echo "... src/move.i"
-	@echo "... src/move.s"
-	@echo "... src/piece.o"
-	@echo "... src/piece.i"
-	@echo "... src/piece.s"
-	@echo "... src/search.o"
-	@echo "... src/search.i"
-	@echo "... src/search.s"
-	@echo "... src/transpos_table.o"
-	@echo "... src/transpos_table.i"
-	@echo "... src/transpos_table.s"
-	@echo "... src/uci.o"
-	@echo "... src/uci.i"
-	@echo "... src/uci.s"
-	@echo "... src/utils.o"
-	@echo "... src/utils.i"
-	@echo "... src/utils.s"
-	@echo "... test/board.o"
-	@echo "... test/board.i"
-	@echo "... test/board.s"
-	@echo "... test/coord.o"
-	@echo "... test/coord.i"
-	@echo "... test/coord.s"
-	@echo "... test/main.o"
-	@echo "... test/main.i"
-	@echo "... test/main.s"
-	@echo "... test/uci.o"
-	@echo "... test/uci.i"
-	@echo "... test/uci.s"
-	@echo "... test/utils.o"
-	@echo "... test/utils.i"
-	@echo "... test/utils.s"
+	@echo "... app/engine/src/board.o"
+	@echo "... app/engine/src/board.i"
+	@echo "... app/engine/src/board.s"
+	@echo "... app/engine/src/clock.o"
+	@echo "... app/engine/src/clock.i"
+	@echo "... app/engine/src/clock.s"
+	@echo "... app/engine/src/color.o"
+	@echo "... app/engine/src/color.i"
+	@echo "... app/engine/src/color.s"
+	@echo "... app/engine/src/coord.o"
+	@echo "... app/engine/src/coord.i"
+	@echo "... app/engine/src/coord.s"
+	@echo "... app/engine/src/engine.o"
+	@echo "... app/engine/src/engine.i"
+	@echo "... app/engine/src/engine.s"
+	@echo "... app/engine/src/fen.o"
+	@echo "... app/engine/src/fen.i"
+	@echo "... app/engine/src/fen.s"
+	@echo "... app/engine/src/main.o"
+	@echo "... app/engine/src/main.i"
+	@echo "... app/engine/src/main.s"
+	@echo "... app/engine/src/move.o"
+	@echo "... app/engine/src/move.i"
+	@echo "... app/engine/src/move.s"
+	@echo "... app/engine/src/piece.o"
+	@echo "... app/engine/src/piece.i"
+	@echo "... app/engine/src/piece.s"
+	@echo "... app/engine/src/result.o"
+	@echo "... app/engine/src/result.i"
+	@echo "... app/engine/src/result.s"
+	@echo "... app/engine/src/search.o"
+	@echo "... app/engine/src/search.i"
+	@echo "... app/engine/src/search.s"
+	@echo "... app/engine/src/settings.o"
+	@echo "... app/engine/src/settings.i"
+	@echo "... app/engine/src/settings.s"
+	@echo "... app/engine/src/square.o"
+	@echo "... app/engine/src/square.i"
+	@echo "... app/engine/src/square.s"
+	@echo "... app/engine/src/tensor.o"
+	@echo "... app/engine/src/tensor.i"
+	@echo "... app/engine/src/tensor.s"
+	@echo "... app/engine/src/utils.o"
+	@echo "... app/engine/src/utils.i"
+	@echo "... app/engine/src/utils.s"
+	@echo "... app/engine/test/board.o"
+	@echo "... app/engine/test/board.i"
+	@echo "... app/engine/test/board.s"
+	@echo "... app/engine/test/coord.o"
+	@echo "... app/engine/test/coord.i"
+	@echo "... app/engine/test/coord.s"
+	@echo "... app/engine/test/fen.o"
+	@echo "... app/engine/test/fen.i"
+	@echo "... app/engine/test/fen.s"
+	@echo "... app/engine/test/main.o"
+	@echo "... app/engine/test/main.i"
+	@echo "... app/engine/test/main.s"
+	@echo "... app/engine/test/result.o"
+	@echo "... app/engine/test/result.i"
+	@echo "... app/engine/test/result.s"
+	@echo "... app/engine/test/square.o"
+	@echo "... app/engine/test/square.i"
+	@echo "... app/engine/test/square.s"
+	@echo "... app/engine/test/uci.o"
+	@echo "... app/engine/test/uci.i"
+	@echo "... app/engine/test/uci.s"
+	@echo "... app/engine/test/utils.o"
+	@echo "... app/engine/test/utils.i"
+	@echo "... app/engine/test/utils.s"
 .PHONY : help
 
 

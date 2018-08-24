@@ -10,18 +10,28 @@ CMakeFiles/Z64C.dir/app/engine/src/board.c.o
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
  /Users/pippoc/Z64C/app/engine/src/square.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C.dir/app/engine/src/clock.c.o
  /Users/pippoc/Z64C/app/engine/src/clock.c
  /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/utils.h
+CMakeFiles/Z64C.dir/app/engine/src/cmd.c.o
+ /Users/pippoc/Z64C/app/engine/src/cmd.c
+ /Users/pippoc/Z64C/app/engine/src/cmd.h
+ /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C.dir/app/engine/src/color.c.o
+ /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/color.c
  /Users/pippoc/Z64C/app/engine/src/color.h
  /Users/pippoc/Z64C/app/engine/src/coord.h
  /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/result.h
+ /Users/pippoc/Z64C/app/engine/src/square.h
+ /Users/pippoc/Z64C/app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/coord.c.o
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/color.h
@@ -31,8 +41,13 @@ CMakeFiles/Z64C.dir/app/engine/src/coord.c.o
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/square.h
 CMakeFiles/Z64C.dir/app/engine/src/engine.c.o
+ ../../lib/hiredis/hiredis.h
+ ../../lib/hiredis/read.h
+ ../../lib/hiredis/sds.h
+ ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/cmd.h
  /Users/pippoc/Z64C/app/engine/src/color.h
  /Users/pippoc/Z64C/app/engine/src/coord.h
  /Users/pippoc/Z64C/app/engine/src/dir.h
@@ -40,12 +55,15 @@ CMakeFiles/Z64C.dir/app/engine/src/engine.c.o
  /Users/pippoc/Z64C/app/engine/src/engine.h
  /Users/pippoc/Z64C/app/engine/src/fen.h
  /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/move_stack.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
- /Users/pippoc/Z64C/app/engine/src/search.h
+ /Users/pippoc/Z64C/app/engine/src/search_node.h
+ /Users/pippoc/Z64C/app/engine/src/search_params.h
+ /Users/pippoc/Z64C/app/engine/src/search_tree.h
  /Users/pippoc/Z64C/app/engine/src/settings.h
  /Users/pippoc/Z64C/app/engine/src/square.h
+ /Users/pippoc/Z64C/app/engine/src/status.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C.dir/app/engine/src/fen.c.o
@@ -58,14 +76,31 @@ CMakeFiles/Z64C.dir/app/engine/src/fen.c.o
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
  /Users/pippoc/Z64C/app/engine/src/square.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o
+ ../../lib/hiredis/hiredis.h
+ ../../lib/hiredis/read.h
+ ../../lib/hiredis/sds.h
+ ../../lib/tensorflow/tensorflow/c/c_api.h
+ /Users/pippoc/Z64C/app/engine/src/board.h
+ /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/engine.h
  /Users/pippoc/Z64C/app/engine/src/main.c
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/result.h
+ /Users/pippoc/Z64C/app/engine/src/search_node.h
+ /Users/pippoc/Z64C/app/engine/src/search_params.h
+ /Users/pippoc/Z64C/app/engine/src/search_tree.h
  /Users/pippoc/Z64C/app/engine/src/settings.h
+ /Users/pippoc/Z64C/app/engine/src/square.h
+ /Users/pippoc/Z64C/app/engine/src/status.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o
  /Users/pippoc/Z64C/app/engine/src/board.h
@@ -76,19 +111,32 @@ CMakeFiles/Z64C.dir/app/engine/src/move.c.o
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
  /Users/pippoc/Z64C/app/engine/src/square.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o
+ /Users/pippoc/Z64C/app/engine/src/board.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/move_stack.c
+ /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/result.h
+ /Users/pippoc/Z64C/app/engine/src/square.h
+ /Users/pippoc/Z64C/app/engine/src/termination.h
+CMakeFiles/Z64C.dir/app/engine/src/piece.c.o
+ /Users/pippoc/Z64C/app/engine/src/piece.c
+ /Users/pippoc/Z64C/app/engine/src/piece.h
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/result.c
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
-CMakeFiles/Z64C.dir/app/engine/src/search.c.o
- ../../lib/hiredis/hiredis.h
- ../../lib/hiredis/read.h
- ../../lib/hiredis/sds.h
+CMakeFiles/Z64C.dir/app/engine/src/search_node.c.o
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/color.h
  /Users/pippoc/Z64C/app/engine/src/coord.h
@@ -96,9 +144,35 @@ CMakeFiles/Z64C.dir/app/engine/src/search.c.o
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/score.h
- /Users/pippoc/Z64C/app/engine/src/search.c
- /Users/pippoc/Z64C/app/engine/src/search.h
+ /Users/pippoc/Z64C/app/engine/src/search_node.c
+ /Users/pippoc/Z64C/app/engine/src/square.h
+ /Users/pippoc/Z64C/app/engine/src/termination.h
+CMakeFiles/Z64C.dir/app/engine/src/search_params.c.o
+ ../../lib/hiredis/hiredis.h
+ ../../lib/hiredis/read.h
+ ../../lib/hiredis/sds.h
+ /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/search_params.c
+ /Users/pippoc/Z64C/app/engine/src/search_params.h
+ /Users/pippoc/Z64C/app/engine/src/settings.h
+CMakeFiles/Z64C.dir/app/engine/src/search_tree.c.o
+ ../../lib/hiredis/hiredis.h
+ ../../lib/hiredis/read.h
+ ../../lib/hiredis/sds.h
+ ../../lib/tensorflow/tensorflow/c/c_api.h
+ /Users/pippoc/Z64C/app/engine/src/board.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/result.h
+ /Users/pippoc/Z64C/app/engine/src/search_node.h
+ /Users/pippoc/Z64C/app/engine/src/search_tree.c
+ /Users/pippoc/Z64C/app/engine/src/search_tree.h
  /Users/pippoc/Z64C/app/engine/src/settings.h
  /Users/pippoc/Z64C/app/engine/src/square.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
@@ -114,6 +188,7 @@ CMakeFiles/Z64C.dir/app/engine/src/square.c.o
  /Users/pippoc/Z64C/app/engine/src/square.c
  /Users/pippoc/Z64C/app/engine/src/square.h
 CMakeFiles/Z64C.dir/app/engine/src/tensor.c.o
+ ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/src/tensor.c
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.o
  /Users/pippoc/Z64C/app/engine/src/utils.c

@@ -8,194 +8,104 @@
 #include "coord.h"
 #include "color.h"
 #include "move.h"
-#include "square.h"
 #include "utils.h"
 
-#define NUM_IRREVERSIBLE_MOVES_BEFORE_DRAW_CAN_BE_CLAIMED 50
-#define NUM_IRREVERSIBLE_MOVES_BEFORE_DRAW_IS_FORCED 75
-
-struct Board *
-board_new(struct Board *board) {
-	if (!board) {
-		board = malloc(sizeof(struct Board));
-		if (!board) {
-			return NULL;
-		}
-	}
-	*board = BOARD_STARTPOS;
-	return board;
-}
-
-void
-board_drop(struct Board *board) {
-	free(board);
-}
-
-void
-board_print(const struct Board *board) {
-	struct Coord coord = {
-		.file = 0,
-		.rank = BOARD_SIDE_LENGTH,
-	};
-	while (coord.rank-- > 0) {
-		while (coord.file < BOARD_SIDE_LENGTH) {
-			putchar(square_to_char(*board_square(board, coord)));
-			putchar(' ');
-			coord.file++;
-		}
-		coord.file = 0;
-		putchar('\n');
-	}
-	putchar('\n');
-}
-
-struct Square *
-board_square(const struct Board *board, const struct Coord coord) {
-	return &(board->squares[coord.rank][coord.file]);
-}
-
-void
-board_update_num_half_moves_and_num_pieces(struct Board *board, const struct Move move) {
-	bool is_capture = move_is_capture(move, board);
-	if (is_capture) {
-		board->num_pieces--;
-	}
-	if (is_capture || board_square(board, move.source)->piece == PIECE_PAWN) {
-		board->num_half_moves = 0;
+enum Piece
+board_piece_at(struct Board *board, Coord coord) {
+	uint64_t bb_coord = coord_to_bb(coord);
+	if (board->bb_pieces[PIECE_PAWN] & bb_coord) {
+		return PIECE_PAWN;
+	} else if (board->bb_pieces[PIECE_KNIGHT] & bb_coord) {
+		return PIECE_KNIGHT;
+	} else if (board->bb_pieces[PIECE_BISHOP] &
+			   board->bb_pieces[PIECE_ROOK] &
+			   bb_coord) {
+		return PIECE_QUEEN;
+	} else if (board->bb_pieces[PIECE_BISHOP] &
+			   bb_coord) {
+		return PIECE_BISHOP;
+	} else if (board->bb_pieces[PIECE_ROOK] & bb_coord) {
+		return PIECE_ROOK;
+	} else if (board->bb_pieces[PIECE_KING] & bb_coord) {
+		return PIECE_KING;
 	} else {
-		board->num_half_moves++;
+		return PIECE_NONE;
 	}
 }
 
-/*
+char
+board_square_to_char(struct Board *board, Coord coord) {
+	uint64_t bb_coord = coord_to_bb(coord);
+	if (board->bb_occupancy & bb_coord) {
+		return piece_to_char(board_piece_at(board, coord));
+	} else {
+		return '.';
+	}
+}
+
+void
+board_print(struct Board *board) {
+	File file;
+	Rank rank = BOARD_SIDE_LENGTH;
+	printf("    A B C D E F G H\n");
+	printf("  ╔═════════════════╗\n");
+	while (rank-- > 0) {
+		printf("%c ║ ", rank_to_char(rank));
+		for (file = 0; file < BOARD_SIDE_LENGTH; file++) {
+			putchar(board_square_to_char(board, coord_new(file, rank)));
+			putchar(' ');
+		}
+		printf("║ %c\n", rank_to_char(rank));
+	}
+	printf("  ╚═════════════════╝\n");
+	printf("    A B C D E F G H\n");
+	printf("\nIt's %s's turn.\n", board_active_color(board) ? "black" : "white");
+	if (board->game_state & GAME_STATE_CASTLING_RIGHT_WK) {
+		printf("White can castle kingside.\n");
+	}
+	if (board->game_state & GAME_STATE_CASTLING_RIGHT_WQ) {
+		printf("White can castle queenside.\n");
+	}
+	if (board->game_state & GAME_STATE_CASTLING_RIGHT_BK) {
+		printf("Black can castle kingside.\n");
+	}
+	if (board->game_state & GAME_STATE_CASTLING_RIGHT_BQ) {
+		printf("Black can castle queenside.\n");
+	}
+}
+
+enum Color
+board_active_color(struct Board *board) {
+	return board->game_state >> 31;
+}
+
+uint_fast8_t
+board_num_half_moves(struct Board *board) {
+	return (board->game_state & GAME_STATE_NUM_HALF_MOVES) >> 8;
+}
+
 bool
-board_consume_castling_rights_if_legal(struct Board *board, const struct Move move) {
-	struct Coord king_coordinates = move.source;
-	bool result = true;
-	result &= move_triggers_check(move, board);
-	king_coordinates.rank += 1;
-	result &= move_triggers_check(move, board);
-	result &= board_square(board, king_coordinates)->piece == PIECE_NONE;
-	king_coordinates.rank += 1;
-	result &= move_triggers_attack(move, king_coordinates, board);
-	if (!result) {
-		return result;
-	}
-	switch (board_square(board, move.source)->color) {
-		case COLOR_WHITE:
-			if (move.source.rank > move.target.rank) {
-				result = board->castling_rights.white_queenside;
-				board->castling_rights.white_queenside = false;
-			} else {
-				result = board->castling_rights.white_queenside;
-				board->castling_rights.white_kingside = false;
-			}
-		case COLOR_BLACK:
-			if (move.source.rank > move.target.rank) {
-				result = board->castling_rights.black_queenside;
-				board->castling_rights.black_queenside = false;
-			} else {
-				result = board->castling_rights.black_queenside;
-				board->castling_rights.black_kingside = false;
-			}
-		default:
-			return false;
-	}
-	return result;
-}*/
-
-struct Square *
-board_en_passant_square(const struct Board *board) {
-	struct Coord coord = {
-		.file = board->en_passant_file,
-		.rank = color_en_passant_rank(board->active_color),
-	};
-	return board_square(board, coord);
+board_castling_right(struct Board *board, uint_fast8_t bitmask) {
+	return board->game_state >> 4 & bitmask;
 }
 
+uint64_t
+board_en_passant_bb(struct Board *board) {
+	return bb_file(board->game_state & 0x7) &
+		   bb_rank(color_en_passant_rank(board_active_color(board)));
+}
+
+// A lot of shuffling around with bits and bytes is involved with this, but it's
+// actually rather simple.
 const struct Board BOARD_STARTPOS = {
-	.squares = {
-		{
-		{ PIECE_ROOK, COLOR_WHITE },
-		{ PIECE_KNIGHT, COLOR_WHITE },
-		{ PIECE_BISHOP, COLOR_WHITE },
-		{ PIECE_QUEEN, COLOR_WHITE },
-		{ PIECE_KING, COLOR_WHITE },
-		{ PIECE_BISHOP, COLOR_WHITE },
-		{ PIECE_KNIGHT, COLOR_WHITE },
-		{ PIECE_ROOK, COLOR_WHITE },
-		},
-		{
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		{ PIECE_PAWN, COLOR_WHITE },
-		},
-		{
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		},
-		{
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		},
-		{
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		},
-		{
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		{ PIECE_NONE, COLOR_NONE },
-		},
-		{
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		{ PIECE_PAWN, COLOR_BLACK },
-		},
-		{
-		{ PIECE_ROOK, COLOR_BLACK },
-		{ PIECE_KNIGHT, COLOR_BLACK },
-		{ PIECE_BISHOP, COLOR_BLACK },
-		{ PIECE_QUEEN, COLOR_BLACK },
-		{ PIECE_KING, COLOR_BLACK },
-		{ PIECE_BISHOP, COLOR_BLACK },
-		{ PIECE_KNIGHT, COLOR_BLACK },
-		{ PIECE_ROOK, COLOR_BLACK },
-		},
+	.bb_occupancy = 0xffff00000000ffff,
+	.bb_colors = 0xffffffff00000000,
+	.bb_pieces = {
+		0x00ff00000000ff00,
+		0x9100000000000091,
+		0x4200000000000042,
+		0x3400000000000034,
+		0x0800000000000008,
 	},
-	.castling_rights = 0b1111,
-	.num_pieces = 32,
+	.game_state = GAME_STATE_CASTLING_RIGHT_ALL << 4,
 };

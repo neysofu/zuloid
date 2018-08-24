@@ -1,16 +1,27 @@
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
+#include "clock.h"
 
+// Settings modifiable at runtime with UCI commands or with ".ucirc".
+struct Settings {
+	bool debug;
+	bool ponder;
+	bool train;
+	bool use_clocks;
+	uint32_t port;
+	uint64_t max_cache_size_in_bytes;
+	float move_selection_noise;
+	float resign_rate;
+	struct Clock *clocks[2];
+	uint32_t max_depth;
+	uint64_t max_num_nodes;
+};
+
+
+// Provide defaults designed for commodity hardware.
+struct Settings
+settings_default(void);
+
+// Print to stdout a report of current setting values.
 void
-settings_init(void);
-
-extern uint64_t Z64C_CACHE_MAX_SIZE_IN_BYTES;
-extern uint32_t Z64C_REDIS_PORT;
-extern char *Z64C_PATH_TO_REDIS_CONF;
-extern uint16_t Z64C_PORT;
-extern bool Z64C_TRAINING;
-extern char *Z64C_DIR;
-extern char *Z64C_TEST_DIR;
-extern float Z64C_MOVE_SELECTION_NOISE;
+settings_print(struct Settings *settings);

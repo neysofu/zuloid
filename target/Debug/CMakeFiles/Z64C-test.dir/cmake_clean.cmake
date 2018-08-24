@@ -1,11 +1,12 @@
 file(REMOVE_RECURSE
   "CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o"
+  "CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o"
+  "CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o"
-  "CMakeFiles/Z64C-test.dir/app/engine/test/uci.cpp.o"
   "CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o"
   "Z64C-test.pdb"
   "Z64C-test"

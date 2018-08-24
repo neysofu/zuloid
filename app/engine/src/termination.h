@@ -10,6 +10,8 @@ enum Termination {
 	TERMINATION_REPETITION,
 	TERMINATION_INSUFFICIENT_MATERIAL,
 	TERMINATION_DRAW_BY_AGREEMENT,
+	// Crash, connectivity issues, illegal move...
 	TERMINATION_OTHER,
+	// An ongoing game has no termination.
 	TERMINATION_NONE,
 };

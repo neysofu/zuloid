@@ -1,265 +1,305 @@
-Search algo: CUSTOM WITH NEURAL NETWORK but it's similar to MCTS
-
-Possible AlphaZero missing feature: AlphaZero does not understand when to look
-deeper! This is a huge deal and I can take advantage of it. Also, AlphaZero
-doesn't know how to incrementally evaluate, thus making search much slower. The
-program also does not search during the opponent's turn! BTW: thinking during
-the opponent's turn is useful to save time in the next turn, thus one must also
-consider the opponent's strength. Evaluation must also be tunable, i.e. it can
-evaluate only a subset of the chessboard if necessary, to increase speed.
-
-IT NEEDS TO BE ABLE TO LEARN EVERYTHING IT NEEDS TO KNOW TO PLAY FLAWLESSLY.
-
-Invalid moves are approximated within reasonable limits.
-
 ARCHITECTURE
 ============
 
-Everything revolves around a chessboard vector. A chessboard vector represents a
-thinking instance about a specific chess position. Many chessboard vectors
-for the same chess position may be spawn, to better focus about certain features
-of the chess position (e.g. central pawns, king safety, material exchange,
-ecc.). When presented with a game, Z64C builds a database of chessboard vectors
-and analyzes them, looking deeper and deeper into its chess position by using an
-attention mechanism, and also by looking into tactics and specific lines. How do
-I then reuse the chessboard vectors after I forced a certain move? This is a
-major problem. In general, the architecture is much less flexible than
-AlphaZero's, but better suited to play real games.
+Z64C is a novel chess engine that features:
+* a competitive evaluation function powered by GPU computing,
+* UCI support,
+* custom playing style by tweaking parameters,
+* better heuristics and uncertainty-driven search with feature engineering,
+* cluster search (with Redis?),
+* division of work between GPU and CPU with asynchronous algorithms, and
+* heuristics-driven time management.
 
-What features does the engine need?
+All of this is only possible thanks to particular techniques:
+* CPU legality checks while the GPU crunches numbers,
+* high move selectivity,
+* magic bitboards,
+* ArrayFire recurrent neural networks,
+* feature engineering a subset of chess with a fallback to Arasan for "weird"
+  chess positions (very, very small subset).
 
-1. Starting a game from arbitrary positions.
-   This I can do. I only need to train a neural network from one-hot encoding of
-   a chess position to a chessboard vector.
-2. Analyze a given position and offer best lines, estimated score, and best
-moves.
-   I can already give an estimated score of any chessboard vector, but I still
-   need to figure out the search algorithm as well as the lines/moves
-   calculations. I need to think about other search algorithms, MCTS doesn't
-   apply here because I have no information on the inside of the tree's
-   information, so I need to have the engine manage it on its own. At the
-   moment, Z64C wouldn't even know how to look for the chosen move *after* the
-   search... something is broken! The chessboard vector is a cool idea, but I
-   need to rethink the whole architecture. The chessboard vectors in the search
-   tree need to at least be "indexable" and associated with a chess position, so
-   that they can be retrieved when the given chess position is met. At the
-   moment, I don't even know what search is guided by!
-   Idea:
-   Every chessboard vector is associated with one (possibly more) actual chess
-   positions. This way the search tree is not completely unstructured and I can
-   peep into it.
-   Ex. I start with a chess position. I create the main chessboard vector
-   associated with that chess position and store it in the Redis instance.
-   At this point, I can either keep looking into the chessboard vector or switch
-   to another chess position and start looking into that.
-   Ideally, I could train the network so that it can handle chessboard vectors
-   that apply to many chess positions.
+ON GPU USAGE
+============
 
-   Instead of a tree, I look at search as operating on a linked list. This
-   better fits the reasoning that humans perform: we look at a bunch of chess
-   positions, but in an orderly fashion. At the beginning, the chessboard vector
-   is just one:
+Z64C is designed from the ground up to be extremly portable and this is seen in
+several design choice:
+* possibility of opting out of GPU libraries with fallback to CPU,
+* small, quantized neural network,
+* low memory impact and tools to limit excessive tree growth, and
+* written in C99 with minimal dependencies.
 
-     A
+ON BOARD REPRESENTATION
+=======================
 
-   Its priority is 1.00 and thus will be exploited. After it is exploited,
-   another chessboard vector is found: possibly another chess position, or maybe
-   the same.
+Z64C uses a board representation that strikes a good balance between
+compactness, speed, and ease of use. Programming it should be easy and simple.
+A single file, bitboards.h, will contain many primitives useful for programming
+a simple AND based move generator. The chess position stores:
 
-     A
-	 B
+* location of each piece indexed by piece ID,
+* game state information,
+* occupancy bitboard,
+* piece bitboard,
 
-   As Z64C searchs the action space, the cached chessboard vectors might look
-   like this:
+* Pawn attacks
+* Knight attacks
+* King attacks
 
-     A
-	 C
-	 B
-	 F
-	 D
-	 E
+ON THE SEARCH TABLE
+===================
 
-   Once the timing mechanism blocks further searching, the move associated with
-   the topmost chessboard vector is performed.
+Z64C uses MCTS to look deeper and deeper into lines and tactics, but uses its
+own version of the original algorithm which tries to maximise cache usage and
+streams data efficiently to GPU. As we can't remove GPU/CPU communication
+overhead, we can only resort to smarter algorithms, such that either of the two
+always has something to do and never has to wait for the other. Designing a good
+memory layout to the search table is the first step in this direction.
 
-   How does exploitation work?
+Z64C search trees are a collection of memory chuncks, all of the same size. This
+size is page aligned for maximum performance and by default is 4kB. Each of
+these chuncks stores a fixed number of search nodes with the following
+information:
 
-   Basically, Redis stores every chessboard vector along with certain
-   information:
+* Children's weights, so that sampling is easy and local to one node only.
+* Chess position using bitboards.
+* Stats about predictions for that particular node.
 
-   - Chessboard vector
-   - Estimated score
-   - Last half-move
+The key to making Z64C lies actually more on search than evaluation, because
+search takes advantage of many heuristcs that other engines don't have. So I
+need an algorithm that, by staying in the CPU and with no cache misses, it has a
+good prediction of the best nodes to search next.
 
-   To exploit, we just need to plug the chessboard vector into the neural
-   network, create a new entry for the novel chessbaord vector and update the
-   current entry. This way every chessboard vector is uniquely associated with a
-   single chess position. Is this a good thing or a bad thing? I really don't
-   know... On one hand, it seems like a chessboard vector could possibly be
-   linked to many chess positions. But a chessboard vector always (except maybe
-   in endgames, where it's not important anyway) contains all necessary
-   information to retrieve a specific chess position! This means that it can't
-   generalize. Moreover, I want very good instincts and not deep search (unless
-   required by tacticts and such).
+When pruning the search table after making a move, Z64C should take on the
+opportunity to shuffle things around and improve data locality. Also, contrary
+to what MCTS does, it doesn't need to start samling directly on top.
 
-   Idea:
-   how can I look harder at a certain chess position without looking deeper into
-   the search tree? If Z64C is able to do this, then it's the ultimate chess
-   engine and perfectly simulates human play while being superhuman: more human
-   than humans. I need an architecture that allows me to refine and refine a
-   chessboard vector, thus obtaining the perfect chessboard vector for a given
-   chess position. Sometimes a move changes very slightly the chessboard vector
-   and is a "quiet" move, but other times a move is a complete game changer and
-   Z64C should be able to look deeper into that. It's not very clear how such an
-   architecture would work. It can think as long as it wants for any chessboard
-   vector, similarly to a RNN. It's also hard to think where such mechanism
-   would lie in the architecture: at move generation, as an external network, or
-   what? I think it should be a pluggable, separate network, so that the
-   architecture becomes even more flexible (it is currently very flexible and I
-   want to keep it that way). So, I need to finally make a decision regarding
-   the architecture! I feel like I've made a lot of progress and it's finally
-   almost ready. I just need to figure this out, then write learning script.
+I would like to experiment an open-addressing storing method for moves, such
+that the space used to store moves is very small. Advantages:
 
-   Notes about the move generation process: this is the very core of the Z64C
-   engine and needs to be absolute perfect. I cannot afford mistakes. A
-   chessboard vector is not only a chess position, but also a plan with several
-   options and looks for the best options first and the worst later. When a move
-   is finally selected, the chosen plan modifies the whole vector and thus the
-   process perftectly captures the dynamic nature of the game without problems.
-   It's not a hack: the chess position is one thing only with also the plan that
-   Z64C is thinking about carrying out and cannot be separated! This can also be
-   used to compare chessboard vectors to judge a player's strength: if we are
-   given a bunch of chessboard vectors, we can perform clustering and estimate
-   which vectors are from the same players. Now I need to think hard about the
-   exploitan aspect: how to think harder about a chess position without looking
-   deeper into the search tree.
+* Reduced storage
 
-   Features:
-   - Chessboard vector [1024]
-   - Turn [0/1]
-   - Half moves clock [0-1: x/50]
-   - Full half moves counter [0-1: x/(x+80)]
-   - Castling rights [4]
-   - Resoluteness factor [0-1]
+ON THE SEARCH ROUTINE
+=====================
 
-   Output:
-   - Chessboard vector [1024]
-   - Rank of source square [0-1]
-   - File of source square [0-1]
-   - Rank of target square [0-1]
-   - File of target square [0-1]
-   - Estimated winning score [0-1]
+Z64C starts search from the top of its search table by creating a visitor. The
+visitor architecture is extremely easy to parallelize: one can just add more
+visitors and update the search table in more places at the same time. The
+visitor works by hammering down the search tree, finding a good minimum while
+mantaining exploration. The behaviour of visitors is customizable directly from
+C using function pointers. This allows for different playing styles or - more
+simply - to explore unsure nodes during training. Exploration routine:
 
-   Idea:
-   what if I imagine thinking process to happen on a long assembly chain that
-   goes forward and can branch? I don't think it can work.
+1. Initialization. Create a visitor at the top node.
+2. Fall. Descend the tree by choosing a semirandom path.
+3. Impact. Evaluate the node at the visitor and add only its children that are
+   considered useful.
+4. Pruning. Sometimes Step Impact make us understand that a whole branch of the
+   tree is not viable.
+4. Bouncing. Recursively move the visitor up the tree for a certain number of
+   nodes, which is determined by a random value. Go back to stage 2.
 
-   I NEED TO FIGURE OUT THE REFINE NETWORK!!! I am short on time. A few days
-   top.
+Just like MCTS, this algorithm is easily parallelizable, but this one reduces
+the amount of nodes that need to be visited when the search table grows bigger
+and bigger, because it takes advantage of proximity of nodes.
 
-3. Estimate the strength of a given move.
-   This is also possible. First the search the chess position before said move
-   for some time, then perform the move and search for some more time. At this
-   point, the score of the move can be calculated by comparing the estimated
-   score of the game before and after moving.
-4. Incrementally modify a game while retaining all its calculations (moves in a
-normal game.)
-   Seems to be possible while retaining chess position information packed with
-   the associated chessboard vectors.
+The search table also needs other features:
 
-Resignation happens when the probability of winning drops below [0.05].
+* Pruning. I don't want the search table to just get bigger and bigger. It also
+  must let some branches go when we realize they're not as promising as we
+  thought they would be.
+* Node prediction. While the GPU is computing, the CPU is choosing the next
+  nodes to feed to the GPU and saving them in a buffer, ready to be streamed in
+  a batch.
+* Data locality and memory pools. Nodes close in the tree shuld also be close in
+  memory, for better data locality and better chance for cache hits.
+* Transpositions. Transpositions are stored by Robin Hood hashing with
+  a counter of how many times they were met during search. During pruning I know
+  when transpositions are actually finished and I can kill them.
+  to delete all transpositions
+  and then
+* Number of children to add at new nodes. Only new children that have a certain
+  probability to improve the current score are kept, those that fall under that
+  are directly removed.
 
-1. Evaluation function.
+The problem with TTable is that it's on the RAM, so it's slow. I want Z64C to be
+using CPU 100% and this only happens when I have better data locality.
+long-term all tactics and lines explored, which can't possibly fit into a
+smaller data structure. I also need to figure out a cache-friendly version of
+TTable though, such that I can 
 
-   Time control:
-     There are so many time controls that I wouldn't know which ones to choose,
-	 so I represent every time control with a pressure indicator for white [1]
-	 and for black [1], which indicates how intricate the position is for that
-	 player. The MCTS is then tuned according to parameters specific to the time
-	 control. In this way, adding new time controls is straightforward. Along
-	 the game tree, a future timeline is mantained. Ex. (10 + 5):
+ON THE NETWORK
+==============
 
-	   600
-	   605
-	   610
-	   615
-	   620
-	   625
-	   630
+Z64C's neural networks are extremely optimized for efficiency and allow very
+fast execution even on CPUs. The GPU can handle even more searching, by using a
+special algorithm that ships with every Z64C that allows for local searching
+starting for a set of positions and never visiting the transition table.
+Z64C uses several networks:
 
-	 While calculating every move, the engine subtracts the past time to the
-	 value.
+* "BOARD_TO_POSITION":
+  Convert a bitboard instance to a chess position thinking instance.
+  - 1st layer:
+    Has all bitboards as an input, and as an output spits out a board of 64 64
+	bit integers.
+* "POSITION_BEST_MOVES":
+  Finds the most promising moves from a chess position.
+* "POSITION_INCREMENTER":
+  Update a position according to a move. Very fast and usually used just before
+  POSITION_BEST_MOVES to simulate a RNN.
 
-	   15s hourglass with 5s delay:
+All these neural networks have an exotic, novel architecture that uses 1 bit
+quantization. This architecture takes advantage of chess discrete nature,
+instaed of fighting against it.
 
-	   15
+A chess position in Z64C is represented as a certain number of 64bit numbers,
+much like bitboards. I can experiment with any number that I want, 64 seems like
+a good number. 64*64=4097 bits per chess position, which is extremely low. A
+transformation on this chess position should be studied accordingly to the
+chessboard specifics. It presents 1 bit weights and no activation function, so
+that a single transformation can take up very little CPU cycles.
 
-   Problem statement:
+EXAMPLES
+========
 
-   Note:
-     only the leaves of the search tree must remember game positions and stuff,
-	 all the others can just remember the move to reach that state. The game
-	 position is thus carried down the tree and cloned if necessary. This way
-	 the board representation must also remember the history by hashing.
+uci
+	Z64C starts and is ready to play. The position is the initial one.
+position startpos e2e4
+	Z64C loads a certain position into memory. Every time a new position is
+	loaded into the engine, Z64C resets the search tree.
+go ...
+	Z64C starts the search.
+stop
+move e7e6
+	Applies the given move to the in-memory board and stores the move in the
+	move tree.
+bestmove
+	d2d4
 
-   Learning process:
-     First, accumulate many, many vectors of chessboards and store them in a
-	 database. Millions, if not billions. At that point, from each of those,
-	 train the network to generalize the embedding to unseen positions by
-	 walking over the graph (i.e. self-play).
+Search routine
+--------------
+The search routine is fundamental to a good chess engine and must be as fast as
+possible, because it will analyze millions of nodes and time must be saved for
+the evaluation function.
+Z64C's search routine uses arrays to store the big number of nodes. The whole
+thing (just as the model) uses ArrayFire arrays to store everything in-memory.
+This allows extremely fast code. It's basically blazing, blazing fast. I need to
+find a way to store the search tree as a compact array. Once I've done that, I
+associate each node with a score and a move. I randomly go down the tree, expand
+it with a new node, and backpropagate up. This many, many times.
 
-   Finally, it is possible to train another network that, given a one-not
-   encoding of the chess position, transforms it into a vector representation.
-   This is necessary if we want to just load and analyze positions (which is a
-   desiderable feature). However, this only happens after the main evaluation
-   network is trained and without any changes to the original network.
+I have settled on the fact that I need a custom solution for the search. I
+really do, but I can add sherding and read slaves as necessary! It won't be too
+hard.
 
-   Input:
-	* Chessboard embedding
-	* Halfmove clock [0-1] (n. moves divided by 50)
-	* Audacity score [0-1] (how much to go for a win instead of a draw)
+From the chessboard vector, how do I get a legal moves vector? And then how to
+modify it. At that point it may become the fundamental chessboard implementation
+in the engine, converted then to a inefficient board implementation. An
+efficient and inefficient data structure, one to do the heavy lifting and the
+other for the simple things. It could also be a perfect representation of the
+chessboard vector. It must respect some conditions:
 
-   Output:
-    * Pressure for white [1]
-	* Pressure for black [1]
-	* Evaluation score [1]
+The strategic component of the chessboard must be highligthed. This doesn't mean
+that after a single move the vector is almost untouched. This means that the
+best moves are closer that the worse moves!
+Basically, I want the distance between two chessboard vectors to be equal to the
+strength of the move (or sequence of) between the two.
 
-	IDEA!
-	What if I design a new architecture where the recurrent nature of the
-	refiner is extended to move generation? I need to figure out how, but it
-	couold work. My point is that chess is something where feedforward doesn't
-	really work because it a pondering activity: you need to ponder on the board
-	to find good combinations. But it may become very hard to train, even though
-	I can easily see Z64C starting by pushing central pawns and then starting to
-	move better slowly and slowly, finally becoming better. SO: The refiner
-	won't be a standalone module if I do this, which is a shame, but ok. At the
-	end maybe I will find some other answer to this problem, but for now it
-	looks good. How do I convince the net not to spend time where unnecessary? I
-	can train it so that the given move and chessboard vector has EXACTLY x
-	probability to win the game and based on some metric is gives as output, I
-	can decide to make look into it more and more (only at first nodes).
+The strength of a move is a metric between 1 and 0, where 0 is a certainly
+"worse-ing" move and 1 is a certainly "better-ing" move. The score of a game is
+determined by my chance of winning, the opponent's chance of winning and the
+uncertainty over these two values.
 
-	Note: the chessboard vector is a stack of [64] numbers? Could work.
+Una volta che trovo una rappresentazione embedded delle scacchiere con una parte
+messa in risalto alla parte strategica, posso allenare una rete shallow per
+ottenere una lista delle mosse migliori, con le mosse nonlegali a basso
+punteggio o negative. Posso anche allenare una rete neurale per incrementare e
+robe varie. La cosa importante e' che ho reinventato la visione degli scacchi.
 
-2. MCTS-like search function.
+The embedding must respect some conditions:
+* The distance between two embeddings must be greater for similar chessboards,
+  especially those easily reachable by a sequence of a grandmaster.
+  Basically, the distance between two vectors equals (1 - strength) for each move
+  needed to go from here to there.
 
-   Input:
-      A sequence of moves, each with an associated score [0-1].
-   Mechanism:
-      For every move suggested by the output of the evaluation function with a
-	  certain probability [0-1], the search function randomly evaluates the
-	  resulting positions from those moves if a random variable is greater than
-	  its probability. The output of a search is also stored to disk according
-	  to that probability, so that it may be more easily retrieved at later
-	  stages.
-   Output:
-      A single move.
+Allenamento: ho come dataset un albero estremamento grande e profondo.
 
-Main procedure output:
-----------------------
-Move: the move to perform
-Bool: A draw is desiderable (right now. The chess librabry checks the rules and,
-if a drawn can be offered or claimed, it does it.)
+Devo trasformarlo in un albero di embedding e nel frattempo allenare delle reti
+neurali.
+
+A chess tensor is a tensor representing a chess position that satisfies certain
+conditions:
+* The distance between two chess tensors equals the likelihood that a perfect
+  player will play that sequence of moves.
+
+This means that there are infinitely many chess tensors even for a single chess
+position, but some are more "true" than others. The dimensionality of chess
+tensors is 1024. The distance is cosine similarity.
+The distance to illegal positions.
+
+I need to reinvent Z64C!
+Basically, the classic search architecture works, but is limited by the huge
+branching factor of chess and especially Go. So I need a search procedure that
+actually searches inside a specific node and searches the perfect evaluation!
+So:
+
+I have a 1024-wide position tensor that is the evaluation of the current
+position. This tensor is, however, not optimal. I need to seach the
+1024-dimensions search space for ideas and tactics without actually making a
+distinction between this or that position! Searching near the original point
+basically simulates the search space, but instead of looking deeper and deeper
+to improve an evaluation I can just look closer and closer and occasionally
+deeper.
+
+Un'altra cosa: a ogni chess tensor non associo una singola scacchiera, bensi'
+piu' o meno una scacchiera. Ce ne sara' una piu' vicina alle altre, ma non e'
+assolutamente ben distinto.
+
+
+When Z64C needs to deepen a certain node, it creates and inserts a new node with
+a score determined by its search algorithm, and then lowers the score of the
+current node to the second best move (or 0 if all moves have been explored).
+This assumes that the neural network gives 0 as output for illegal moves.
+
+The questions that arise in this approach are:
+* When do you stop searching?
+  When I find one (or possibly more) line that has a satisfying score with good
+  certainty. This part of the algorithm must take into serious consideration the
+  uncertainty of the score, as it is key in the search: spend more time thinking
+  in positions where your guts tell you that you might have a chance at getting
+  a lead over your opponent. Search until the best lines either tell that you
+  where wrong, or you were right. Act accordingly.
+* How do you determine a newly created node's score?
+  The score is a double-precision float and should be in the range 0-1, so that
+  successive plies go to 0. It makes sense! A 0.95 move is almost forced and
+  basically all lines follow that single move. The second best move could be
+  like 0.03, at that point 0.03 will only be computed before 0.95 has a line
+  that brings it down to 0.03. The alternation of colors doesn't alter the
+  scores.
+* How do you, after all of this, choose the best move?
+  I need to formally prove this mathematically, but I have an intuition that can
+  be used in a probablistic tree traversal algorithm.
+* How do you remove all transpositions unreachable after the enemy's move in a
+  short time?
+  This also relates to the tree-like indexing of transpositions in the Redis
+  server.
+  I need to remove all positions (probably) unreacheable from the current position, so:
+  This problem arises from the fact that I'm treating a tree (the search tree)
+  with a hash table! I need to find an encoding.
+
+Another question is: what do I set on nodes as an expiry date? White's turn
+estimate plus black's turn estimate seems like a good choice. I'm gonna do it
+like that.
+
+In Redis, the sorted set has the numeric ID as keys.
+
+The hash table has these keys:
+
+* ID:tensor_in
+* ID:tensor_out
+* ID:board
+* ID:parent
+* ID:main
+* ID:branch
 
 TRAINING STRATEGY
 =================
@@ -271,52 +311,6 @@ I need to train:
 * Board2moves
 * Increment2board
 
-I start by creating a population of Board2moves, each with a starting score
-representing its relative strength. This score is not limited in the 0-1 range.
-For each training iteration, every neural network is trained. The learning rate
-mustn't be adjusted for quite some time to let all the networks learn the
-basics. I also instantiate one model of Hot2board and Increment2board and
-creating one board tensor from a random chess position. The resulting vector is
-cloned and each copy is given to one individual from the Board2moves population,
-which will generate a certain move. If the architecture generates many possible
-moves, just choose one at random and go with that. Push the move to the board
-and increment the other player's board vector using the Increment2board model.
-
-So:
-* Create a population for each neural network that I want to train and try to
-  plug in different individuals in the process, and see which one gives better
-  results. During the "challenge" between two architectures, each one of the two
-  receives a certain score. The one with the lower score is trained and the
-  other is kept the same. This approach is both flexible and efficient, but I
-  should find an optimal algorithm to give even small rewards.
-
-Idea:
-No population, otherwise it can't be proven that it converges. I need a simpler
-RL algorithm that is also more efficient, not multi-agent. There are several
-questions that arise:
-* How do I reinforce learning without many agents? What approach would a human
-  have if they were given a similar problem? They can't spawn more versions of
-  themselves, so how do they do it? They would start by exploring the action
-  space and learning what actions lead to better rewards, see if there are
-  patterns! At the very beginning you would try random moves though, just to
-  explore the space. And it would be a smart idea to keep doing some random
-  stuff here and there just not to fall into local minima. I would train one
-  neural network at the time, and learning would be very fast this way. So, I
-  have this net, how do I judge what moves it does? And how do I teach it? Once
-  I have the algorithm, I can implement something like Tic Tac Toe and see if it
-  works. The algorithm should be optimal. So, what algorithm should I use?!
-* Temporal difference! This allows for extremely fast converging times, without
-  having to play sooo many games.
-
-SO: I have a network from the board hot encoding to moves and winning score, how
-do I train this without dueling? I mustn't think in terms of rewards, but only
-in terms of training.
-
-Action selection strategy: this also depends on what the architecture of the net
-is and what candidate moves I have. For a single move output without search,
-e-greedy (mixed random and best) is the best approach. With this approach, I can
-guarantee that the net will start and keep exploring for better moves.
-
 What's the relation between the estimated score [0-1] and the move strenght
 [0-1]? Given one, one can find the other. So the move strenght is not relative
 to other moves, but only to the estimated score.
@@ -325,9 +319,6 @@ I need an optimal algorithm.
 Basically, it start playing moves given board positions. I add an exploration
 component by playing also random or unlikely moves. At every move, I get an
 estimated score and a move.
-
-I'll use A2C and later possibly a modified version (ACKTR and custom solutions,
-specifically tailored for chess).
 
 So my net is at the same time an actor and a critic: gives me an action (or more
 than one), and an estimated winning score. How do I train this? I want to
@@ -340,19 +331,70 @@ the temporal difference learning formula. Now I should be set, I have the
 training figured out, and I can devote my time to implement (and train!) Z64C
 v0.2.
 
-Action space:
-voglio un action space il piu' compatto possibile. Voglio anche che sia molto
-comprensibile alla rete neurale. Lo spazion compatto vuol tire che ogni feature
-deve cambiare significato geometrico a seconda della scacchiera... pero'
-mantenendo l'unicita' della mossa. 512 mosse sarebbero giuste... a seconda dei
-pezzi intorno?! Sembra interessante. Dovrei usare una sorta di automata
-cellulare.
+Notes on perft:
+I want to develop a perft so that I don't need to worry about checks. It would
+be much, much faster! What's the quirk?
+A move is illegal if, at the next move, there is a pseudolegal move to capture the
+king.
+
+I need a struct Board where I can extremely rapidly say which moves are in the
+tensor and if they are legal.
 
 Cavalli: 8
 Pedoni: 28
 Torri: 14
 Alfieri: 13
 Re: 8
+
+Architettura REDIS:
+Sorted set con Id dei search node e priorita'.
+
+Non capisco se dovrei fare l'update delle statistiche... mi serve davvero?
+Spero davvero di no, perche' altrimenti sarei nei guai. Diventa un magnitudo di
+complessita' temporale piu' lento. Mi serve che la ricerca sia velocissima. La
+ricerca deve fare:
+
+* Legality check (pseudo?)
+  Come faccio a gestire una pseudo legality checking? Il problema non e' affatto
+  lo scacco matto, ma lo stallo, che invece e' difficile da prevedere.
+
+Ricerca:
+Parto dal root node che non e' in Redis ma nello struct Engine e da li' aggiungo
+a Redis i nodi di ricerca con la relativa priorita'. Una volta finito il tempo
+di ricerca, tutti i nodi dell'albero vengono backtraced e si scopre il nodo
+migliore.
+
+La struttura in hash ha come key la scacchiera (ottimo), e come valore:
+* Position tensor (scalable sia per one-hot che LSTM)
+* Mossa della precendente
+Il tutto in un memory dump di uno struct compatto by value.
+
+La ricerca fa:
+Prendo il nodo al top, prendo il position tensor, ci corro Tensorflow e ottengo
+i nuovi nodi che metto dentro Redis.
+La priorita' e' data da da una formula che dipende da TRAINING.
+
+Se no training: allora la priorita' e' solo N, altrimenti ci sommo una
+distrubuzione bounded normale
+
+Il sorted set rappresenta i branch che devo esplorare con piu' urgenza.
+
+Domanda: come influisce lo stallo sull'allenamento?
+
+Qual e' l'algoritmo di ricerca?
+
+0. Metti in focus il nodo di base.
+1. Prendi il nodo di base e scegli una mossa.
+non pseudolegali vengono subito eliminate e non inserite.
+2. Se
+
+Mi serve anche un algoritmo di backpropagation.
+
+Ho una rete a parte, (7 strati) che mi calcola il passaggio da una scacchiera
+ad un'altra. Le scacchiere memorizzano 64 dati per casella, quindi sono 4096 di
+spessore.
+
+Inoltre ho anche una rete a parte che mi traduce dal one-hot al tensor.
 
 Quindi ho:
 	16 per cavalli (2)
@@ -420,8 +462,10 @@ https://pdfs.semanticscholar.org/6e98/bbc9a3dc3ffb5e23abd748bf4e46d1671929.pdf
 per migliorare LDleaf.
 
 Procedura di training:
-Crea una nuova scacchiera dall'inizio e gioca una partita. Non puo' imparare
-durante la partita per semplicita'. Durante la partita, raccogli gli state
+Crea una nuova scacchiera dall'inizio e gioca una partita. Questo per ogni
+istanza, ce n'e' una per thread e sono asincrone (opzionale). Non puo' imparare
+durante la partita per semplicita'. Durante la partita (giocata con un numero di
+nodi fissi per partita) non eliminare le transpositions che non servono piu'.
 values con anche i vari parametri e usi TD64 per calcorare gli state values
 ottimali. Ci abbini le mosse migliori con una selezione bayesiana delle mosse
 (non sempre la migliore) a metti tutto in fila al batch per l'allenamento.

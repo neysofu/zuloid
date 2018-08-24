@@ -6,5 +6,5 @@ CXX_FLAGS = -O3 -DNDEBUG -Wall   -std=gnu++14
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/Users/pippoc/Z64C/src -I/Users/pippoc/Z64C/lib -I/Users/pippoc/Z64C/lib/Catch2/single_include 
+CXX_INCLUDES = -I/Users/pippoc/Z64C/app/engine/src -I/Users/pippoc/Z64C/lib -I/Users/pippoc/Z64C/lib/Catch2/single_include 
 

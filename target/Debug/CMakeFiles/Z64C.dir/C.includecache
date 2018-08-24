@@ -30,6 +30,12 @@ stdarg.h
 stdint.h
 -
 
+../../lib/tensorflow/tensorflow/c/c_api.h
+stddef.h
+-
+stdint.h
+-
+
 /Users/pippoc/Z64C/app/engine/src/board.c
 stddef.h
 -
@@ -69,20 +75,46 @@ square.h
 /Users/pippoc/Z64C/app/engine/src/clock.c
 stdlib.h
 -
+sys/time.h
+-
 clock.h
 /Users/pippoc/Z64C/app/engine/src/clock.h
+utils.h
+/Users/pippoc/Z64C/app/engine/src/utils.h
 
 /Users/pippoc/Z64C/app/engine/src/clock.h
 stdint.h
 -
 
+/Users/pippoc/Z64C/app/engine/src/cmd.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+cmd.h
+/Users/pippoc/Z64C/app/engine/src/cmd.h
+utils.h
+/Users/pippoc/Z64C/app/engine/src/utils.h
+
+/Users/pippoc/Z64C/app/engine/src/cmd.h
+stdlib.h
+-
+
 /Users/pippoc/Z64C/app/engine/src/color.c
+stdlib.h
+-
 color.h
 /Users/pippoc/Z64C/app/engine/src/color.h
 coord.h
 /Users/pippoc/Z64C/app/engine/src/coord.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
 
 /Users/pippoc/Z64C/app/engine/src/color.h
+stdint.h
+-
 coord.h
 /Users/pippoc/Z64C/app/engine/src/coord.h
 
@@ -123,8 +155,14 @@ sysexits.h
 -
 sys/select.h
 -
+cmd.h
+/Users/pippoc/Z64C/app/engine/src/cmd.h
 engine.h
 /Users/pippoc/Z64C/app/engine/src/engine.h
+move_stack.h
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
 clock.h
 /Users/pippoc/Z64C/app/engine/src/clock.h
 utils.h
@@ -133,16 +171,34 @@ fen.h
 /Users/pippoc/Z64C/app/engine/src/fen.h
 board.h
 /Users/pippoc/Z64C/app/engine/src/board.h
-search.h
-/Users/pippoc/Z64C/app/engine/src/search.h
+search_params.h
+/Users/pippoc/Z64C/app/engine/src/search_params.h
 settings.h
 /Users/pippoc/Z64C/app/engine/src/settings.h
 result.h
 /Users/pippoc/Z64C/app/engine/src/result.h
+search_tree.h
+/Users/pippoc/Z64C/app/engine/src/search_tree.h
 
 /Users/pippoc/Z64C/app/engine/src/engine.h
 stdbool.h
 -
+tensorflow/tensorflow/c/c_api.h
+-
+board.h
+/Users/pippoc/Z64C/app/engine/src/board.h
+move_stack.h
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+result.h
+/Users/pippoc/Z64C/app/engine/src/result.h
+search_node.h
+/Users/pippoc/Z64C/app/engine/src/search_node.h
+search_params.h
+/Users/pippoc/Z64C/app/engine/src/search_params.h
+search_tree.h
+/Users/pippoc/Z64C/app/engine/src/search_tree.h
+status.h
+/Users/pippoc/Z64C/app/engine/src/status.h
 termination.h
 /Users/pippoc/Z64C/app/engine/src/termination.h
 
@@ -151,7 +207,13 @@ stdio.h
 -
 stdlib.h
 -
+stdbool.h
+-
 string.h
+-
+ctype.h
+-
+assert.h
 -
 fen.h
 /Users/pippoc/Z64C/app/engine/src/fen.h
@@ -189,6 +251,8 @@ stdbool.h
 -
 string.h
 -
+ctype.h
+-
 move.h
 /Users/pippoc/Z64C/app/engine/src/move.h
 coord.h
@@ -216,21 +280,51 @@ piece.h
 result.h
 /Users/pippoc/Z64C/app/engine/src/result.h
 
+/Users/pippoc/Z64C/app/engine/src/move_stack.c
+stdlib.h
+-
+move_stack.h
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+
+/Users/pippoc/Z64C/app/engine/src/piece.c
+piece.h
 /Users/pippoc/Z64C/app/engine/src/piece.h
+
+/Users/pippoc/Z64C/app/engine/src/piece.h
+stdint.h
+-
 
 /Users/pippoc/Z64C/app/engine/src/result.c
 result.h
 /Users/pippoc/Z64C/app/engine/src/result.h
 
 /Users/pippoc/Z64C/app/engine/src/result.h
-score.h
-/Users/pippoc/Z64C/app/engine/src/score.h
+color.h
+/Users/pippoc/Z64C/app/engine/src/color.h
 termination.h
 /Users/pippoc/Z64C/app/engine/src/termination.h
 
-/Users/pippoc/Z64C/app/engine/src/score.h
+/Users/pippoc/Z64C/app/engine/src/search_node.c
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
 
-/Users/pippoc/Z64C/app/engine/src/search.c
+/Users/pippoc/Z64C/app/engine/src/search_node.h
+tensorflow/tensorflow/c/c_api.h
+-
+board.h
+/Users/pippoc/Z64C/app/engine/src/board.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+
+/Users/pippoc/Z64C/app/engine/src/search_params.c
+stdio.h
+-
 stdlib.h
 -
 sys/types.h
@@ -241,23 +335,57 @@ sysexits.h
 -
 hiredis/hiredis.h
 /Users/pippoc/Z64C/app/engine/src/hiredis/hiredis.h
-search.h
-/Users/pippoc/Z64C/app/engine/src/search.h
+clock.h
+/Users/pippoc/Z64C/app/engine/src/clock.h
+color.h
+/Users/pippoc/Z64C/app/engine/src/color.h
+search_params.h
+/Users/pippoc/Z64C/app/engine/src/search_params.h
 settings.h
 /Users/pippoc/Z64C/app/engine/src/settings.h
 
-/Users/pippoc/Z64C/app/engine/src/search.h
+/Users/pippoc/Z64C/app/engine/src/search_params.h
 stdlib.h
 -
 stdbool.h
+-
+clock.h
+/Users/pippoc/Z64C/app/engine/src/clock.h
+
+/Users/pippoc/Z64C/app/engine/src/search_tree.c
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+string.h
+-
+sysexits.h
+-
+tensorflow/tensorflow/c/c_api.h
 -
 move.h
 /Users/pippoc/Z64C/app/engine/src/move.h
+search_tree.h
+/Users/pippoc/Z64C/app/engine/src/search_tree.h
+
+/Users/pippoc/Z64C/app/engine/src/search_tree.h
+hiredis/hiredis.h
+-
+search_node.h
+/Users/pippoc/Z64C/app/engine/src/search_node.h
+settings.h
+/Users/pippoc/Z64C/app/engine/src/settings.h
 
 /Users/pippoc/Z64C/app/engine/src/settings.c
+stdio.h
+-
 stdlib.h
 -
 stdbool.h
+-
+string.h
 -
 settings.h
 /Users/pippoc/Z64C/app/engine/src/settings.h
@@ -284,7 +412,11 @@ piece.h
 color.h
 /Users/pippoc/Z64C/app/engine/src/color.h
 
+/Users/pippoc/Z64C/app/engine/src/status.h
+
 /Users/pippoc/Z64C/app/engine/src/tensor.c
+tensorflow/tensorflow/c/c_api.h
+-
 
 /Users/pippoc/Z64C/app/engine/src/termination.h
 
@@ -299,6 +431,12 @@ string.h
 -
 unistd.h
 -
+sys/time.h
+-
+pwd.h
+-
 
 /Users/pippoc/Z64C/app/engine/src/utils.h
+stdbool.h
+-
 

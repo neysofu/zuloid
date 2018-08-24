@@ -6,6 +6,7 @@
 # features.
 
 import sys
+import random
 from pathlib import Path
 import os.path
 from os import environ
@@ -14,7 +15,7 @@ import requests
 import shutil
 import itertools
 
-NUM_DATA_POINTS_PER_TEST = 30
+NUM_DATA_POINTS_PER_TEST = 500
 
 def game_to_uci_str(game):
     uci_str = "position fen " + game.root().board().fen()
@@ -37,20 +38,24 @@ def write_games_to_file_by_condition(games, db_path, condition):
 
 def write_positions_to_file_with_illegal_moves(games, db_path):
     with open(db_path, "w+") as db:
+        all_moves = list(itertools.product(chess.SQUARES, repeat=2))
         count = 0
         for game in games:
             if count >= NUM_DATA_POINTS_PER_TEST:
                 break
-            board = game.root().board()
-            db.write(board.fen())
+            i = 0
             for move in game.main_line():
-                for legal_move in board.legal_moves:
-                    db.write(" " + move.uci())
-                board.push(move)
-
-def all_possible_moves():
-    return itertools.product(chess.SQUARE_NAMES, chess.SQUARE_NAMES)
-
+                i += 1
+            for _ in range(random.randint(0, i)):
+                game = game.variations[0]
+            board = game.board()
+            db.write(" \n")
+            db.write(board.fen() + "\n")
+            for coords in random.sample(list(all_moves), 1024):
+                move = chess.Move(coords[0], coords[1])
+                if move not in board.pseudo_legal_moves:
+                    db.write(move.uci() + "\n")
+            count += 1
 def main():
     db_path = Path(sys.argv[1])
     environ["Z64C_TEST_DB_LOCATION"] = str(db_path)
@@ -64,31 +69,31 @@ def main():
             if game.errors:
                 continue
             games.append(game)
-    write_games_to_file_by_condition(
-        games,
-        db_path.with_suffix(".uci.checkmate"),
-        lambda board: board.is_checkmate())
-    write_games_to_file_by_condition(
-        games,
-        db_path.with_suffix(".uci.fivefold"),
-        lambda board: (board.is_fivefold_repetition() or
-                       board.can_claim_threefold_repetition()))
-    write_games_to_file_by_condition(
-        games,
-        db_path.with_suffix(".uci.fifty"),
-        lambda board: (board.can_claim_fifty_moves() or
-                       board.is_seventyfive_moves()))
-    write_games_to_file_by_condition(
-        games,
-        db_path.with_suffix(".uci.insufficient"),
-        lambda board: board.is_insufficient_material())
-    write_games_to_file_by_condition(
-        games,
-        db_path.with_suffix(".uci.stalemate"),
-        lambda board: board.is_stalemate())
+    #write_games_to_file_by_condition(
+    #    games,
+    #    db_path.with_name("checkmate").with_suffix(".uci"),
+    #    lambda board: board.is_checkmate())
+    #write_games_to_file_by_condition(
+    #    games,
+    #    db_path.with_name("threefold").with_suffix(".uci"),
+    #    lambda board: (board.is_fivefold_repetition() or
+    #                   board.can_claim_threefold_repetition()))
+    #write_games_to_file_by_condition(
+    #    games,
+    #    db_path.with_name("fifty").with_suffix(".uci"),
+    #    lambda board: (board.can_claim_fifty_moves() or
+    #                   board.is_seventyfive_moves()))
+    #write_games_to_file_by_condition(
+    #    games,
+    #    db_path.with_name("insufficient").with_suffix(".uci"),
+    #    lambda board: board.is_insufficient_material())
+    #write_games_to_file_by_condition(
+    #    games,
+    #    db_path.with_name("stalemate").with_suffix(".uci"),
+    #    lambda board: board.is_stalemate())
     write_positions_to_file_with_illegal_moves(
         games,
-        db_path.with_suffix(".fen.illegal"))
+        db_path.with_name("illegal").with_suffix(".fen"))
 
 if __name__ == "__main__":
     main()
