@@ -9,6 +9,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/bitboards.c.o: ../../app/engine/src/coord
 CMakeFiles/Z64C_LIB.dir/app/engine/src/bitboards.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/bitboards.c.o: ../../app/engine/src/piece.h
 
+CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/bitboards.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/board.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/color.h
@@ -16,8 +17,6 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/coord.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/piece.h
-CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o: ../../app/engine/src/utils.h
 
 CMakeFiles/Z64C_LIB.dir/app/engine/src/clock.c.o: ../../app/engine/src/clock.c
@@ -53,6 +52,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/fen.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/globals.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/mover.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/result.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o: ../../app/engine/src/saves_dir.h
@@ -75,6 +75,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/en
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/fen.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/mover.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/result.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o: ../../app/engine/src/saves_dir.h
@@ -91,17 +92,15 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/fen.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/fen.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/piece.h
-CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/result.h
-CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o: ../../app/engine/src/utils.h
 
 CMakeFiles/Z64C_LIB.dir/app/engine/src/globals.c.o: ../../app/engine/src/globals.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/globals.c.o: ../../app/engine/src/globals.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/globals.c.o: ../../app/engine/src/utils.h
 
-CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/bitboards.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/cmd.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/color.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/coord.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/dir.h
@@ -110,6 +109,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/globals.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/main.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/move.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/mover.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/result.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/saves_dir.h
@@ -118,8 +118,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/status.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o: ../../app/engine/src/ttable.h
 
-CMakeFiles/Z64C_LIB.dir/app/engine/src/model.c.o: ../../app/engine/src/model.c
-
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/bitboards.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/board.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/color.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/coord.h
@@ -130,6 +129,26 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/piece.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/result.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/termination.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o: ../../app/engine/src/utils.h
+
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move_stack.c
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move_stack.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/piece.h
+
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/bitboards.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/mover.c
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/mover.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/result.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/termination.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o: ../../app/engine/src/utils.h
 
 CMakeFiles/Z64C_LIB.dir/app/engine/src/piece.c.o: ../../app/engine/src/piece.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/piece.c.o: ../../app/engine/src/piece.h
@@ -144,13 +163,30 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/result.c.o: ../../app/engine/src/terminat
 CMakeFiles/Z64C_LIB.dir/app/engine/src/saves_dir.c.o: ../../app/engine/src/globals.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/saves_dir.c.o: ../../app/engine/src/saves_dir.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/saves_dir.c.o: ../../app/engine/src/saves_dir.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/saves_dir.c.o: ../../app/engine/src/utils.h
 
 CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/clock.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/dir.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/settings.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/settings.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o: ../../app/engine/src/utils.h
 
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../lib/xxHash/xxhash.c
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../lib/xxHash/xxhash.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/board.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/color.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/coord.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/dir.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/move.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/piece.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/switches.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/ttable.c
+CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o: ../../app/engine/src/ttable.h
 
 CMakeFiles/Z64C_LIB.dir/app/engine/src/utils.c.o: ../../app/engine/src/utils.c
+
+CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.o: ../../lib/xxHash/xxhash.c
+CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.o: ../../lib/xxHash/xxhash.h
 

@@ -1,5 +1,3 @@
-
-
 #define PIECE_MAP_PAWN_0 0x0
 #define PIECE_MAP_PAWN_1 0x1
 #define PIECE_MAP_PAWN_2 0x2

@@ -11,7 +11,6 @@ set(CMAKE_DEPENDS_CHECK_CXX
   "/Users/pippoc/Z64C/app/engine/test/legality.cpp" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o"
   "/Users/pippoc/Z64C/app/engine/test/main.cpp" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o"
   "/Users/pippoc/Z64C/app/engine/test/result.cpp" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o"
-  "/Users/pippoc/Z64C/app/engine/test/square.cpp" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o"
   "/Users/pippoc/Z64C/app/engine/test/utils.cpp" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "AppleClang")

@@ -1,14 +1,22 @@
+#include <assert.h>
 #include <stddef.h>
 #include <stdint.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include "bitboards.h"
 #include "board.h"
 #include "coord.h"
 #include "color.h"
 #include "move.h"
 #include "utils.h"
+
+void
+board_setup_960(struct Board *board) {
+	// TODO.
+	return;
+}
 
 enum Piece
 board_piece_at(struct Board *board, Coord coord) {
@@ -21,14 +29,14 @@ board_piece_at(struct Board *board, Coord coord) {
 			   board->bb_pieces[PIECE_ROOK] &
 			   bb_coord) {
 		return PIECE_QUEEN;
-	} else if (board->bb_pieces[PIECE_BISHOP] &
-			   bb_coord) {
+	} else if (board->bb_pieces[PIECE_BISHOP] & bb_coord) {
 		return PIECE_BISHOP;
 	} else if (board->bb_pieces[PIECE_ROOK] & bb_coord) {
 		return PIECE_ROOK;
 	} else if (board->bb_pieces[PIECE_KING] & bb_coord) {
 		return PIECE_KING;
 	} else {
+		assert(false);
 		return PIECE_NONE;
 	}
 }
@@ -84,13 +92,30 @@ board_num_half_moves(struct Board *board) {
 	return (board->game_state & GAME_STATE_NUM_HALF_MOVES) >> 8;
 }
 
-bool
-board_castling_right(struct Board *board, uint_fast8_t bitmask) {
-	return board->game_state >> 4 & bitmask;
+void
+board_increment_half_moves(struct Board *board) {
+	// FIXME
+	board->game_state &= (board_num_half_moves(board) + 1) << 8;
 }
 
-uint64_t
-board_en_passant_bb(struct Board *board) {
+void
+board_reset_half_moves(struct Board *board) {
+	// FIXME
+	board->game_state &= !GAME_STATE_NUM_HALF_MOVES;
+}
+
+bool
+board_castling_rights(struct Board *board) {
+	return board->game_state >> 4 & 0xf;
+}
+
+bool
+board_en_passant_is_available(struct Board *board) {
+	return board->game_state & 0xff8f;
+}
+
+Coord
+board_en_passant_coord(struct Board *board) {
 	return bb_file(board->game_state & 0x7) &
 		   bb_rank(color_en_passant_rank(board_active_color(board)));
 }
@@ -102,10 +127,10 @@ const struct Board BOARD_STARTPOS = {
 	.bb_colors = 0xffffffff00000000,
 	.bb_pieces = {
 		0x00ff00000000ff00,
-		0x9100000000000091,
 		0x4200000000000042,
-		0x3400000000000034,
-		0x0800000000000008,
+		0x2c0000000000002c,
+		0x8900000000000089,
+		0x1000000000000010,
 	},
 	.game_state = GAME_STATE_CASTLING_RIGHT_ALL << 4,
 };

@@ -3,27 +3,15 @@
 
 CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o
  ../../app/engine/src/board.h
- ../../app/engine/src/clock.h
  ../../app/engine/src/color.h
  ../../app/engine/src/coord.h
  ../../app/engine/src/dir.h
- ../../app/engine/src/engine.h
  ../../app/engine/src/move.h
- ../../app/engine/src/move_stack.h
+ ../../app/engine/src/mover.h
  ../../app/engine/src/piece.h
  ../../app/engine/src/result.h
- ../../app/engine/src/search_node.h
- ../../app/engine/src/search_params.h
- ../../app/engine/src/search_tree.h
- ../../app/engine/src/settings.h
- ../../app/engine/src/square.h
- ../../app/engine/src/status.h
  ../../app/engine/src/termination.h
  ../../lib/Catch2/single_include/catch.hpp
- ../../lib/hiredis/hiredis.h
- ../../lib/hiredis/read.h
- ../../lib/hiredis/sds.h
- ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/test/board.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
  ../../app/engine/src/board.h
@@ -31,7 +19,6 @@ CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
  ../../app/engine/src/coord.h
  ../../app/engine/src/dir.h
  ../../app/engine/src/piece.h
- ../../app/engine/src/square.h
  ../../lib/Catch2/single_include/catch.hpp
  /Users/pippoc/Z64C/app/engine/test/coord.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o
@@ -43,20 +30,15 @@ CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o
  ../../app/engine/src/engine.h
  ../../app/engine/src/move.h
  ../../app/engine/src/move_stack.h
+ ../../app/engine/src/mover.h
  ../../app/engine/src/piece.h
  ../../app/engine/src/result.h
- ../../app/engine/src/search_node.h
- ../../app/engine/src/search_params.h
- ../../app/engine/src/search_tree.h
+ ../../app/engine/src/saves_dir.h
  ../../app/engine/src/settings.h
- ../../app/engine/src/square.h
  ../../app/engine/src/status.h
  ../../app/engine/src/termination.h
+ ../../app/engine/src/ttable.h
  ../../lib/Catch2/single_include/catch.hpp
- ../../lib/hiredis/hiredis.h
- ../../lib/hiredis/read.h
- ../../lib/hiredis/sds.h
- ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/test/engine.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
  ../../app/engine/src/board.h
@@ -65,7 +47,6 @@ CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
  ../../app/engine/src/dir.h
  ../../app/engine/src/fen.h
  ../../app/engine/src/piece.h
- ../../app/engine/src/square.h
  ../../lib/Catch2/single_include/catch.hpp
  /Users/pippoc/Z64C/app/engine/test/fen.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o
@@ -78,20 +59,15 @@ CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o
  ../../app/engine/src/fen.h
  ../../app/engine/src/move.h
  ../../app/engine/src/move_stack.h
+ ../../app/engine/src/mover.h
  ../../app/engine/src/piece.h
  ../../app/engine/src/result.h
- ../../app/engine/src/search_node.h
- ../../app/engine/src/search_params.h
- ../../app/engine/src/search_tree.h
+ ../../app/engine/src/saves_dir.h
  ../../app/engine/src/settings.h
- ../../app/engine/src/square.h
  ../../app/engine/src/status.h
  ../../app/engine/src/termination.h
+ ../../app/engine/src/ttable.h
  ../../lib/Catch2/single_include/catch.hpp
- ../../lib/hiredis/hiredis.h
- ../../lib/hiredis/read.h
- ../../lib/hiredis/sds.h
- ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/test/legality.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o
  ../../lib/Catch2/single_include/catch.hpp
@@ -106,29 +82,16 @@ CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o
  ../../app/engine/src/engine.h
  ../../app/engine/src/move.h
  ../../app/engine/src/move_stack.h
+ ../../app/engine/src/mover.h
  ../../app/engine/src/piece.h
  ../../app/engine/src/result.h
- ../../app/engine/src/search_node.h
- ../../app/engine/src/search_params.h
- ../../app/engine/src/search_tree.h
+ ../../app/engine/src/saves_dir.h
  ../../app/engine/src/settings.h
- ../../app/engine/src/square.h
  ../../app/engine/src/status.h
  ../../app/engine/src/termination.h
+ ../../app/engine/src/ttable.h
  ../../lib/Catch2/single_include/catch.hpp
- ../../lib/hiredis/hiredis.h
- ../../lib/hiredis/read.h
- ../../lib/hiredis/sds.h
- ../../lib/tensorflow/tensorflow/c/c_api.h
  /Users/pippoc/Z64C/app/engine/test/result.cpp
-CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o
- ../../app/engine/src/color.h
- ../../app/engine/src/coord.h
- ../../app/engine/src/dir.h
- ../../app/engine/src/piece.h
- ../../app/engine/src/square.h
- ../../lib/Catch2/single_include/catch.hpp
- /Users/pippoc/Z64C/app/engine/test/square.cpp
 CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o
  ../../app/engine/src/utils.h
  ../../lib/Catch2/single_include/catch.hpp

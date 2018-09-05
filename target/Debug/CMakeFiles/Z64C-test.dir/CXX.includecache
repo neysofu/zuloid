@@ -13,14 +13,18 @@ stdbool.h
 -
 color.h
 ../../app/engine/src/color.h
-square.h
-../../app/engine/src/square.h
+piece.h
+../../app/engine/src/piece.h
 
 ../../app/engine/src/clock.h
+stdbool.h
+-
 stdint.h
 -
 
 ../../app/engine/src/cmd.h
+stdint.h
+-
 stdlib.h
 -
 
@@ -31,9 +35,9 @@ coord.h
 ../../app/engine/src/coord.h
 
 ../../app/engine/src/coord.h
-stdint.h
--
 stdbool.h
+-
+stdint.h
 -
 dir.h
 ../../app/engine/src/dir.h
@@ -43,22 +47,22 @@ dir.h
 ../../app/engine/src/engine.h
 stdbool.h
 -
-tensorflow/tensorflow/c/c_api.h
--
 board.h
 ../../app/engine/src/board.h
 move_stack.h
 ../../app/engine/src/move_stack.h
+mover.h
+../../app/engine/src/mover.h
 result.h
 ../../app/engine/src/result.h
-search_node.h
-../../app/engine/src/search_node.h
-search_params.h
-../../app/engine/src/search_params.h
-search_tree.h
-../../app/engine/src/search_tree.h
+saves_dir.h
+../../app/engine/src/saves_dir.h
+settings.h
+../../app/engine/src/settings.h
 status.h
 ../../app/engine/src/status.h
+ttable.h
+../../app/engine/src/ttable.h
 termination.h
 ../../app/engine/src/termination.h
 
@@ -69,24 +73,30 @@ board.h
 ../../app/engine/src/move.h
 stdbool.h
 -
-board.h
-../../app/engine/src/board.h
+stdint.h
+-
 coord.h
 ../../app/engine/src/coord.h
 dir.h
 ../../app/engine/src/dir.h
 piece.h
 ../../app/engine/src/piece.h
-result.h
-../../app/engine/src/result.h
 
 ../../app/engine/src/move_stack.h
+stdlib.h
+-
 move.h
 ../../app/engine/src/move.h
 
+../../app/engine/src/mover.h
+board.h
+../../app/engine/src/board.h
+move.h
+../../app/engine/src/move.h
+result.h
+../../app/engine/src/result.h
+
 ../../app/engine/src/piece.h
-stdint.h
--
 
 ../../app/engine/src/result.h
 color.h
@@ -94,48 +104,28 @@ color.h
 termination.h
 ../../app/engine/src/termination.h
 
-../../app/engine/src/search_node.h
-tensorflow/tensorflow/c/c_api.h
--
-board.h
-../../app/engine/src/board.h
-move.h
-../../app/engine/src/move.h
-
-../../app/engine/src/search_params.h
+../../app/engine/src/saves_dir.h
 stdlib.h
 -
-stdbool.h
--
+
+../../app/engine/src/settings.h
 clock.h
 ../../app/engine/src/clock.h
-
-../../app/engine/src/search_tree.h
-hiredis/hiredis.h
--
-search_node.h
-../../app/engine/src/search_node.h
-settings.h
-../../app/engine/src/settings.h
-
-../../app/engine/src/settings.h
-stdbool.h
--
-stdint.h
--
-
-../../app/engine/src/square.h
-piece.h
-../../app/engine/src/piece.h
-color.h
-../../app/engine/src/color.h
 
 ../../app/engine/src/status.h
 
 ../../app/engine/src/termination.h
 
+../../app/engine/src/ttable.h
+stdint.h
+-
+board.h
+../../app/engine/src/board.h
+
 ../../app/engine/src/utils.h
 stdbool.h
+-
+stdlib.h
 -
 
 ../../lib/Catch2/single_include/catch.hpp
@@ -550,36 +540,6 @@ algorithm
 cassert
 -
 
-../../lib/hiredis/hiredis.h
-read.h
-../../lib/hiredis/read.h
-stdarg.h
--
-sys/time.h
--
-stdint.h
--
-sds.h
-../../lib/hiredis/sds.h
-
-../../lib/hiredis/read.h
-stdio.h
--
-
-../../lib/hiredis/sds.h
-sys/types.h
--
-stdarg.h
--
-stdint.h
--
-
-../../lib/tensorflow/tensorflow/c/c_api.h
-stddef.h
--
-stdint.h
--
-
 /Users/pippoc/Z64C/app/engine/test/board.cpp
 cstdio
 -
@@ -591,18 +551,12 @@ catch.hpp
 /Users/pippoc/Z64C/app/engine/test/catch.hpp
 sysexits.h
 -
-engine.h
-/Users/pippoc/Z64C/app/engine/test/engine.h
 board.h
 /Users/pippoc/Z64C/app/engine/test/board.h
-board.h
-/Users/pippoc/Z64C/app/engine/test/board.h
-color.h
-/Users/pippoc/Z64C/app/engine/test/color.h
 move.h
 /Users/pippoc/Z64C/app/engine/test/move.h
-settings.h
-/Users/pippoc/Z64C/app/engine/test/settings.h
+mover.h
+/Users/pippoc/Z64C/app/engine/test/mover.h
 
 /Users/pippoc/Z64C/app/engine/test/coord.cpp
 cstdio
@@ -695,18 +649,6 @@ move.h
 /Users/pippoc/Z64C/app/engine/test/move.h
 settings.h
 /Users/pippoc/Z64C/app/engine/test/settings.h
-
-/Users/pippoc/Z64C/app/engine/test/square.cpp
-cstdio
--
-cstdlib
--
-string
--
-catch.hpp
-/Users/pippoc/Z64C/app/engine/test/catch.hpp
-square.h
-/Users/pippoc/Z64C/app/engine/test/square.h
 
 /Users/pippoc/Z64C/app/engine/test/utils.cpp
 cstdlib

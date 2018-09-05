@@ -122,19 +122,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Z64C-test
-
-# Build rule for target.
-Z64C-test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Z64C-test
-.PHONY : Z64C-test
-
-# fast build rule for target.
-Z64C-test/fast:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/build
-.PHONY : Z64C-test/fast
-
-#=============================================================================
 # Target rules for targets named Z64C
 
 # Build rule for target.
@@ -146,6 +133,19 @@ Z64C: cmake_check_build_system
 Z64C/fast:
 	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/build
 .PHONY : Z64C/fast
+
+#=============================================================================
+# Target rules for targets named Z64C_TEST
+
+# Build rule for target.
+Z64C_TEST: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 Z64C_TEST
+.PHONY : Z64C_TEST
+
+# fast build rule for target.
+Z64C_TEST/fast:
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/build
+.PHONY : Z64C_TEST/fast
 
 #=============================================================================
 # Target rules for targets named Z64C_LIB
@@ -490,36 +490,6 @@ app/engine/src/main.c.s:
 	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.s
 .PHONY : app/engine/src/main.c.s
 
-app/engine/src/model.o: app/engine/src/model.c.o
-
-.PHONY : app/engine/src/model.o
-
-# target to build an object file
-app/engine/src/model.c.o:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/model.c.o
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/model.c.o
-.PHONY : app/engine/src/model.c.o
-
-app/engine/src/model.i: app/engine/src/model.c.i
-
-.PHONY : app/engine/src/model.i
-
-# target to preprocess a source file
-app/engine/src/model.c.i:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/model.c.i
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/model.c.i
-.PHONY : app/engine/src/model.c.i
-
-app/engine/src/model.s: app/engine/src/model.c.s
-
-.PHONY : app/engine/src/model.s
-
-# target to generate assembly for a file
-app/engine/src/model.c.s:
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/model.c.s
-	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/model.c.s
-.PHONY : app/engine/src/model.c.s
-
 app/engine/src/move.o: app/engine/src/move.c.o
 
 .PHONY : app/engine/src/move.o
@@ -549,6 +519,66 @@ app/engine/src/move.c.s:
 	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move.c.s
 	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.s
 .PHONY : app/engine/src/move.c.s
+
+app/engine/src/move_stack.o: app/engine/src/move_stack.c.o
+
+.PHONY : app/engine/src/move_stack.o
+
+# target to build an object file
+app/engine/src/move_stack.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o
+.PHONY : app/engine/src/move_stack.c.o
+
+app/engine/src/move_stack.i: app/engine/src/move_stack.c.i
+
+.PHONY : app/engine/src/move_stack.i
+
+# target to preprocess a source file
+app/engine/src/move_stack.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.i
+.PHONY : app/engine/src/move_stack.c.i
+
+app/engine/src/move_stack.s: app/engine/src/move_stack.c.s
+
+.PHONY : app/engine/src/move_stack.s
+
+# target to generate assembly for a file
+app/engine/src/move_stack.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.s
+.PHONY : app/engine/src/move_stack.c.s
+
+app/engine/src/mover.o: app/engine/src/mover.c.o
+
+.PHONY : app/engine/src/mover.o
+
+# target to build an object file
+app/engine/src/mover.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/mover.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o
+.PHONY : app/engine/src/mover.c.o
+
+app/engine/src/mover.i: app/engine/src/mover.c.i
+
+.PHONY : app/engine/src/mover.i
+
+# target to preprocess a source file
+app/engine/src/mover.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/mover.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.i
+.PHONY : app/engine/src/mover.c.i
+
+app/engine/src/mover.s: app/engine/src/mover.c.s
+
+.PHONY : app/engine/src/mover.s
+
+# target to generate assembly for a file
+app/engine/src/mover.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/mover.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.s
+.PHONY : app/engine/src/mover.c.s
 
 app/engine/src/piece.o: app/engine/src/piece.c.o
 
@@ -736,7 +766,7 @@ app/engine/test/board.o: app/engine/test/board.cpp.o
 
 # target to build an object file
 app/engine/test/board.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/board.cpp.o
 .PHONY : app/engine/test/board.cpp.o
 
 app/engine/test/board.i: app/engine/test/board.cpp.i
@@ -745,7 +775,7 @@ app/engine/test/board.i: app/engine/test/board.cpp.i
 
 # target to preprocess a source file
 app/engine/test/board.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/board.cpp.i
 .PHONY : app/engine/test/board.cpp.i
 
 app/engine/test/board.s: app/engine/test/board.cpp.s
@@ -754,8 +784,35 @@ app/engine/test/board.s: app/engine/test/board.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/board.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/board.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/board.cpp.s
 .PHONY : app/engine/test/board.cpp.s
+
+app/engine/test/cmd.o: app/engine/test/cmd.cpp.o
+
+.PHONY : app/engine/test/cmd.o
+
+# target to build an object file
+app/engine/test/cmd.cpp.o:
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/cmd.cpp.o
+.PHONY : app/engine/test/cmd.cpp.o
+
+app/engine/test/cmd.i: app/engine/test/cmd.cpp.i
+
+.PHONY : app/engine/test/cmd.i
+
+# target to preprocess a source file
+app/engine/test/cmd.cpp.i:
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/cmd.cpp.i
+.PHONY : app/engine/test/cmd.cpp.i
+
+app/engine/test/cmd.s: app/engine/test/cmd.cpp.s
+
+.PHONY : app/engine/test/cmd.s
+
+# target to generate assembly for a file
+app/engine/test/cmd.cpp.s:
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/cmd.cpp.s
+.PHONY : app/engine/test/cmd.cpp.s
 
 app/engine/test/coord.o: app/engine/test/coord.cpp.o
 
@@ -763,7 +820,7 @@ app/engine/test/coord.o: app/engine/test/coord.cpp.o
 
 # target to build an object file
 app/engine/test/coord.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/coord.cpp.o
 .PHONY : app/engine/test/coord.cpp.o
 
 app/engine/test/coord.i: app/engine/test/coord.cpp.i
@@ -772,7 +829,7 @@ app/engine/test/coord.i: app/engine/test/coord.cpp.i
 
 # target to preprocess a source file
 app/engine/test/coord.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/coord.cpp.i
 .PHONY : app/engine/test/coord.cpp.i
 
 app/engine/test/coord.s: app/engine/test/coord.cpp.s
@@ -781,7 +838,7 @@ app/engine/test/coord.s: app/engine/test/coord.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/coord.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/coord.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/coord.cpp.s
 .PHONY : app/engine/test/coord.cpp.s
 
 app/engine/test/engine.o: app/engine/test/engine.cpp.o
@@ -790,7 +847,7 @@ app/engine/test/engine.o: app/engine/test/engine.cpp.o
 
 # target to build an object file
 app/engine/test/engine.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/engine.cpp.o
 .PHONY : app/engine/test/engine.cpp.o
 
 app/engine/test/engine.i: app/engine/test/engine.cpp.i
@@ -799,7 +856,7 @@ app/engine/test/engine.i: app/engine/test/engine.cpp.i
 
 # target to preprocess a source file
 app/engine/test/engine.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/engine.cpp.i
 .PHONY : app/engine/test/engine.cpp.i
 
 app/engine/test/engine.s: app/engine/test/engine.cpp.s
@@ -808,7 +865,7 @@ app/engine/test/engine.s: app/engine/test/engine.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/engine.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/engine.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/engine.cpp.s
 .PHONY : app/engine/test/engine.cpp.s
 
 app/engine/test/fen.o: app/engine/test/fen.cpp.o
@@ -817,7 +874,7 @@ app/engine/test/fen.o: app/engine/test/fen.cpp.o
 
 # target to build an object file
 app/engine/test/fen.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/fen.cpp.o
 .PHONY : app/engine/test/fen.cpp.o
 
 app/engine/test/fen.i: app/engine/test/fen.cpp.i
@@ -826,7 +883,7 @@ app/engine/test/fen.i: app/engine/test/fen.cpp.i
 
 # target to preprocess a source file
 app/engine/test/fen.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/fen.cpp.i
 .PHONY : app/engine/test/fen.cpp.i
 
 app/engine/test/fen.s: app/engine/test/fen.cpp.s
@@ -835,7 +892,7 @@ app/engine/test/fen.s: app/engine/test/fen.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/fen.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/fen.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/fen.cpp.s
 .PHONY : app/engine/test/fen.cpp.s
 
 app/engine/test/legality.o: app/engine/test/legality.cpp.o
@@ -844,7 +901,7 @@ app/engine/test/legality.o: app/engine/test/legality.cpp.o
 
 # target to build an object file
 app/engine/test/legality.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/legality.cpp.o
 .PHONY : app/engine/test/legality.cpp.o
 
 app/engine/test/legality.i: app/engine/test/legality.cpp.i
@@ -853,7 +910,7 @@ app/engine/test/legality.i: app/engine/test/legality.cpp.i
 
 # target to preprocess a source file
 app/engine/test/legality.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/legality.cpp.i
 .PHONY : app/engine/test/legality.cpp.i
 
 app/engine/test/legality.s: app/engine/test/legality.cpp.s
@@ -862,7 +919,7 @@ app/engine/test/legality.s: app/engine/test/legality.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/legality.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/legality.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/legality.cpp.s
 .PHONY : app/engine/test/legality.cpp.s
 
 app/engine/test/main.o: app/engine/test/main.cpp.o
@@ -871,7 +928,7 @@ app/engine/test/main.o: app/engine/test/main.cpp.o
 
 # target to build an object file
 app/engine/test/main.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/main.cpp.o
 .PHONY : app/engine/test/main.cpp.o
 
 app/engine/test/main.i: app/engine/test/main.cpp.i
@@ -880,7 +937,7 @@ app/engine/test/main.i: app/engine/test/main.cpp.i
 
 # target to preprocess a source file
 app/engine/test/main.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/main.cpp.i
 .PHONY : app/engine/test/main.cpp.i
 
 app/engine/test/main.s: app/engine/test/main.cpp.s
@@ -889,7 +946,7 @@ app/engine/test/main.s: app/engine/test/main.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/main.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/main.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/main.cpp.s
 .PHONY : app/engine/test/main.cpp.s
 
 app/engine/test/result.o: app/engine/test/result.cpp.o
@@ -898,7 +955,7 @@ app/engine/test/result.o: app/engine/test/result.cpp.o
 
 # target to build an object file
 app/engine/test/result.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/result.cpp.o
 .PHONY : app/engine/test/result.cpp.o
 
 app/engine/test/result.i: app/engine/test/result.cpp.i
@@ -907,7 +964,7 @@ app/engine/test/result.i: app/engine/test/result.cpp.i
 
 # target to preprocess a source file
 app/engine/test/result.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/result.cpp.i
 .PHONY : app/engine/test/result.cpp.i
 
 app/engine/test/result.s: app/engine/test/result.cpp.s
@@ -916,35 +973,8 @@ app/engine/test/result.s: app/engine/test/result.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/result.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/result.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/result.cpp.s
 .PHONY : app/engine/test/result.cpp.s
-
-app/engine/test/square.o: app/engine/test/square.cpp.o
-
-.PHONY : app/engine/test/square.o
-
-# target to build an object file
-app/engine/test/square.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.o
-.PHONY : app/engine/test/square.cpp.o
-
-app/engine/test/square.i: app/engine/test/square.cpp.i
-
-.PHONY : app/engine/test/square.i
-
-# target to preprocess a source file
-app/engine/test/square.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.i
-.PHONY : app/engine/test/square.cpp.i
-
-app/engine/test/square.s: app/engine/test/square.cpp.s
-
-.PHONY : app/engine/test/square.s
-
-# target to generate assembly for a file
-app/engine/test/square.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/square.cpp.s
-.PHONY : app/engine/test/square.cpp.s
 
 app/engine/test/utils.o: app/engine/test/utils.cpp.o
 
@@ -952,7 +982,7 @@ app/engine/test/utils.o: app/engine/test/utils.cpp.o
 
 # target to build an object file
 app/engine/test/utils.cpp.o:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/utils.cpp.o
 .PHONY : app/engine/test/utils.cpp.o
 
 app/engine/test/utils.i: app/engine/test/utils.cpp.i
@@ -961,7 +991,7 @@ app/engine/test/utils.i: app/engine/test/utils.cpp.i
 
 # target to preprocess a source file
 app/engine/test/utils.cpp.i:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/utils.cpp.i
 .PHONY : app/engine/test/utils.cpp.i
 
 app/engine/test/utils.s: app/engine/test/utils.cpp.s
@@ -970,8 +1000,41 @@ app/engine/test/utils.s: app/engine/test/utils.cpp.s
 
 # target to generate assembly for a file
 app/engine/test/utils.cpp.s:
-	$(MAKE) -f CMakeFiles/Z64C-test.dir/build.make CMakeFiles/Z64C-test.dir/app/engine/test/utils.cpp.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/app/engine/test/utils.cpp.s
 .PHONY : app/engine/test/utils.cpp.s
+
+lib/xxHash/xxhash.o: lib/xxHash/xxhash.c.o
+
+.PHONY : lib/xxHash/xxhash.o
+
+# target to build an object file
+lib/xxHash/xxhash.c.o:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/lib/xxHash/xxhash.c.o
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.o
+.PHONY : lib/xxHash/xxhash.c.o
+
+lib/xxHash/xxhash.i: lib/xxHash/xxhash.c.i
+
+.PHONY : lib/xxHash/xxhash.i
+
+# target to preprocess a source file
+lib/xxHash/xxhash.c.i:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.i
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/lib/xxHash/xxhash.c.i
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.i
+.PHONY : lib/xxHash/xxhash.c.i
+
+lib/xxHash/xxhash.s: lib/xxHash/xxhash.c.s
+
+.PHONY : lib/xxHash/xxhash.s
+
+# target to generate assembly for a file
+lib/xxHash/xxhash.c.s:
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.s
+	$(MAKE) -f CMakeFiles/Z64C_TEST.dir/build.make CMakeFiles/Z64C_TEST.dir/lib/xxHash/xxhash.c.s
+	$(MAKE) -f CMakeFiles/Z64C_LIB.dir/build.make CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.s
+.PHONY : lib/xxHash/xxhash.c.s
 
 # Help Target
 help:
@@ -981,10 +1044,10 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... Z64C-test"
-	@echo "... Z64C"
-	@echo "... Z64C_LIB"
 	@echo "... test"
+	@echo "... Z64C"
+	@echo "... Z64C_TEST"
+	@echo "... Z64C_LIB"
 	@echo "... app/engine/src/bitboards.o"
 	@echo "... app/engine/src/bitboards.i"
 	@echo "... app/engine/src/bitboards.s"
@@ -1018,12 +1081,15 @@ help:
 	@echo "... app/engine/src/main.o"
 	@echo "... app/engine/src/main.i"
 	@echo "... app/engine/src/main.s"
-	@echo "... app/engine/src/model.o"
-	@echo "... app/engine/src/model.i"
-	@echo "... app/engine/src/model.s"
 	@echo "... app/engine/src/move.o"
 	@echo "... app/engine/src/move.i"
 	@echo "... app/engine/src/move.s"
+	@echo "... app/engine/src/move_stack.o"
+	@echo "... app/engine/src/move_stack.i"
+	@echo "... app/engine/src/move_stack.s"
+	@echo "... app/engine/src/mover.o"
+	@echo "... app/engine/src/mover.i"
+	@echo "... app/engine/src/mover.s"
 	@echo "... app/engine/src/piece.o"
 	@echo "... app/engine/src/piece.i"
 	@echo "... app/engine/src/piece.s"
@@ -1045,6 +1111,9 @@ help:
 	@echo "... app/engine/test/board.o"
 	@echo "... app/engine/test/board.i"
 	@echo "... app/engine/test/board.s"
+	@echo "... app/engine/test/cmd.o"
+	@echo "... app/engine/test/cmd.i"
+	@echo "... app/engine/test/cmd.s"
 	@echo "... app/engine/test/coord.o"
 	@echo "... app/engine/test/coord.i"
 	@echo "... app/engine/test/coord.s"
@@ -1063,12 +1132,12 @@ help:
 	@echo "... app/engine/test/result.o"
 	@echo "... app/engine/test/result.i"
 	@echo "... app/engine/test/result.s"
-	@echo "... app/engine/test/square.o"
-	@echo "... app/engine/test/square.i"
-	@echo "... app/engine/test/square.s"
 	@echo "... app/engine/test/utils.o"
 	@echo "... app/engine/test/utils.i"
 	@echo "... app/engine/test/utils.s"
+	@echo "... lib/xxHash/xxhash.o"
+	@echo "... lib/xxHash/xxhash.i"
+	@echo "... lib/xxHash/xxhash.s"
 .PHONY : help
 
 

@@ -1,7 +1,7 @@
 #pragma once
 
 #include <stdbool.h>
-#include <stdint.h>
+#include <stdlib.h>
 
 // A unilateral (i.e. for one player only) clock with support for increments,
 // delays, and transition to a different time control after a certain amount of
@@ -17,28 +17,25 @@ struct Clock {
 	struct Clock *previous_clock;
 };
 
-// Create 90+30 time control for the first 40 moves, then adds 30 minutes.
 struct Clock *
-clock_classical(struct Clock *clock);
+clock_new_blitz(void);
 
-// Create a 15+10 time control.
 struct Clock *
-clock_rapid(struct Clock *clock);
+clock_new_rapid(void);
 
-// Create a 3+2 time control.
 struct Clock *
-clock_blitz(struct Clock *clock);
+clock_new_classical(void);
 
-// Free a clock and all its related time controls.
+// Frees any memory allocated for 'clock'.
 void
 clock_drop(struct Clock *clock);
 
-// Start the clock and return the timestamp in milliseconds after which it will
+// Starts the clock and returns the timestamp in milliseconds after which it will
 // flag.
 uint64_t
 clock_start(struct Clock *clock);
 
-// Stop a ticking clock and check if time expired. '1' means there is some time
-// left, '0' means it's over.
+// Stops a ticking clock and checks if time expired. 'true' means there is some
+// time left, 'false' means it's over.
 bool
 clock_stop(struct Clock *clock);

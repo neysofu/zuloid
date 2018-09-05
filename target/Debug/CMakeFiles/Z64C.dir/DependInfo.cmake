@@ -15,14 +15,16 @@ set(CMAKE_DEPENDS_CHECK_C
   "/Users/pippoc/Z64C/app/engine/src/fen.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/fen.c.o"
   "/Users/pippoc/Z64C/app/engine/src/globals.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/globals.c.o"
   "/Users/pippoc/Z64C/app/engine/src/main.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/main.c.o"
-  "/Users/pippoc/Z64C/app/engine/src/model.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/model.c.o"
   "/Users/pippoc/Z64C/app/engine/src/move.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/move.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/move_stack.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o"
+  "/Users/pippoc/Z64C/app/engine/src/mover.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/mover.c.o"
   "/Users/pippoc/Z64C/app/engine/src/piece.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/piece.c.o"
   "/Users/pippoc/Z64C/app/engine/src/result.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/result.c.o"
   "/Users/pippoc/Z64C/app/engine/src/saves_dir.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o"
   "/Users/pippoc/Z64C/app/engine/src/settings.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/settings.c.o"
   "/Users/pippoc/Z64C/app/engine/src/ttable.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o"
   "/Users/pippoc/Z64C/app/engine/src/utils.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/app/engine/src/utils.c.o"
+  "/Users/pippoc/Z64C/lib/xxHash/xxhash.c" "/Users/pippoc/Z64C/target/Debug/CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o"
   )
 set(CMAKE_C_COMPILER_ID "AppleClang")
 

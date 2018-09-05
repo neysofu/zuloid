@@ -321,33 +321,9 @@ CMakeFiles/Z64C.dir/app/engine/src/main.c.o.provides: CMakeFiles/Z64C.dir/app/en
 CMakeFiles/Z64C.dir/app/engine/src/main.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/main.c.o
 
 
-CMakeFiles/Z64C.dir/app/engine/src/model.c.o: CMakeFiles/Z64C.dir/flags.make
-CMakeFiles/Z64C.dir/app/engine/src/model.c.o: ../../app/engine/src/model.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/Z64C.dir/app/engine/src/model.c.o"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/model.c.o   -c /Users/pippoc/Z64C/app/engine/src/model.c
-
-CMakeFiles/Z64C.dir/app/engine/src/model.c.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Z64C.dir/app/engine/src/model.c.i"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/pippoc/Z64C/app/engine/src/model.c > CMakeFiles/Z64C.dir/app/engine/src/model.c.i
-
-CMakeFiles/Z64C.dir/app/engine/src/model.c.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Z64C.dir/app/engine/src/model.c.s"
-	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/pippoc/Z64C/app/engine/src/model.c -o CMakeFiles/Z64C.dir/app/engine/src/model.c.s
-
-CMakeFiles/Z64C.dir/app/engine/src/model.c.o.requires:
-
-.PHONY : CMakeFiles/Z64C.dir/app/engine/src/model.c.o.requires
-
-CMakeFiles/Z64C.dir/app/engine/src/model.c.o.provides: CMakeFiles/Z64C.dir/app/engine/src/model.c.o.requires
-	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/model.c.o.provides.build
-.PHONY : CMakeFiles/Z64C.dir/app/engine/src/model.c.o.provides
-
-CMakeFiles/Z64C.dir/app/engine/src/model.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/model.c.o
-
-
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o: ../../app/engine/src/move.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/Z64C.dir/app/engine/src/move.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_12) "Building C object CMakeFiles/Z64C.dir/app/engine/src/move.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/move.c.o   -c /Users/pippoc/Z64C/app/engine/src/move.c
 
 CMakeFiles/Z64C.dir/app/engine/src/move.c.i: cmake_force
@@ -369,9 +345,57 @@ CMakeFiles/Z64C.dir/app/engine/src/move.c.o.provides: CMakeFiles/Z64C.dir/app/en
 CMakeFiles/Z64C.dir/app/engine/src/move.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/move.c.o
 
 
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: CMakeFiles/Z64C.dir/flags.make
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o: ../../app/engine/src/move_stack.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_13) "Building C object CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o   -c /Users/pippoc/Z64C/app/engine/src/move_stack.c
+
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/pippoc/Z64C/app/engine/src/move_stack.c > CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.i
+
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/pippoc/Z64C/app/engine/src/move_stack.c -o CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.s
+
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.requires:
+
+.PHONY : CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.requires
+
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.provides: CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.requires
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.provides.build
+.PHONY : CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.provides
+
+CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o
+
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.o: CMakeFiles/Z64C.dir/flags.make
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.o: ../../app/engine/src/mover.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/Z64C.dir/app/engine/src/mover.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/mover.c.o   -c /Users/pippoc/Z64C/app/engine/src/mover.c
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Z64C.dir/app/engine/src/mover.c.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/pippoc/Z64C/app/engine/src/mover.c > CMakeFiles/Z64C.dir/app/engine/src/mover.c.i
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Z64C.dir/app/engine/src/mover.c.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/pippoc/Z64C/app/engine/src/mover.c -o CMakeFiles/Z64C.dir/app/engine/src/mover.c.s
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.requires:
+
+.PHONY : CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.requires
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.provides: CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.requires
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.provides.build
+.PHONY : CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.provides
+
+CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/mover.c.o
+
+
 CMakeFiles/Z64C.dir/app/engine/src/piece.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/piece.c.o: ../../app/engine/src/piece.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_14) "Building C object CMakeFiles/Z64C.dir/app/engine/src/piece.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/Z64C.dir/app/engine/src/piece.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/piece.c.o   -c /Users/pippoc/Z64C/app/engine/src/piece.c
 
 CMakeFiles/Z64C.dir/app/engine/src/piece.c.i: cmake_force
@@ -395,7 +419,7 @@ CMakeFiles/Z64C.dir/app/engine/src/piece.c.o.provides.build: CMakeFiles/Z64C.dir
 
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/result.c.o: ../../app/engine/src/result.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_15) "Building C object CMakeFiles/Z64C.dir/app/engine/src/result.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/Z64C.dir/app/engine/src/result.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/result.c.o   -c /Users/pippoc/Z64C/app/engine/src/result.c
 
 CMakeFiles/Z64C.dir/app/engine/src/result.c.i: cmake_force
@@ -419,7 +443,7 @@ CMakeFiles/Z64C.dir/app/engine/src/result.c.o.provides.build: CMakeFiles/Z64C.di
 
 CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o: ../../app/engine/src/saves_dir.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_16) "Building C object CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o   -c /Users/pippoc/Z64C/app/engine/src/saves_dir.c
 
 CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.i: cmake_force
@@ -443,7 +467,7 @@ CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o.provides.build: CMakeFiles/Z64C
 
 CMakeFiles/Z64C.dir/app/engine/src/settings.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/settings.c.o: ../../app/engine/src/settings.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_17) "Building C object CMakeFiles/Z64C.dir/app/engine/src/settings.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/Z64C.dir/app/engine/src/settings.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/settings.c.o   -c /Users/pippoc/Z64C/app/engine/src/settings.c
 
 CMakeFiles/Z64C.dir/app/engine/src/settings.c.i: cmake_force
@@ -467,7 +491,7 @@ CMakeFiles/Z64C.dir/app/engine/src/settings.c.o.provides.build: CMakeFiles/Z64C.
 
 CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o: ../../app/engine/src/ttable.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_18) "Building C object CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o   -c /Users/pippoc/Z64C/app/engine/src/ttable.c
 
 CMakeFiles/Z64C.dir/app/engine/src/ttable.c.i: cmake_force
@@ -491,7 +515,7 @@ CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o.provides.build: CMakeFiles/Z64C.di
 
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.o: CMakeFiles/Z64C.dir/flags.make
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.o: ../../app/engine/src/utils.c
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_19) "Building C object CMakeFiles/Z64C.dir/app/engine/src/utils.c.o"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Building C object CMakeFiles/Z64C.dir/app/engine/src/utils.c.o"
 	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/app/engine/src/utils.c.o   -c /Users/pippoc/Z64C/app/engine/src/utils.c
 
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.i: cmake_force
@@ -513,6 +537,30 @@ CMakeFiles/Z64C.dir/app/engine/src/utils.c.o.provides: CMakeFiles/Z64C.dir/app/e
 CMakeFiles/Z64C.dir/app/engine/src/utils.c.o.provides.build: CMakeFiles/Z64C.dir/app/engine/src/utils.c.o
 
 
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o: CMakeFiles/Z64C.dir/flags.make
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o: ../../lib/xxHash/xxhash.c
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_21) "Building C object CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -o CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o   -c /Users/pippoc/Z64C/lib/xxHash/xxhash.c
+
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing C source to CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.i"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -E /Users/pippoc/Z64C/lib/xxHash/xxhash.c > CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.i
+
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling C source to assembly CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.s"
+	/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin/cc $(C_DEFINES) $(C_INCLUDES) $(C_FLAGS) -S /Users/pippoc/Z64C/lib/xxHash/xxhash.c -o CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.s
+
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.requires:
+
+.PHONY : CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.requires
+
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.provides: CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.requires
+	$(MAKE) -f CMakeFiles/Z64C.dir/build.make CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.provides.build
+.PHONY : CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.provides
+
+CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.provides.build: CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o
+
+
 # Object files for target Z64C
 Z64C_OBJECTS = \
 "CMakeFiles/Z64C.dir/app/engine/src/bitboards.c.o" \
@@ -526,14 +574,16 @@ Z64C_OBJECTS = \
 "CMakeFiles/Z64C.dir/app/engine/src/fen.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/globals.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/main.c.o" \
-"CMakeFiles/Z64C.dir/app/engine/src/model.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/move.c.o" \
+"CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o" \
+"CMakeFiles/Z64C.dir/app/engine/src/mover.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/piece.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/result.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/settings.c.o" \
 "CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o" \
-"CMakeFiles/Z64C.dir/app/engine/src/utils.c.o"
+"CMakeFiles/Z64C.dir/app/engine/src/utils.c.o" \
+"CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o"
 
 # External object files for target Z64C
 Z64C_EXTERNAL_OBJECTS =
@@ -549,20 +599,20 @@ Z64C: CMakeFiles/Z64C.dir/app/engine/src/engine_calls.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/fen.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/globals.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/main.c.o
-Z64C: CMakeFiles/Z64C.dir/app/engine/src/model.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/move.c.o
+Z64C: CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o
+Z64C: CMakeFiles/Z64C.dir/app/engine/src/mover.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/piece.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/result.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/settings.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o
 Z64C: CMakeFiles/Z64C.dir/app/engine/src/utils.c.o
+Z64C: CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o
 Z64C: CMakeFiles/Z64C.dir/build.make
 Z64C: libZ64C_LIB.a
-Z64C: ../../lib/hiredis/libhiredis.a
-Z64C: /Users/pippoc/libtensorflow-cpu-darwin-x86_64-1.9.0/lib/libtensorflow.so
 Z64C: CMakeFiles/Z64C.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_20) "Linking C executable Z64C"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/Users/pippoc/Z64C/target/Debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_22) "Linking C executable Z64C"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/Z64C.dir/link.txt --verbose=$(VERBOSE)
 
 # Rule to build all files generated by this target.
@@ -581,14 +631,16 @@ CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/engine_calls.c.
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/fen.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/globals.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/main.c.o.requires
-CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/model.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/move.c.o.requires
+CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/move_stack.c.o.requires
+CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/mover.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/piece.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/result.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/saves_dir.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/settings.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/ttable.c.o.requires
 CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/app/engine/src/utils.c.o.requires
+CMakeFiles/Z64C.dir/requires: CMakeFiles/Z64C.dir/lib/xxHash/xxhash.c.o.requires
 
 .PHONY : CMakeFiles/Z64C.dir/requires
 

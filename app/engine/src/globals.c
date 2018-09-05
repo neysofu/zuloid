@@ -3,8 +3,16 @@
 #include "globals.h"
 #include "utils.h"
 
+size_t PAGE_SIZE;
+
 void
 globals_init(void) {
-	HOME_DIR = home_dir();
-	PAGE_SIZE = page_size();
+	static bool init = false;
+	if (init) {
+		return;
+	} else {
+		init = true;
+	}
+	bb_init();
+	PAGE_SIZE = util_page_size();
 }

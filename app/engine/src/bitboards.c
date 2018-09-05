@@ -77,8 +77,24 @@ uint64_t BB_PAWN_MOVES[BOARD_NUM_SQUARES];
 
 void
 bb_init(void) {
-	Coord coord = 0;
-	while (coord++ < BOARD_NUM_SQUARES) {
+	BB_ADJIACTENT_FILES[0] = BB_FILES[1];
+	BB_ADJIACTENT_FILES[1] = BB_FILES[0] | BB_FILES[2];
+	BB_ADJIACTENT_FILES[2] = BB_FILES[1] | BB_FILES[3];
+	BB_ADJIACTENT_FILES[3] = BB_FILES[2] | BB_FILES[4];
+	BB_ADJIACTENT_FILES[4] = BB_FILES[3] | BB_FILES[5];
+	BB_ADJIACTENT_FILES[5] = BB_FILES[4] | BB_FILES[6];
+	BB_ADJIACTENT_FILES[6] = BB_FILES[5] | BB_FILES[7];
+	BB_ADJIACTENT_FILES[7] = BB_FILES[6];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[0] | BB_RANKS[2];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1] | BB_RANKS[3];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[2] | BB_RANKS[4];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[3] | BB_RANKS[5];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[4] | BB_RANKS[6];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[5] | BB_RANKS[7];
+	BB_ADJIACTENT_RANKS[0] = BB_RANKS[6];
+	Coord coord;
+	for (coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
 		BB_ROOK_ATTACKS[coord] = BB_FILES[coord_file(coord)] ^
 			                     BB_RANKS[coord_rank(coord)];
 		BB_KNIGHT_ATTACKS[coord] = ((coord <<  6) &
@@ -97,38 +113,33 @@ bb_init(void) {
 									BB_ADJIACTENT_RANKS[coord_file(coord)]) |
 		              			   ((coord >> 10) &
 									BB_ADJIACTENT_RANKS[coord_file(coord)]);
-		BB_ROOK_ATTACKS[coord] = bb_diagonals_main(coord) ^
-			                     bb_diagonals_anti(coord);
-		BB_KING_ATTACKS[coord] = (BB_FILES[coord_file(coord)] |
-				                  BB_ADJIACTENT_FILES[coord_file(coord)]) &
-		                         (BB_RANKS[coord_rank(coord)] |
-				                  BB_ADJIACTENT_RANKS[coord_rank(coord)]) ^ coord;
+		BB_ROOK_ATTACKS[coord] = bb_diagonal_main(coord) ^
+			                     bb_diagonal_anti(coord);
+		BB_KING_ATTACKS[coord] = ((BB_FILES[coord_file(coord)] |
+				                   BB_ADJIACTENT_FILES[coord_file(coord)]) &
+		                          (BB_RANKS[coord_rank(coord)] |
+				                   BB_ADJIACTENT_RANKS[coord_rank(coord)])) ^
+								 coord;
 	}
-	BB_ADJIACTENT_FILES[0] = BB_FILES[1];
-	BB_ADJIACTENT_FILES[1] = BB_FILES[0] | BB_FILES[2];
-	BB_ADJIACTENT_FILES[2] = BB_FILES[1] | BB_FILES[3];
-	BB_ADJIACTENT_FILES[3] = BB_FILES[2] | BB_FILES[4];
-	BB_ADJIACTENT_FILES[4] = BB_FILES[3] | BB_FILES[5];
-	BB_ADJIACTENT_FILES[5] = BB_FILES[4] | BB_FILES[6];
-	BB_ADJIACTENT_FILES[6] = BB_FILES[5] | BB_FILES[7];
-	BB_ADJIACTENT_FILES[7] = BB_FILES[6];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[0] | BB_RANKS[2];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1] | BB_RANKS[3];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[2] | BB_RANKS[4];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[3] | BB_RANKS[5];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[4] | BB_RANKS[6];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[5] | BB_RANKS[7];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[6];
 }
 
 uint64_t
-bb_diagonals_main(Coord coord) {
+bb_file(Coord coord) {
+	return BB_FILES[coord_file(coord)];
+}
+
+uint64_t
+bb_rank(Coord coord) {
+	return BB_RANKS[coord_rank(coord)];
+}
+
+uint64_t
+bb_diagonal_main(Coord coord) {
 	return BB_DIAGONALS_MAIN[7 + coord_rank(coord) - coord_file(coord)];
 }
 
 uint64_t
-bb_diagonals_anti(Coord coord) {
+bb_diagonal_anti(Coord coord) {
 	return BB_DIAGONALS_ANTI[coord_file(coord) + coord_rank(coord)];
 }
 
@@ -148,8 +159,13 @@ bb_bishop_attacks(Coord coord) {
 }
 
 uint64_t
+bb_king_attacks(Coord coord) {
+	return BB_KING_ATTACKS[coord];
+}
+
+uint64_t
 bb_queen_attacks(Coord coord) {
-	return bb_rook_attacks(coord) & bb_bishop_attacks(coord);
+	return bb_rook_attacks(coord) | bb_bishop_attacks(coord);
 }
 
 uint64_t

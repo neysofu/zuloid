@@ -23,12 +23,6 @@
 #define GAME_STATE_EN_PASSANT_AVAILABILITY 0x8
 #define GAME_STATE_EN_PASSANT_FILE 0x7
 
-#define BOARD_BB_PAWNS 0
-#define BOARD_BB_ROOKS 1
-#define BOARD_BB_KNIGHTS 2
-#define BOARD_BB_BISHOPS 3
-#define BOARD_BB_KINGS 4
-
 // A piece-centric, space-efficient board representation that ships with
 // relevant game state information. This solution is based on bitboards and
 // lends itself to fast legality checking while mantaining a tiny memory
@@ -49,30 +43,43 @@ struct Board {
 	uint16_t game_state;
 };
 
-// Print this chess position to stdout.
+void
+board_new(struct Board *board, bool chess960);
+
+// Prints this chess position to stdout as ASCII art.
 void
 board_print(struct Board *board);
 
-// Get the ASCII character that represents a certain square in this chess
-// position.
+// Returns the lowercase letter that FEN uses to represent the piece at 'coord';
+// if none, returns ".".
 char
 board_square_to_char(struct Board *board, Coord coord);
 
-// Get the color of the player whose turn it is.
+// Returns the color of the player whose turn it is.
 enum Color
 board_active_color(struct Board *board);
 
-// Get the number of half moves since any capture, pawn, or castling move was
-// made. Please note that this number can't possibly be any larger than 75,
+// Returns the number of half moves since any capture, pawn, or castling movewas
+// was made. Please note that this number can't possibly be any larger than 75,
 // after which the game is automatically a draw.
 uint_fast8_t
 board_num_half_moves(struct Board *board);
 
+void
+board_increment_half_moves(struct Board *board);
+
+void
+board_reset_half_moves(struct Board *board);
+
 // Get the castling right of a certain player on the side of 'rook'.
 bool
-board_castling_right(struct Board *board, uint_fast8_t bitmask);
+board_castling_rights(struct Board *board);
 
-// Get the coordinates to the square where en passant capture is possible, or
+// Checks whether or not the current player can capture en-passant.
+bool
+board_en_passant_is_available(struct Board *board);
+
+// Returns the coordinates of the square where en passant capture is possible, or
 // 'COORD_NONE' if none.
 Coord
 board_en_passant_coord(struct Board *board);

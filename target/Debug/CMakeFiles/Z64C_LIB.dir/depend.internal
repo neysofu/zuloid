@@ -10,6 +10,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/bitboards.c.o
  /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o
+ /Users/pippoc/Z64C/app/engine/src/bitboards.h
  /Users/pippoc/Z64C/app/engine/src/board.c
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/color.h
@@ -17,8 +18,6 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/board.c.o
  /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
- /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/clock.c.o
  /Users/pippoc/Z64C/app/engine/src/clock.c
@@ -54,6 +53,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/engine.c.o
  /Users/pippoc/Z64C/app/engine/src/globals.h
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/mover.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
  /Users/pippoc/Z64C/app/engine/src/saves_dir.h
@@ -76,6 +76,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/engine_calls.c.o
  /Users/pippoc/Z64C/app/engine/src/fen.h
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/mover.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
  /Users/pippoc/Z64C/app/engine/src/saves_dir.h
@@ -92,17 +93,15 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/fen.c.o
  /Users/pippoc/Z64C/app/engine/src/fen.h
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
- /Users/pippoc/Z64C/app/engine/src/result.h
- /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/globals.c.o
  /Users/pippoc/Z64C/app/engine/src/globals.c
  /Users/pippoc/Z64C/app/engine/src/globals.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o
- /Users/pippoc/Z64C/app/engine/src/bitboards.h
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/cmd.h
  /Users/pippoc/Z64C/app/engine/src/color.h
  /Users/pippoc/Z64C/app/engine/src/coord.h
  /Users/pippoc/Z64C/app/engine/src/dir.h
@@ -111,6 +110,7 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o
  /Users/pippoc/Z64C/app/engine/src/main.c
  /Users/pippoc/Z64C/app/engine/src/move.h
  /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/mover.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
  /Users/pippoc/Z64C/app/engine/src/saves_dir.h
@@ -118,15 +118,34 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/main.c.o
  /Users/pippoc/Z64C/app/engine/src/status.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
  /Users/pippoc/Z64C/app/engine/src/ttable.h
-CMakeFiles/Z64C_LIB.dir/app/engine/src/model.c.o
- /Users/pippoc/Z64C/app/engine/src/model.c
 CMakeFiles/Z64C_LIB.dir/app/engine/src/move.c.o
+ /Users/pippoc/Z64C/app/engine/src/bitboards.h
  /Users/pippoc/Z64C/app/engine/src/board.h
  /Users/pippoc/Z64C/app/engine/src/color.h
  /Users/pippoc/Z64C/app/engine/src/coord.h
  /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/move.c
  /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/result.h
+ /Users/pippoc/Z64C/app/engine/src/termination.h
+ /Users/pippoc/Z64C/app/engine/src/utils.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/move_stack.c.o
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/move_stack.c
+ /Users/pippoc/Z64C/app/engine/src/move_stack.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+CMakeFiles/Z64C_LIB.dir/app/engine/src/mover.c.o
+ /Users/pippoc/Z64C/app/engine/src/bitboards.h
+ /Users/pippoc/Z64C/app/engine/src/board.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/mover.c
+ /Users/pippoc/Z64C/app/engine/src/mover.h
  /Users/pippoc/Z64C/app/engine/src/piece.h
  /Users/pippoc/Z64C/app/engine/src/result.h
  /Users/pippoc/Z64C/app/engine/src/termination.h
@@ -145,12 +164,29 @@ CMakeFiles/Z64C_LIB.dir/app/engine/src/saves_dir.c.o
  /Users/pippoc/Z64C/app/engine/src/globals.h
  /Users/pippoc/Z64C/app/engine/src/saves_dir.c
  /Users/pippoc/Z64C/app/engine/src/saves_dir.h
+ /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/settings.c.o
  /Users/pippoc/Z64C/app/engine/src/clock.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
  /Users/pippoc/Z64C/app/engine/src/settings.c
  /Users/pippoc/Z64C/app/engine/src/settings.h
  /Users/pippoc/Z64C/app/engine/src/utils.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/ttable.c.o
+ ../../lib/xxHash/xxhash.c
+ ../../lib/xxHash/xxhash.h
+ /Users/pippoc/Z64C/app/engine/src/board.h
+ /Users/pippoc/Z64C/app/engine/src/color.h
+ /Users/pippoc/Z64C/app/engine/src/coord.h
+ /Users/pippoc/Z64C/app/engine/src/dir.h
+ /Users/pippoc/Z64C/app/engine/src/move.h
+ /Users/pippoc/Z64C/app/engine/src/piece.h
+ /Users/pippoc/Z64C/app/engine/src/switches.h
  /Users/pippoc/Z64C/app/engine/src/ttable.c
+ /Users/pippoc/Z64C/app/engine/src/ttable.h
 CMakeFiles/Z64C_LIB.dir/app/engine/src/utils.c.o
  /Users/pippoc/Z64C/app/engine/src/utils.c
+CMakeFiles/Z64C_LIB.dir/lib/xxHash/xxhash.c.o
+ /Users/pippoc/Z64C/lib/xxHash/xxhash.c
+ /Users/pippoc/Z64C/lib/xxHash/xxhash.h

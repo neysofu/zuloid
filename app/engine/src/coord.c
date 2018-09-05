@@ -1,17 +1,20 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include <assert.h>
 #include "board.h"
 #include "coord.h"
 #include "dir.h"
 
 char
 file_to_char(File file) {
+	assert(file_is_valid(file));
 	return file + 'a';
 }
 
 File
 char_to_file(char c) {
+	assert(isalpha(c));
 	return c - 'a';
 }
 
@@ -22,11 +25,13 @@ file_is_valid(File file) {
 
 char
 rank_to_char(Rank rank) {
+	assert(rank_is_valid(rank));
 	return rank + '1';
 }
 
 Rank
 char_to_rank(char c) {
+	assert(isdigit(c));
 	return c - '1';
 }
 
@@ -37,16 +42,20 @@ rank_is_valid(Rank rank) {
 
 Coord
 coord_new(File file, Rank rank) {
-	return rank || file;
+	assert(file_is_valid(file));
+	assert(rank_is_valid(rank));
+	return (rank << 3) | file;
 }
 
 uint64_t
 coord_to_bb(Coord coord) {
-	return 1 << coord;
+	assert(coord_is_valid(coord));
+	return 1LLU << coord;
 }
 
 void
 coord_to_str(Coord coord, char *str) {
+	assert(coord_is_valid(coord));
 	str[0] = file_to_char(coord_file(coord));
 	str[1] = rank_to_char(coord_rank(coord));
 }
@@ -58,21 +67,25 @@ str_to_coord(char *str) {
 
 File
 coord_file(Coord coord) {
+	assert(coord_is_valid(coord));
 	return coord & 0x7;
 }
 
 Rank
 coord_rank(Coord coord) {
+	assert(coord_is_valid(coord));
 	return coord >> 3;
 }
 
 bool
 coord_is_valid(Coord coord) {
-	return coord < BOARD_SIDE_LENGTH * BOARD_SIDE_LENGTH;
+	return coord < BOARD_NUM_SQUARES;
 }
 
 enum Dir
 coord_dir(Coord coord_1, Coord coord_2) {
+	assert(coord_is_valid(coord_1));
+	assert(coord_is_valid(coord_2));
 	uint8_t horizontal_shift = abs(coord_file(coord_1) - coord_file(coord_2));
 	uint8_t vertical_shift = abs(coord_rank(coord_1) - coord_rank(coord_2));
 	// TODO: bitwise hackery to speed this up with branchless execution.

@@ -10,17 +10,17 @@
 
 // Check if the stdin buffer contains some text.
 bool
-is_stdin_empty(void);
+util_is_stdin_empty(void);
 
 // Try to fetch the home directory first from environment variables, then from
 // UID.
 char *
-home_dir(void);
+util_home_dir(void);
 
 // Get the current UNIX-like timestamp in milliseconds.
 size_t
-timestamp_msec(void);
+util_timestamp_msec(void);
 
 // Get the page size on this OS (usually 4kiB).
 size_t
-page_size(void);
+util_page_size(void);

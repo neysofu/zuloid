@@ -6,6 +6,28 @@
 
 #IncludeRegexTransform: 
 
+../../lib/xxHash/xxhash.c
+stdlib.h
+-
+string.h
+-
+assert.h
+-
+xxhash.h
+../../lib/xxHash/xxhash.h
+stdint.h
+-
+stdint.h
+-
+
+../../lib/xxHash/xxhash.h
+stddef.h
+-
+stdint.h
+-
+xxhash.c
+../../lib/xxHash/xxhash.c
+
 /Users/pippoc/Z64C/app/engine/src/bitboards.c
 stdint.h
 -
@@ -25,6 +47,8 @@ coord.h
 /Users/pippoc/Z64C/app/engine/src/coord.h
 
 /Users/pippoc/Z64C/app/engine/src/board.c
+assert.h
+-
 stddef.h
 -
 stdint.h
@@ -37,6 +61,8 @@ stdlib.h
 -
 string.h
 -
+bitboards.h
+/Users/pippoc/Z64C/app/engine/src/bitboards.h
 board.h
 /Users/pippoc/Z64C/app/engine/src/board.h
 coord.h
@@ -73,10 +99,12 @@ utils.h
 /Users/pippoc/Z64C/app/engine/src/clock.h
 stdbool.h
 -
-stdint.h
+stdlib.h
 -
 
 /Users/pippoc/Z64C/app/engine/src/cmd.c
+assert.h
+-
 stdio.h
 -
 stdlib.h
@@ -115,6 +143,8 @@ stdlib.h
 -
 string.h
 -
+assert.h
+-
 board.h
 /Users/pippoc/Z64C/app/engine/src/board.h
 coord.h
@@ -123,6 +153,8 @@ dir.h
 /Users/pippoc/Z64C/app/engine/src/dir.h
 
 /Users/pippoc/Z64C/app/engine/src/coord.h
+ctype.h
+-
 stdbool.h
 -
 stdint.h
@@ -143,9 +175,11 @@ stdbool.h
 -
 string.h
 -
+sys/select.h
+-
 sysexits.h
 -
-sys/select.h
+unistd.h
 -
 board.h
 /Users/pippoc/Z64C/app/engine/src/board.h
@@ -185,8 +219,12 @@ stdbool.h
 -
 board.h
 /Users/pippoc/Z64C/app/engine/src/board.h
+cmd.h
+/Users/pippoc/Z64C/app/engine/src/cmd.h
 move_stack.h
 /Users/pippoc/Z64C/app/engine/src/move_stack.h
+mover.h
+/Users/pippoc/Z64C/app/engine/src/mover.h
 result.h
 /Users/pippoc/Z64C/app/engine/src/result.h
 saves_dir.h
@@ -215,6 +253,12 @@ engine_calls.h
 /Users/pippoc/Z64C/app/engine/src/engine_calls.h
 fen.h
 /Users/pippoc/Z64C/app/engine/src/fen.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+move_stack.h
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+mover.h
+/Users/pippoc/Z64C/app/engine/src/mover.h
 
 /Users/pippoc/Z64C/app/engine/src/engine_calls.h
 engine.h
@@ -259,6 +303,8 @@ utils.h
 /Users/pippoc/Z64C/app/engine/src/utils.h
 
 /Users/pippoc/Z64C/app/engine/src/globals.h
+stdlib.h
+-
 
 /Users/pippoc/Z64C/app/engine/src/main.c
 stdio.h
@@ -267,16 +313,10 @@ sys/select.h
 -
 sysexits.h
 -
-bitboards.h
-/Users/pippoc/Z64C/app/engine/src/bitboards.h
 engine.h
 /Users/pippoc/Z64C/app/engine/src/engine.h
 globals.h
 /Users/pippoc/Z64C/app/engine/src/globals.h
-settings.h
-/Users/pippoc/Z64C/app/engine/src/settings.h
-
-/Users/pippoc/Z64C/app/engine/src/model.c
 
 /Users/pippoc/Z64C/app/engine/src/move.c
 stdio.h
@@ -289,6 +329,8 @@ string.h
 -
 ctype.h
 -
+bitboards.h
+/Users/pippoc/Z64C/app/engine/src/bitboards.h
 move.h
 /Users/pippoc/Z64C/app/engine/src/move.h
 coord.h
@@ -307,20 +349,62 @@ stdbool.h
 -
 stdint.h
 -
-board.h
-/Users/pippoc/Z64C/app/engine/src/board.h
 coord.h
 /Users/pippoc/Z64C/app/engine/src/coord.h
 dir.h
 /Users/pippoc/Z64C/app/engine/src/dir.h
 piece.h
 /Users/pippoc/Z64C/app/engine/src/piece.h
-result.h
-/Users/pippoc/Z64C/app/engine/src/result.h
 
+/Users/pippoc/Z64C/app/engine/src/move_stack.c
+stdlib.h
+-
+move_stack.h
 /Users/pippoc/Z64C/app/engine/src/move_stack.h
 move.h
 /Users/pippoc/Z64C/app/engine/src/move.h
+
+/Users/pippoc/Z64C/app/engine/src/move_stack.h
+stdlib.h
+-
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+
+/Users/pippoc/Z64C/app/engine/src/mover.c
+stdio.h
+-
+stdlib.h
+-
+stdbool.h
+-
+string.h
+-
+ctype.h
+-
+bitboards.h
+/Users/pippoc/Z64C/app/engine/src/bitboards.h
+board.h
+/Users/pippoc/Z64C/app/engine/src/board.h
+coord.h
+/Users/pippoc/Z64C/app/engine/src/coord.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+mover.h
+/Users/pippoc/Z64C/app/engine/src/mover.h
+piece.h
+/Users/pippoc/Z64C/app/engine/src/piece.h
+result.h
+/Users/pippoc/Z64C/app/engine/src/result.h
+utils.h
+/Users/pippoc/Z64C/app/engine/src/utils.h
+
+/Users/pippoc/Z64C/app/engine/src/mover.h
+board.h
+/Users/pippoc/Z64C/app/engine/src/board.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+result.h
+/Users/pippoc/Z64C/app/engine/src/result.h
 
 /Users/pippoc/Z64C/app/engine/src/piece.c
 string.h
@@ -341,13 +425,21 @@ termination.h
 /Users/pippoc/Z64C/app/engine/src/termination.h
 
 /Users/pippoc/Z64C/app/engine/src/saves_dir.c
+assert.h
+-
+stdio.h
+-
+string.h
+-
 saves_dir.h
 /Users/pippoc/Z64C/app/engine/src/saves_dir.h
 globals.h
 /Users/pippoc/Z64C/app/engine/src/globals.h
+utils.h
+/Users/pippoc/Z64C/app/engine/src/utils.h
 
 /Users/pippoc/Z64C/app/engine/src/saves_dir.h
-stdint.h
+stdlib.h
 -
 
 /Users/pippoc/Z64C/app/engine/src/settings.c
@@ -359,6 +451,10 @@ stdlib.h
 -
 string.h
 -
+clock.h
+/Users/pippoc/Z64C/app/engine/src/clock.h
+color.h
+/Users/pippoc/Z64C/app/engine/src/color.h
 settings.h
 /Users/pippoc/Z64C/app/engine/src/settings.h
 utils.h
@@ -377,6 +473,18 @@ stdbool.h
 /Users/pippoc/Z64C/app/engine/src/termination.h
 
 /Users/pippoc/Z64C/app/engine/src/ttable.c
+stdlib.h
+-
+board.h
+/Users/pippoc/Z64C/app/engine/src/board.h
+move.h
+/Users/pippoc/Z64C/app/engine/src/move.h
+switches.h
+/Users/pippoc/Z64C/app/engine/src/switches.h
+ttable.h
+/Users/pippoc/Z64C/app/engine/src/ttable.h
+xxHash/xxhash.h
+/Users/pippoc/Z64C/app/engine/src/xxHash/xxhash.h
 
 /Users/pippoc/Z64C/app/engine/src/ttable.h
 stdint.h
@@ -405,4 +513,26 @@ stdbool.h
 -
 stdlib.h
 -
+
+/Users/pippoc/Z64C/lib/xxHash/xxhash.c
+stdlib.h
+-
+string.h
+-
+assert.h
+-
+xxhash.h
+/Users/pippoc/Z64C/lib/xxHash/xxhash.h
+stdint.h
+-
+stdint.h
+-
+
+/Users/pippoc/Z64C/lib/xxHash/xxhash.h
+stddef.h
+-
+stdint.h
+-
+xxhash.c
+/Users/pippoc/Z64C/lib/xxHash/xxhash.c
 

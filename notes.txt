@@ -125,7 +125,7 @@ The problem with TTable is that it's on the RAM, so it's slow. I want Z64C to be
 using CPU 100% and this only happens when I have better data locality.
 long-term all tactics and lines explored, which can't possibly fit into a
 smaller data structure. I also need to figure out a cache-friendly version of
-TTable though, such that I can 
+TTable though, such that I can fetch subsets of TTable very quickly.
 
 ON THE NETWORK
 ==============
@@ -139,16 +139,46 @@ Z64C uses several networks:
 * "BOARD_TO_POSITION":
   Convert a bitboard instance to a chess position thinking instance.
   - 1st layer:
-    Has all bitboards as an input, and as an output spits out a board of 64 64
-	bit integers.
+    Has all bitboards as an input, and as an output spits heuristic bitboards. I
+	want an architecture that can take work with heuristic bitboards as inputs.
+	The whole idea is that some sets in the next layer will be set to either one
+	or zero depending on other bits around the board.
 * "POSITION_BEST_MOVES":
-  Finds the most promising moves from a chess position.
+  Finds the most promising moves from a chess position. This is the main network
+  and the most optimized. During training, we apply a dropout of randu*randu.
+  connected to the others, with weights and activations.
 * "POSITION_INCREMENTER":
   Update a position according to a move. Very fast and usually used just before
-  POSITION_BEST_MOVES to simulate a RNN.
+  POSITION_BEST_MOVES to simulate a RNN. Has the same exact topology of
+  POSITION_BEST_MOVES.
 
 All these neural networks have an exotic, novel architecture that uses 1 bit
-quantization. This architecture takes advantage of chess discrete nature,
+quantization. Example by showing a 3x3 board with width 1.
+
+110 100 001
+
+At this point I have several inputs:
+
+* Board representation
+* Turn [2 booleans]
+* Resoluteness [1 float]
+
+Our goal is to approximate a certain function f. f is from inputs to outputs and
+we have a specific neural architecture to allow best performance with this
+function approximator. The training algorithm can take advantage from many
+actors at the same time. Basically, during play, I create many many training
+examples. Every descent down the tree improves prediction without exception,
+even considering uncertainty. If a line is uncertain, then also its first move
+should be uncertain. So I want to explore the tree to approximate the function
+in its weak spots, this way it will converge *etremely* fast. I want to study
+the approximation strategy because it is important.
+
+Thanks to the approximation strategy and tree search I will have an incoming
+stream of labeled examples.
+
+We first train the last layer, which is the only different one. We must train it
+from a certain neuron and
+
 instaed of fighting against it.
 
 A chess position in Z64C is represented as a certain number of 64bit numbers,
