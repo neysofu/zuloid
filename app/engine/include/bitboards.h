@@ -11,6 +11,7 @@
 #include <stdint.h>
 #include "chess/coord.h"
 #include "chess/dir.h"
+#include "chess/move.h"
 
 // Initializes bitboard lookup tables. Do NOT call any of the other 'bb'
 // functions without first calling 'bb_init' at the start of your program (it
@@ -38,8 +39,8 @@ bb_file(Coord coord);
 
 /// Masks the files directly adjacent to this square's file.
 /// @pre Initialization via `bb_init`.
-uint64_t
-bb_adjiacent_files(Coord coord);
+//uint64_t
+//bb_adjiacent_files(Coord coord);
 
 /// Masks this square's rank.
 /// @pre Initialization via `bb_init`.
@@ -48,8 +49,8 @@ bb_rank(Coord coord);
 
 /// Masks the ranks directly adjacent to this square's rank.
 /// @pre Initialization via `bb_init`.
-uint64_t
-bb_adjiacent_ranks(Coord coord);
+//uint64_t
+//bb_adjiacent_ranks(Coord coord);
 
 /// @brief Masks this square's diagonals.
 ///
@@ -66,7 +67,7 @@ bb_diagonals(Coord coord);
 /// @brief Masks the squares involved in a sliding move.
 /// @pre Initialization via `bb_init`.
 uint64_t
-bb_ray(Coord coord_0, Coord coord_1, enum Dir dir);
+bb_ray(Move move);
 
 /// Masks the threats of specific piece types from this square.
 /// @pre Initialization via `bb_init`.

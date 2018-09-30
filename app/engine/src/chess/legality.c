@@ -49,9 +49,7 @@ board_approves_pseudolegal_knight_move(struct Board *board, Move move) {
 bool
 board_approves_pseudolegal_sliding_move(struct Board *board, Move move) {
 	assert(board);
-	uint64_t ray = bb_ray(move_source(move),
-						  move_target(move),
-						  dir_from_to(move_source(move), move_target(move)));
+	uint64_t ray = bb_ray(move);
 	return !(ray & board->bb_occupancy);
 }
 
