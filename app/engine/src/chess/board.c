@@ -99,13 +99,11 @@ board_color_at(struct Board *board, Coord coord) {
 
 void
 board_print(struct Board *board) {
-	File file;
-	Rank rank = BOARD_SIDE_LENGTH;
 	printf("    A B C D E F G H\n");
 	printf("  ╔═════════════════╗\n");
-	while (rank-- > 0) {
+	for (Rank rank = BOARD_SIDE_LENGTH; rank > 0; rank--) {
 		printf("%c ║ ", rank_to_char(rank));
-		for (file = 0; file < BOARD_SIDE_LENGTH; file++) {
+		for (File file = 0; file < BOARD_SIDE_LENGTH; file++) {
 			putchar(board_square_to_char(board, coord_new(file, rank), '.'));
 			putchar(' ');
 		}
