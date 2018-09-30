@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,6 +29,24 @@ struct Cmd {
 	struct Option (*options)[];
 };
 
+struct Cmd *
+cmd_new(void) {
+	struct Cmd *cmd = malloc(sizeof(struct Cmd));
+	if (!cmd) {
+		return NULL;
+	}
+	cmd->str = NULL;
+	cmd->args_num = 0;
+	cmd->args_capacity = CMD_ARGS_DEFAULT_CAPACITY;
+	cmd->args = malloc(sizeof(char *) * CMD_ARGS_DEFAULT_CAPACITY);
+	// TODO
+	cmd->options_num = 0;
+	cmd->options_capacity = CMD_OPTIONS_DEFAULT_CAPACITY;
+	cmd->args = malloc(sizeof(struct Option) * CMD_OPTIONS_DEFAULT_CAPACITY);
+	// TODO
+	return cmd;
+}
+
 void
 cmd_drop(struct Cmd *cmd) {
 	if (!cmd) {
@@ -38,28 +57,21 @@ cmd_drop(struct Cmd *cmd) {
 	free(cmd);
 }
 
-struct Cmd *
-cmd_read_str(struct Cmd *cmd, char *str) {
+int8_t
+cmd_parse(struct Cmd *cmd, char *str) {
+	assert(cmd);
+	assert(str);
 	// TODO: implement quoting, escape character, and options.
-	if (cmd) {
-		if (cmd->args_capacity > CMD_ARGS_DEFAULT_CAPACITY) {
-			cmd->args_capacity = CMD_ARGS_DEFAULT_CAPACITY;
-			cmd->args = realloc(cmd->args,
-					            sizeof(char *) * CMD_ARGS_DEFAULT_CAPACITY);
-		}
-		if (cmd->options_capacity > CMD_OPTIONS_DEFAULT_CAPACITY) {
-			cmd->options_capacity = CMD_OPTIONS_DEFAULT_CAPACITY;
-			cmd->options = realloc(cmd->options,
-								   sizeof(struct Option) *
-								   CMD_OPTIONS_DEFAULT_CAPACITY);
-		}
-	} else {
-		cmd = malloc(sizeof(struct Cmd));
+	if (cmd->args_capacity > CMD_ARGS_DEFAULT_CAPACITY) {
 		cmd->args_capacity = CMD_ARGS_DEFAULT_CAPACITY;
-		cmd->args = malloc(sizeof(char *) * cmd->args_capacity);
+		cmd->args = realloc(cmd->args,
+				            sizeof(char *) * CMD_ARGS_DEFAULT_CAPACITY);
+	}
+	if (cmd->options_capacity > CMD_OPTIONS_DEFAULT_CAPACITY) {
 		cmd->options_capacity = CMD_OPTIONS_DEFAULT_CAPACITY;
-		cmd->options = malloc(sizeof(struct Option) *
-				              CMD_OPTIONS_DEFAULT_CAPACITY);
+		cmd->options = realloc(cmd->options,
+							   sizeof(struct Option) *
+							   CMD_OPTIONS_DEFAULT_CAPACITY);
 	}
 	cmd->str = str;
 	cmd->args_num = 0;
@@ -67,35 +79,24 @@ cmd_read_str(struct Cmd *cmd, char *str) {
 	size_t str_length = strlen(cmd->str);
 	char *token_start;
 	char *token_end = str;
-read_token:
-	token_start = token_end + strspn(token_end, WHITESPACE_CHARS);
-	token_end = strpbrk(token_start, WHITESPACE_CHARS);
-	if (cmd->args_num == cmd->args_capacity) {
-		cmd->args_capacity <<= 1;
-		cmd->args = realloc(cmd->args, cmd->args_capacity);
-	}
-	char *p;
-	if (token_end) {
-		(*cmd->args)[cmd->args_num++] = token_start;
-		*token_end++ = '\0';
-		for (p = token_start; *p; ++p) {
-			*p = tolower(*p);
+	while (true) {
+		token_start = token_end + strspn(token_end, WHITESPACE_CHARS);
+		token_end = strpbrk(token_start, WHITESPACE_CHARS);
+		if (cmd->args_num == cmd->args_capacity) {
+			cmd->args_capacity <<= 1;
+			cmd->args = realloc(cmd->args, cmd->args_capacity);
 		}
-	} else {
-		return cmd;
+		if (token_end) {
+			(*cmd->args)[cmd->args_num++] = token_start;
+			*(token_end++) = '\0';
+			char *p;
+			for (p = token_start; *p; ++p) {
+				*p = tolower(*p);
+			}
+		} else {
+			return 0;
+		}
 	}
-	goto read_token;
-	return cmd;
-}
-
-struct Cmd *
-cmd_read_stream(struct Cmd *cmd, FILE *stream) {
-	char *str = NULL;
-	size_t spam;
-	if (getline(&str, &spam, stream) == -1) {
-		return NULL;
-	}
-	return cmd_read_str(cmd, str);
 }
 
 char *

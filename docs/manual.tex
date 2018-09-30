@@ -1,0 +1,398 @@
+\documentclass[11pt]{scrbook}
+
+\usepackage{acronym}
+\usepackage{algorithmicx}
+\usepackage{amsmath}
+\usepackage[english]{babel}
+\usepackage[style = alphabetic]{biblatex}
+\usepackage{bookmark}
+\usepackage{chessboard}
+\usepackage{color}
+\usepackage{framed}
+\usepackage[a4paper]{geometry}
+\usepackage{xskak}
+\usepackage{lipsum}
+\usepackage{listings}
+\usepackage{microtype}
+\usepackage{lmodern}
+\usepackage{hyperref}
+\usepackage{scrextend}
+\usepackage{textcase}
+\usepackage{tikz}
+\usepackage[normalem]{ulem}
+
+% Make maths in titles and section titles bold by default. Not sure how this
+% works...
+% From https://tex.stackexchange.com/questions/41379/automatically-typeset-math-in-section-headings-in-bold-face
+\makeatletter
+\g@addto@macro\bfseries{\boldmath}
+\makeatother
+
+\usepackage{fontspec}
+\setmainfont{IBM Plex Serif}
+\setsansfont{IBM Plex Sans}
+\setmonofont{IBM Plex Mono}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+	linktoc=all,
+    linkcolor=black,
+    urlcolor=black
+}
+
+\input{./macros.tex}
+
+\addbibresource{.contents/citations.bib}
+
+
+\title{The Z64C Chess Engine}
+\subtitle{Software Design Document}
+\author{Filippo Costa}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents{}
+\frontmatter
+\input{./contents/preface.tex}
+\mainmatter
+\input{./contents/architecture-overview.tex}
+\input{./contents/user-manual.tex}
+\input{./contents/evaluation-and-search.tex}
+\input{./contents/heuristics-training.tex}
+\input{./contents/on-performance.tex}
+\nocite{*}
+
+\printbibliography
+
+% \section{\texttt{THINK}}
+% \newgame
+% \chessboard
+%
+% Z64C is a modern chess engine that features:
+%
+% \begin{itemize}
+% \item a competitive evaluation function powered by GPU computing,
+% \item (Z)UCI support,
+% \item custom playing style by tweaking parameters,
+% \item better heuristics and uncertainty-driven search with feature engineering,
+% \item cluster search,
+% \item division of work between GPU and CPU with asynchronous algorithms, and
+% \item heuristics-driven time management.
+% \end{itemize}
+%
+% All of this is only possible thanks to particular techniques:
+% * CPU legality checks while the GPU crunches numbers,
+% * high move selectivity,
+% * magic bitboards,
+% * ArrayFire recurrent neural networks,
+% * feature engineering a subset of chess with a fallback to Arasan for "weird"
+%   chess positions (very, very small subset).
+%
+% Z64C is designed from the ground up to be extremly portable and this is seen in
+% several design choice:
+% * possibility of opting out of GPU libraries with fallback to CPU,
+% * small, quantized neural network,
+% * low memory impact and tools to limit excessive tree growth, and
+% * written in C99 with minimal dependencies.
+%
+% \chapter{Board representations}
+%
+% Z64C uses a board representation that strikes a good balance between
+% compactness, speed, and ease of use. Programming it should be easy and simple.
+% A single file, bitboards.h, will contain many primitives useful for programming
+% a simple AND based move generator. The chess position stores:
+%
+% * location of each piece indexed by piece ID,
+% * game state information,
+% * occupancy bitboard,
+% * piece bitboard,
+%
+% * Pawn attacks
+% * Knight attacks
+% * King attacks
+%
+% ON THE SEARCH TABLE
+% ===================
+%
+% ON THE SEARCH ROUTINE
+% =====================
+%
+% Z64C's neural networks are extremely optimized for efficiency and allow very
+% fast execution even on CPUs. The GPU can handle even more searching, by using a
+% special algorithm that ships with every Z64C that allows for local searching
+% starting for a set of positions and never visiting the transition table.
+% Z64C uses several networks:
+%
+% board to position:
+%   Convert a bitboard instance to a chess position thinking instance.
+%   - 1st layer:
+%     Has all bitboards as an input, and as an output spits heuristic bitboards. I
+% 	want an architecture that can take work with heuristic bitboards as inputs.
+% 	The whole idea is that some sets in the next layer will be set to either one
+% 	or zero depending on other bits around the board.
+% position best moves:
+%   Finds the most promising moves from a chess position. This is the main network
+%   and the most optimized. During training, we apply a dropout of randu*randu.
+%   connected to the others, with weights and activations.
+% position incrementer:
+%   Update a position according to a move. Very fast and usually used just before
+%    to simulate a RNN. Has the same exact topology of
+%   .
+%
+% All these neural networks have an exotic, novel architecture that uses 1 bit
+% quantization. Example by showing a 3x3 board with width 1.
+%
+% 110 100 001
+%
+% At this point I have several inputs:
+%
+% * Board representation
+% * Turn [2 booleans]
+% * Resoluteness [1 float]
+%
+% Our goal is to approximate a certain function f. f is from inputs to outputs and
+% we have a specific neural architecture to allow best performance with this
+% function approximator. The training algorithm can take advantage from many
+% actors at the same time. Basically, during play, I create many many training
+% examples. Every descent down the tree improves prediction without exception,
+% even considering uncertainty. If a line is uncertain, then also its first move
+% should be uncertain. So I want to explore the tree to approximate the function
+% in its weak spots, this way it will converge *etremely* fast. I want to study
+% the approximation strategy because it is important.
+%
+% Thanks to the approximation strategy and tree search I will have an incoming
+% stream of labeled examples.
+%
+% We first train the last layer, which is the only different one. We must train it
+% from a certain neuron and
+%
+% instaed of fighting against it.
+%
+% A chess position in Z64C is represented as a certain number of 64bit numbers,
+% much like bitboards. I can experiment with any number that I want, 64 seems like
+% a good number. 64*64=4097 bits per chess position, which is extremely low. A
+% transformation on this chess position should be studied accordingly to the
+% chessboard specifics. It presents 1 bit weights and no activation function, so
+% that a single transformation can take up very little CPU cycles.
+%
+% \chapter{The ZUCI interface}
+%
+% uci
+% 	Z64C starts and is ready to play. The position is the initial one.
+% position startpos e2e4
+% 	Z64C loads a certain position into memory. Every time a new position is
+% 	loaded into the engine, Z64C resets the search tree.
+% go ...
+% 	Z64C starts the search.
+% stop
+% move e7e6
+% 	Applies the given move to the in-memory board and stores the move in the
+% 	move tree.
+% bestmove
+% 	d2d4
+%
+% \chapter{On data structures and memory usage}
+% The search routine is fundamental to a good chess engine and must be as fast as
+% possible, because it will analyze millions of nodes and time must be saved for
+% the evaluation function.
+% Z64C's search routine uses arrays to store the big number of nodes. The whole
+% thing (just as the model) uses ArrayFire arrays to store everything in-memory.
+% This allows extremely fast code. It's basically blazing, blazing fast. I need to
+% find a way to store the search tree as a compact array. Once I've done that, I
+% associate each node with a score and a move. I randomly go down the tree, expand
+% it with a new node, and backpropagate up. This many, many times.
+%
+% I have settled on the fact that I need a custom solution for the search. I
+% really do, but I can add sherding and read slaves as necessary! It won't be too
+% hard.
+%
+% From the chessboard vector, how do I get a legal moves vector? And then how to
+% modify it. At that point it may become the fundamental chessboard implementation
+% in the engine, converted then to a inefficient board implementation. An
+% efficient and inefficient data structure, one to do the heavy lifting and the
+% other for the simple things. It could also be a perfect representation of the
+% chessboard vector. It must respect some conditions:
+%
+% The strategic component of the chessboard must be highligthed. This doesn't mean
+% that after a single move the vector is almost untouched. This means that the
+% best moves are closer that the worse moves!
+% Basically, I want the distance between two chessboard vectors to be equal to the
+% strength of the move (or sequence of) between the two.
+%
+% The strength of a move is a metric between 1 and 0, where 0 is a certainly
+% "worse-ing" move and 1 is a certainly "better-ing" move. The score of a game is
+% determined by my chance of winning, the opponent's chance of winning and the
+% uncertainty over these two values.
+%
+% Una volta che trovo una rappresentazione embedded delle scacchiere con una parte
+% messa in risalto alla parte strategica, posso allenare una rete shallow per
+% ottenere una lista delle mosse migliori, con le mosse nonlegali a basso
+% punteggio o negative. Posso anche allenare una rete neurale per incrementare e
+% robe varie. La cosa importante e' che ho reinventato la visione degli scacchi.
+%
+% The embedding must respect some conditions:
+% * The distance between two embeddings must be greater for similar chessboards,
+%   especially those easily reachable by a sequence of a grandmaster.
+%   Basically, the distance between two vectors equals (1 - strength) for each move
+%   needed to go from here to there.
+%
+% Allenamento: ho come dataset un albero estremamento grande e profondo.
+%
+% Devo trasformarlo in un albero di embedding e nel frattempo allenare delle reti
+% neurali.
+%
+% A chess tensor is a tensor representing a chess position that satisfies certain
+% conditions:
+% * The distance between two chess tensors equals the likelihood that a perfect
+%   player will play that sequence of moves.
+%
+% This means that there are infinitely many chess tensors even for a single chess
+% position, but some are more "true" than others. The dimensionality of chess
+% tensors is 1024. The distance is cosine similarity.
+% The distance to illegal positions.
+%
+% I need to reinvent Z64C!
+% Basically, the classic search architecture works, but is limited by the huge
+% branching factor of chess and especially Go. So I need a search procedure that
+% actually searches inside a specific node and searches the perfect evaluation!
+% So:
+%
+% I have a 1024-wide position tensor that is the evaluation of the current
+% position. This tensor is, however, not optimal. I need to seach the
+% 1024-dimensions search space for ideas and tactics without actually making a
+% distinction between this or that position! Searching near the original point
+% basically simulates the search space, but instead of looking deeper and deeper
+% to improve an evaluation I can just look closer and closer and occasionally
+% deeper.
+%
+% Un'altra cosa: a ogni chess tensor non associo una singola scacchiera, bensi'
+% piu' o meno una scacchiera. Ce ne sara' una piu' vicina alle altre, ma non e'
+% assolutamente ben distinto.
+%
+%
+% When Z64C needs to deepen a certain node, it creates and inserts a new node with
+% a score determined by its search algorithm, and then lowers the score of the
+% current node to the second best move (or 0 if all moves have been explored).
+% This assumes that the neural network gives 0 as output for illegal moves.
+%
+% The questions that arise in this approach are:
+% * When do you stop searching?
+%   When I find one (or possibly more) line that has a satisfying score with good
+%   certainty. This part of the algorithm must take into serious consideration the
+%   uncertainty of the score, as it is key in the search: spend more time thinking
+%   in positions where your guts tell you that you might have a chance at getting
+%   a lead over your opponent. Search until the best lines either tell that you
+%   where wrong, or you were right. Act accordingly.
+% * How do you determine a newly created node's score?
+%   The score is a double-precision float and should be in the range 0-1, so that
+%   successive plies go to 0. It makes sense! A 0.95 move is almost forced and
+%   basically all lines follow that single move. The second best move could be
+%   like 0.03, at that point 0.03 will only be computed before 0.95 has a line
+%   that brings it down to 0.03. The alternation of colors doesn't alter the
+%   scores.
+% * How do you, after all of this, choose the best move?
+%   I need to formally prove this mathematically, but I have an intuition that can
+%   be used in a probablistic tree traversal algorithm.
+% * How do you remove all transpositions unreachable after the enemy's move in a
+%   short time?
+%   This also relates to the tree-like indexing of transpositions in the Redis
+%   server.
+%   I need to remove all positions (probably) unreacheable from the current position, so:
+%   This problem arises from the fact that I'm treating a tree (the search tree)
+%   with a hash table! I need to find an encoding.
+%
+% Another question is: what do I set on nodes as an expiry date? White's turn
+% estimate plus black's turn estimate seems like a good choice. I'm gonna do it
+% like that.
+%
+% In Redis, the sorted set has the numeric ID as keys.
+%
+% The hash table has these keys:
+%
+% \chapter{Heuristics training}
+% Ricerca:
+% Parto dal root node che non e' in Redis ma nello struct Engine e da li' aggiungo
+% a Redis i nodi di ricerca con la relativa priorita'. Una volta finito il tempo
+% di ricerca, tutti i nodi dell'albero vengono backtraced e si scopre il nodo
+% migliore.
+%
+% La struttura in hash ha come key la scacchiera (ottimo), e come valore:
+% * Position tensor (scalable sia per one-hot che LSTM)
+% * Mossa della precendente
+% Il tutto in un memory dump di uno struct compatto by value.
+%
+% La ricerca fa:
+% Prendo il nodo al top, prendo il position tensor, ci corro Tensorflow e ottengo
+% i nuovi nodi che metto dentro Redis.
+% La priorita' e' data da da una formula che dipende da TRAINING.
+%
+% Se no training: allora la priorita' e' solo N, altrimenti ci sommo una
+% distrubuzione bounded normale
+%
+% Il sorted set rappresenta i branch che devo esplorare con piu' urgenza.
+%
+% Domanda: come influisce lo stallo sull'allenamento?
+%
+% Qual e' l'algoritmo di ricerca?
+%
+% 0. Metti in focus il nodo di base.
+% 1. Prendi il nodo di base e scegli una mossa.
+% non pseudolegali vengono subito eliminate e non inserite.
+% 2. Se
+%
+% Mi serve anche un algoritmo di backpropagation.
+%
+% Ho una rete a parte, (7 strati) che mi calcola il passaggio da una scacchiera
+% ad un'altra. Le scacchiere memorizzano 64 dati per casella, quindi sono 4096 di
+% spessore.
+%
+% Inoltre ho anche una rete a parte che mi traduce dal one-hot al tensor.
+%
+% Quindi ho:
+% 	16 per cavalli (2)
+% 	48 per torri (3)
+% 	48 per alfieri (3)
+% 	32 per pedoni (8)
+% 	 8 per re (1)
+%
+%     152 move features
+% 	3 state values
+% 	Anche qua, derivo il learning rate da un fattore statistico.
+%
+% 	In input ho la scacchiera o il lstm piu':
+% 	* Turn [2]
+% 	* Castling rights [4]
+% 	* En passant [8]
+% 	Anziche' avere a che fare con i tempi, metto come output una descrizione
+% 	piu' precisa dello state value cosi' so quali sono i punti piu' critici e
+% 	quanto e' sicuro della propria azione.
+%
+% Ho una architettura GRU con 140 uscite. Creo l'architettura in modo tale che
+% sia:
+%
+% * Facilmente allenabile
+% * Pensi nel tempo e modifichi le propie previsioni (opzionale)
+% * Riporti la mossa automaticamente al GRU (sara' un GRU particolare, allora).
+%
+% Question: how do I represent the estimated score? I don't want a single value,
+% instead I want a fully blown probability distribution. The distribution goes
+% from 0 to 1, where 0 and 1 are the fixed scores when the game is over. Anything
+% in between means it is not certain. How many values and what distribution to
+% choose? For example, I may want to draw a distribution where my enemy can't win,
+% I'm very close to winning but I may stalemate. How do I show that? I neet to
+% show uncertainty in an asymmetric way. I think I can describe the distribution
+% using 2 parameters:
+% * My score
+% * Uncertanty
+% The uncertainty drives the distribution towards the centre because there is
+% uncertainty.
+%
+% The distribution is an S-shaped distribution in a [0-1] box both vertically and
+% horizontally.
+
+\end{document}

@@ -1,8 +1,9 @@
+#include <assert.h>
 #include <stdint.h>
 #include "bitboards.h"
-#include "board.h"
-#include "color.h"
-#include "coord.h"
+#include "chess/board.h"
+#include "chess/color.h"
+#include "chess/coord.h"
 
 const uint64_t BB_FILES[BOARD_SIDE_LENGTH] = {
 	0x0101010101010101,
@@ -31,7 +32,7 @@ const uint64_t BB_RANKS[BOARD_SIDE_LENGTH] = {
 uint64_t BB_ADJIACTENT_RANKS[BOARD_SIDE_LENGTH];
 
 // Ordered by '7 + rank - file'.
-const uint64_t BB_DIAGONALS_MAIN[15] = {
+const uint64_t BB_DIAGONALS[15] = {
 	0x0000000000000080,
 	0x0000000000008040,
 	0x0000000000804020,
@@ -49,8 +50,8 @@ const uint64_t BB_DIAGONALS_MAIN[15] = {
 	0x0100000000000000,
 };
 
-// Ordered by 'rank - file'.
-const uint64_t BB_DIAGONALS_ANTI[15] = {
+// Ordered by 'rank + file'.
+const uint64_t BB_ANTI_DIAGONALS[15] = {
 	0x0000000000000001,
 	0x0000000000000102,
 	0x0000000000010204,
@@ -68,15 +69,21 @@ const uint64_t BB_DIAGONALS_ANTI[15] = {
 	0x8000000000000000,
 };
 
-uint64_t BB_ROOK_ATTACKS[BOARD_NUM_SQUARES];
-uint64_t BB_KNIGHT_ATTACKS[BOARD_NUM_SQUARES];
-uint64_t BB_BISHOP_ATTACKS[BOARD_NUM_SQUARES];
-uint64_t BB_KING_ATTACKS[BOARD_NUM_SQUARES];
-uint64_t BB_PAWN_ATTACKS[BOARD_NUM_SQUARES];
+uint64_t BB_ROOK_THREATS[BOARD_NUM_SQUARES];
+uint64_t BB_KNIGHT_THREATS[BOARD_NUM_SQUARES];
+uint64_t BB_BISHOP_THREATS[BOARD_NUM_SQUARES];
+uint64_t BB_KING_THREATS[BOARD_NUM_SQUARES];
+uint64_t BB_PAWN_THREATS[BOARD_NUM_SQUARES];
 uint64_t BB_PAWN_MOVES[BOARD_NUM_SQUARES];
 
 void
 bb_init(void) {
+	static bool flag = false;
+	if (flag) {
+		return;
+	} else {
+		flag = true;
+	}
 	BB_ADJIACTENT_FILES[0] = BB_FILES[1];
 	BB_ADJIACTENT_FILES[1] = BB_FILES[0] | BB_FILES[2];
 	BB_ADJIACTENT_FILES[2] = BB_FILES[1] | BB_FILES[3];
@@ -86,89 +93,107 @@ bb_init(void) {
 	BB_ADJIACTENT_FILES[6] = BB_FILES[5] | BB_FILES[7];
 	BB_ADJIACTENT_FILES[7] = BB_FILES[6];
 	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[0] | BB_RANKS[2];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[1] | BB_RANKS[3];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[2] | BB_RANKS[4];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[3] | BB_RANKS[5];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[4] | BB_RANKS[6];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[5] | BB_RANKS[7];
-	BB_ADJIACTENT_RANKS[0] = BB_RANKS[6];
-	Coord coord;
-	for (coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
-		BB_ROOK_ATTACKS[coord] = BB_FILES[coord_file(coord)] ^
+	BB_ADJIACTENT_RANKS[1] = BB_RANKS[0] | BB_RANKS[2];
+	BB_ADJIACTENT_RANKS[2] = BB_RANKS[1] | BB_RANKS[3];
+	BB_ADJIACTENT_RANKS[3] = BB_RANKS[2] | BB_RANKS[4];
+	BB_ADJIACTENT_RANKS[4] = BB_RANKS[3] | BB_RANKS[5];
+	BB_ADJIACTENT_RANKS[5] = BB_RANKS[4] | BB_RANKS[6];
+	BB_ADJIACTENT_RANKS[6] = BB_RANKS[5] | BB_RANKS[7];
+	BB_ADJIACTENT_RANKS[7] = BB_RANKS[6];
+	for (Coord coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
+		uint64_t coord_mask = bb_coord(coord);
+		BB_ROOK_THREATS[coord] = BB_FILES[coord_file(coord)] ^
 			                     BB_RANKS[coord_rank(coord)];
-		BB_KNIGHT_ATTACKS[coord] = ((coord <<  6) &
+		BB_KNIGHT_THREATS[coord] = ((bb_coord(coord) << 6) &
 				                    BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		              			   ((coord >>  6) &
+		              			   ((bb_coord(coord) >>  6) &
 									BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		              			   ((coord << 15) &
+		              			   ((bb_coord(coord) << 15) &
 									BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		              			   ((coord >> 15) &
+		              			   ((bb_coord(coord) >> 15) &
 									BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		              			   ((coord << 17) &
+		              			   ((bb_coord(coord) << 17) &
 									BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		              			   ((coord >> 17) &
+		              			   ((bb_coord(coord) >> 17) &
 									BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		              			   ((coord << 10) &
+		              			   ((bb_coord(coord) << 10) &
 									BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		              			   ((coord >> 10) &
+		              			   ((bb_coord(coord) >> 10) &
 									BB_ADJIACTENT_RANKS[coord_file(coord)]);
-		BB_ROOK_ATTACKS[coord] = bb_diagonal_main(coord) ^
-			                     bb_diagonal_anti(coord);
-		BB_KING_ATTACKS[coord] = ((BB_FILES[coord_file(coord)] |
+		BB_BISHOP_THREATS[coord] = bb_diagonals(coord) ^ bb_coord(coord);
+		BB_KING_THREATS[coord] = coord ^
+								 ((BB_FILES[coord_file(coord)] |
 				                   BB_ADJIACTENT_FILES[coord_file(coord)]) &
 		                          (BB_RANKS[coord_rank(coord)] |
-				                   BB_ADJIACTENT_RANKS[coord_rank(coord)])) ^
-								 coord;
+				                   BB_ADJIACTENT_RANKS[coord_rank(coord)]));
 	}
 }
 
 uint64_t
+bb_coord(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return (uint64_t)(1) << (uint64_t)(coord);
+}
+
+uint64_t
 bb_file(Coord coord) {
+	assert(coord_is_in_bounds(coord));
 	return BB_FILES[coord_file(coord)];
 }
 
 uint64_t
 bb_rank(Coord coord) {
+	assert(coord_is_in_bounds(coord));
 	return BB_RANKS[coord_rank(coord)];
 }
 
 uint64_t
-bb_diagonal_main(Coord coord) {
-	return BB_DIAGONALS_MAIN[7 + coord_rank(coord) - coord_file(coord)];
+bb_diagonals(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return BB_DIAGONALS[7 + coord_rank(coord) - coord_file(coord)] |
+		   BB_ANTI_DIAGONALS[coord_rank(coord) + coord_file(coord)];
 }
 
 uint64_t
-bb_diagonal_anti(Coord coord) {
-	return BB_DIAGONALS_ANTI[coord_file(coord) + coord_rank(coord)];
+bb_ray(Coord coord_0, Coord coord_1, enum Dir dir) {
+	assert(coord_is_in_bounds(coord_0));
+	assert(coord_is_in_bounds(coord_1));
+	assert(dir_from_to(coord_0, coord_1) == dir);
+	assert(dir != DIR_NONE);
+	uint64_t (*dir_mask[])(Coord coord) = {
+		&bb_rank,
+		&bb_file,
+		&bb_diagonals,
+	};
+	return (coord_0 - 1) & (coord_1 - 1) & dir_mask[dir](coord_0);
 }
 
 uint64_t
-bb_rook_attacks(Coord coord) {
-	return BB_ROOK_ATTACKS[coord];
+bb_rook_threats(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return BB_ROOK_THREATS[coord];
 }
 
 uint64_t
-bb_knight_attacks(Coord coord) {
-	return BB_KNIGHT_ATTACKS[coord];
+bb_knight_threats(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return BB_KNIGHT_THREATS[coord];
 }
 
 uint64_t
-bb_bishop_attacks(Coord coord) {
-	return BB_BISHOP_ATTACKS[coord];
+bb_bishop_threats(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return BB_BISHOP_THREATS[coord];
 }
 
 uint64_t
-bb_king_attacks(Coord coord) {
-	return BB_KING_ATTACKS[coord];
+bb_king_threats(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return BB_KING_THREATS[coord];
 }
 
 uint64_t
-bb_queen_attacks(Coord coord) {
-	return bb_rook_attacks(coord) | bb_bishop_attacks(coord);
-}
-
-uint64_t
-bb_pawn_moves(Coord coord, enum Color color) {
-	return color ? coord - BOARD_NUM_SQUARES : coord + BOARD_NUM_SQUARES;
+bb_queen_threats(Coord coord) {
+	assert(coord_is_in_bounds(coord));
+	return bb_rook_threats(coord) | bb_bishop_threats(coord);
 }

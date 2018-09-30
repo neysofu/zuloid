@@ -1,4 +1,3 @@
-#include <stdbool.h>
 #include <stdlib.h>
 #include <sys/time.h>
 #include "clock.h"
@@ -68,7 +67,7 @@ clock_start(struct Clock *clock) {
 	return clock->start_timestamp_msec + clock->time_available_msec;
 }
 
-bool
+uint64_t
 clock_stop(struct Clock *clock) {
 	uint64_t time_elapsed_msec = util_timestamp_msec() - clock->start_timestamp_msec;
 	clock->time_available_msec -= time_elapsed_msec;

@@ -3,16 +3,16 @@
 #include "globals.h"
 #include "utils.h"
 
-size_t PAGE_SIZE;
-
 void
 globals_init(void) {
-	static bool init = false;
-	if (init) {
+	static bool flag = false;
+	if (flag) {
 		return;
 	} else {
-		init = true;
+		flag = true;
 	}
 	bb_init();
 	PAGE_SIZE = util_page_size();
 }
+
+size_t PAGE_SIZE;

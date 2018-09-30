@@ -6,5 +6,5 @@ C_FLAGS = -g   -std=gnu99
 
 C_DEFINES = 
 
-C_INCLUDES = -I/Users/pippoc/Z64C/lib 
+C_INCLUDES = -I/Users/pippoc/Z64C/lib -I/Users/pippoc/Z64C/app/engine/include 
 

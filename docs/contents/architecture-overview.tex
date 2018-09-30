@@ -1,0 +1,74 @@
+\chapter{Architecture overview}
+\section{Board representation}
+
+Hundreds of programmers in the history of computer chess have long debated on
+the optimal data structure to store chess positions in memory and there are
+several alternatives to choose from. The optimal choice of board representation
+must satisfy these requirements:
+
+\begin{enumerate}
+\item Compactness. Chess programs have a need to store thousands of chess
+positions in memory, so it is mandatory not to occupy unnecessary memory.
+\item Access to useful information and speed. Even the most compact board
+representation of them all would be of little use if it doesn't store data in a
+fast way. An admittely extreme example of this is a compressed data structure.
+\end{enumerate}
+
+These constraints leave bitboards as the only sane option, possibly variations
+of.
+The board representation used by Z64C is only 58 bytes wide and fits comfortably
+in a single cache line of 64 bytes. This ensures optimal performance and
+minimizes TLB misses.
+
+* location of each piece indexed by piece ID,
+* game state information,
+* occupancy bitboard,
+* piece bitboard,
+
+\section{Move generation}
+
+\section{Transpositions table}
+Z64C uses MCTS to look deeper and deeper into lines and tactics, but uses its
+own version of the original algorithm which tries to maximise cache usage and
+streams data efficiently to GPU. As we can't remove GPU/CPU communication
+overhead, we can only resort to smarter algorithms, such that either of the two
+always has something to do and never has to wait for the other. Designing a good
+memory layout to the search table is the first step in this direction.
+
+Z64C search trees are a collection of memory chuncks, all of the same size. This
+size is page aligned for maximum performance and by default is 4kB. Each of
+these chuncks stores a fixed number of search nodes with the following
+information:
+
+* Children's weights, so that sampling is easy and local to one node only.
+* Chess position using bitboards.
+* Stats about predictions for that particular node.
+
+The key to making Z64C lies actually more on search than evaluation, because
+search takes advantage of many heuristcs that other engines don't have. So I
+need an algorithm that, by staying in the CPU and with no cache misses, it has a
+good prediction of the best nodes to search next.
+
+When pruning the search table after making a move, Z64C should take on the
+opportunity to shuffle things around and improve data locality. Also, contrary
+to what MCTS does, it doesn't need to start samling directly on top.
+
+I would like to experiment an open-addressing storing method for moves, such
+that the space used to store moves is very small. Advantages:
+
+* Reduced storage
+
+\section{Z64C as a server}
+
+The UCI was designed in November 2000 and has the merit of lowering the entry
+barrier to graphical computer chess. It has several limitations though:
+
+\begin{enumerate}
+\item Internal inconsistency.
+\item Remote Procedure Call via stdin.
+\end{enumerate}
+
+Because of these reasons, Z64C implements a different protocol based on network
+RPC.
+
+\section{Testing metodologies}

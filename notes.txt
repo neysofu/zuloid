@@ -31,22 +31,26 @@ several design choice:
 ON BOARD REPRESENTATION
 =======================
 
-Z64C uses a board representation that strikes a good balance between
-compactness, speed, and ease of use. Programming it should be easy and simple.
-A single file, bitboards.h, will contain many primitives useful for programming
-a simple AND based move generator. The chess position stores:
-
-* location of each piece indexed by piece ID,
-* game state information,
-* occupancy bitboard,
-* piece bitboard,
-
-* Pawn attacks
-* Knight attacks
-* King attacks
-
 ON THE SEARCH TABLE
 ===================
+
+How to sample from a discete probability distribution:
+
+For example, I have a biased die with:
+
+1. 0.2
+2. 0.8
+
+1. has 0.2 left and 0.8 right.
+2. has 0.2 right and 0.8 left.
+
+I basically want to converge to minimax as fast as possible and using little
+memory. So the best mechanism is MCTS, but I can't just pretend like that is the
+best way to do it. Actually select and expand, select and expand is extremely
+slowly from an architecture point of view and it would destroy the cache.
+Instead, I develop a set of boosters that have a reusable architecture and I can
+decide what to use according to hardware. Some are to be used for CPUS, others
+when there's little ram, excetera.
 
 Z64C uses MCTS to look deeper and deeper into lines and tactics, but uses its
 own version of the original algorithm which tries to maximise cache usage and

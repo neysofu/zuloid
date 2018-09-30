@@ -6,7 +6,7 @@ set (CMAKE_CXX_STANDARD 14)
 set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -Wall -Wextra -ggdb -g")
 set (CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -Wall -O3 -frename-registers -funroll-loops -flto")
 
-set (INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
+set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 
 # xxHash
 set (XXHASH_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/xxHash/")
@@ -21,20 +21,22 @@ add_library (CATCH2 INTERFACE)
 target_sources (CATCH2 INTERFACE ${CATCH2_SRC})
 
 # Z64C_LIB
-file (GLOB Z64C_SRC "app/engine/src/*.h" "app/engine/src/*.c")
+set (Z64C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app/engine/include/")
+file (GLOB_RECURSE Z64C_SRC "${Z64C_INCLUDE_DIR}*.h" "app/engine/src/*.c")
 add_library (Z64C_LIB STATIC ${Z64C_SRC})
-target_include_directories (Z64C_LIB PUBLIC ${INCLUDE_DIR})
+target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR})
+target_include_directories (Z64C_LIB PUBLIC ${Z64C_INCLUDE_DIR})
 target_link_libraries(Z64C_LIB XXHASH)
 
 # Z64C
 add_executable (Z64C ${Z64C_SRC})
-target_include_directories (Z64C PUBLIC ${INCLUDE_DIR})
 target_link_libraries (Z64C Z64C_LIB)
 
 # Z64C_TEST
-file (GLOB Z64C_TEST_SRC "app/engine/test/*.cpp")
+file (GLOB_RECURSE Z64C_TEST_SRC "app/engine/test/*.cpp")
 add_executable (Z64C_TEST ${Z64C_TEST_SRC})
-target_include_directories (Z64C_TEST PUBLIC "app/engine/src/" ${INCLUDE_DIR} ${CATCH2_DIR})
+target_include_directories (Z64C_TEST PUBLIC ${Z64C_INCLUDE_DIR})
 target_link_libraries (Z64C_TEST Z64C_LIB)
+target_link_libraries (Z64C_TEST CATCH2)
 enable_testing ()
 add_test (NAME Z64C COMMAND Z64C_TEST)

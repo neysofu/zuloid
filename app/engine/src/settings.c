@@ -1,65 +1,153 @@
+#include <assert.h>
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
+#include "chess/color.h"
 #include "clock.h"
-#include "color.h"
 #include "settings.h"
+#include "switches.h"
 #include "utils.h"
+#include "xxHash.h"
 
-struct Settings
-settings_default(void) {
-	struct Settings settings = {
-		.debug = false,
-		.ponder = true,
-		.train = false,
-		.use_time_control = true,
-		.port = SWITCH_PORT,
-		.max_cache_size_in_bytes = SWITCH_MAX_CACHE_SIZE_IN_BYTES,
-		.move_selection_noise = 0.005,
-		.resign_rate = 0.08,
-		.time_control = {
-			clock_new_blitz(),
-			clock_new_blitz(),
-		},
-		.max_depth = 0,
-		.max_num_nodes = 0,
-	};
-	return settings;
+void
+settings_default(struct Settings *settings) {
+	assert(settings);
+	clock_drop(settings->time_control[0]);
+	clock_drop(settings->time_control[1]);
+	settings->debug = false;
+	settings->ponder = true;
+	settings->train = false;
+	settings->use_time_control = true;
+	settings->port = SWITCH_PORT;
+	settings->max_cache_size = SWITCH_MAX_CACHE_SIZE;
+	settings->move_selection_noise = 0.005;
+	settings->resoluteness = 0.5;
+	settings->selectivity = 0.005;
+	settings->resign_rate = 0.08;
+	settings->time_control[0] = clock_new_blitz();
+	settings->time_control[1] = clock_new_blitz();
+	settings->max_depth = 0;
+	settings->max_num_nodes = 0;
+	settings->buffer = malloc(20);
 };
 
 void
 settings_print(struct Settings *settings) {
-	printf("Debug: %s\n",
-		   settings->debug ? "yes" : "no");
-	printf("Think during opponent's time: %s\n",
-		   settings->ponder ? "yes" : "no");
-	printf("Train heuristics during play: %s\n",
-		   settings->train ? "yes" : "no");
-	printf("Use time control: %s\n",
-		   settings->use_time_control ? "yes" : "no");
-	printf("Network port in use: %lu\n",
-		   settings->port);
-	printf("Maximum size of the cache table (bytes): %s\n",
-		   settings->max_cache_size_in_bytes);
-	printf("Noise applied during move selection: %f\n",
-		   settings->move_selection_noise);
-	printf("Resign rate: %f\n",
-		   settings->resign_rate);
-	printf("White's thinking time (msec): %d\n",
-		   settings->time_control[COLOR_WHITE]->time_available_msec);
-	printf("White's increment (msec): %d\n",
-		   settings->time_control[COLOR_WHITE]->time_increment_msec);
-	printf("White's Bronstein delay (msec): %d\n",
-		   settings->time_control[COLOR_WHITE]->time_delay_msec);
-	printf("Black's thinking time (msec): %d\n",
-		   settings->time_control[COLOR_BLACK]->time_available_msec);
-	printf("Black's increment (msec): %d\n",
-		   settings->time_control[COLOR_BLACK]->time_increment_msec);
-	printf("Black's Bronstein delay (msec): %d\n",
-		   settings->time_control[COLOR_BLACK]->time_delay_msec);
-	printf("Maximum depth (plies): %d\n",
-		   settings->max_depth);
-	printf("Maximum num. of nodes: %llu\n",
-		   settings->max_num_nodes);
+	assert(settings);
+	printf("debug: %d\n", settings->debug);
+	printf("ponder: %d\n", settings->ponder);
+	printf("train: %d\n", settings->train);
+	printf("use-time-control: %d\n", settings->use_time_control);
+	printf("port: %d\n", settings->port);
+	printf("maximum-cache-size: %zu\n", settings->max_cache_size);
+	printf("move-selection-noise: %.3f\n", settings->move_selection_noise);
+	printf("resign-rate: %.3f\n", settings->resign_rate);
+	//printf("white-time-control",
+	//	   settings->time_control[COLOR_WHITE]->time_available_msec);
+	//printf("White's increment (msec): %d\n",
+	//	   settings->time_control[COLOR_WHITE]->time_increment_msec);
+	//printf("White's Bronstein delay (msec): %d\n",
+	//	   settings->time_control[COLOR_WHITE]->time_delay_msec);
+	//printf("Black's thinking time (msec): %d\n",
+	//	   settings->time_control[COLOR_BLACK]->time_available_msec);
+	//printf("Black's increment (msec): %d\n",
+	//	   settings->time_control[COLOR_BLACK]->time_increment_msec);
+	//printf("Black's Bronstein delay (msec): %d\n",
+	//	   settings->time_control[COLOR_BLACK]->time_delay_msec);
+	printf("max-depth: %zu\n", settings->max_depth);
+	printf("max-num-nodes: %zu\n", settings->max_num_nodes);
+}
+
+char *
+settings_value(struct Settings *settings, char *name) {
+	assert(settings);
+	assert(name);
+	size_t i;
+	for (i = 0; name[i]; i++) {
+		name[i] = tolower(name[i]);
+	}
+	switch (XXH64(name, i, 0)) {
+		case 0x01fd51a2a6f9cc2f:
+			sprintf(settings->buffer, "%d", settings->debug);
+			break;
+		case 0x0a6f394a3987568a:
+			sprintf(settings->buffer, "%d", settings->ponder);
+			break;
+		case 0xd18f9b6611eb8e16:
+			sprintf(settings->buffer, "%d", settings->train);
+			break;
+		case 0x74e00972f2209886: // use-time-control
+			// TODO
+			break;
+		case 0x1fa9e1c58f24f03b:
+			sprintf(settings->buffer, "%d", settings->debug);
+			break;
+		case 0x498733265ad1a88e:
+			sprintf(settings->buffer, "%zu", settings->max_cache_size);
+			// TODO: units (GiB, ecc.).
+			break;
+		case 0x866f5b204efc0f22:
+			sprintf(settings->buffer, "%.3f", settings->move_selection_noise);
+			break;
+		case 0xf291148a28ff30db:
+			sprintf(settings->buffer, "%.3f", settings->resign_rate);
+			break;
+		case 0x20e46ecc0c1029f5:
+			sprintf(settings->buffer, "%.3f", settings->resoluteness);
+			break;
+		case 0x92cfb5ce943dee0d:
+			sprintf(settings->buffer, "%.3f", settings->selectivity);
+			break;
+		default:
+			return "Invalid field.";
+	}
+	return settings->buffer;
+}
+
+char *
+settings_set_value(struct Settings *settings, char *name, char *value) {
+	assert(settings);
+	assert(name);
+	assert(value);
+	size_t i;
+	for (i = 0; name[i]; i++) {
+		name[i] = tolower(name[i]);
+	}
+	switch (XXH64(name, i, 0)) {
+		case 0x01fd51a2a6f9cc2f:
+			settings->debug = atof(value);
+			break;
+		case 0x0a6f394a3987568a:
+			settings->ponder = atof(value);
+			break;
+		case 0xd18f9b6611eb8e16:
+			settings->train = atof(value);
+			break;
+		case 0x74e00972f2209886: // use-time-control
+			// TODO
+			break;
+		case 0x1fa9e1c58f24f03b:
+			settings->debug = atoi(value);
+			break;
+		case 0x498733265ad1a88e:
+			settings->max_cache_size = atoi(value);
+			// TODO: units (GiB, ecc.).
+			break;
+		case 0x866f5b204efc0f22:
+			settings->move_selection_noise = atof(value);
+			break;
+		case 0xf291148a28ff30db:
+			settings->resign_rate = atof(value);
+			break;
+		case 0x20e46ecc0c1029f5:
+			settings->resoluteness = atof(value);
+			break;
+		case 0x92cfb5ce943dee0d:
+			settings->selectivity = atof(value);
+			break;
+		default:
+			return "Invalid field.";
+	}
+	return NULL;
 }

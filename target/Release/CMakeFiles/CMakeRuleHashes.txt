@@ -1,2 +1,0 @@
-# Hashes of file build rules.
-f69c8fa820df16d6d286e8aa77e51e11 ../../lib/hiredis/libhiredis.a

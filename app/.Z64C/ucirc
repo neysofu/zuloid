@@ -1,8 +1,0 @@
-# This file contains UCI commands that get run every time Z64C starts. You can
-# use it to change the default values of internal parameters.
-
-print welcome
-
-SET selectivity 0.12
-SET resoluteness 0.25
-SET resoluteness 0.25

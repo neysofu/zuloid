@@ -1,7 +1,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <string>
-#include "catch.hpp"
+#include "Catch2/single_include/catch.hpp"
 extern "C" {
 #include <time.h>
 #include <unistd.h>
@@ -33,7 +33,7 @@ TEST_CASE("'util_home_dir' returns an existing directory with read and write pri
 }
 
 TEST_CASE("'util_timestamp_msec'.") {
-	CHECK(MAX(time() - util_timestamp_msec() % 1000, 1) == 1);
+	CHECK(MAX(time() - util_timestamp_msec() / 1000, 1) == 1);
 }
 
 TEST_CASE("'util_is_stdin_empty' works.") {

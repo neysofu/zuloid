@@ -1,0 +1,22 @@
+\chapter{On performance}
+
+Performance is central to the strenght of chess programs. Other factors being
+equal, faster software running faster will be able to search deeper and consider
+more lines, which sometimes does win a game. Let's consider the perfect
+evaluation function $\delta$ and its approximation $\omega$.
+
+\section{Clustering}
+\section{Scaling vertically}
+\section{Compiler optimizations and low-level details}
+
+Compiler optimizations play a huge role in the performance of C programs. Z64C
+benefits from the following optimizations:
+
+profile guided optimization
+% pointer aliasing
+% Osize
+% -march=native
+% -flto
+% -frename-registers
+% __builtin_prefetch
+% hot and cold

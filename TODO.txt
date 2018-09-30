@@ -1,0 +1,5 @@
+* Replace stdin/stdout communication with network RPC.
+  The new protocol should be based on TCP a la Redis with MessagePack
+  serialization.
+* Write a UCEA to UCI converter.
+* Write the user manual.
