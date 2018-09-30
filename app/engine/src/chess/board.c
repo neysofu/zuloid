@@ -101,7 +101,7 @@ void
 board_print(struct Board *board) {
 	printf("    A B C D E F G H\n");
 	printf("  ╔═════════════════╗\n");
-	for (Rank rank = BOARD_SIDE_LENGTH; rank > 0; rank--) {
+	for (Rank rank = BOARD_SIDE_LENGTH - 1; rank >= 0; rank--) {
 		printf("%c ║ ", rank_to_char(rank));
 		for (File file = 0; file < BOARD_SIDE_LENGTH; file++) {
 			putchar(board_square_to_char(board, coord_new(file, rank), '.'));
