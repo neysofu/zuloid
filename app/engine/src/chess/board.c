@@ -12,28 +12,36 @@
 #include "chess/move.h"
 #include "utils.h"
 
-#define BB_960_HELPER 0x100000000000001
+#define BB_960_HELPER 0x0100000000000001
 
 void
 board_setup_960(struct Board *board) {
-	File available_files[8] = {0, 1, 2, 3, 4, 5, 6, 7};
-	File file;
-	file = available_files[(rand() % 4) * 2];
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << file;
-	available_files[file] = available_files[7];
-	file = available_files[(rand() % 4) * 2 + 1];
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << file;
-	available_files[file] = available_files[6];
-	file = available_files[rand() % 6];
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << file;
-	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << file;
-	available_files[file] = available_files[5];
-	file = available_files[rand() % 5];
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << file;
-	available_files[file] = available_files[4];
-	file = available_files[rand() % 4];
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << file;
-	available_files[file] = available_files[3];
+	*board = BOARD_STARTPOS;
+	board->bb_pieces[PIECE_KNIGHT] = 0;
+	board->bb_pieces[PIECE_BISHOP] = 0;
+	board->bb_pieces[PIECE_ROOK] = 0;
+	board->bb_pieces[PIECE_KING] = 0;
+	File available_files[BOARD_SIDE_LENGTH] = {0, 1, 2, 3, 4, 5, 6, 7};
+	size_t file_i;
+	// Bishops
+	file_i = (rand() % 4) * 2;
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
+	available_files[file_i] = available_files[7];
+	file_i = (rand() % 4) * 2 + 1;
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
+	available_files[file_i] = available_files[6];
+	// Queen
+	file_i = rand() % 6;
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
+	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[file_i];
+	available_files[file_i] = available_files[5];
+	// Knights
+	file_i = rand() % 5;
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
+	available_files[file_i] = available_files[4];
+	file_i = rand() % 4;
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
+	available_files[file_i] = available_files[3];
 	// Sort the remaining three elements.
 	if (available_files[0] > available_files[2]) {
 		available_files[7] = available_files[0];
