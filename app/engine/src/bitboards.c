@@ -5,6 +5,7 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
+#include "utils.h"
 
 uint64_t BB_ADJIACTENT_FILES[BOARD_SIDE_LENGTH] = {
 	0x0202020202020202,
@@ -135,18 +136,26 @@ bb_ray(Move move) {
 	enum Dir dir = move_dir(move);
 	assert(coord_is_in_bounds(source));
 	assert(coord_is_in_bounds(target));
-	assert(dir_from_to(source, target) == dir);
-	assert(dir != DIR_NONE);
+	assert(dir == DIR_HORIZONTAL ||
+		   dir == DIR_VERTICAL ||
+		   dir == DIR_DIAGONAL);
+	uint64_t ray = (bb_coord(source) - 1) ^ (bb_coord(target) - 1);
 	switch (dir) {
 		case DIR_HORIZONTAL:
-			return (source - 1) & (target - 1) & bb_rank(source);
+			ray &= bb_rank(source);
+			break;
 		case DIR_VERTICAL:
-			return (source - 1) & (target - 1) & bb_file(source);
+			ray &= bb_file(source);
+			break;
 		case DIR_DIAGONAL:
-			return (source - 1) & (target - 1) & bb_diagonals(source);
+			ray &= bb_diagonals(source);
+			break;
 		default:
-			return 0;
+			assert(false);
 	}
+	// Clear lowest set bit.
+	ray &= ray - 1;
+	return ray;
 }
 
 uint64_t
