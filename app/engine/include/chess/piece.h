@@ -10,8 +10,8 @@ enum Piece {
 	PIECE_BISHOP = 2,
 	PIECE_ROOK = 3,
 	PIECE_KING = 4,
-	PIECE_QUEEN = 5,
-	PIECE_NONE = 6,
+	PIECE_NONE = 5,
+	PIECE_QUEEN = 6,
 };
 
 /// @brief Returns the lowercase letter that FEN uses to represent @p piece.

@@ -1,9 +1,11 @@
+#include <assert.h>
 #include <string.h>
 #include "chess/piece.h"
 
 char
 piece_to_char(enum Piece piece) {
-	return "pnbrkq-"[piece];
+	assert(piece != PIECE_NONE);
+	return "pnbrk.q"[piece];
 }
 
 enum Piece
