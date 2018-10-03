@@ -23,26 +23,27 @@ board_setup_960(struct Board *board) {
 	board->bb_pieces[PIECE_KING] = 0;
 	File available_files[BOARD_SIDE_LENGTH] = {0, 1, 2, 3, 4, 5, 6, 7};
 	size_t file_i;
-	// Bishops
+	// Bishops.
 	file_i = (rand() % 4) * 2;
 	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
 	available_files[file_i] = available_files[7];
 	file_i = (rand() % 4) * 2 + 1;
 	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
 	available_files[file_i] = available_files[6];
-	// Queen
+	// Queen.
 	file_i = rand() % 6;
 	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
 	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[file_i];
 	available_files[file_i] = available_files[5];
-	// Knights
+	// Knights.
 	file_i = rand() % 5;
 	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
 	available_files[file_i] = available_files[4];
 	file_i = rand() % 4;
 	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
 	available_files[file_i] = available_files[3];
-	// Sort the remaining three elements.
+	// Sorts the remaining three elements because the king is always placed
+	// between the two rooks.
 	if (available_files[0] > available_files[2]) {
 		available_files[7] = available_files[0];
 		available_files[0] = available_files[2];
@@ -107,8 +108,8 @@ board_color_at(struct Board *board, Coord coord) {
 
 void
 board_print(struct Board *board) {
-	printf("    A B C D E F G H\n");
-	printf("  ╔═════════════════╗\n");
+	printf("    A B C D E F G H\n"
+	       "  ╔═════════════════╗\n");
 	Rank rank = BOARD_SIDE_LENGTH;
 	while (rank-- > 0) {
 		printf("%c ║ ", rank_to_char(rank));
@@ -118,8 +119,8 @@ board_print(struct Board *board) {
 		}
 		printf("║ %c\n", rank_to_char(rank));
 	}
-	printf("  ╚═════════════════╝\n");
-	printf("    A B C D E F G H\n");
+	printf("  ╚═════════════════╝\n"
+	       "    A B C D E F G H\n");
 }
 
 enum Color
