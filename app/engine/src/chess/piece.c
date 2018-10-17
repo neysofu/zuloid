@@ -1,15 +1,17 @@
-#include <assert.h>
-#include <string.h>
 #include "chess/piece.h"
+#include <assert.h>
+#include <ctype.h>
 
 char
-piece_to_char(enum Piece piece) {
+piece_to_char(enum Piece piece)
+{
 	assert(piece != PIECE_NONE);
 	return "pnbrk.q"[piece];
 }
 
 enum Piece
-char_to_piece(char c) {
+char_to_piece(char c)
+{
 	switch (tolower(c)) {
 		case 'p':
 			return PIECE_PAWN;

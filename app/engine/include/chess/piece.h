@@ -4,7 +4,8 @@
 #pragma once
 
 /// @brief One 3-bit code for each (colorless) type of chess piece.
-enum Piece {
+enum Piece
+{
 	PIECE_PAWN = 0,
 	PIECE_KNIGHT = 1,
 	PIECE_BISHOP = 2,

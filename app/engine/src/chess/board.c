@@ -1,63 +1,83 @@
+#include "chess/board.h"
+#include "bitboards.h"
+#include "chess/color.h"
+#include "chess/coord.h"
+#include "chess/move.h"
+#include "log.h"
+#include "utils.h"
 #include <assert.h>
+#include <stdbool.h>
 #include <stddef.h>
 #include <stdint.h>
-#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "bitboards.h"
-#include "chess/board.h"
-#include "chess/coord.h"
-#include "chess/color.h"
-#include "chess/move.h"
-#include "utils.h"
 
 #define BB_960_HELPER 0x0100000000000001
 
 void
-board_setup_960(struct Board *board) {
+board_setup_960(struct Board* board, int16_t seed)
+{
+	// https://en.wikipedia.org/wiki/Chess960_numbering_scheme#Direct_derivation
 	*board = BOARD_STARTPOS;
+	// Erase pieces.
 	board->bb_pieces[PIECE_KNIGHT] = 0;
 	board->bb_pieces[PIECE_BISHOP] = 0;
 	board->bb_pieces[PIECE_ROOK] = 0;
 	board->bb_pieces[PIECE_KING] = 0;
-	File available_files[BOARD_SIDE_LENGTH] = {0, 1, 2, 3, 4, 5, 6, 7};
-	size_t file_i;
+	File available_files[BOARD_SIDE_LENGTH] = { 0, 1, 2, 3, 4, 5, 6, 7 };
+	div_t permutations;
+	// Seeds larger than 959 trigger random setup.
+	permutations.quot = (seed < 960 ? seed : rand()) % 960;
+	debug_printf("The Chess960 starting position is %d.\n", permutations.quot);
 	// Bishops.
-	file_i = (rand() % 4) * 2;
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
-	available_files[file_i] = available_files[7];
-	file_i = (rand() % 4) * 2 + 1;
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
-	available_files[file_i] = available_files[6];
+	assert(permutations.quot < 960);
+	permutations = div(permutations.quot, 4);
+	permutations.rem = (permutations.rem << 1) + 1;
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
+	                                  << available_files[permutations.rem];
+	available_files[permutations.rem] = available_files[7];
+	assert(permutations.quot < 240);
+	permutations = div(permutations.quot, 4);
+	permutations.rem <<= 1;
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
+	                                  << available_files[permutations.rem];
+	available_files[permutations.rem] = available_files[6];
 	// Queen.
-	file_i = rand() % 6;
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[file_i];
-	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[file_i];
-	available_files[file_i] = available_files[5];
+	assert(permutations.quot < 60);
+	permutations = div(permutations.quot, 6);
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
+	                                  << available_files[permutations.rem];
+	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER
+	                                << available_files[permutations.rem];
+	available_files[permutations.rem] = available_files[5];
 	// Knights.
-	file_i = rand() % 5;
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
-	available_files[file_i] = available_files[4];
-	file_i = rand() % 4;
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[file_i];
-	available_files[file_i] = available_files[3];
-	// Sorts the remaining three elements because the king is always placed
-	// between the two rooks.
-	if (available_files[0] > available_files[2]) {
-		available_files[7] = available_files[0];
-		available_files[0] = available_files[2];
-		available_files[2] = available_files[7];
-	}
+	assert(permutations.quot < 10);
+	int_fast8_t knight_2_permutations[10] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 3 };
+	int_fast8_t knight_1_permutations[10] = { 1, 2, 3, 4, 2, 3, 4, 3, 4, 4 };
+	permutations.rem = knight_1_permutations[permutations.quot];
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER
+	                                  << available_files[permutations.rem];
+	available_files[permutations.rem] = available_files[4];
+	permutations.rem = knight_2_permutations[permutations.quot];
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER
+	                                  << available_files[permutations.rem];
+	available_files[permutations.rem] = available_files[3];
+	// Unrolled bubble sort.
 	if (available_files[0] > available_files[1]) {
-		available_files[7] = available_files[0];
+		available_files[3] = available_files[0];
 		available_files[0] = available_files[1];
-		available_files[1] = available_files[7];
+		available_files[1] = available_files[3];
 	}
 	if (available_files[1] > available_files[2]) {
-		available_files[7] = available_files[1];
+		available_files[3] = available_files[1];
 		available_files[1] = available_files[2];
-		available_files[2] = available_files[7];
+		available_files[2] = available_files[3];
+	}
+	if (available_files[0] > available_files[1]) {
+		available_files[3] = available_files[0];
+		available_files[0] = available_files[1];
+		available_files[1] = available_files[3];
 	}
 	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[0];
 	board->bb_pieces[PIECE_KING] |= BB_960_HELPER << available_files[1];
@@ -65,21 +85,21 @@ board_setup_960(struct Board *board) {
 }
 
 enum Piece
-board_piece_at(struct Board *board, Coord coord) {
-	uint64_t bb = bb_coord(coord);
-	if (board->bb_pieces[PIECE_PAWN] & bb) {
+board_piece_at(struct Board* board, Coord coord)
+{
+	uint64_t mask = bb_coord(coord);
+	if (board->bb_pieces[PIECE_PAWN] & mask) {
 		return PIECE_PAWN;
-	} else if (board->bb_pieces[PIECE_KNIGHT] & bb) {
+	} else if (board->bb_pieces[PIECE_KNIGHT] & mask) {
 		return PIECE_KNIGHT;
-	} else if (board->bb_pieces[PIECE_BISHOP] &
-			   board->bb_pieces[PIECE_ROOK] &
-			   bb) {
+	} else if (board->bb_pieces[PIECE_BISHOP] & board->bb_pieces[PIECE_ROOK] &
+	           mask) {
 		return PIECE_QUEEN;
-	} else if (board->bb_pieces[PIECE_BISHOP] & bb) {
+	} else if (board->bb_pieces[PIECE_BISHOP] & mask) {
 		return PIECE_BISHOP;
-	} else if (board->bb_pieces[PIECE_ROOK] & bb) {
+	} else if (board->bb_pieces[PIECE_ROOK] & mask) {
 		return PIECE_ROOK;
-	} else if (board->bb_pieces[PIECE_KING] & bb) {
+	} else if (board->bb_pieces[PIECE_KING] & mask) {
 		return PIECE_KING;
 	} else {
 		return PIECE_NONE;
@@ -87,7 +107,8 @@ board_piece_at(struct Board *board, Coord coord) {
 }
 
 char
-board_square_to_char(struct Board *board, Coord coord, char empty_square) {
+board_square_to_char(struct Board* board, Coord coord, char empty_square)
+{
 	uint64_t bb = bb_coord(coord);
 	if (board->bb_occupancy & bb) {
 		enum Piece piece = board_piece_at(board, coord);
@@ -102,20 +123,21 @@ board_square_to_char(struct Board *board, Coord coord, char empty_square) {
 }
 
 enum Color
-board_color_at(struct Board *board, Coord coord) {
-	return board->bb_colors & bb_coord(coord) ? COLOR_BLACK : COLOR_WHITE;
+board_color_at(struct Board* board, Coord coord)
+{
+	return MIN(board->bb_colors & bb_coord(coord), COLOR_BLACK);
 }
 
 void
-board_print(struct Board *board) {
+board_print(struct Board* board)
+{
 	printf("    A B C D E F G H\n"
 	       "  ╔═════════════════╗\n");
 	Rank rank = BOARD_SIDE_LENGTH;
 	while (rank-- > 0) {
 		printf("%c ║ ", rank_to_char(rank));
 		for (File file = 0; file < BOARD_SIDE_LENGTH; file++) {
-			putchar(board_square_to_char(board, coord_new(file, rank), '.'));
-			putchar(' ');
+			printf("%c ", board_square_to_char(board, coord_new(file, rank), '.'));
 		}
 		printf("║ %c\n", rank_to_char(rank));
 	}
@@ -124,51 +146,57 @@ board_print(struct Board *board) {
 }
 
 enum Color
-board_active_color(struct Board *board) {
+board_active_color(struct Board* board)
+{
 	return board->game_state >> GAME_STATE_ACTIVE_COLOR_OFFSET;
 }
 
 void
-board_toggle_active_color(struct Board *board) {
+board_toggle_active_color(struct Board* board)
+{
 	board->game_state ^= (1 << GAME_STATE_ACTIVE_COLOR_OFFSET);
 }
 
-
 size_t
-board_num_half_moves(struct Board *board) {
+board_num_half_moves(struct Board* board)
+{
 	return (board->game_state & GAME_STATE_NUM_HALF_MOVES) >> 8;
 }
 
 void
-board_increment_half_moves(struct Board *board) {
-	// FIXME
-	board->game_state &= (board_num_half_moves(board) + 1) << 8;
+board_increment_half_moves(struct Board* board)
+{
+	board->game_state += 1 << GAME_STATE_NUM_HALF_MOVES_OFFSET;
 }
 
 void
-board_reset_half_moves(struct Board *board) {
-	// FIXME
-	board->game_state &= !GAME_STATE_NUM_HALF_MOVES;
+board_reset_half_moves(struct Board* board)
+{
+	board->game_state &= ~GAME_STATE_NUM_HALF_MOVES;
 }
 
 int_fast8_t
-board_castling_rights(struct Board *board) {
+board_castling_rights(struct Board* board)
+{
 	return board->game_state >> 4 & 0xf;
 }
 
 bool
-board_en_passant_is_available(struct Board *board) {
-	return board->game_state & 0xff8f;
+board_en_passant_is_available(struct Board* board)
+{
+	return board->game_state & 0x8;
 }
 
 Coord
-board_en_passant_coord(struct Board *board) {
+board_en_passant_coord(struct Board* board)
+{
 	return bb_file(board->game_state & 0x7) &
-		   bb_rank(color_en_passant_rank(board_active_color(board)));
+	       bb_rank(color_en_passant_rank(board_active_color(board)));
 }
 
 size_t
-board_legal_moves(struct Board *board, Move *move) {
+board_legal_moves(struct Board* board, Move* move)
+{
 	return 1337; // TODO
 }
 
@@ -177,25 +205,27 @@ board_legal_moves(struct Board *board, Move *move) {
 const struct Board BOARD_STARTPOS = {
 	.bb_occupancy = 0xffff00000000ffff,
 	.bb_colors = 0xffffffff00000000,
-	.bb_pieces = {
-		0x00ff00000000ff00,
-		0x4200000000000042,
-		0x2c0000000000002c,
-		0x8900000000000089,
-		0x1000000000000010,
-	},
+	.bb_pieces =
+	  {
+	    0x00ff00000000ff00,
+	    0x4200000000000042,
+	    0x2c0000000000002c,
+	    0x8900000000000089,
+	    0x1000000000000010,
+	  },
 	.game_state = GAME_STATE_CASTLING_RIGHT_ALL,
 };
 
 const struct Board BOARD_NONE = {
 	.bb_occupancy = 0x150d80c4a13cee73,
 	.bb_colors = 0x05d8bdab3dc4614f,
-	.bb_pieces = {
-		0x19b0628a126d722e,
-		0xdaf6c76749348c8e,
-		0xdd117e1fd1cf0015,
-		0xc09a9b009ce7d6c0,
-		0xc9509da366a8e6a7,
-	},
+	.bb_pieces =
+	  {
+	    0x19b0628a126d722e,
+	    0xdaf6c76749348c8e,
+	    0xdd117e1fd1cf0015,
+	    0xc09a9b009ce7d6c0,
+	    0xc9509da366a8e6a7,
+	  },
 	.game_state = 0xf0,
 };

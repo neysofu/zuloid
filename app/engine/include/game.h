@@ -11,11 +11,12 @@
 
 #pragma once
 
-#include <stdlib.h>
 #include "chess/board.h"
 #include "chess/move.h"
+#include <stdlib.h>
 
-struct GameTag {
+struct GameTag
+{
 	char *name;
 	char *value;
 	struct GameTag *next;
@@ -23,7 +24,8 @@ struct GameTag {
 
 // @struct Game
 // @brief A container for game metainformation.
-struct Game {
+struct Game
+{
 	struct GameTag *tags;
 	size_t num_moves;
 	size_t moves_capacity;
@@ -37,7 +39,7 @@ game_new(void);
 
 // @brief Frees the game.
 void
-game_drop(struct Game *game);
+game_free(struct Game *game);
 
 /// @brief Adds a name/value tag to this game.
 ///

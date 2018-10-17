@@ -3,7 +3,7 @@
 
 #pragma once
 
-#define SWITCH_DEBUG 0
+#define SWITCH_DEBUG 1
 
 /// To choose the most performing GPU library on a certain system.
 #define SWITCH_BACKEND_AF 0
@@ -14,18 +14,13 @@
 /// models with unsupervised algorithms.
 #define SWITCH_TRAIN 0
 
-#define SWITCH_PORT 34290
-
-/// Turn this on to allow engine clustering and networking capabilities. Not
-/// supported yet.
-#define SWITCH_CLUSTER 0
-
 /// Place an upper limit to 'max_cache_size'.
 #define SWITCH_MAX_CACHE_SIZE 1E+9
 
-/// Change the default hashing function.
-#define SWITCH_HASH_XXH64 0
-#define SWITCH_HASH Z64C_SWITCH_HASH_XXH64
+/// Random search seed.
+#define SWITCH_SEED 0xf9f868077a5940cf
 
 /// Size of contigouos memory chunks in the transpositions table.
-#define SWITCH_TTABLE_FRAGMENT_SIZE (32 * 1024 * 1024)
+#define SWITCH_TTABLE_FRAGMENT_SIZE 16777216
+
+#define SWITCH_NUM_AVG_CANDIDATE_MOVES 32

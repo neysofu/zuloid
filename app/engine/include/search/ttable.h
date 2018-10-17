@@ -1,31 +1,43 @@
-/// @file ttable.h
-/// @brief In-memory transpositions table.
+/**
+ * @file ttable.h
+ * @brief In-memory transpositions table.
+ */
 
 #pragma once
 
-#include <stdint.h>
 #include "chess/board.h"
 #include "chess/move.h"
+#include "search/ttable_node.h"
+#include "switches.h"
+#include <stdint.h>
 
-// A transposition table can store a huge number of chess positions with
-// candidate moves and metadata. The internal memory layout is a hashed array
-// tree with Robin Hood open addressing. Memory fragments' size can be chosen to
-// fit into a single huge page to reduce TLB misses.
-// Some use cases require specific data to be stored along chess positions, so
-// transposition tables support cells of any size.
+/**
+ * It can store a huge number of chess positions and keep them
+ * sorted for quick access.
+ */
 struct TTable;
 
 struct TTable *
 ttable_new(void);
 
 void
-ttable_drop(struct TTable *ttable);
+ttable_free(struct TTable *ttable);
+
+struct TTableNode *
+ttable_get(struct TTable *ttable, struct Board *board);
 
 void
-ttable_clear_fragments(struct TTable *ttable);
+ttable_node_backpropagate(struct TTableNode *parent,
+                          struct TTableNode *child,
+                          bool *lock);
 
-void *
-ttable_ith_fragment(struct TTable *ttable, size_t i);
-
-void *
-ttable_element(struct TTable *ttable, struct Board *board);
+/**
+ * @brief The main search procedure.
+ * This nonblocking function puts into work every available thread for
+ * searching this position until:
+ * - told to stop by @p lock;
+ * - time is up;
+ * - a satisfying move is found.
+ */
+struct SController *
+ttable_search(struct TTable *ttable, struct Board *board);

@@ -3,14 +3,15 @@
 
 #pragma once
 
-#include <stdbool.h>
-#include <stdint.h>
 #include "chess/board.h"
 #include "chess/coord.h"
 #include "chess/dir.h"
 #include "chess/piece.h"
+#include <stdbool.h>
+#include <stdint.h>
 
 // A move from one square to another.
+// TODO: make it a struct.
 typedef uint32_t Move;
 
 // Creates a move from one square to another. 'promotion' is ignored if the move

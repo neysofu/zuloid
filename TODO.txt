@@ -3,3 +3,5 @@
   serialization.
 * Write a UCEA to UCI converter.
 * Write the user manual.
+* Multithreading.
+* Through testing.

@@ -1,0 +1,4 @@
+BasedOnStyle: Mozilla
+PointerAlignment: Right
+TabWidth: 2
+UseTab: ForIndentation

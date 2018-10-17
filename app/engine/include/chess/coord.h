@@ -25,6 +25,9 @@ typedef uint_fast8_t Coord;
 char
 file_to_char(File file);
 
+bool
+file_is_in_bounds(File file);
+
 /// Returns the file labelled with this letter, or FILE_NONE if none.
 ///
 /// @return The file labelled with the letter @c (either case), or @c FILE_NONE
@@ -44,6 +47,9 @@ char_to_file(char c);
 char
 rank_to_char(Rank rank);
 
+bool
+rank_is_in_bounds(Rank rank);
+
 // Returns the rank labelled with this digit, or RANK_NONE is none.
 Rank
 char_to_rank(char c);
@@ -52,7 +58,6 @@ char_to_rank(char c);
 
 /// @defgroup coord Coordinates
 /// @{
-
 
 // Returns the square specified by a file and a rank.
 Coord
@@ -68,6 +73,9 @@ coord_file(Coord coord);
 // Returns this square's rank.
 Rank
 coord_rank(Coord coord);
+
+bool
+coord_is_in_bounds(Coord coord);
 
 /// @}
 

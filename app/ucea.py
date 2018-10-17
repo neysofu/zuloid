@@ -1,10 +1,6 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# Takes a .pgn database as input and, using the chess logic provided by
-# python-chess, sorts the game in different files according to certain
-# features.
-
 import msgpack
 import socket
 

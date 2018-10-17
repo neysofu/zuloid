@@ -1,18 +1,19 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
-#include <string.h>
-#include <ctype.h>
-#include <assert.h>
+#include "chess/fen.h"
 #include "bitboards.h"
 #include "chess/board.h"
-#include "chess/fen.h"
-#include "chess/move.h"
 #include "chess/coord.h"
+#include "chess/move.h"
 #include "utils.h"
+#include <assert.h>
+#include <ctype.h>
+#include <stdbool.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 void
-board_to_fen(struct Board *board, char *buffer) {
+board_to_fen(struct Board* board, char* buffer)
+{
 	assert(board);
 	assert(buffer);
 	Rank rank = BOARD_SIDE_LENGTH;
@@ -44,26 +45,28 @@ board_to_fen(struct Board *board, char *buffer) {
 		*(buffer++) = '-';
 	}
 	*(buffer++) = ' ';
-	if (board_en_passant_coord(board) == COORD_NONE) {
-		*(buffer++) = '-';
-	} else {
+	if (board_en_passant_is_available(board)) {
 		Coord en_passant_coord = board_en_passant_coord(board);
 		*(buffer++) = file_to_char(coord_file(en_passant_coord));
 		*(buffer++) = rank_to_char(coord_rank(en_passant_coord));
+	} else {
+		*(buffer++) = '-';
 	}
 	*(buffer++) = ' ';
-	sprintf(buffer, "%zu 0", board_num_half_moves(board));
+	// TODO: fullmove number.
+	sprintf(buffer, "%zu 1", board_num_half_moves(board));
 	buffer += 4;
 	*buffer = '\0';
 }
 
 int8_t
-fen_to_board(char *fen, struct Board *buffer) {
-	//char *token;
-	//char *save_ptr;
-	//token = strtok_r(fen, WHITESPACE_CHARS, &token);
-	//Coord coord = coord_new(0, BOARD_SIDE_LENGTH);
-	//while ((token = strtok_r(fen, "/", &save_ptr)), coord_rank(coord--) > 0) {
+fen_to_board(char* fen, struct Board* buffer)
+{
+	// char *token;
+	// char *save_ptr;
+	// token = strtok_r(fen, WHITESPACE_CHARS, &token);
+	// Coord coord = coord_new(0, BOARD_SIDE_LENGTH);
+	// while ((token = strtok_r(fen, "/", &save_ptr)), coord_rank(coord--) > 0) {
 	//	uint_fast8_t i = 0;
 	//	while (coord.file < BOARD_SIDE_LENGTH && token[i]) {
 	//		if (isdigit(token[i])) {
@@ -93,11 +96,11 @@ fen_to_board(char *fen, struct Board *buffer) {
 	//	coord.file = 0;
 	//}
 	//// Active color
-	//token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	//if (!token) {
+	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
+	// if (!token) {
 	//	return;
 	//}
-	//switch (tolower(token[0])) {
+	// switch (tolower(token[0])) {
 	//	case 'w':
 	//		board->game_state |= COLOR_WHITE << GAME_STATE_ACTIVE_COLOR_OFFSET;
 	//		break;
@@ -108,12 +111,12 @@ fen_to_board(char *fen, struct Board *buffer) {
 	//		break;
 	//}
 	//// Castling rights
-	//token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	//if (!token) {
+	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
+	// if (!token) {
 	//	return;
 	//}
-	//size_t i = 0;
-	//while (token[i]) {
+	// size_t i = 0;
+	// while (token[i]) {
 	//	switch (token[i++]) {
 	//		case 'K':
 	//			board->game_state |= GAME_STATE_CASTLING_RIGHT_WK;
@@ -136,24 +139,24 @@ fen_to_board(char *fen, struct Board *buffer) {
 	//	}
 	//}
 	//// En passant
-//en_passant:
-	//token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	//if (!token) {
+	// en_passant:
+	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
+	// if (!token) {
 	//	return;
 	//} else if (token[0] != '-') {
 	//	board->game_state &= !GAME_STATE_EN_PASSANT_AVAILABILITY;
 	//}
 	//// Num. halfmoves
-	//token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	//if (!token) {
+	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
+	// if (!token) {
 	//	return;
 	//}
-	//board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
+	// board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
 	//// Num. fullmoves
-	//token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	//if (!token) {
+	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
+	// if (!token) {
 	//	return;
 	//}
-	//board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
+	// board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
 	return 0;
 }

@@ -21,12 +21,162 @@ All of this is only possible thanks to particular techniques:
 ON GPU USAGE
 ============
 
-Z64C is designed from the ground up to be extremly portable and this is seen in
-several design choice:
-* possibility of opting out of GPU libraries with fallback to CPU,
-* small, quantized neural network,
-* low memory impact and tools to limit excessive tree growth, and
-* written in C99 with minimal dependencies.
+The goal of Z64C is to be a wonderful implementation of the most optimal chess
+algorithm possibly existing, while being an open an easily tunable algorithm.
+This algorithm should fall gracely into the architecture of commodity hardware
+as well as specialized one, i.e. doesn't require any special architecture and is
+flexible.
+
+The core algorithm works with a concept known as bubbles. Bubbles improve
+locality of reference than plain transpositions tables. Z64C can blow bubbles
+concurrently, so the algorithm is extremely flexible. One can either use large
+bubbles and less threads or few bubbles. Bubbles are groups of positions that
+are evaluated together for better locality. Every group is grown independently
+and has:
+* A belt
+* A batch
+* One thread or more
+
+The bubble architecture must be very fast and local, both spacial and temporal
+locality. This will be the single best algorithm because it is flexible enough
+to use it with many different architectures. At the start of the game, there is
+a single empty bubble. Blowing bubbles works like this:
+
+* You pick a bubble and decide to blow it. You act now independently from all
+  other bubbles.
+* Inside this bubble, positions are stored using open addressing hashing with
+  techniques such as linear probing or Robin Hood.
+* Bubbles and the elements inside are enumerated. Numbers close to the current
+  number are intra-bubble positions.
+* Bubbles should hold positions that can only become positions in the same
+  bubble.
+
+Ideas for bubbles:
+* Depth based: every bubble stores a certain number of plies down the line, so
+  that detecting extra-bubble outbursts would become extremely easy. Bubbles
+  could be very easy to set up, just choose a size and it will fill up.
+* Only reversable moves are in the bubble. This is very interesting as well.
+
+I can consider bubbles that are soft limited and that use open addressing
+schemes that are relatively local in reference.
+
+The problem is always extra-table references though...
+What can I do? I need a custom hashing algorithm, possibly many so that I can
+choose the best:
+
+* xxHash with linear probing or any other open addressing scheme.
+*
+
+So basically I should store in different parts of the program:
+* MCTS (I can even store this to disk or cold memory. It doesn't really matter speed of
+  fetching, as I only need to store few elements)
+* Actual data
+By keeping together the MCTS, I minimize cache line fills for reading node data
+and also to incrementally load that.
+
+BUT! What if there's a... O(1) !! solution to my problem. I feel like there
+should be. Just like discrete ditribution sampling, every node that becomes a
+little more probable should be better than all the others.
+
+Fuck. I just realized that the transitions table can't be dynamically allocated.
+What if I used an ordered array instead of hashing?
+
+After a short walk I came up with a great new bubble architecture! I was
+constantly thinking about bubbles indexed by hash, instead, I have a very very
+flexible (and rather simple) idea for bubbles:
+
+ Use self-balancing ordered search trees.
+
+What I need is an approximate value for each board, but the nice thing is that I
+don't need it to be unique.
+
+* 0.2 (0.5 * 0.4)
+* 0.8 (0.5 * 0.6 + 0.5 * 1)
+
+* 0.1 (1/3 * 3/10)
+* 0.2 ()
+* 0.7
+
+They are sorted in ascending order.
+
+1. Choose one element at random. That element will determine my probability
+distribution.
+2. I get a random number from 0 to 1 according to that distribution and
+distibute it to the rightmost elements.
+
+I thus have:
+* 1.8 (any)
+* 0.5
+
+Algorithm:
+ 1. Choose at random one element from frequencies with uniform probability.
+ 2. Let x be p + rand() * (1-p)
+ 3. Return n. i * (1-p).
+
+Frequencies:
+	* 0.05
+	* 0.2
+	* 0.21
+	* 0.54
+I want to simulate this in O(1).
+
+So, I fill a bubble with positions until they can fit no more. But what happens
+then? I create a new bubble and ideally should fit any other kind of positions
+there, but it won't happen.
+
+But wait! Maybe I can get the best out of both worlds (complex data locality
+with bubbles architecture and flat and easy structure of TTable) and also
+improve speed by using a flat yet customizable architecture: instead of doing
+random read and writes, I stay local and use a semirandom algorithm to create a
+semirandom walking path. This way, the computation will be bound by:
+* Legality checking
+* Move pushing
+* Thus CPU
+* And obviously GPU computation and ANN evaluation.
+
+This architecture is also flexible because if I have some region of memory that
+accesses faster than others, I can hack the software into treating it the same
+exact way as I usually do and I place explorating agents on the faster memory
+portion.
+
+Now, however, I need to define a good semirandom path finder. This semirandom
+path finder must be incredibily easy on the CPU and must converge to minimax.
+
+
+TTable architecture:
+
+Each node must contain:
+* Path finder via open addressing
+* The current board position
+* Input tensor
+* Output tensor (?)
+
+Every agent follows a unique desire path. How do I get a desire path? The path
+should ONLY originate from the original 64bit seed, nothing more.
+
+The desire path strategy operates on the original tensors? Nah, they are
+useless. I only need to story frequencies according to the paper. But the desire
+path strategy how does it work? It's basically a deterministic value that,
+starting from the seed, oscillates according to some very fast operations and
+tells me what to choose. This way I don't have to generate a lot of data.
+
+Z64C is designed from the ground up to run fast on a variety of commodity
+hardware. The goal is to have as flat as a profile as possible. The core MCTS
+exploration can be made rather simple, doable by very simple threads and thus
+benefits for parallelism. The GPU, on the other hand, can:
+* Run evaluation functions in batches.
+* Do descent.
+* Training.
+Heavy work that the CPU must compute:
+* Chess move
+* Legality checking.
+I think I can overcome these by using pseudolegal moves, then legality checking
+really will be very fast.
+
+I think the goal here is to:
+Make everything parallelizable and concurrent and fast. Evaluation and
+generation already is, many cores at that point should be able to sustain all of
+that. I cannot reasonably expect to do everything on the CPU.
 
 ON BOARD REPRESENTATION
 =======================
@@ -515,6 +665,7 @@ errori in mezzo.
 
 Faccio training sulle mosse di KingBase, e allo stesso tempo alleno con TD(64).
 Mantengo il learning rate lo stesso e dopo comincio il self-play.
+
 
 Devo anche usare CTDleaf con lambda 0.7
 

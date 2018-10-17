@@ -8,10 +8,10 @@
 
 #pragma once
 
-#include <stdint.h>
 #include "chess/coord.h"
 #include "chess/dir.h"
 #include "chess/move.h"
+#include <stdint.h>
 
 // Initializes bitboard lookup tables. Do NOT call any of the other 'bb'
 // functions without first calling 'bb_init' at the start of your program (it
@@ -39,8 +39,8 @@ bb_file(Coord coord);
 
 /// Masks the files directly adjacent to this square's file.
 /// @pre Initialization via `bb_init`.
-//uint64_t
-//bb_adjiacent_files(Coord coord);
+// uint64_t
+// bb_adjiacent_files(Coord coord);
 
 /// Masks this square's rank.
 /// @pre Initialization via `bb_init`.
@@ -49,8 +49,8 @@ bb_rank(Coord coord);
 
 /// Masks the ranks directly adjacent to this square's rank.
 /// @pre Initialization via `bb_init`.
-//uint64_t
-//bb_adjiacent_ranks(Coord coord);
+// uint64_t
+// bb_adjiacent_ranks(Coord coord);
 
 /// @brief Masks this square's diagonals.
 ///
@@ -78,6 +78,6 @@ bb_bishop_threats(Coord coord);
 uint64_t
 bb_rook_threats(Coord coord);
 uint64_t
-bb_king_attacks(Coord coord);
+bb_king_threats(Coord coord);
 uint64_t
-bb_queen_attacks(Coord coord);
+bb_queen_threats(Coord coord);

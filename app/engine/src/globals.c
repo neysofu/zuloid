@@ -1,16 +1,13 @@
+#include "globals.h"
+#include "bitboards.h"
+#include "utils.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "globals.h"
-#include "utils.h"
 
 void
-globals_init(void) {
-	static bool flag = false;
-	if (flag) {
-		return;
-	} else {
-		flag = true;
-	}
+globals_init(void)
+{
+	debug_printf("Initializing global variables.\n");
 	bb_init();
 	PAGE_SIZE = util_page_size();
 }

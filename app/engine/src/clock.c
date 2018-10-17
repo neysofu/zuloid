@@ -1,11 +1,12 @@
-#include <stdlib.h>
-#include <sys/time.h>
 #include "clock.h"
 #include "utils.h"
+#include <stdlib.h>
+#include <sys/time.h>
 
-struct Clock *
-clock_new_blitz(void) {
-	struct Clock *clock = malloc(sizeof(struct Clock));
+struct Clock*
+clock_new_blitz(void)
+{
+	struct Clock* clock = xmalloc(sizeof(struct Clock));
 	clock->start_timestamp_msec = 0;
 	clock->time_available_msec = 3 * 60 * 1000;
 	clock->time_increment_msec = 2 * 1000;
@@ -16,9 +17,10 @@ clock_new_blitz(void) {
 	return clock;
 }
 
-struct Clock *
-clock_new_rapid(void) {
-	struct Clock *clock = malloc(sizeof(struct Clock));
+struct Clock*
+clock_new_rapid(void)
+{
+	struct Clock* clock = xmalloc(sizeof(struct Clock));
 	clock->start_timestamp_msec = 0;
 	clock->time_available_msec = 15 * 60 * 1000;
 	clock->time_increment_msec = 10 * 1000;
@@ -29,10 +31,11 @@ clock_new_rapid(void) {
 	return clock;
 }
 
-struct Clock *
-clock_new_classical(void) {
-	struct Clock *clock = malloc(sizeof(struct Clock));
-	struct Clock *clock_after_40 = malloc(sizeof(struct Clock));
+struct Clock*
+clock_new_classical(void)
+{
+	struct Clock* clock = xmalloc(sizeof(struct Clock));
+	struct Clock* clock_after_40 = xmalloc(sizeof(struct Clock));
 	clock->start_timestamp_msec = 0;
 	clock->time_available_msec = 90 * 60 * 1000;
 	clock->time_increment_msec = 30 * 1000;
@@ -51,25 +54,29 @@ clock_new_classical(void) {
 }
 
 void
-clock_drop(struct Clock *clock) {
+clock_free(struct Clock* clock)
+{
 	if (!clock) {
 		return;
 	}
 	// Recursion is fine here since we expect to go down 1 or 2 levels max.
-	clock_drop(clock->next_clock);
-	clock_drop(clock->previous_clock);
+	clock_free(clock->next_clock);
+	clock_free(clock->previous_clock);
 	free(clock);
 }
 
 uint64_t
-clock_start(struct Clock *clock) {
+clock_start(struct Clock* clock)
+{
 	clock->start_timestamp_msec = util_timestamp_msec();
 	return clock->start_timestamp_msec + clock->time_available_msec;
 }
 
 uint64_t
-clock_stop(struct Clock *clock) {
-	uint64_t time_elapsed_msec = util_timestamp_msec() - clock->start_timestamp_msec;
+clock_stop(struct Clock* clock)
+{
+	uint64_t time_elapsed_msec =
+	  util_timestamp_msec() - clock->start_timestamp_msec;
 	clock->time_available_msec -= time_elapsed_msec;
 	if (clock->time_available_msec < 0) {
 		return false;

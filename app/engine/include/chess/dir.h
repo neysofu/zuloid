@@ -7,7 +7,8 @@
 #include "coord.h"
 
 /// @brief The direction between any two squares on a chessboard.
-enum Dir {
+enum Dir
+{
 	/// Two squares on the same rank.
 	DIR_HORIZONTAL = 0,
 	/// Two squares on the same file.

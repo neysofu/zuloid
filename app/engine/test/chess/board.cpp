@@ -6,5 +6,4 @@ extern "C" {
 #include <sysexits.h>
 #include "chess/board.h"
 #include "chess/move.h"
-#include "chess/move_inspector.h"
 }

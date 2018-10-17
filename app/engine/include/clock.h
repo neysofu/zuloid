@@ -8,7 +8,8 @@
 // A unilateral (i.e. for one player only) clock with support for increments,
 // delays, and transition to a different time control after a certain amount of
 // moves.
-struct Clock {
+struct Clock
+{
 	uint64_t start_timestamp_msec;
 	int64_t time_available_msec;
 	uint64_t time_increment_msec;
@@ -32,10 +33,10 @@ clock_new_classical(void);
 
 // Frees a clock.
 void
-clock_drop(struct Clock *clock);
+clock_free(struct Clock *clock);
 
-// Starts the clock and returns the timestamp in milliseconds after which it will
-// flag.
+// Starts the clock and returns the timestamp in milliseconds after which it
+// will flag.
 uint64_t
 clock_start(struct Clock *clock);
 

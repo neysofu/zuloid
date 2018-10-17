@@ -21,7 +21,7 @@ struct Cmd *
 cmd_new(void);
 
 void
-cmd_drop(struct Cmd *cmd);
+cmd_free(struct Cmd *cmd);
 
 // Creates a new 'struct Cmd' using the 'cmd' buffer or allocating one if needed
 // (i.e. 'cmd' is set to NULL). 'str' is the original string that will be

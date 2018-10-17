@@ -12,7 +12,9 @@
 #include "chess/result.h"
 
 bool
-board_approves_pseudolegal_move(struct Board *board, Move move, enum Piece piece);
+board_approves_pseudolegal_move(struct Board *board,
+                                Move move,
+                                enum Piece piece);
 
 bool
 board_approves_legal_move(struct Board *board, Move move, enum Piece piece);

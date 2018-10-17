@@ -6,7 +6,8 @@
 #include "termination.h"
 
 // One amongst every possible game result.
-struct Result {
+struct Result
+{
 	enum Color winner;
 	enum Termination termination;
 };

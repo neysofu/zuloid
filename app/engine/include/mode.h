@@ -5,7 +5,8 @@
 
 // Used as a status flag inside 'struct Driver' to keep track of internal
 // state and to exit gracefully if needed.
-enum Mode {
+enum Mode
+{
 	/// The engine is sitting idle and waiting for commands.
 	MODE_IDLE,
 	/// The engine is currently busy performing some calculations. Incoming

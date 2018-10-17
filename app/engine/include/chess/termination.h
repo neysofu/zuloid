@@ -4,7 +4,8 @@
 #pragma once
 
 /// @see https://en.wikipedia.org/wiki/Rules_of_chess#End_of_the_game
-enum Termination {
+enum Termination
+{
 	TERMINATION_CHECKMATE,
 	TERMINATION_STALEMATE,
 	TERMINATION_RESIGN,

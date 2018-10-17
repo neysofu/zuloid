@@ -1,27 +1,30 @@
+#include "chess/coord.h"
+#include "chess/board.h"
+#include "chess/dir.h"
+#include <assert.h>
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
-#include "chess/board.h"
-#include "chess/coord.h"
-#include "chess/dir.h"
 
 // FILE
 // ====
 
 bool
-file_is_in_bounds(File file) {
+file_is_in_bounds(File file)
+{
 	return file < BOARD_SIDE_LENGTH;
 }
 
 char
-file_to_char(File file) {
+file_to_char(File file)
+{
 	assert(file_is_in_bounds(file));
 	return file + 'a';
 }
 
 File
-char_to_file(char c) {
+char_to_file(char c)
+{
 	if (isalpha(c)) {
 		File file = tolower(c) - 'a';
 		assert(file_is_in_bounds(file));
@@ -37,18 +40,21 @@ const File FILE_NONE = (1 << 8) - 1;
 // ====
 
 bool
-rank_is_in_bounds(Rank rank) {
+rank_is_in_bounds(Rank rank)
+{
 	return rank < BOARD_SIDE_LENGTH;
 }
 
 char
-rank_to_char(Rank rank) {
+rank_to_char(Rank rank)
+{
 	assert(rank_is_in_bounds(rank));
 	return rank + '1';
 }
 
 Rank
-char_to_rank(char c) {
+char_to_rank(char c)
+{
 	if (isdigit(c)) {
 		Rank rank = c - '1';
 		assert(rank_is_in_bounds(rank));
@@ -64,25 +70,29 @@ const Rank RANK_NONE = (1 << 8) - 1;
 // =====
 
 Coord
-coord_new(File file, Rank rank) {
+coord_new(File file, Rank rank)
+{
 	assert(file_is_in_bounds(file));
 	assert(rank_is_in_bounds(rank));
 	return (rank << 3) | file;
 }
 
 bool
-coord_is_in_bounds(Coord coord) {
+coord_is_in_bounds(Coord coord)
+{
 	return coord < BOARD_NUM_SQUARES;
 }
 
 File
-coord_file(Coord coord) {
+coord_file(Coord coord)
+{
 	assert(coord_is_in_bounds(coord));
 	return coord & 0x7;
 }
 
 Rank
-coord_rank(Coord coord) {
+coord_rank(Coord coord)
+{
 	assert(coord_is_in_bounds(coord));
 	return coord >> 3;
 }

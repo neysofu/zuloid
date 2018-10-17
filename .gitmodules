@@ -4,3 +4,12 @@
 [submodule "lib/Catch2"]
 	path = lib/Catch2
 	url = https://github.com/catchorg/Catch2.git
+[submodule "lib/arrayfire"]
+	path = lib/arrayfire
+	url = https://github.com/arrayfire/arrayfire
+[submodule "lib/mt19937-64"]
+	path = lib/mt19937-64
+	url = https://github.com/stevemkim/mt19937-64
+[submodule "lib/wslay"]
+	path = lib/wslay
+	url = https://github.com/tatsuhiro-t/wslay.git

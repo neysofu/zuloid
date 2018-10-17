@@ -8,6 +8,8 @@
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
+#define LIKELY(x) __builtin_expect((x), 1)
+#define UNLIKELY(x) __builtin_expect((x), 0)
 
 #define WHITESPACE_CHARS " \t\n\v\f\r"
 
@@ -28,3 +30,6 @@ util_timestamp_msec(void);
 /// @return The page size in bytes.
 size_t
 util_page_size(void);
+
+void *
+xmalloc(size_t size);

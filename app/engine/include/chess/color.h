@@ -3,14 +3,15 @@
 
 #pragma once
 
-#include <stdint.h>
 #include "coord.h"
+#include <stdint.h>
 
 // As an extension, any non-zero integer represents COLOR_BLACK, while 0
 // represents COLOR_WHITE. COLOR_NONE is used in game results (draws), not
 // as argument to any of the following functions or anywhere near 'struct
 // Board'.
-enum Color {
+enum Color
+{
 	COLOR_WHITE = 0,
 	COLOR_BLACK = 1,
 	COLOR_NONE = 2,

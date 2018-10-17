@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <stdbool.h>
 #include "chess/board.h"
 #include "chess/legality.h"
 #include "chess/result.h"
@@ -12,8 +11,9 @@
 #include "cmd.h"
 #include "game.h"
 #include "mode.h"
-#include "settings.h"
 #include "search/ttable.h"
+#include "settings.h"
+#include <stdbool.h>
 
 #define DRIVER_NAME "Z64C"
 #define DRIVER_VERSION "v0.6"
@@ -26,7 +26,8 @@
 /// work.
 /// This structure doesn't takes up very little memory by itself. The most
 /// resource-hungry component by far and large is 'struct TTable'.
-struct Driver {
+struct Driver
+{
 	struct TTable *ttable;
 	struct Board board;
 	struct Result result;
@@ -34,6 +35,7 @@ struct Driver {
 	struct Game *game;
 	enum Mode mode;
 	int8_t exit_status;
+	uint64_t seed;
 };
 
 /// @brief Instantiates a new chess driver.
@@ -49,7 +51,7 @@ driver_new(void);
 ///
 /// @param driver A pointer to the driver instance to kill.
 void
-driver_drop(struct Driver *driver);
+driver_free(struct Driver *driver);
 
 /// @brief Initializes @p driver and starts listening from a ZUCI shell.
 ///
@@ -62,6 +64,9 @@ driver_drop(struct Driver *driver);
 /// @return A non-zero error code on failure, zero on success.
 int8_t
 driver_main(struct Driver *driver);
+
+void
+driver_seed(struct Driver *driver);
 
 /// @brief Evaluates a ZUCI command.
 int8_t

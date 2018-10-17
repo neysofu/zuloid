@@ -3,12 +3,13 @@
 
 #pragma once
 
+#include "clock.h"
 #include <stdbool.h>
 #include <stdlib.h>
-#include "clock.h"
 
 /// @brief A grobal settings manager modifiable at runtime.
-struct Settings {
+struct Settings
+{
 	bool debug;
 	/// When set to 1, the engine will think during opponent's time.
 	bool ponder;
@@ -67,8 +68,8 @@ settings_print(struct Settings *settings);
 char *
 settings_value(struct Settings *settings, char *field);
 
-/// @brief Updates a certain setting with the intended value @p value. Returns NULL if the
-/// setting is successfully updated, an error message otherwise.
+/// @brief Updates a certain setting with the intended value @p value. Returns
+/// NULL if the setting is successfully updated, an error message otherwise.
 /// @return @p field iff the operation was successful; `NULL` otherwise. Reasons
 /// of failure can be:
 /// - nonexistant name, or
