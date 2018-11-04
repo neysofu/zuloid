@@ -9,6 +9,7 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
+#include "log.h"
 #include "switches.h"
 #include "utils.h"
 #include <assert.h>
@@ -47,11 +48,24 @@ bb_init(void)
 		// BB_KNIGHT_THREATS[coord] =
 		//  ((0xa1100110a << (coord - 18)) | (0xa1100110a >> (18u - coord))) &
 		//  (0x3f3f3f3f3f3f3f3f << (MIN(coord_file(coord), 2)));
-		BB_KING_THREATS[coord] =
-		  coord ^ ((bb_file(coord) | MIN(bb_file(coord - 1), bb_file(coord)) |
-		            MAX(bb_file(coord + 1), bb_file(coord))) &
-		           (bb_rank(coord) | MIN(bb_rank(coord - 1), bb_rank(coord)) |
-		            MAX(bb_rank(coord + 1), bb_rank(coord))));
+		uint64_t file = bb_file(coord);
+		uint64_t rank = bb_rank(coord);
+		uint64_t king_horizontal_threats =
+		  rank | (rank << BOARD_SIDE_LENGTH) | (rank >> BOARD_SIDE_LENGTH);
+		/** FIXME: bitshifting bug on the A file. */
+		uint64_t king_vertical_threats =
+		  (file | MAX(file, file << 1ULL) | MIN(file, file >> 1ULL));
+		BB_KING_THREATS[coord] = king_horizontal_threats & king_vertical_threats;
+		debug_printf("King horizontal threats at square n.%d are: 0x%llx.\n",
+		             coord,
+		             king_horizontal_threats);
+		debug_printf("King vertical threats at square n.%d are: 0x%llx.\n",
+		             coord,
+		             king_vertical_threats);
+		debug_printf("King threats at square n.%d are: 0x%llx.\n",
+		             coord,
+		             BB_KING_THREATS[coord]);
+		debug_printf("Bitboard initilization at square n.%d is complete.\n", coord);
 	}
 }
 
@@ -73,7 +87,7 @@ uint64_t
 bb_rank(Coord coord)
 {
 	assert(coord_is_in_bounds(coord));
-	return 0xffULL << (coord_rank(coord) << BOARD_SIDE_LENGTH);
+	return 0xffULL << (coord_rank(coord) * BOARD_SIDE_LENGTH);
 }
 
 uint64_t
