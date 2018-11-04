@@ -17,9 +17,7 @@
 
 struct TTable
 {
-	size_t element_size;
 	size_t fragment_size;
-	struct TTableNode *root;
 	size_t num_fragments;
 	struct TTableNode (*fragments)[];
 };
