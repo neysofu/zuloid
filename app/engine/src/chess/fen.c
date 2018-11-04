@@ -12,7 +12,7 @@
 #include <string.h>
 
 void
-board_to_fen(struct Board* board, char* buffer)
+board_to_fen(struct Board *board, char *buffer)
 {
 	assert(board);
 	assert(buffer);
@@ -60,7 +60,7 @@ board_to_fen(struct Board* board, char* buffer)
 }
 
 int8_t
-fen_to_board(char* fen, struct Board* buffer)
+fen_to_board(char *fen, struct Board *buffer)
 {
 	// char *token;
 	// char *save_ptr;

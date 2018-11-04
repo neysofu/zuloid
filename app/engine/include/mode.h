@@ -1,5 +1,7 @@
-/// @file mode.h
-/// @brief All operational modes available.
+/**
+ * @file mode.h
+ * @brief All operational modes available.
+ */
 
 #pragma once
 
@@ -13,5 +15,5 @@ enum Mode
 	/// commands will still be evaluated.
 	MODE_BUSY,
 	/// The engine is ready to exit.
-	MODE_QUIT,
+	MODE_EXIT,
 };

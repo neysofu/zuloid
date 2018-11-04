@@ -14,30 +14,38 @@
 /**
  * It can store a huge number of chess positions and keep them
  * sorted for quick access.
+ *
+ * Elements of the transpositions table are:
+ * - Play hierarchy. Basically contains nodes with probabilities (approximately
+ *   ordered by strength). NB the behaviour of nodes once searched is very
+ *   clear.
+ *   What I want to do is improve data locality... how the hell can I do that?
+ *   Maybe I already got it as much as possible though... Temporal locality is
+ *   there by design. Now I need an algorithm that is cache-aware and loads only
+ *   most important cells, each that fits into a single cache.
+ *   with a bit that are terminal
+ * - Position database. This tells me where to find a certain position.
+ *   Implemented by binary tree search and possibly accelerated with Cuckoo
+ *   filters.
+ * - TensorIn. Not all positions have tensor_in, because they are only needed in
+ *   terminal nodes. TensorIn database are just pointers from a stack-like
+ *   memory pool.
  */
 struct TTable;
 
+/**
+ * @brief Create an empty transpositions table.
+ * @return A pointer to the new data structure.
+ */
 struct TTable *
 ttable_new(void);
 
 void
 ttable_free(struct TTable *ttable);
 
-struct TTableNode *
-ttable_get(struct TTable *ttable, struct Board *board);
-
-void
-ttable_node_backpropagate(struct TTableNode *parent,
-                          struct TTableNode *child,
-                          bool *lock);
-
 /**
- * @brief The main search procedure.
- * This nonblocking function puts into work every available thread for
- * searching this position until:
- * - told to stop by @p lock;
- * - time is up;
- * - a satisfying move is found.
+ * @brief Remove any stored transpositions from @ttable and resize it to the
+ * default size.
  */
-struct SController *
-ttable_search(struct TTable *ttable, struct Board *board);
+void
+ttable_clear(struct TTable *ttable);

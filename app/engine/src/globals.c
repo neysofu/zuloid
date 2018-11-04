@@ -1,15 +1,12 @@
-#include "globals.h"
-#include "bitboards.h"
-#include "utils.h"
-#include <stdbool.h>
 #include <stdlib.h>
 
-void
-globals_init(void)
-{
-	debug_printf("Initializing global variables.\n");
-	bb_init();
-	PAGE_SIZE = util_page_size();
-}
+const char *const engine_name = "Z64C";
+const char *const engine_version = "0.8";
+const char *const engine_license = "GNU AGPLv3";
+const char *const engine_release_date = __DATE__;
+const char *const engine_author = "Filippo Costa (@neysofu)";
+const char *const engine_url = "https://zsixfourc.net";
+const char *const engine_language = "en-us";
 
-size_t PAGE_SIZE;
+const uint32_t default_port = 34290;
+const uint32_t default_seed = 0x94f45fdb;

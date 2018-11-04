@@ -1,3 +1,9 @@
+ON THE APIS
+===========
+
+Commands are just strings with arguments, so...
+It would make sense to use MsgPack though, because it is a standard and is fast.
+
 ARCHITECTURE
 ============
 
@@ -17,6 +23,104 @@ All of this is only possible thanks to particular techniques:
 * ArrayFire recurrent neural networks,
 * feature engineering a subset of chess with a fallback to Arasan for "weird"
   chess positions (very, very small subset).
+
+Note for the transpositions table:
+Maybe I can use a range based solution with binary tree.
+Let's suppose I have 4 elements. Then I would need 2 levels of binary tree. For
+2**n levels, I need N levels. What if I can keep that number constant or
+logarithmic?
+
+I set a certain k=16 and every level is an array that reduces the number of
+elements by even more. Instead of having binary search, I can use fast bitshift
+together with cache locality for good behaviour!
+
+I am looking for a solution with:
+* Fast search and insert.
+* Extremely good scaling.
+* Dynamic resizing.
+
+API
+===
+Un chess engine puo giocare a scacchi. Cosa devo esporre con le APIs? Capacita'
+di giocare, e giocare vuol dire scegliere una mossa data una certa posizione.
+Estendiamo il concetto a intere partite, che sono dall'inizio alla fine.
+L'analisi invece si tratta di scoprire linee alternative.
+
+Basically what is missing here is the search. How the hell do people search?
+Engines go one level by level, but this is wasteful of resources and suboptimal.
+
+I need a system that can explore many paths without remembering them... How the
+hell do I do that?
+The answer here is that there is not one. It's about tradeoffs with space and
+time and computer architecture. A good solution might be to explore branches
+from the down up by estimating how much time it might take to explore this
+branch.How do I want the search to go. Othewise, I can store everything... but
+it will take everything!
+
+I have 64 bit keys and need a unique address for each of them.
+
+Best search algorithm:
+* It must be fast, i.e. search overheard must be small compared to evaluation.
+  It must spend time thinking about chess positions, not shuffling bytes.
+* It must be selective.
+* It must have low memory consumptions.
+
+So the search is:
+* Choose a path and deepen it.
+
+So I have a core data structure that indexes one byte of data. 256 buckets (data
+& 0xff and then >> 8), each of those buckets points to a new bucket. This can
+also be dynamic...
+
+Low memory consumption...
+1. I start at the top position and evaluate it. Any evaluation is added to the
+transpositions table list.
+2. Deepen the most interesting node and go down with it, store the good result
+into memory.
+3. I can investigate optimal search algorithms, but the core strategy is the
+same.
+
+SEARCH
+======
+
+I think I have a nice idea, but need to consider something before deciding it's
+worth it.
+
+What other engine do is they just look at many many positions, which is silly
+because most of them are absolutely moronic. I just want to look at moves that
+seem interesting... for this it is necessary to have an excellent evaluation
+function, but I trust that I can have one.
+
+A kind of best first approach!
+
+- I have the top position and an empty transposition table.
+- I evaluate the top node and push all evaluations on the TTable.
+- Go down one ply.
+- Deepen all moves that are better than X.
+
+This way I never need to store board tensors and output tensors are immediately
+transformed into transpositions.
+What's the problem though? The problem is always the position, that I cannot
+easily store because it's so freaking huge. Not storing it would however cause a
+very expensive recomputation process.
+On one hand, use very little memory and recompute stuff a lot.
+On the other hand, each node computation takes more time than because it is
+written. The question is:
+* Is it better to store board tensors and have more accurate predictions or less
+  accurate predictions? And also, what is the best search algorithm that is
+  compatible with my goals?
+
+* Monte Carlo tree search
+  - High memory consumption
+  - Cache pollution
+  - Slowish search
+* Alpha beta pruning
+  - Blind evaluation
+  - Evaluates way too many nodes, even useless ones
+* Monte Carlo Alpha Beta
+  - More efficient than pure MCTS
+  - Requires move generation for board
+* 
 
 ON GPU USAGE
 ============
@@ -90,12 +194,63 @@ flexible (and rather simple) idea for bubbles:
 What I need is an approximate value for each board, but the nice thing is that I
 don't need it to be unique.
 
-* 0.2 (0.5 * 0.4)
-* 0.8 (0.5 * 0.6 + 0.5 * 1)
+Ok, I decided that I'll think about it. How can I deal with more moves than
+usual?
 
-* 0.1 (1/3 * 3/10)
-* 0.2 ()
-* 0.7
+I can just fit the whole thing into the buffer and then
+
+Basically I got a huge tree (which is effectively a double tree, because it
+contains pointers both for )
+
+The base working system is:
+many threads, each with their own task. Every thread adds tasks to schudules,
+then are merged into the system.
+
+Now I need to consider batch search, ttable, and evaluation, because everything
+is linked together.
+The question is: do I need to store all info in a node? Maybe not. This is
+because, after I looked through all the possible children in a certain node,
+what good are its tensor_in, tensor_out, and board? Absolutely nothing! struct
+Board may still be useful, but I expect to be able to let go all the tensor_in
+and out data. Children data unfortunately still need to be explored.
+
+Now I consider searching. I have a decision tree with a nice evaluation function
+that is very slow to kickstart and stop for a certain node, so I need to reduce
+that to a minimum.
+
+1. Select. The visitor randomly selects a terminal node. Terminal nodes are the
+nodes that need further exploration, because otherwise their children would be
+explored as well. Terminal nodes that don't need further exploration are marked
+so that they are not visited.
+2. Explore. The exploration phase became more prominent after some
+considerations about memory requirements and cache. The exploration phase
+basically exhausts a given path by keeping on the stack a tensor_in. That
+tensor_in is applied to
+
+I don't think I can flatten the whole tree, because I still need to highlight
+parent relationships. If I flatten everything, then how can I possibly alter the
+frequencies of other children? I can't. BUT the approach that I'm taking has a
+very low upper bound, i.e. it can be extremely fast.
+If I'm able to do some flattening, what I can achieve is:
+* Extremely good cache behaviour. This is a huge win for performance.
+* More predictable multithreading, maybe lockless and without slowing them down.
+
+This means that my search algorithm will not be pure Monte Carlo, because pure
+Monte Carlo spreads exploration way too thin. Just one prediction mistake and a
+whole branch won't be considered. Instead, I will choose nodes and then do a
+shallow search.
+
+What's the maximum number of transposition references? A position is only
+referenced from source positions, right? So the answer is how many possible
+antimoves can I make? Not possibly more than 256, so the reference count will
+always be lower than that!
+
+* 0.2 (1/2 * 0.4)
+* 0.8 (1/2 * 0.4 + 1/2 * 1)
+
+* 0.1 (1/3 * 0.3)
+* 0.2 (1/3 * 0.35 + 1/3 * 0.25)
+* 0.7 (1/3 * 0.35 + 1/3 * 0.75 + 1/3 * 1)
 
 They are sorted in ascending order.
 

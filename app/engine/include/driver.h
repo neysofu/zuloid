@@ -1,6 +1,8 @@
-/// @file driver.h
-/// @brief The core components of Z64C.
-/// This file contains the API to the very core of Z64C.
+/**
+ * @file driver.h
+ * @brief The core components of Z64C.
+ * This file contains the API to the very core of Z64C.
+ */
 
 #pragma once
 
@@ -8,18 +10,14 @@
 #include "chess/legality.h"
 #include "chess/result.h"
 #include "chess/termination.h"
-#include "cmd.h"
 #include "game.h"
 #include "mode.h"
+#include "search/scontroller.h"
 #include "search/ttable.h"
 #include "settings.h"
 #include <stdbool.h>
 
-#define DRIVER_NAME "Z64C"
-#define DRIVER_VERSION "v0.6"
-#define DRIVER_RELEASE_DATE __DATE__
-#define DRIVER_AUTHOR "Filippo Costa (@neysofu)"
-#define DRIVER_URL "https://zsixfourc.net"
+#define BUFFER_SIZE 1024
 
 /// @brief A self-contained chess driver instance.
 /// The @c Driver structure contains all the necessary components to make Z64C
@@ -28,14 +26,15 @@
 /// resource-hungry component by far and large is 'struct TTable'.
 struct Driver
 {
-	struct TTable *ttable;
 	struct Board board;
 	struct Result result;
 	struct Settings settings;
-	struct Game *game;
 	enum Mode mode;
 	int8_t exit_status;
-	uint64_t seed;
+	/** The heavy lifts. */
+	struct TTable *ttable;
+	struct Scontroller *scontroller;
+	struct Network *network;
 };
 
 /// @brief Instantiates a new chess driver.
@@ -65,9 +64,11 @@ driver_free(struct Driver *driver);
 int8_t
 driver_main(struct Driver *driver);
 
-void
-driver_seed(struct Driver *driver);
-
-/// @brief Evaluates a ZUCI command.
-int8_t
-driver_run_str(struct Driver *driver, char *str);
+/**
+ * @brief Run a Remote Procedure Call (RPC) and return the engine's response.
+ * @param A pointer to the request string.
+ * @return A pointer to the response string. The pointer will be NULL on exit
+ * and the exit status will be stored in 'driver->exit_status'.
+ */
+const char *
+driver_rpc(struct Driver *driver, const char *cmd);

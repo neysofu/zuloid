@@ -26,7 +26,7 @@
 //  89
 //
 // [0]: https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
-#define FEN_SIZE 128
+#define FEN_SIZE 127
 
 /// Writes the FEN string to @buffer from the chess position @board.
 ///

@@ -5,6 +5,7 @@
 char
 piece_to_char(enum Piece piece)
 {
+	assert(piece <= PIECE_MAX);
 	assert(piece != PIECE_NONE);
 	return "pnbrk.q"[piece];
 }

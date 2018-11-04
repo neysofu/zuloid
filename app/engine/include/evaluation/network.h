@@ -1,10 +1,15 @@
+/**
+ * @file network.h
+ * @file Containes definitions for the evaluation function.
+ */
+
 #pragma once
 
 #include <stdint.h>
 
 struct Network;
-struct TensorIn;
-struct TensorOut;
+struct BoardTensorIn;
+struct BoardTensorOut;
 
 struct Network *
 network_new(void);
@@ -12,7 +17,12 @@ network_new(void);
 void
 network_free(struct Network *network);
 
-int8_t
+/**
+ * @brief
+ * @param network The neural network instance.
+ * @param
+ */
+void
 network_eval(struct Network *network,
-             struct TensorIn *t_in,
-             struct TensorOut *t_out);
+             struct BoardTensor *bt,
+             struct EvalTensor *et);

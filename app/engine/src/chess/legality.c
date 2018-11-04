@@ -14,7 +14,7 @@
 #include <string.h>
 
 bool
-board_approves_pseudolegal_pawn_move(struct Board* board, Move move)
+board_approves_pseudolegal_pawn_move(struct Board *board, Move move)
 {
 	assert(board);
 	Coord source = move_source(move);
@@ -41,30 +41,31 @@ board_approves_pseudolegal_pawn_move(struct Board* board, Move move)
 }
 
 bool
-board_approves_pseudolegal_knight_move(struct Board* board, Move move)
+board_approves_pseudolegal_knight_move(struct Board *board, Move move)
 {
 	assert(board);
 	return bb_knight_threats(move_source(move)) & bb_coord(move_target(move));
 }
 
 bool
-board_approves_pseudolegal_sliding_move(struct Board* board, Move move)
+board_approves_pseudolegal_sliding_move(struct Board *board, Move move)
 {
 	assert(board);
 	return !(bb_ray(move) & board->bb_occupancy);
 }
 
 bool
-board_approves_pseudolegal_castling_move(struct Board* board, Move move)
+board_approves_pseudolegal_castling_move(struct Board *board, Move move)
 {
 	// return board->bb_pieces[PIECE_ROOK] & board->bb_colors(board,
-	// move_source(move))->piece == PIECE_KING && 	   abs(move_source(move).file -
-	//move_target(move).file) == 2;
+	// move_source(move))->piece == PIECE_KING && 	   abs(move_source(move).file
+	// -
+	// move_target(move).file) == 2;
 	return false; // TODO
 }
 
 bool
-board_approves_pseudolegal_king_move(struct Board* board, Move move)
+board_approves_pseudolegal_king_move(struct Board *board, Move move)
 {
 	bool is_single_move =
 	  bb_king_threats(move_source(move)) & bb_coord(move_target(move));
@@ -73,7 +74,7 @@ board_approves_pseudolegal_king_move(struct Board* board, Move move)
 }
 
 bool
-board_approves_pseudolegal_move(struct Board* board,
+board_approves_pseudolegal_move(struct Board *board,
                                 Move move,
                                 enum Piece piece)
 {
@@ -104,14 +105,14 @@ board_approves_pseudolegal_move(struct Board* board,
 }
 
 bool
-board_approves_legal_move(struct Board* board, Move move, enum Piece piece)
+board_approves_legal_move(struct Board *board, Move move, enum Piece piece)
 {
 	return board_approves_pseudolegal_move(board, move, piece);
 	// TODO
 }
 
 struct Result
-board_push_pseudolegal_move(struct Board* board, Move move, enum Piece piece)
+board_push_pseudolegal_move(struct Board *board, Move move, enum Piece piece)
 {
 	enum Color active_color = board_active_color(board);
 	if (move_is_capture(move, board) || piece == PIECE_PAWN) {
@@ -132,15 +133,15 @@ board_push_pseudolegal_move(struct Board* board, Move move, enum Piece piece)
 	} else if (piece == PIECE_PAWN) {
 		// board->bb_pieces[board->promotion] |= bb_coord(board->target);
 	} else if (false) { // TODO
-		//	File rook_source_file;
-		//	File rook_target_file;
-		//	if (coord_file(board->source) == 2) {
-		//		rook_source_file = 0;
-		//		rook_target_file = 3;
-		//	} else {
-		//		rook_source_file = 7;
-		//		rook_target_file = 5;
-		//	}
+		                  //	File rook_source_file;
+		                  //	File rook_target_file;
+		                  //	if (coord_file(board->source) == 2) {
+		                  //		rook_source_file = 0;
+		                  //		rook_target_file = 3;
+		                  //	} else {
+		                  //		rook_source_file = 7;
+		                  //		rook_target_file = 5;
+		                  //	}
 		//	Coord rook = coord_new(rook_source_file, move_source(move).rank);
 		//	*board_square(board, rook) = SQUARE_NONE;
 		//	rook.file = rook_target_file;
@@ -166,7 +167,7 @@ board_push_pseudolegal_move(struct Board* board, Move move, enum Piece piece)
 }
 
 struct Result
-board_push_legal_move(struct Board* board, Move move, enum Piece piece)
+board_push_legal_move(struct Board *board, Move move, enum Piece piece)
 {
 	return board_push_pseudolegal_move(board, move, piece); // TODO
 }

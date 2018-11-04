@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "ttable.h"
+#include "search/ttable.h"
 #include <stdint.h>
 
 struct SController;
@@ -17,17 +17,21 @@ struct SController;
 struct SController *
 scontroller_new(struct TTable *ttable);
 
-/** @brief Free @p scontroller and run destructors.
+/**
+ * @brief Free @p scontroller and run destructors.
  */
 void
 scontroller_free(struct SController *scontroller);
 
-Move
-scontroller_best_move(struct SController *scontroller);
+/**
+ * @brief Start searching with all the workers available.
+ */
+void
+scontroller_start(struct SController *scontroller, struct Board *board);
 
 /**
  * @brief Stop searching.
  * @return The best move found.
  */
 Move
-scontroller_finish(struct SController *scontroller);
+scontroller_stop(struct SController *scontroller);

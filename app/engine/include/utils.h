@@ -1,5 +1,7 @@
-/// @file utils.h
-/// @brief General utility functions.
+/**
+ * @file utils.h
+ * @brief General utility functions.
+ */
 
 #pragma once
 
@@ -8,8 +10,11 @@
 
 #define MAX(x, y) ((x) > (y) ? (x) : (y))
 #define MIN(x, y) ((x) < (y) ? (x) : (y))
-#define LIKELY(x) __builtin_expect((x), 1)
-#define UNLIKELY(x) __builtin_expect((x), 0)
+#define LIKELY(x) (__builtin_expect((x), 1))
+#define UNLIKELY(x) (__builtin_expect((x), 0))
+#define POPCOUNT(x) (__builtin_popcountll(x))
+#define LSB(x) (__builtin_ctzll(x))
+#define MSB(x) (__builtin_clzll(x))
 
 #define WHITESPACE_CHARS " \t\n\v\f\r"
 
@@ -17,19 +22,14 @@
 bool
 util_is_stdin_empty(void);
 
-// Try to fetch the home directory first from environment variables, then from
-// UID. Return NULL if no home directory is found.
-char *
-util_home_dir(void);
-
 // Get the current UNIX-like timestamp in milliseconds.
 size_t
 util_timestamp_msec(void);
 
-/// @brief Gets the page size on this device.
-/// @return The page size in bytes.
-size_t
-util_page_size(void);
-
+/**
+ * @brief A safe @c malloc wrapper. Z64C has no special stability needs and I
+ * don't feel comfortable cluttering the source code with unnecessary NULL
+ * checks that don't actually solve anything.
+ */
 void *
 xmalloc(size_t size);

@@ -3,23 +3,14 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
+#include "switches.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdint.h>
 
-uint64_t BB_ADJIACTENT_FILES[BOARD_SIDE_LENGTH] = {
-	0x0202020202020202, 0x0505050505050505, 0x0a0a0a0a0a0a0a0a,
-	0x1414141414141414, 0x2828282828282828, 0x5050505050505050,
-	0xa0a0a0a0a0a0a0a0, 0x4040404040404040,
-};
-
-uint64_t BB_ADJIACTENT_RANKS[BOARD_SIDE_LENGTH] = {
-	0x000000000000ff00, 0x0000000000ff00ff, 0x00000000ff00ff00,
-	0x000000ff00ff0000, 0x0000ff00ff000000, 0x00ff00ff00000000,
-	0xff00ff0000000000, 0x00ff000000000000,
-};
-
-// Ordered by '7 + rank - file'.
+/**
+ * Ordered by '7 + rank - file'.
+ */
 const uint64_t BB_DIAGONALS[15] = {
 	0x0000000000000080, 0x0000000000008040, 0x0000000000804020,
 	0x0000000080402010, 0x0000008040201008, 0x0000804020100804,
@@ -28,7 +19,9 @@ const uint64_t BB_DIAGONALS[15] = {
 	0x0402010000000000, 0x0201000000000000, 0x0100000000000000,
 };
 
-// Ordered by 'rank + file'.
+/**
+ * Ordered by 'rank + file'.
+ */
 const uint64_t BB_ANTI_DIAGONALS[15] = {
 	0x0000000000000001, 0x0000000000000102, 0x0000000000010204,
 	0x0000000001020408, 0x0000000102040810, 0x0000010204081020,
@@ -45,18 +38,14 @@ bb_init(void)
 {
 	for (Coord coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
 		uint64_t coord_mask = bb_coord(coord);
-		BB_KNIGHT_THREATS[coord] =
-		  ((bb_coord(coord) << 6) & BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		  ((bb_coord(coord) >> 6) & BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		  ((bb_coord(coord) << 15) & BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		  ((bb_coord(coord) >> 15) & BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		  ((bb_coord(coord) << 17) & BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		  ((bb_coord(coord) >> 17) & BB_ADJIACTENT_FILES[coord_file(coord)]) |
-		  ((bb_coord(coord) << 10) & BB_ADJIACTENT_RANKS[coord_file(coord)]) |
-		  ((bb_coord(coord) >> 10) & BB_ADJIACTENT_RANKS[coord_file(coord)]);
-		BB_KING_THREATS[coord] =
-		  coord ^ ((bb_file(coord) | BB_ADJIACTENT_FILES[coord_file(coord)]) &
-		           (bb_rank(coord) | BB_ADJIACTENT_RANKS[coord_rank(coord)]));
+		//BB_KNIGHT_THREATS[coord] =
+		//  ((0xa1100110a << (coord - 18)) | (0xa1100110a >> (18u - coord))) &
+		//  (0x3f3f3f3f3f3f3f3f << (MIN(coord_file(coord), 2)));
+		//BB_KING_THREATS[coord] =
+		//  coord ^ ((bb_file(coord) | bb_file(MIN(coord - 1, 0)) |
+		//            bb_file(MAX(coord + 1, coord))) &
+		//           (bb_rank(coord) | bb_rank(MIN(coord - 1, coord)) |
+		//            bb_rank(MAX(coord + 1, coord))));
 	}
 }
 
@@ -82,14 +71,6 @@ bb_rank(Coord coord)
 }
 
 uint64_t
-bb_diagonals(Coord coord)
-{
-	assert(coord_is_in_bounds(coord));
-	return BB_DIAGONALS[7 + coord_rank(coord) - coord_file(coord)] |
-	       BB_ANTI_DIAGONALS[coord_rank(coord) + coord_file(coord)];
-}
-
-uint64_t
 bb_ray(Move move)
 {
 	Coord source = move_source(move);
@@ -99,22 +80,8 @@ bb_ray(Move move)
 	assert(coord_is_in_bounds(target));
 	assert(dir == DIR_HORIZONTAL || dir == DIR_VERTICAL || dir == DIR_DIAGONAL);
 	uint64_t ray = (bb_coord(source) - 1) ^ (bb_coord(target) - 1);
-	switch (dir) {
-		case DIR_HORIZONTAL:
-			ray &= bb_rank(source);
-			break;
-		case DIR_VERTICAL:
-			ray &= bb_file(source);
-			break;
-		case DIR_DIAGONAL:
-			ray &= bb_diagonals(source);
-			break;
-		default:
-			assert(false);
-	}
-	// Clear lowest set bit.
-	ray &= ray - 1;
-	return ray;
+	//void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
+	return ray & (ray - 1);// & filters[dir](source);
 }
 
 uint64_t
@@ -128,14 +95,16 @@ uint64_t
 bb_knight_threats(Coord coord)
 {
 	assert(coord_is_in_bounds(coord));
-	return BB_KNIGHT_THREATS[coord];
+	return BB_KING_THREATS[coord];
 }
 
 uint64_t
 bb_bishop_threats(Coord coord)
 {
 	assert(coord_is_in_bounds(coord));
-	return bb_diagonals(coord);
+	File file = coord_file(coord);
+	Rank rank = coord_rank(coord);
+	return BB_DIAGONALS[7 + rank - file] ^ BB_ANTI_DIAGONALS[rank + file];
 }
 
 uint64_t

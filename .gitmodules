@@ -13,3 +13,6 @@
 [submodule "lib/wslay"]
 	path = lib/wslay
 	url = https://github.com/tatsuhiro-t/wslay.git
+[submodule "lib/json"]
+	path = lib/json
+	url = https://github.com/nlohmann/json

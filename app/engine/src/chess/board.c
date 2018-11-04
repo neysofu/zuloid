@@ -16,7 +16,7 @@
 #define BB_960_HELPER 0x0100000000000001
 
 void
-board_setup_960(struct Board* board, int16_t seed)
+board_setup_960(struct Board *board, int16_t seed)
 {
 	// https://en.wikipedia.org/wiki/Chess960_numbering_scheme#Direct_derivation
 	*board = BOARD_STARTPOS;
@@ -84,8 +84,15 @@ board_setup_960(struct Board* board, int16_t seed)
 	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[2];
 }
 
+uint64_t
+board_hash(struct Board *board)
+{
+	assert(board);
+	return XXH64(board, sizeof(struct Board), 0);
+}
+
 enum Piece
-board_piece_at(struct Board* board, Coord coord)
+board_piece_at(struct Board *board, Coord coord)
 {
 	uint64_t mask = bb_coord(coord);
 	if (board->bb_pieces[PIECE_PAWN] & mask) {
@@ -107,7 +114,7 @@ board_piece_at(struct Board* board, Coord coord)
 }
 
 char
-board_square_to_char(struct Board* board, Coord coord, char empty_square)
+board_square_to_char(struct Board *board, Coord coord, char empty_square)
 {
 	uint64_t bb = bb_coord(coord);
 	if (board->bb_occupancy & bb) {
@@ -123,13 +130,13 @@ board_square_to_char(struct Board* board, Coord coord, char empty_square)
 }
 
 enum Color
-board_color_at(struct Board* board, Coord coord)
+board_color_at(struct Board *board, Coord coord)
 {
 	return MIN(board->bb_colors & bb_coord(coord), COLOR_BLACK);
 }
 
 void
-board_print(struct Board* board)
+board_print(struct Board *board)
 {
 	printf("    A B C D E F G H\n"
 	       "  ╔═════════════════╗\n");
@@ -146,56 +153,56 @@ board_print(struct Board* board)
 }
 
 enum Color
-board_active_color(struct Board* board)
+board_active_color(struct Board *board)
 {
 	return board->game_state >> GAME_STATE_ACTIVE_COLOR_OFFSET;
 }
 
 void
-board_toggle_active_color(struct Board* board)
+board_toggle_active_color(struct Board *board)
 {
 	board->game_state ^= (1 << GAME_STATE_ACTIVE_COLOR_OFFSET);
 }
 
 size_t
-board_num_half_moves(struct Board* board)
+board_num_half_moves(struct Board *board)
 {
 	return (board->game_state & GAME_STATE_NUM_HALF_MOVES) >> 8;
 }
 
 void
-board_increment_half_moves(struct Board* board)
+board_increment_half_moves(struct Board *board)
 {
 	board->game_state += 1 << GAME_STATE_NUM_HALF_MOVES_OFFSET;
 }
 
 void
-board_reset_half_moves(struct Board* board)
+board_reset_half_moves(struct Board *board)
 {
 	board->game_state &= ~GAME_STATE_NUM_HALF_MOVES;
 }
 
 int_fast8_t
-board_castling_rights(struct Board* board)
+board_castling_rights(struct Board *board)
 {
 	return board->game_state >> 4 & 0xf;
 }
 
 bool
-board_en_passant_is_available(struct Board* board)
+board_en_passant_is_available(struct Board *board)
 {
 	return board->game_state & 0x8;
 }
 
 Coord
-board_en_passant_coord(struct Board* board)
+board_en_passant_coord(struct Board *board)
 {
 	return bb_file(board->game_state & 0x7) &
 	       bb_rank(color_en_passant_rank(board_active_color(board)));
 }
 
 size_t
-board_legal_moves(struct Board* board, Move* move)
+board_legal_moves(struct Board *board, Move *move)
 {
 	return 1337; // TODO
 }

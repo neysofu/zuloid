@@ -1,7 +1,11 @@
-/// @file piece.h
-/// @brief Piece codes and relative utilities.
+/**
+ * @file piece.h
+ * @brief Piece codes and relative utilities.
+ */
 
 #pragma once
+
+#define PIECE_MAX PIECE_QUEEN
 
 /// @brief One 3-bit code for each (colorless) type of chess piece.
 enum Piece
@@ -12,7 +16,7 @@ enum Piece
 	PIECE_ROOK = 3,
 	PIECE_KING = 4,
 	PIECE_NONE = 5,
-	PIECE_QUEEN = 6,
+	PIECE_QUEEN = 6, // TODO: switch NONE and QUEEN
 };
 
 /// @brief Returns the lowercase letter that FEN uses to represent @p piece.

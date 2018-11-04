@@ -1,5 +1,7 @@
-/// @file move.h
-/// @brief Utilities for integer representation of chess moves.
+/**
+ * @file move.h
+ * @brief Utilities for integer representation of chess moves.
+ */
 
 #pragma once
 
@@ -11,7 +13,7 @@
 #include <stdint.h>
 
 // A move from one square to another.
-// TODO: make it a struct.
+// TODO: turn it into a uint16_t.
 typedef uint32_t Move;
 
 // Creates a move from one square to another. 'promotion' is ignored if the move
