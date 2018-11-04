@@ -52,7 +52,7 @@ ttable_probe(struct TTable *ttable, struct Board *board)
 	assert(ttable);
 	assert(board);
 	uint64_t hash = board_hash(board);
-	struct TTableNode *node = ttable->root;
+	struct TTableNode *node = ttable; // FIXME
 	return node;
 }
 
