@@ -51,7 +51,7 @@ bb_init(void)
 		  coord ^ ((bb_file(coord) | MIN(bb_file(coord - 1), bb_file(coord)) |
 		            MAX(bb_file(coord + 1), bb_file(coord))) &
 		           (bb_rank(coord) | MIN(bb_rank(coord - 1), bb_rank(coord)) |
-		            MAX(bb_rank(coord + 1), coord));
+		            MAX(bb_rank(coord + 1), bb_rank(coord))));
 	}
 }
 
