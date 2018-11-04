@@ -4,7 +4,10 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#pragma once
+
 #include "switches.h"
+#include <stdio.h>
 
 #if SWITCH_DEBUG
 #define debug_printf(fmt, args...)                                             \
