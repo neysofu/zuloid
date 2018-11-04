@@ -373,7 +373,7 @@ json
 driver_rpc_uci(struct Driver *driver, json request, bool must_respond)
 {
 	assert(driver);
-	debug_printf("UCI session initialization via 'uci' command.\n");
+	log_debug("UCI session initialization via 'uci' command.\n");
 	json response;
 	if (must_respond) {
 		response[field_result][field_meta][field_license] = engine_license;
@@ -392,13 +392,13 @@ extern "C" {
 const char *
 driver_rpc(struct Driver *driver, const char *cmd)
 {
-	debug_printf("New JSON RPC request.\n");
+	log_debug("New JSON RPC request.\n");
 	json request;
 	json response;
 	try {
 		request = json::parse(cmd);
 	} catch (json::parse_error &e) {
-		debug_printf("The JSON RPC request is not parsable.\n");
+		log_debug("The JSON RPC request is not parsable.\n");
 		response = {
 			{ field_jsonrpc, uci_jsonrpc_version },
 			{ field_error,
@@ -410,12 +410,12 @@ driver_rpc(struct Driver *driver, const char *cmd)
 		};
 		return strdup(response.dump().c_str());
 	}
-	debug_printf("Running sanity checks on the JSON RPC request.\n");
+	log_debug("Running sanity checks on the JSON RPC request.\n");
 	if (request.count(field_method) == 0 || !request[field_method].is_string() ||
 	    request.count(field_jsonrpc) == 0 ||
 	    !request[field_jsonrpc].is_string() ||
 	    request[field_jsonrpc].get<std::string>() != uci_jsonrpc_version) {
-		debug_printf("Sanity checks failed.\n");
+		log_debug("Sanity checks failed.\n");
 		response = {
 			{ field_jsonrpc, uci_jsonrpc_version },
 			{ field_error,
@@ -428,10 +428,10 @@ driver_rpc(struct Driver *driver, const char *cmd)
 		return strdup(response.dump().c_str());
 	}
 	bool has_id = request.count("id") == 1;
-	debug_printf(
+	log_debug(
 	  "The JSON RPC request is a notification. No response will be sent.\n");
 	std::string method_name = request["method"];
-	debug_printf("Doing method dispatching for the JSON RPC request.\n");
+	log_debug("Doing method dispatching for the JSON RPC request.\n");
 	switch (XXH64(method_name.c_str(), method_name.size(), 0)) {
 		case 0xa2aa05ed9085aaf9: /** "foobar" */
 			/** Just give back an empty result. */
@@ -469,7 +469,7 @@ driver_rpc(struct Driver *driver, const char *cmd)
 			response = driver_rpc_uci(driver, request, has_id);
 			break;
 		default:
-			debug_printf("The JSON RPC method was not found.\n");
+			log_debug("The JSON RPC method was not found.\n");
 			response = { { field_error,
 				             { { field_code, uci_method_not_found_code },
 				               { field_message, uci_method_not_found_message } } } };
@@ -484,7 +484,7 @@ driver_rpc(struct Driver *driver, const char *cmd)
 		response[field_id] = request[field_id];
 		return strdup(response.dump().c_str());
 	} else {
-		debug_printf("No response given.\n");
+		log_debug("No response given.\n");
 		return NULL;
 	}
 }

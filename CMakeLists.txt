@@ -12,6 +12,9 @@ set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 
 find_package (ArrayFire REQUIRED)
 
+string (LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_LENGTH)
+add_definitions ("-D__FILE_PREFIX_SIZE__=${SOURCE_PATH_LENGTH}")
+
 # Modern C++
 set (JSON_BuildTests OFF CACHE INTERNAL "")
 add_subdirectory ("${LIB_DIR}json/")

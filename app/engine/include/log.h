@@ -9,10 +9,14 @@
 #include "switches.h"
 #include <stdio.h>
 
-#if SWITCH_DEBUG
-#define debug_printf(fmt, args...)                                             \
-	fprintf(                                                                     \
-	  stderr, "[DEBUG] %s:%s:%d -- " fmt, __FILE__, __func__, __LINE__, ##args);
+#if SWITCH_LOG
+#define log_debug(fmt, args...)                                             \
+	fprintf(stderr,                                                              \
+	        "[DEBUG] %s:%s:%d -- " fmt,                                          \
+	        __FILE__ + __FILE_PREFIX_SIZE__,                                     \
+	        __func__,                                                            \
+	        __LINE__,                                                            \
+	        ##args);
 #else
-#define debug_printf(fmt, args...)
+#define log_debug(fmt, args...)
 #endif

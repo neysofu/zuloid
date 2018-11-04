@@ -6,6 +6,7 @@
 
 #include "bitboards.h"
 #include "driver.h"
+#include "log.h"
 #include <stdio.h>
 #include <sys/select.h>
 #include <sysexits.h>
@@ -13,6 +14,7 @@
 int
 main(void)
 {
+	log_debug("Now setting line buffering for all three standard channels.\n");
 	setlinebuf(stdin);
 	setlinebuf(stdout);
 	setlinebuf(stderr);

@@ -12,7 +12,7 @@
 /**
  * Activate debug print statements and assertions.
  */
-#define SWITCH_DEBUG 1
+#define SWITCH_LOG 1
 
 /**
  * Turn on OpenMP optimizations for multithreading. Reccomended.

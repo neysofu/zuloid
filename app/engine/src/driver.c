@@ -63,7 +63,7 @@ driver_main(struct Driver *driver)
 		}
 		const char *response = driver_rpc(driver, cmd);
 		if (response) {
-			debug_printf("Writing the JSON RPC response object to stdout.\n");
+			log_debug("Writing the JSON RPC response object to stdout.\n");
 			printf("  %s\r\n", response);
 			free((void *)response);
 		}
