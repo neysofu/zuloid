@@ -95,7 +95,7 @@ uint64_t
 bb_knight_threats(Coord coord)
 {
 	assert(coord_is_in_bounds(coord));
-	return BB_KING_THREATS[coord];
+	return BB_KNIGHT_THREATS[coord];
 }
 
 uint64_t
