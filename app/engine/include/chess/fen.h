@@ -1,12 +1,18 @@
-/// @file fen.h
-/// @brief Function prototypes for FEN utilities.
-//
-/// FEN strings
-/// (Forsyth–Edwards Notation, see the wikipedia page
-/// for details) are not used internally by Z64C, but
-/// they are available as means of input and output for chess positions.
-//
-/// @see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @file fen.h
+ * @brief Function prototypes for FEN utilities.
+ *
+ * FEN strings
+ * (Forsyth–Edwards Notation, see the wikipedia page
+ * for details) are not used internally by Z64C, but
+ * they are available as means of input and output for chess positions.
+ *
+ * @see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+ */
 
 #pragma once
 

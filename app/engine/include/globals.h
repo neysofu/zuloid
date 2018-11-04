@@ -1,4 +1,8 @@
 /**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
  * @file globals.h
  * @brief Global constants.
  */
@@ -17,7 +21,7 @@ extern const char *const engine_language;
 
 #define ENGINE_NAME "Z64C"
 #define ENGINE_VERSION "0.8"
-#define ENGINE_LICENSE "GNU AGPLv3"
+#define ENGINE_LICENSE "MPL-2.0"
 #define ENGINE_RELEASE_DATE __DATE__
 #define ENGINE_AUTHOR "Filippo Costa (@neysofu)"
 #define ENGINE_URL "https://zsixfourc.net"

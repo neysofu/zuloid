@@ -1,4 +1,8 @@
 /**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
  * @file ttable_node.h
  * @brief Search nodes.
  */
@@ -50,8 +54,7 @@ struct TTableNode
 	 * @brief Counts the number of incoming connections to this node. A counter
 	 * is necessary for deleting nodes.
 	 * not be enough in some cases.
-	 */
-	/**
+	 *
 	 * It is *technically* possible to have a transposition with more than 256
 	 * collisions, but it won't ever happen in normal circumstances; you would
 	 * need a crazy position like R6R/3Q4/1Q4Q1/4Q3/2Q4Q/Q4Q2/pp1Q4/kBNN1KB1

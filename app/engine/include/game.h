@@ -1,4 +1,9 @@
-/// @file game.h
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @file game.h
 /// @brief Operations that allow to store game metainformation and PGN
 /// utilities.
 ///
@@ -8,6 +13,7 @@
 /// they are available as means of input and output for chess positions.
 //
 /// @see https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation
+ */
 
 #pragma once
 

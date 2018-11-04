@@ -1,6 +1,12 @@
-/// @file move_inspector.h
-/// @brief A simple object to unpack information that arises during move
-// checki
+/**
+ * This Source Code Form is subject to the terms of the Mozilla Public
+ * License, v. 2.0. If a copy of the MPL was not distributed with this
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/.
+ *
+ * @file move_inspector.h
+ * @brief A simple object to unpack information that arises during move
+ * checki
+ */
 
 #pragma once
 
