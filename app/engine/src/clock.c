@@ -63,6 +63,9 @@ clock_free(struct Clock *clock)
 {
 	assert(clock);
 	assert(!clock->previous_stage);
+	while (clock->previous_stage) {
+		clock = clock->previous_stage;
+	}
 	while (clock->next_stage) {
 		clock = clock->next_stage;
 		free(clock->previous_stage);
