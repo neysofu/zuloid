@@ -51,9 +51,29 @@ struct TTableNode
 	 * is necessary for deleting nodes.
 	 * not be enough in some cases.
 	 */
-#if SWITCH_SHRINK_TREE
+	/**
+	 * It is *technically* possible to have a transposition with more than 256
+	 * collisions, but it won't ever happen in normal circumstances; you would
+	 * need a crazy position like R6R/3Q4/1Q4Q1/4Q3/2Q4Q/Q4Q2/pp1Q4/kBNN1KB1
+	 * and Cthulhu only knows what search parameters. Just to make sure, a
+	 * safety pig has been provided below for protecting the engine from any
+	 * bug.
+	 *                          _
+	 *  _._ _..._ .-',     _.._(`))
+	 * '-. `     '  /-._.-'    ',/
+	 *    )         \            '.
+	 *   / _    _    |             \
+	 *  |  a    a    /              |
+	 *  \   .-.                     ;
+	 *   '-('' ).-'       ,'       ;
+	 *      '-;           |      .'
+	 *         \           \    /
+	 *         | 7  .__  _.-\   \
+	 *         | |  |  ``/  /`  /
+	 *        /,_|  |   /,_/   /
+	 *           /,_/      '`-'
+	 */
 	uint8_t reference_count;
-#endif
 	uint8_t children_count;
 	uint16_t frequency_unit;
 	struct CandidateLine lines[NUM_AVG_CANDIDATE_MOVES];

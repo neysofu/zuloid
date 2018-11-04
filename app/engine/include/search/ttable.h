@@ -49,3 +49,6 @@ ttable_free(struct TTable *ttable);
  */
 void
 ttable_clear(struct TTable *ttable);
+
+struct TTableNode *
+ttable_proble(struct TTable *ttable, uint64_t key);
