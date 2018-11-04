@@ -38,14 +38,14 @@ bb_init(void)
 {
 	for (Coord coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
 		uint64_t coord_mask = bb_coord(coord);
-		//BB_KNIGHT_THREATS[coord] =
+		// BB_KNIGHT_THREATS[coord] =
 		//  ((0xa1100110a << (coord - 18)) | (0xa1100110a >> (18u - coord))) &
 		//  (0x3f3f3f3f3f3f3f3f << (MIN(coord_file(coord), 2)));
-		//BB_KING_THREATS[coord] =
-		//  coord ^ ((bb_file(coord) | bb_file(MIN(coord - 1, 0)) |
-		//            bb_file(MAX(coord + 1, coord))) &
-		//           (bb_rank(coord) | bb_rank(MIN(coord - 1, coord)) |
-		//            bb_rank(MAX(coord + 1, coord))));
+		BB_KING_THREATS[coord] =
+		  coord ^ ((bb_file(coord) | MIN(bb_file(coord - 1), bb_file(coord)) |
+		            MAX(bb_file(coord + 1), bb_file(coord))) &
+		           (bb_rank(coord) | MIN(bb_rank(coord - 1), bb_rank(coord)) |
+		            MAX(bb_rank(coord + 1), coord));
 	}
 }
 
@@ -80,8 +80,8 @@ bb_ray(Move move)
 	assert(coord_is_in_bounds(target));
 	assert(dir == DIR_HORIZONTAL || dir == DIR_VERTICAL || dir == DIR_DIAGONAL);
 	uint64_t ray = (bb_coord(source) - 1) ^ (bb_coord(target) - 1);
-	//void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
-	return ray & (ray - 1);// & filters[dir](source);
+	// void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
+	return ray & (ray - 1); // & filters[dir](source);
 }
 
 uint64_t
