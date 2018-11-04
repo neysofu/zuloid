@@ -39,6 +39,15 @@ I am looking for a solution with:
 * Extremely good scaling.
 * Dynamic resizing.
 
+I can dispatch from a table that divides into 256 sectors, each with a pointer
+-> 64 cache lines.
+This will already divide by a factor of 2**6 the workload.
+It must support:
+- Probing
+- Setting
+- (Optional.) Dynamic growth
+- Shrinking
+
 API
 ===
 Un chess engine puo giocare a scacchi. Cosa devo esporre con le APIs? Capacita'
@@ -54,7 +63,7 @@ hell do I do that?
 The answer here is that there is not one. It's about tradeoffs with space and
 time and computer architecture. A good solution might be to explore branches
 from the down up by estimating how much time it might take to explore this
-branch.How do I want the search to go. Othewise, I can store everything... but
+branch. How do I want the search to go. Othewise, I can store everything... but
 it will take everything!
 
 I have 64 bit keys and need a unique address for each of them.
@@ -64,6 +73,7 @@ Best search algorithm:
   It must spend time thinking about chess positions, not shuffling bytes.
 * It must be selective.
 * It must have low memory consumptions.
+No things such as 
 
 So the search is:
 * Choose a path and deepen it.
@@ -120,7 +130,7 @@ written. The question is:
 * Monte Carlo Alpha Beta
   - More efficient than pure MCTS
   - Requires move generation for board
-* 
+
 
 ON GPU USAGE
 ============
