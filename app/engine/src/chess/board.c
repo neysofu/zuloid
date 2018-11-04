@@ -11,6 +11,7 @@
 #include "chess/move.h"
 #include "log.h"
 #include "utils.h"
+#include "xxHash.h"
 #include <assert.h>
 #include <stdbool.h>
 #include <stddef.h>
