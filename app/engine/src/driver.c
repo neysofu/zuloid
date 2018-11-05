@@ -46,26 +46,30 @@ driver_new(void)
 void
 driver_free(struct Driver *driver)
 {
+	LOG_DEBUG("Freeing all memory.\n");
 	assert(driver);
 	ttable_free(driver->ttable);
+	scontroller_free(driver->scontroller);
 	free(driver);
 }
 
 int8_t
 driver_main(struct Driver *driver)
 {
+	LOG_DEBUG("Now entering the main UCI loop.\n");
 	assert(driver);
 	char *cmd = NULL;
 	size_t cmd_length = 0;
 	while (driver->mode != MODE_EXIT) {
 		if (getline(&cmd, &cmd_length, stdin) == -1) {
+			LOG_FATAL("Something bad happened while reading from stdin. Abort.\n");
 			return EX_IOERR;
 		}
 		const char *response = driver_rpc(driver, cmd);
 		if (response) {
-			log_debug("Writing the JSON RPC response object to stdout.\n");
+			LOG_DEBUG("Writing the JSON RPC response object to stdout.\n");
 			printf("  %s\r\n", response);
-			free((void *)response);
+			free((void *)(response));
 		}
 	}
 	return driver->exit_status;

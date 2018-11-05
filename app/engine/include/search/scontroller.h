@@ -31,7 +31,8 @@ scontroller_free(struct SController *scontroller);
  * @brief Start searching with all the workers available.
  */
 void
-scontroller_start(struct SController *scontroller, struct Board *board);
+scontroller_start(struct SController *scontroller,
+                  struct Board *board);
 
 /**
  * @brief Stop searching.

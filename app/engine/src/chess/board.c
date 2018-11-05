@@ -36,7 +36,7 @@ board_setup_960(struct Board *board, int16_t seed)
 	div_t permutations;
 	// Seeds larger than 959 trigger random setup.
 	permutations.quot = (seed < 960 ? seed : rand()) % 960;
-	log_debug("Now setting up the board from the Chess 960 position %d.\n",
+	LOG_DEBUG("Now setting up the board from the Chess 960 position %d.\n",
 	          permutations.quot);
 	// Bishops.
 	assert(permutations.quot < 960);

@@ -16,12 +16,7 @@
 
 struct CandidateLine
 {
-#if SWITCH_TRAIN
-	uint32_t frequency;
-	uint32_t uncertainty;
-#else
 	uint8_t frequency;
-#endif
 	// This can potentially be a move camouflaged as pointer.
 	struct TTableNode *ttnode;
 };
