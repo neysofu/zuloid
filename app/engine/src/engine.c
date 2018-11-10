@@ -65,7 +65,7 @@ engine_main(struct Engine *engine)
 			TRACE("Something bad happened while reading from stdin. Abort.\n");
 			return EX_IOERR;
 		}
-		char cmd_iter = cmd;
+		const char *cmd_iter = cmd;
 		if (util_str_is_whitespace(cmd)) {
 			continue;
 		}

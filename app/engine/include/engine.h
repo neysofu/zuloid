@@ -38,7 +38,7 @@ struct Engine
 	int8_t exit_status;
 	/** The heavy lifts. */
 	struct TTable *ttable;
-	struct Scontroller *scontroller;
+	struct SController *scontroller;
 	struct Network *network;
 };
 

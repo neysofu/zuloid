@@ -53,6 +53,13 @@ ttable_probe(struct TTable *ttable, uint64_t key)
 	return NULL;
 }
 
+struct TTableNode *
+ttable_insertion(struct TTable *ttable, uint64_t key)
+{
+	assert(ttable);
+	return NULL;
+}
+
 void
 ttable_clear(struct TTable *ttable)
 {

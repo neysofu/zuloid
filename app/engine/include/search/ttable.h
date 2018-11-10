@@ -56,3 +56,6 @@ ttable_clear(struct TTable *ttable);
 
 struct TTableNode *
 ttable_probe(struct TTable *ttable, uint64_t key);
+
+struct TTableNode *
+ttable_insertion(struct TTable *ttable, uint64_t key);
