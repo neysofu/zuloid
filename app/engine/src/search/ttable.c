@@ -47,23 +47,25 @@ ttable_free(struct TTable *ttable)
 }
 
 struct TTableNode *
-ttable_probe(struct TTable *ttable, struct Board *board)
+ttable_probe(struct TTable *ttable, uint64_t key)
 {
 	assert(ttable);
-	assert(board);
-	uint64_t hash = board_hash(board);
-	struct TTableNode *node = ttable; // FIXME
-	return node;
+	return NULL;
 }
 
 void
 ttable_clear(struct TTable *ttable)
 {
-//	assert(ttable);
-//#if SWITCH_OPENMP
-//#pragma omp parallel for
-//#endif
-//	for (size_t i = ttable->num_fragments; i > 0; i--) {
-//		memset(*(*ttable->fragments)[i], 0, ttable->fragment_size);
-//	}
+	assert(ttable);
+	/**
+	 * See
+	 * https://stackoverflow.com/questions/11576670/in-an-openmp-parallel-code-would-there-be-any-benefit-for-memset-to-be-run-in-p
+	 * for performance considerations.
+	 */
+#if SWITCH_OPENMP
+#pragma omp parallel for
+#endif
+	for (size_t i = ttable->num_fragments; i > 0; i--) {
+		//memset(*(*ttable->fragments)[i], 0, ttable->fragment_size);
+	}
 }

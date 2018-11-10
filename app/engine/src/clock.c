@@ -16,9 +16,9 @@ clock_new_blitz(void)
 	struct Clock *clock = xmalloc(sizeof(struct Clock));
 	clock->start_timestamp_msec = 0;
 	clock->time_available_msec = 3 * 60 * 1000;
-	clock->time_increment_msec = 2 * 1000;
-	clock->time_delay_msec = 0;
-	clock->time_lag_msec = 0;
+	clock->increment_msec = 2 * 1000;
+	clock->delay_msec = 0;
+	clock->latency_msec = 0;
 	clock->num_moves_before_next_stage = 0;
 	clock->next_stage = NULL;
 	clock->previous_stage = NULL;
@@ -31,9 +31,9 @@ clock_new_rapid(void)
 	struct Clock *clock = xmalloc(sizeof(struct Clock));
 	clock->start_timestamp_msec = 0;
 	clock->time_available_msec = 15 * 60 * 1000;
-	clock->time_increment_msec = 10 * 1000;
-	clock->time_delay_msec = 0;
-	clock->time_lag_msec = 0;
+	clock->increment_msec = 10 * 1000;
+	clock->delay_msec = 0;
+	clock->latency_msec = 0;
 	clock->num_moves_before_next_stage = 0;
 	clock->next_stage = NULL;
 	clock->previous_stage = NULL;
@@ -47,17 +47,17 @@ clock_new_classical(void)
 	struct Clock *clock_1 = xmalloc(sizeof(struct Clock));
 	clock_0->start_timestamp_msec = 0;
 	clock_0->time_available_msec = 90 * 60 * 1000;
-	clock_0->time_increment_msec = 30 * 1000;
-	clock_0->time_delay_msec = 0;
-	clock_0->time_lag_msec = 0;
+	clock_0->increment_msec = 30 * 1000;
+	clock_0->delay_msec = 0;
+	clock_0->latency_msec = 0;
 	clock_0->num_moves_before_next_stage = 40;
 	clock_0->next_stage = clock_1;
 	clock_0->previous_stage = NULL;
 	clock_1->start_timestamp_msec = 0;
 	clock_1->time_available_msec = 30 * 60 * 1000;
-	clock_1->time_increment_msec = 30 * 1000;
-	clock_1->time_lag_msec = 0;
-	clock_1->time_delay_msec = 0;
+	clock_1->increment_msec = 30 * 1000;
+	clock_1->latency_msec = 0;
+	clock_1->delay_msec = 0;
 	clock_1->num_moves_before_next_stage = 0;
 	clock_1->next_stage = NULL;
 	clock_1->previous_stage = clock_0;
@@ -96,8 +96,8 @@ clock_stop(struct Clock *clock)
 		return -1;
 	} else {
 		clock->time_available_msec +=
-		  clock->time_increment_msec +
-		  MIN(clock->time_delay_msec, time_elapsed_msec);
+		  clock->increment_msec +
+		  MIN(clock->delay_msec, time_elapsed_msec);
 		return 0;
 	}
 }

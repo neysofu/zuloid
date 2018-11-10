@@ -30,6 +30,9 @@ util_is_stdin_empty(void);
 size_t
 util_timestamp_msec(void);
 
+bool
+util_str_is_whitespace(const char *str);
+
 /**
  * @brief A safe @c malloc wrapper. Z64C has no special stability needs and I
  * don't feel comfortable cluttering the source code with unnecessary NULL

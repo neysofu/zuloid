@@ -9,7 +9,7 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
-#include "log.h"
+#include "trace.h"
 #include "utils.h"
 #include "xxHash.h"
 #include <assert.h>
@@ -25,7 +25,9 @@
 void
 board_setup_960(struct Board *board, int16_t seed)
 {
-	// https://en.wikipedia.org/wiki/Chess960_numbering_scheme#Direct_derivation
+	/**
+	 * https://en.wikipedia.org/wiki/Chess960_numbering_scheme#Direct_derivation
+	 */
 	*board = BOARD_STARTPOS;
 	// Erase pieces.
 	board->bb_pieces[PIECE_KNIGHT] = 0;
@@ -36,8 +38,8 @@ board_setup_960(struct Board *board, int16_t seed)
 	div_t permutations;
 	// Seeds larger than 959 trigger random setup.
 	permutations.quot = (seed < 960 ? seed : rand()) % 960;
-	LOG_DEBUG("Now setting up the board from the Chess 960 position %d.\n",
-	          permutations.quot);
+	TRACE("Now setting up the board from the Chess 960 position %d.\n",
+	      permutations.quot);
 	// Bishops.
 	assert(permutations.quot < 960);
 	permutations = div(permutations.quot, 4);

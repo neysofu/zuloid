@@ -5,8 +5,8 @@
  */
 
 #include "bitboards.h"
-#include "driver.h"
-#include "log.h"
+#include "engine.h"
+#include "trace.h"
 #include <stdio.h>
 #include <sys/select.h>
 #include <sysexits.h>
@@ -17,10 +17,10 @@ main(void)
 	setlinebuf(stdin);
 	setlinebuf(stdout);
 	setlinebuf(stderr);
-	LOG_DEBUG("Line buffering set for all three standard channels.\n");
+	TRACE("Line buffering set for all three standard channels.\n");
 	bb_init();
-	struct Driver *driver = driver_new();
-	int8_t exit_status = driver_main(driver);
-	driver_free(driver);
+	struct Engine *engine = engine_new();
+	int8_t exit_status = engine_main(engine);
+	engine_free(engine);
 	return exit_status;
 }

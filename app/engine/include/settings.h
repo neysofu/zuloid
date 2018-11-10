@@ -46,14 +46,13 @@ struct Settings
 	///
 	/// The default and optimal value is 0.5.
 	float selectivity;
-	struct Clock *time_control[2];
 	/// @brief The maximum number of half moves the engine is allowed to look
 	/// ahead during search.
 	size_t max_depth;
 	/// @brief The maximum number of chess positions the engine is allowed to
 	/// evaluate.
 	size_t max_num_nodes;
-	char *buffer;
+	struct Tablebase *tablebase;
 };
 
 /// @brief Reset the settings manager @p settings to its default value.
@@ -67,5 +66,5 @@ settings_default(struct Settings *settings);
 /// of failure can be:
 /// - nonexistant name, or
 /// - illegal value.
-char *
+int8_t
 settings_set_value(struct Settings *settings, char *name, char *value);

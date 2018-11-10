@@ -20,12 +20,13 @@ struct Clock
 {
 	uint64_t start_timestamp_msec;
 	int64_t time_available_msec;
-	uint64_t time_increment_msec;
-	uint64_t time_delay_msec;
-	uint64_t time_lag_msec;
+	uint64_t increment_msec;
+	uint64_t delay_msec;
+	uint64_t latency_msec;
 	uint16_t num_moves_before_next_stage;
 	struct Clock *next_stage;
 	struct Clock *previous_stage;
+	struct Clock *overtime_stage;
 };
 
 struct Clock *

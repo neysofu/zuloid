@@ -5,6 +5,8 @@
  */
 
 #include "utils.h"
+#include <assert.h>
+#include <ctype.h>
 #include <pwd.h>
 #include <stdbool.h>
 #include <stdio.h>
@@ -29,6 +31,14 @@ util_timestamp_msec(void)
 	struct timeval tv;
 	gettimeofday(&tv, NULL);
 	return tv.tv_sec * 1000 + tv.tv_usec / 1000;
+}
+
+bool
+util_str_is_whitespace(const char *str)
+{
+	assert(str);
+	while (isspace(*str) && str++);
+	return !*str;
 }
 
 void *

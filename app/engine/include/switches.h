@@ -15,7 +15,7 @@
 #define SWITCH_LOG 1
 
 /**
- * Turn on OpenMP optimizations for multithreading. Reccomended.
+ * Turn on OpenMP optimizations for multithreading. Recommended.
  */
 #define SWITCH_OPENMP 0
 

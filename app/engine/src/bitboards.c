@@ -9,8 +9,8 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
-#include "log.h"
 #include "switches.h"
+#include "trace.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdint.h>
@@ -43,7 +43,7 @@ uint64_t BB_KING_THREATS[BOARD_NUM_SQUARES];
 void
 bb_init(void)
 {
-	LOG_DEBUG("Bitboard lookup tables initialization has started.\n");
+	TRACE("Bitboard lookup tables initialization has started.\n");
 	for (Coord coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
 		uint64_t coord_mask = bb_coord(coord);
 		// BB_KNIGHT_THREATS[coord] =
@@ -57,16 +57,16 @@ bb_init(void)
 		uint64_t king_vertical_threats =
 		  (file | MAX(file, file << 1ULL) | MIN(file, file >> 1ULL));
 		BB_KING_THREATS[coord] = king_horizontal_threats & king_vertical_threats;
-		LOG_DEBUG("King horizontal threats at square n.%d are: 0x%llx.\n",
-		             coord,
-		             king_horizontal_threats);
-		LOG_DEBUG("King vertical threats at square n.%d are: 0x%llx.\n",
-		             coord,
-		             king_vertical_threats);
-		LOG_DEBUG("King threats at square n.%d are: 0x%llx.\n",
-		             coord,
-		             BB_KING_THREATS[coord]);
-		LOG_DEBUG("Bitboard initilization at square n.%d is complete.\n", coord);
+		TRACE("King horizontal threats at square n.%d are: 0x%llx.\n",
+		          coord,
+		          king_horizontal_threats);
+		TRACE("King vertical threats at square n.%d are: 0x%llx.\n",
+		          coord,
+		          king_vertical_threats);
+		TRACE("King threats at square n.%d are: 0x%llx.\n",
+		          coord,
+		          BB_KING_THREATS[coord]);
+		TRACE("Bitboard initilization at square n.%d is complete.\n", coord);
 	}
 }
 
