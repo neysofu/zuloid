@@ -17,6 +17,10 @@
 #define LIKELY(x) (__builtin_expect((x), 1))
 #define UNLIKELY(x) (__builtin_expect((x), 0))
 #define POPCOUNT(x) (__builtin_popcountll(x))
+
+/**
+ * WATCH OUT FOR UNDEFINED BEHAVIOUR WHEN x == 0!
+ */
 #define LSB(x) (__builtin_ctzll(x))
 #define MSB(x) (__builtin_clzll(x))
 

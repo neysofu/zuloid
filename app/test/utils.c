@@ -23,5 +23,9 @@ test_utils(void)
 	TEST_ASSERT_INT_WITHIN(1, time(NULL), util_timestamp_msec() / 1000);
 	TEST_ASSERT(util_str_is_whitespace(" \t\r\n\v"));
 	TEST_ASSERT_FALSE(util_str_is_whitespace(" \t\r\n\v:)"));
-	TEST_ASSERT_EQUAL_INT(LSB(0b1101), 0);
+	TEST_ASSERT_EQUAL_INT(LSB(0b101), 0);
+	TEST_ASSERT_EQUAL_INT(LSB(0b100), 2);
+	TEST_ASSERT_EQUAL_INT(MSB(0b10), 62);
+	TEST_ASSERT_EQUAL_INT(MSB(0b101), 61);
+	TEST_ASSERT_EQUAL_INT(POPCOUNT(0b110), 2);
 }
