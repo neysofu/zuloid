@@ -13,48 +13,36 @@ set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 find_package (ArrayFire REQUIRED)
 
 # Useful macros
-string (LENGTH "${CMAKE_SOURCE_DIR}/" SOURCE_PATH_LENGTH)
+string (LENGTH ${CMAKE_SOURCE_DIR} SOURCE_PATH_LENGTH)
 add_definitions ("-D__FILE_PREFIX_SIZE__=${SOURCE_PATH_LENGTH}")
 
-# JSON C++ library
-set (JSON_BuildTests OFF CACHE INTERNAL "")
-add_subdirectory ("${LIB_DIR}json/")
-
-# xxHash
-set (XXHASH_DIR "${LIB_DIR}xxHash/")
-set (XXHASH_SRC "${XXHASH_DIR}/xxhash.c")
-add_library (XXHASH INTERFACE)
-target_sources (XXHASH INTERFACE ${XXHASH_SRC})
-
-# Catch2
-set (CATCH2_DIR "${LIB_DIR}Catch2/single_include/")
-set (CATCH2_SRC "${CATCH2_DIR}/catch.hpp")
-add_library (CATCH2 INTERFACE)
-target_sources (CATCH2 INTERFACE ${CATCH2_SRC})
-
-# MT19937-64
-add_library (MT19937_64 "${CMAKE_CURRENT_SOURCE_DIR}/lib/mt19937-64/mt19937-64.c")
+add_library (CJSON "${LIB_DIR}/cJSON/cJSON.c")
+add_library (XXHASH "${LIB_DIR}/xxHash/xxhash.c")
+add_library (MT19937_64 "${LIB_DIR}/mt19937-64/mt19937-64.c")
+add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 
 # Z64C_LIB
-set (Z64C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app/engine/include/")
-file (GLOB_RECURSE Z64C_SRC "${Z64C_INCLUDE_DIR}*.h" "app/engine/src/*.c" "app/engine/src/*.cpp")
+set (Z64C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app/include/")
+file (GLOB_RECURSE Z64C_SRC "${Z64C_INCLUDE_DIR}/*.h"
+							"${CMAKE_CURRENT_SOURCE_DIR}/app/src/*.c")
+list (REMOVE_ITEM Z64C_SRC "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main.c")
 add_library (Z64C_LIB STATIC ${Z64C_SRC})
 target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR})
 target_include_directories (Z64C_LIB PUBLIC ${Z64C_INCLUDE_DIR})
 target_link_libraries (Z64C_LIB ArrayFire::afcpu)
+target_link_libraries (Z64C_LIB CJSON)
 target_link_libraries (Z64C_LIB XXHASH)
 target_link_libraries (Z64C_LIB MT19937_64)
-target_link_libraries (Z64C_LIB nlohmann_json::nlohmann_json)
 
 # Z64C
-add_executable (Z64C ${Z64C_SRC})
+add_executable (Z64C ${Z64C_SRC} "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main.c")
 target_link_libraries (Z64C Z64C_LIB)
 
 # Z64C_TEST
-#file (GLOB_RECURSE Z64C_TEST_SRC "app/engine/test/*.cpp")
-#add_executable (Z64C_TEST ${Z64C_TEST_SRC})
-#target_include_directories (Z64C_TEST PUBLIC ${Z64C_INCLUDE_DIR})
-#target_link_libraries (Z64C_TEST Z64C_LIB)
-#target_link_libraries (Z64C_TEST CATCH2)
-#enable_testing ()
-#add_test (NAME Z64C COMMAND Z64C_TEST)
+file (GLOB_RECURSE Z64C_TEST_SRC "${CMAKE_CURRENT_SOURCE_DIR}/app/test/*.c")
+add_executable (Z64C_TEST ${Z64C_TEST_SRC})
+target_include_directories (Z64C_TEST PUBLIC ${Z64C_INCLUDE_DIR})
+target_link_libraries (Z64C_TEST Z64C_LIB)
+target_link_libraries (Z64C_TEST UNITY)
+enable_testing ()
+add_test (NAME Z64C COMMAND Z64C_TEST)

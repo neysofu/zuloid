@@ -1,18 +1,15 @@
 [submodule "lib/xxHash"]
 	path = lib/xxHash
 	url = https://github.com/Cyan4973/xxHash
-[submodule "lib/Catch2"]
-	path = lib/Catch2
-	url = https://github.com/catchorg/Catch2.git
 [submodule "lib/arrayfire"]
 	path = lib/arrayfire
 	url = https://github.com/arrayfire/arrayfire
 [submodule "lib/mt19937-64"]
 	path = lib/mt19937-64
 	url = https://github.com/stevemkim/mt19937-64
-[submodule "lib/wslay"]
-	path = lib/wslay
-	url = https://github.com/tatsuhiro-t/wslay.git
-[submodule "lib/json"]
-	path = lib/json
-	url = https://github.com/nlohmann/json
+[submodule "lib/cJSON"]
+	path = lib/cJSON
+	url = https://github.com/DaveGamble/cJSON/
+[submodule "lib/Unity"]
+	path = lib/Unity
+	url = https://github.com/ThrowTheSwitch/Unity

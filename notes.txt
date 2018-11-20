@@ -68,11 +68,34 @@ it will take everything!
 
 I have 64 bit keys and need a unique address for each of them.
 
-Best search algorithm:
-* It must be fast, i.e. search overheard must be small compared to evaluation.
-  It must spend time thinking about chess positions, not shuffling bytes.
-* It must be selective.
-* It must have low memory consumptions.
+Design choices:
+* The transition table is a lossy hash table. Elements are deleted starting from
+  the worst move.
+* The search overhead should be minimal.
+* The search should maximise the probability of X.
+  - When playing, that it is the best move.
+  - When analyzing, a weighted mean.
+* It must have very low memory consumption. Ideally it should have very little
+  cache misses.
+* Nodes should be move-oriented and not value-oriented.
+* The search starts from a position, from which we get the best moves with the
+  probabilities. The probabilities and the focus on uncertainty is what makes
+  Z64C extremely good: it considers how unstable a position is and doesn't need
+  specific search parameters.
+* Nodes dont't store optimal moves because it would waste memory on something
+  useless. Once I store moves I also need tensors, and if I have tensors I
+  wouldn't need moves. So no moves.
+
+An example of search:
+* I start from the start position.
+* The position is analyzed and the move considerations are stored on the stack.
+* I can get:
+  * Dangerous move but may be solid, rest is a bit worse but safer.
+  * Many, many quiet and possible choices. No obvious candidate. Ex. start.
+  * Forced line, maybe two alternatives. Common in endgames.
+* The search must handle these three cases all very well.
+* I start searching until I am confident with a certain
+  for cache behaviour. It needs more continuity.
 
 Soooo... how the hell do I do this? I want it to be very strong but also easy on
 resources, and the key to that is considering very little nodes while keeping
@@ -85,6 +108,7 @@ when I consider sequential moves. So the obvious way is some sort of
 depth-first, best first approach: only keep the tree in memory and when you meet
 a new position, add it to the transition table. The transition table is by
 itself a lossy hash table.
+
 
 The more I think about the search problem (because I actually know how to do the
 evaluation), the more I realize it's a problem about the APIs and the
