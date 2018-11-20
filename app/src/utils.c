@@ -51,13 +51,3 @@ xmalloc(size_t size)
 	}
 	return ptr;
 }
-
-struct cJSON *
-util_jsonrpc_error(int64_t code, const char *message)
-{
-	struct cJSON *response = cJSON_CreateObject();
-	struct cJSON *error = cJSON_AddObjectToObject(response, "error");
-	cJSON_AddNumberToObject(error, "code", code);
-	cJSON_AddStringToObject(error, "message", message);
-	return response;
-}
