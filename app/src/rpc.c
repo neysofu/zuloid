@@ -79,13 +79,13 @@ engine_rpc_load(struct Engine *engine, struct cJSON *params)
 	assert(engine);
 	cJSON *response = cJSON_CreateObject();
 	cJSON *body = cJSON_CreateObject();
-	if (engine->mode != MODE_IDLE) {
-		return util_jsonrpc_error(uci_operational_mode_error_code,
-		                          uci_operational_mode_error_message);
-	}
-	if (!cJSON_HasObjectItem(params, field_path)) {
-		return util_jsonrpc_error(uci_invalid_params_code, uci_invalid_params_message);
-	}
+	//if (engine->mode != MODE_IDLE) {
+	//	return util_jsonrpc_error(uci_operational_mode_error_code,
+	//	                          uci_operational_mode_error_message);
+	//}
+	//if (!cJSON_HasObjectItem(params, field_path)) {
+	//	return util_jsonrpc_error(uci_invalid_params_code, uci_invalid_params_message);
+	//}
 	return response;
 }
 
