@@ -1,70 +1,65 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * @file settings.h
- * @brief Settings that change the default behavior of the program.
- */
+ * Settings that change the default behavior of the program. */
 
 #pragma once
 
+#include "cJSON/cJSON.h"
 #include "clock.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
-/// @brief A grobal settings manager modifiable at runtime.
+/* A global settings manager modifiable at runtime. */
 struct Settings
 {
-	bool debug;
-	/// When set to 1, the engine will think during opponent's time.
-	bool ponder;
-	/// If set, the command @a train will become available.
-	bool train;
-	bool use_time_control;
-	/// The port reserved for network features such as clustering.
+	/* This is the network port in use for engine clusters. */
 	uint32_t port;
+	/* The random seed. */
 	uint32_t seed;
-	/// The maximum size of `struct TTable` instances in bytes.
+	/* The maximum amount of memory allocated for the transpositions table in
+	 * bytes. */
 	size_t max_cache_size;
 	/// Random noise between 0 and 1 that is added to candidade moves' scores to
 	/// improve randomness.
 	float move_selection_noise;
-	/// @brief The minimum probability of winning before Z64C resigns.
-	/// @note Resigning is not available with the @a train command.
+	/* Once the estimated winning chances fall below this threshold, Z64C will
+	 * resign. */
 	float resign_rate;
-	/// @brief A measure of preference for winning over drawing.
-	/// A resoluteness score of 0.0 means that Z64C will make no distincion
-	/// between drawing and winning and will treat both outcomes equally. On the
-	/// contrary, a resoluteness score of 1.0 will treat draws as losses.
-	///
-	/// The default value is 0.5.
+	/* The resoluteness score favors a risky, high-reward kind of play. It is
+	 * included in the range [0;1]. */
 	float resoluteness;
-	/// @brief A measure of the approach. Low selectivity scores will favour
-	/// shallow searching but exaustive searching; a high selectivity score will
-	/// favour deep and sharp playing lines.
-	///
-	/// The default and optimal value is 0.5.
+	/* The higher the selectivity score, the lower the branching factor during
+	 * search is. It must be in the range [0;1]. */
 	float selectivity;
-	/// @brief The maximum number of half moves the engine is allowed to look
-	/// ahead during search.
-	size_t max_depth;
-	/// @brief The maximum number of chess positions the engine is allowed to
-	/// evaluate.
-	size_t max_num_nodes;
 	struct Tablebase *tablebase;
 };
 
-/// @brief Reset the settings manager @p settings to its default value.
-/// @pre @p settings is not `NULL`.
+/* Resets the settings manager `settings` back to default values.
+ *
+ * Preconditions
+ *   The parameter `settings` must be non-NULL. */
 void
 settings_default(struct Settings *settings);
 
-/// @brief Updates a certain setting with the intended value @p value. Returns
-/// NULL if the setting is successfully updated, an error message otherwise.
-/// @return @p field iff the operation was successful; `NULL` otherwise. Reasons
-/// of failure can be:
-/// - nonexistant name, or
-/// - illegal value.
+/* Changes a specific field of the `settings` instance.
+ *
+ * Parameters
+ *   - `settings`: a non-NULL pointer to the settings manager.
+ *   - `name`: the name of the setting that shall be updated with the given
+ *     value.
+ *   - `value`: The JSON encoded value that one wishes to assign to `name`. It
+ *     can be any kind of JSON value (most of the times a number), but
+ *     it must be of the expected type for the given setting `name`. E.g., the
+ *     `port` setting only supports numbers and null values.
+ * Result
+ *   0 on success. On failure to update the setting, any of these error codes:
+ *   - -1: the given setting `name` is not supported.
+ *   - -2: the JSON `value` that was provided is not meaningful for the `name`
+ *   setting.
+ * Preconditions
+ *   All `settings`, `name`, and `value` parameters are non-NULL pointers.
+ */
 int8_t
-settings_set_value(struct Settings *settings, char *name, char *value);
+settings_set_value(struct Settings *settings, const char *name, const struct cJSON *value);

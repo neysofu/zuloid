@@ -1,12 +1,11 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * @file engine.h
- * @brief The core components of Z64C.
- * This file contains the API to the very core of Z64C.
- */
+ * -------------------------------------------------------------------
+ *
+ * The `Engine` structure holds a reference to all engine components and wires
+ * them together. */
 
 #pragma once
 
@@ -20,65 +19,52 @@
 #include "settings.h"
 #include <stdbool.h>
 
-#define BUFFER_SIZE 1024
-
-/**
- * @brief A self-contained chess engine instance.
- * The @c Engine structure contains all the necessary components to make Z64C
+/* A self-contained chess engine instance.
+ * The `Engine` structure contains all the necessary components to make Z64C
  * work.
  * This structure doesn't takes up very little memory by itself. The most
  * resource-hungry component by far and large is 'struct TTable'.
- */
+ * */
 struct Engine
 {
+	/* The current chess position.
+	 */
 	struct Board board;
+	/* A flag that signals when somebody wins. */
 	struct Result result;
+	/* Indexed by `enum Color`. */
 	struct Clock *time_control[2];
 	struct Settings settings;
+	/* What to do next? `mode` tells us. */
 	enum Mode mode;
+	/* On exit, this variable stores the exit status returned by the process. */
 	int8_t exit_status;
 	struct TTable *ttable;
 	struct Network *network;
 };
 
-/**
- * @brief Instantiates a new chess engine.
- *
- * The newly created chess engine is
- * still asleep, without responding to commands.
- *
- * @see engine_main
- */
+/* Create a self-contained engine instance with default settings. */
 struct Engine *
 engine_new(void);
 
-/**
- * @brief Gracefully kill a struct Engine instance.
- *
- * @param engine A pointer to the engine instance to kill.
- */
+/* Gracefully kill a `Engine` instance. */
 void
 engine_free(struct Engine *engine);
 
-/**
- * @brief Initializes @p engine and starts listening from a ZUCI shell.
- *
- * Once initialized, @p param will be actively listening on `stdin` for ZUCI
- * commands. Output information will be written to `stdout` and error messages
- * on `stderr`. This function will return only upon failure or a \a quit
- * command.
- *
- * @param engine The engine instance to initialize.
- * @return A non-zero error code on failure, zero on success.
- */
+/* Start reading commands from stdin and feen them to `engine` as they come. */
 int8_t
 engine_main(struct Engine *engine);
 
-/**
- * @brief Run a Remote Procedure Call (RPC) and return the engine's response.
- * @param A pointer to the request string.
- * @return A pointer to the response string. The pointer will be NULL on exit
- * and the exit status will be stored in 'engine->exit_status'.
- */
+/* Runs a "Remote Procedure Call" (RPC) and return the engine's response.
+ * All communication must be valid JSON-RPC 2.0.
+ *
+ * Parameters
+ *   `cmd` is a valid pointer to a null-terminated string that encodes JSON-RPC.
+ * Result
+ *   It returns a pointer to a null-terminated serialized JSON-RPC response
+ *   object. The JSON data contains no unnecessary whitespace and doesn't
+ *   contain any newline character.
+ * Preconditions
+ *   `cmd` must be a valid pointer to a null-terminated string. */
 const char *
 engine_rpc(struct Engine *engine, const char *cmd);

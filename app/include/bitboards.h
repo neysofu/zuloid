@@ -1,15 +1,15 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * @file bitboards.h
- * @brief Bitboard masking utilities.
+ * This file provides bitboard utilities for the `uint64_t` data type.
  *
- * @see https://www.chessprogramming.org/Bitboards
- * @see https://www.chessprogramming.org/General_Setwise_Operations
- * @see https://en.wikipedia.org/wiki/Bitboard
- * @see http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
+ * Resources
+ *   https://www.chessprogramming.org/Bitboards
+ *   https://www.chessprogramming.org/General_Setwise_Operations
+ *   https://en.wikipedia.org/wiki/Bitboard
+ *   https://graphics.stanford.edu/~seander/bithacks.html
+ *   http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
  */
 
 #pragma once
@@ -19,32 +19,25 @@
 #include "chess/move.h"
 #include <stdint.h>
 
-/**
- * @brief Initialize bitboard lookup tables. Do NOT call any of the other 'bb'
+/* Initializes bitboard lookup tables. Do NOT call any of the other 'bb'
  * functions without first calling 'bb_init' at the start of your program (it
  * will cause undefined behaviour)! This
  * function can safely be called multiple times without any effect after
  * the first call.
  *
- * @post Any of the other functions prototyped in this file can be
- * called safely.
+ * Effects
+ *   After initialization, all other `bb_` are safe to call.
  */
 void
 bb_init(void);
 
-/**
- * @brief Masks this square.
- * @return A bitboard that masks only the bit at this coordinates.
+/* Masks this square.
  *
- * @pre Initialization via `bb_init`.
  */
 uint64_t
 bb_coord(Coord coord);
 
-/**
- * Masks this square's file.
- * @pre Initialization via `bb_init`.
- */
+/* Masks all squares on the same file as `coord`. */
 uint64_t
 bb_file(Coord coord);
 
@@ -68,8 +61,7 @@ bb_rank(Coord coord);
 uint64_t
 bb_ray(Move move);
 
-/// Masks the threats of specific piece types from this square.
-/// @pre Initialization via `bb_init`.
+/* Masks the threats that a certain piece will make from `coord`. */
 uint64_t
 bb_knight_threats(Coord coord);
 uint64_t
