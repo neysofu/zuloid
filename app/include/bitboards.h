@@ -9,8 +9,7 @@
  *   https://www.chessprogramming.org/General_Setwise_Operations
  *   https://en.wikipedia.org/wiki/Bitboard
  *   https://graphics.stanford.edu/~seander/bithacks.html
- *   http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html
- */
+ *   http://cinnamonchess.altervista.org/bitboard_calculator/Calc.html */
 
 #pragma once
 
@@ -26,14 +25,11 @@
  * the first call.
  *
  * Effects
- *   After initialization, all other `bb_` are safe to call.
- */
+ *   After initialization, all other `bb_` are safe to call. */
 void
 bb_init(void);
 
-/* Masks this square.
- *
- */
+/* Masks this square. */
 uint64_t
 bb_coord(Coord coord);
 

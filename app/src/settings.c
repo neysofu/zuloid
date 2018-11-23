@@ -36,7 +36,7 @@ settings_set_value(struct Settings *settings, const char *name, const struct cJS
 	assert(value);
 	switch (XXH64(name, strlen(name), 0)) {
 		case 0x6e87002190572330: /* "seed" */
-			settings->seed = atoi(value);
+			settings->seed = value->valuedouble;
 			break;
 		case 0x866f5b204efc0f22: /* "move-selection-noise" */
 			settings->move_selection_noise = value->valuedouble;

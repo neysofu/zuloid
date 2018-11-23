@@ -24,65 +24,55 @@
 #include <string.h>
 #include <sysexits.h>
 
-#define MAX_PERFT_DEPTH 16
+#define LITERAL_AUTHORS ("author(s)")
+#define LITERAL_CODE ("code")
+#define LITERAL_DATA ("data")
+#define LITERAL_ERROR ("error")
+#define LITERAL_GAME ("game")
+#define LITERAL_ID ("id")
+#define LITERAL_JSONRPC ("jsonrpc")
+#define LITERAL_KEY ("key")
+#define LITERAL_LICENSE ("license")
+#define LITERAL_MESSAGE ("message")
+#define LITERAL_META ("meta")
+#define LITERAL_METHOD ("method")
+#define LITERAL_NAME ("name")
+#define LITERAL_NOTATION ("notation")
+#define LITERAL_PARAMS ("params")
+#define LITERAL_PATH ("path")
+#define LITERAL_RELEASE_DATE ("release-date")
+#define LITERAL_RESULT ("result")
+#define LITERAL_TREE ("tree")
+#define LITERAL_TWO_POINT_OH ("2.0")
+#define LITERAL_URL ("url")
+#define LITERAL_VALUE ("value")
+#define LITERAL_VERSION ("version")
 
-/* String literals used in JSON data. */
-static const char *jsonrpc_version = "2.0";
-static const char *field_code = "code";
-static const char *field_error = "error";
-static const char *field_id = "id";
-static const char *field_jsonrpc = "jsonrpc";
-static const char *field_message = "message";
-static const char *field_method = "method";
-static const char *field_params = "params";
-static const char *field_result = "result";
-/* 'uci' method. */
-static const char *field_meta = "meta";
-static const char *field_name = "name";
-static const char *field_authors = "author(s)";
-static const char *field_release_date = "release-date";
-static const char *field_license = "license";
-static const char *field_url = "url";
-static const char *field_version = "version";
-/* 'get' method. */
-static const char *field_key = "key";
-static const char *field_value = "value";
-/* 'load' method. */
-static const char *field_path = "path";
-/* 'setup' method. */
-static const char *field_game = "game";
-static const char *field_notation = "notation";
-static const char *field_data = "data";
-static const char *field_tree = "tree";
-
-/* Error codes and messages. */
-static const int32_t uci_parse_error_code = -32700;
-static const char *uci_parse_error_message = "Parse error.";
-static const int32_t uci_invalid_request_code = -32600;
-static const char *uci_invalid_request_message = "Invalid request.";
-static const int32_t uci_method_not_found_code = -32601;
-static const char *uci_method_not_found_message = "Method not found.";
-static const int32_t uci_invalid_params_code = -32602;
-static const char *uci_invalid_params_message = "Invalid parameters.";
-static const int32_t uci_operational_mode_error_code = 100;
-static const int32_t uci_unsupported_error = 101;
-static const char *uci_operational_mode_error_message =
-  "Unavailable method during search time.";
-static const int32_t uci_invalid_chess_code = 150;
-static const char *uci_invalid_chess_message = "Invalid notation.";
+#define JSONRPC_CHESS_ERROR_CODE (150)
+#define JSONRPC_CHESS_ERROR_MSG ("Invalid notation.")
+#define JSONRPC_INVALID_METHOD_CODE (-32601)
+#define JSONRPC_INVALID_METHOD_MSG ("Method not found.")
+#define JSONRPC_INVALID_PARAMS_CODE (-32602)
+#define JSONRPC_INVALID_PARAMS_MSG ("Invalid parameters.")
+#define JSONRPC_INVALID_REQUEST_CODE (-32600)
+#define JSONRPC_INVALID_REQUEST_MSG ("Invalid request.")
+#define JSONRPC_MODE_ERROR_CODE (100)
+#define JSONRPC_MODE_ERROR_MSG ("Unavailable method during search time.")
+#define JSONRPC_PARSE_ERROR_CODE (-32700)
+#define JSONRPC_PARSE_ERROR_MSG ("Parse error.")
 
 struct cJSON *
-engine_rpc_load(struct Engine *engine, struct cJSON *params)
+engine_rpc_load(struct Engine *engine, const struct cJSON *params)
 {
 	assert(engine);
-	cJSON *response = cJSON_CreateObject();
-	cJSON *body = cJSON_CreateObject();
-	//if (engine->mode != MODE_IDLE) {
-	//	return util_jsonrpc_error(uci_operational_mode_error_code,
-	//	                          uci_operational_mode_error_message);
+	struct cJSON *response = cJSON_CreateObject();
+	struct cJSON *body = cJSON_CreateObject();
+	// if (engine->mode != MODE_IDLE) {
+	//	return util_jsonrpc_error(JSONRPC_MODE_ERROR_CODE,
+	//	                          JSONRPC_MODE_ERROR_MSG);
 	//}
-	//if (!cJSON_HasObjectItem(params, field_path)) {
-	//	return util_jsonrpc_error(uci_invalid_params_code, uci_invalid_params_message);
+	// if (!cJSON_HasObjectItem(params, field_path)) {
+	//	return util_jsonrpc_error(JSONRPC_INVALID_PARAMS_CODE, JSONRPC_INVALID_PARAMS_MSG);
 	//}
 	return response;
 }
@@ -110,7 +100,7 @@ engine_rpc_perft(struct Engine *engine, const struct cJSON *params)
 	//	ttable_insert(ttables, board_buffer);
 	//}
 	// free(ttables);
-	return cJSON_AddObjectToObject(cJSON_CreateObject(), field_result);
+	return cJSON_AddObjectToObject(cJSON_CreateObject(), LITERAL_RESULT);
 }
 
 struct cJSON *
@@ -120,36 +110,36 @@ engine_rpc_get(struct Engine *engine, const struct cJSON *params)
 	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *content = cJSON_CreateObject();
 	if (!params || !cJSON_IsObject(params) ||
-	    !cJSON_IsString(cJSON_GetObjectItem(params, field_key))) {
-		cJSON_AddNumberToObject(content, field_code, uci_invalid_params_code);
-		cJSON_AddStringToObject(content, field_message, uci_invalid_params_message);
-		cJSON_AddItemToObject(response, field_error, content);
+	    !cJSON_IsString(cJSON_GetObjectItem(params, LITERAL_KEY))) {
+		cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_INVALID_PARAMS_CODE);
+		cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_INVALID_PARAMS_MSG);
+		cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 		return response;
 	}
-	const char *key = cJSON_GetObjectItem(params, field_key)->valuestring;
+	const char *key = cJSON_GetObjectItem(params, LITERAL_KEY)->valuestring;
 	/* Note that value only allocates memory if a match is found. No cleanup on
 	 * errors is needed. */
 	struct cJSON *value;
 	char *buffer;
 	switch (XXH64(key, strlen(key), 0)) {
 		case 0x99bfb67800f8ab48: /* "meta:name" */
-			value = cJSON_CreateString(engine_name);
+			value = cJSON_CreateString(SOFTWARE_NAME);
 			break;
 		case 0x0eedec02bc43b1c6: /* "meta:version" */
-			value = cJSON_CreateString(engine_version);
+			value = cJSON_CreateString(SOFTWARE_VERSION);
 			break;
 		case 0xd3ed40bbb9d9813d: /* "meta:release-date" */
-			value = cJSON_CreateString(engine_release_date);
+			value = cJSON_CreateString(SOFTWARE_RELEASE_DATE);
 			break;
 		case 0x8d15e178965e9e80: /* "meta:author(s)" */
-			value = cJSON_CreateString(engine_author);
+			value = cJSON_CreateString(SOFTWARE_AUTHOR);
 			break;
 		case 0xbe96813f393d45c8: /* "meta:license" */
-			value = cJSON_CreateString(engine_license);
+			value = cJSON_CreateString(SOFTWARE_LICENSE);
 			break;
 			break;
 		case 0x9f39919c36cf7b1d: /* "meta:url" */
-			value = cJSON_CreateString(engine_url);
+			value = cJSON_CreateString(SOFTWARE_URL);
 			break;
 		case 0x3dde2c8e2f1ae60c: /* "position:fen" */
 			buffer = xmalloc(FEN_SIZE);
@@ -218,122 +208,122 @@ engine_rpc_get(struct Engine *engine, const struct cJSON *params)
 			value = cJSON_CreateNumber(engine->settings.selectivity);
 			break;
 		default:
-			cJSON_AddNumberToObject(content, field_code, uci_invalid_params_code);
-			cJSON_AddStringToObject(content, field_message, uci_invalid_params_message);
-			cJSON_AddItemToObject(response, field_error, content);
+			cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_INVALID_PARAMS_CODE);
+			cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_INVALID_PARAMS_MSG);
+			cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 			return response;
 	}
 	/* Let's finally assembly the response object. */
-	cJSON_AddItemToObject(content, field_key, cJSON_GetObjectItem(params, field_key));
-	cJSON_AddItemToObject(content, field_value, value);
-	cJSON_AddItemToObject(response, field_result, content);
+	cJSON_AddItemToObject(content, LITERAL_KEY, cJSON_GetObjectItem(params, LITERAL_KEY));
+	cJSON_AddItemToObject(content, LITERAL_VALUE, value);
+	cJSON_AddItemToObject(response, LITERAL_RESULT, content);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_exit(struct Engine *engine, struct cJSON *params)
+engine_rpc_exit(struct Engine *engine, const struct cJSON *params)
 {
 	assert(engine);
 	engine->exit_status = EX_OK;
 	engine->mode = MODE_EXIT;
 	struct cJSON *response = cJSON_CreateObject();
-	cJSON_AddObjectToObject(response, field_result);
+	cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_status(struct Engine *engine, struct cJSON *params)
+engine_rpc_status(struct Engine *engine, const struct cJSON *params)
 {
 	assert(engine);
 	struct cJSON *response = cJSON_CreateObject();
-	cJSON_AddObjectToObject(response, field_result);
+	cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_save(struct Engine *engine, struct cJSON *params)
+engine_rpc_save(struct Engine *engine, const struct cJSON *params)
 {
 	struct cJSON *response = cJSON_CreateObject();
-	cJSON_AddObjectToObject(response, field_result);
+	cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	return response;
 	// if (engine->mode != MODE_IDLE) {
 	//	cJSON *error = cJSON_CreateObject();
 	//	cJSON_AddItemToObject(
-	//	  error, field_code, cJSON_CreateNumber(uci_operational_mode_error_code));
+	//	  error, LITERAL_CODE, cJSON_CreateNumber(JSONRPC_MODE_ERROR_CODE));
 	//	cJSON_AddItemToObject(
 	//	  error,
-	//	  field_message,
-	//	  cJSON_CreateString(uci_operational_mode_error_message));
-	//	cJSON_AddItemToObject(response, field_error, error);
+	//	  LITERAL_MESSAGE,
+	//	  cJSON_CreateString(JSONRPC_MODE_ERROR_MSG));
+	//	cJSON_AddItemToObject(response, LITERAL_ERROR, error);
 	//	return response;
 	//}
-	// if (!cJSON_HasObjectItem(request, field_params) ||
-	//    request[field_params].count(field_path) == 0) {
+	// if (!cJSON_HasObjectItem(request, LITERAL_PARAMS) ||
+	//    request[LITERAL_PARAMS].count(field_path) == 0) {
 	//	cJSON *error = cJSON_CreateObject();
 	//	cJSON_AddItemToObject(
-	//	  error, field_code, cJSON_CreateNumber(uci_invalid_params_code));
+	//	  error, LITERAL_CODE, cJSON_CreateNumber(JSONRPC_INVALID_PARAMS_CODE));
 	//	cJSON_AddItemToObject(
-	//	  error, field_message, cJSON_CreateString(uci_invalid_params_message));
-	//	cJSON_AddItemToObject(response, field_error, error);
+	//	  error, LITERAL_MESSAGE, cJSON_CreateString(JSONRPC_INVALID_PARAMS_MSG));
+	//	cJSON_AddItemToObject(response, LITERAL_ERROR, error);
 	//	return response;
 	//}
 	return response;
 }
 
 struct cJSON *
-engine_rpc_search(struct Engine *engine, struct cJSON *params)
+engine_rpc_search(struct Engine *engine, const struct cJSON *params)
 {
 	struct cJSON *response = cJSON_CreateObject();
-	cJSON_AddObjectToObject(response, field_result);
+	cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_set(struct Engine *engine, struct cJSON *params)
+engine_rpc_set(struct Engine *engine, const struct cJSON *params)
 {
 	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *content = cJSON_CreateObject();
 	if (engine->mode != MODE_IDLE) {
-		cJSON_AddNumberToObject(content, field_code, uci_invalid_params_code);
-		cJSON_AddStringToObject(content, field_message, uci_invalid_params_message);
-		cJSON_AddItemToObject(response, field_error, content);
+		cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_INVALID_PARAMS_CODE);
+		cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_INVALID_PARAMS_MSG);
+		cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 		return response;
-	} else if (!cJSON_IsString(cJSON_GetObjectItem(content, field_key))) {
+	} else if (!cJSON_IsString(cJSON_GetObjectItem(content, LITERAL_KEY))) {
 	}
-	const char *key = cJSON_GetObjectItem(content, field_key)->valuestring;
-	struct cJSON *value = cJSON_GetObjectItem(content, field_value);
+	const char *key = cJSON_GetObjectItem(content, LITERAL_KEY)->valuestring;
+	struct cJSON *value = cJSON_GetObjectItem(content, LITERAL_VALUE);
 	switch (XXH64(key, strlen(key), 0)) {
 		case 0x6e87002190572330: /** "seed" */
 			engine->settings.seed = genrand64_int64() >> 32;
 			return 0;
 	}
 	if (settings_set_value(&engine->settings, key, value) == -1) {
-		cJSON_AddNumberToObject(content, field_code, uci_operational_mode_error_code);
-		cJSON_AddStringToObject(content, field_message, uci_operational_mode_error_message);
-		cJSON_AddItemToObject(response, field_error, content);
+		cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_MODE_ERROR_CODE);
+		cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_MODE_ERROR_MSG);
+		cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 		return response;
 	} else {
-		cJSON_AddItemToObject(response, field_result, content);
+		cJSON_AddItemToObject(response, LITERAL_RESULT, content);
 	}
-	cJSON_AddItemToObject(response, field_result, content);
+	cJSON_AddItemToObject(response, LITERAL_RESULT, content);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_setup(struct Engine *engine, struct cJSON *params)
+engine_rpc_setup(struct Engine *engine, const struct cJSON *params)
 {
 	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *content = cJSON_CreateObject();
 	if (engine->mode != MODE_IDLE) {
-		cJSON_AddNumberToObject(content, field_code, uci_operational_mode_error_code);
-		cJSON_AddStringToObject(content, field_message, uci_operational_mode_error_message);
-		cJSON_AddItemToObject(response, field_error, content);
+		cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_MODE_ERROR_CODE);
+		cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_MODE_ERROR_MSG);
+		cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 		return response;
 	}
-	if (!cJSON_IsObject(cJSON_GetObjectItem(response, field_params))) {
-		cJSON_AddNumberToObject(content, field_code, uci_operational_mode_error_code);
-		cJSON_AddStringToObject(content, field_message, uci_operational_mode_error_message);
-		cJSON_AddItemToObject(response, field_error, content);
+	if (!cJSON_IsObject(cJSON_GetObjectItem(response, LITERAL_PARAMS))) {
+		cJSON_AddNumberToObject(content, LITERAL_CODE, JSONRPC_MODE_ERROR_CODE);
+		cJSON_AddStringToObject(content, LITERAL_MESSAGE, JSONRPC_MODE_ERROR_MSG);
+		cJSON_AddItemToObject(response, LITERAL_ERROR, content);
 		return response;
 	}
 	char *game_name = response->valuestring; // FIXME
@@ -355,23 +345,23 @@ engine_rpc_train(struct Engine *engine, const struct cJSON *params)
 {
 	assert(engine);
 	struct cJSON *response = cJSON_CreateObject();
-	cJSON_AddObjectToObject(response, field_result);
+	cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	return response;
 }
 
 struct cJSON *
-engine_rpc_uci(struct Engine *engine, struct cJSON *params)
+engine_rpc_uci(struct Engine *engine, const struct cJSON *params)
 {
 	TRACE("UCI session initialization via 'uci' command.\n");
 	struct cJSON *response = cJSON_CreateObject();
-	struct cJSON *result = cJSON_AddObjectToObject(response, field_result);
-	struct cJSON *meta = cJSON_AddObjectToObject(result, field_meta);
-	cJSON_AddStringToObject(meta, field_license, engine_license);
-	cJSON_AddStringToObject(meta, field_name, engine_name);
-	cJSON_AddStringToObject(meta, field_authors, engine_author);
-	cJSON_AddStringToObject(meta, field_version, engine_version);
-	cJSON_AddStringToObject(meta, field_release_date, engine_release_date);
-	cJSON_AddStringToObject(meta, field_url, engine_url);
+	struct cJSON *result = cJSON_AddObjectToObject(response, LITERAL_RESULT);
+	struct cJSON *meta = cJSON_AddObjectToObject(result, LITERAL_META);
+	cJSON_AddStringToObject(meta, LITERAL_LICENSE, SOFTWARE_LICENSE);
+	cJSON_AddStringToObject(meta, LITERAL_NAME, SOFTWARE_NAME);
+	cJSON_AddStringToObject(meta, LITERAL_AUTHORS, SOFTWARE_AUTHOR);
+	cJSON_AddStringToObject(meta, LITERAL_VERSION, SOFTWARE_VERSION);
+	cJSON_AddStringToObject(meta, LITERAL_RELEASE_DATE, SOFTWARE_RELEASE_DATE);
+	cJSON_AddStringToObject(meta, LITERAL_URL, SOFTWARE_URL);
 	return response;
 }
 
@@ -387,23 +377,22 @@ engine_rpc(struct Engine *engine, const char *cmd)
 	 * because it is single-threaded. */
 	if (!request || cJSON_GetErrorPtr()) {
 		TRACE("The JSON RPC request is not parsable.\n");
-		error = cJSON_AddObjectToObject(response, field_error);
-		cJSON_AddNumberToObject(error, field_code, uci_parse_error_code);
-		cJSON_AddStringToObject(error, field_message, uci_parse_error_message);
+		error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
+		cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_PARSE_ERROR_CODE);
+		cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_PARSE_ERROR_MSG);
 		goto respond;
 	}
-	if (!cJSON_IsString(cJSON_GetObjectItem(request, field_method))) {
+	if (!cJSON_IsString(cJSON_GetObjectItem(request, LITERAL_METHOD))) {
 		TRACE("The JSON RPC request is parsable but semantically incorrect.\n");
-		error = cJSON_AddObjectToObject(response, field_error);
-		cJSON_AddNumberToObject(error, field_code, uci_invalid_request_code);
-		cJSON_AddStringToObject(error, field_message, uci_invalid_request_message);
+		error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
+		cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_INVALID_REQUEST_CODE);
+		cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_INVALID_REQUEST_MSG);
 		goto respond;
 	}
 	TRACE("The JSON RPC request is valid. Now proceeding to method dispatching.\n");
-	id = cJSON_GetObjectItem(request, field_id);
-	const struct cJSON *params = cJSON_GetObjectItem(request, field_params);
-	const char *method = cJSON_GetObjectItem(request, field_method)->valuestring;
-	/* TODO: consider dropping xxHash in favor of a simpler hash function. */
+	id = cJSON_GetObjectItem(request, LITERAL_ID);
+	const struct cJSON *params = cJSON_GetObjectItem(request, LITERAL_PARAMS);
+	const char *method = cJSON_GetObjectItem(request, LITERAL_METHOD)->valuestring;
 	switch (XXH64(method, strlen(method), 0)) {
 		case 0xc641b2419f8a3ce1: /* "status" */
 			response = engine_rpc_status(engine, params);
@@ -437,16 +426,16 @@ engine_rpc(struct Engine *engine, const char *cmd)
 			break;
 		default:
 			TRACE("Method dispatch failed.\n");
-			error = cJSON_AddObjectToObject(response, field_error);
-			cJSON_AddNumberToObject(error, field_code, uci_method_not_found_code);
-			cJSON_AddStringToObject(error, field_message, uci_method_not_found_message);
+			error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
+			cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_INVALID_METHOD_CODE);
+			cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_INVALID_PARAMS_MSG);
 			goto respond;
 	}
 	TRACE("Method dispatching was successful and the response object is ready.\n");
 	if (id) {
-respond:
-		cJSON_AddStringToObject(response, field_jsonrpc, jsonrpc_version);
-		cJSON_AddItemToObject(response, field_id, id);
+	respond:
+		cJSON_AddStringToObject(response, LITERAL_JSONRPC, LITERAL_TWO_POINT_OH);
+		cJSON_AddItemToObject(response, LITERAL_ID, id);
 		const char *response_str = cJSON_PrintUnformatted(response);
 		cJSON_Delete(response);
 		return response_str;

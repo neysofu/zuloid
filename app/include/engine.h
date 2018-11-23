@@ -23,8 +23,7 @@
  * The `Engine` structure contains all the necessary components to make Z64C
  * work.
  * This structure doesn't takes up very little memory by itself. The most
- * resource-hungry component by far and large is 'struct TTable'.
- * */
+ * resource-hungry component by far and large is 'struct TTable'. */
 struct Engine
 {
 	/* The current chess position.

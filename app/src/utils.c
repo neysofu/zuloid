@@ -1,13 +1,12 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
+#include "trace.h"
 #include "utils.h"
 #include <assert.h>
 #include <ctype.h>
-#include <pwd.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -45,6 +44,7 @@ void *
 xmalloc(size_t size)
 {
 	void *ptr = malloc(size);
+	static size_t count = 0;
 	if (UNLIKELY(!ptr)) {
 		printf("\n{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{}}\n");
 		exit(EX_OSERR);

@@ -18,8 +18,7 @@ clock_new_blitz(void)
 	clock->time_available_msec = 3 * 60 * 1000;
 	clock->increment_msec = 2 * 1000;
 	clock->delay_msec = 0;
-	clock->latency_msec = 0;
-	clock->num_moves_before_next_stage = 0;
+	clock->trigger_move_num = 0;
 	clock->next_stage = NULL;
 	clock->previous_stage = NULL;
 	return clock;
@@ -33,8 +32,7 @@ clock_new_rapid(void)
 	clock->time_available_msec = 15 * 60 * 1000;
 	clock->increment_msec = 10 * 1000;
 	clock->delay_msec = 0;
-	clock->latency_msec = 0;
-	clock->num_moves_before_next_stage = 0;
+	clock->trigger_move_num = 0;
 	clock->next_stage = NULL;
 	clock->previous_stage = NULL;
 	return clock;
@@ -49,16 +47,14 @@ clock_new_classical(void)
 	clock_0->time_available_msec = 90 * 60 * 1000;
 	clock_0->increment_msec = 30 * 1000;
 	clock_0->delay_msec = 0;
-	clock_0->latency_msec = 0;
-	clock_0->num_moves_before_next_stage = 40;
+	clock_0->trigger_move_num = 40;
 	clock_0->next_stage = clock_1;
 	clock_0->previous_stage = NULL;
 	clock_1->start_timestamp_msec = 0;
 	clock_1->time_available_msec = 30 * 60 * 1000;
 	clock_1->increment_msec = 30 * 1000;
-	clock_1->latency_msec = 0;
 	clock_1->delay_msec = 0;
-	clock_1->num_moves_before_next_stage = 0;
+	clock_1->trigger_move_num = 0;
 	clock_1->next_stage = NULL;
 	clock_1->previous_stage = clock_0;
 	return clock_0;
