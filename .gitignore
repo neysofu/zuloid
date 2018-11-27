@@ -19,7 +19,6 @@ target/
 *.pch
 
 # Libraries
-lib/
 *.lib
 *.a
 *.la
