@@ -8,7 +8,6 @@ set (CMAKE_C_STANDARD 99)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-missing-braces -Wextra -Wswitch-default -Wswitch-enum -Wunreachable-code -Wunused-macros")
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
-find_package (ArrayFire REQUIRED)
 
 # Useful macros
 string (LENGTH "${CMAKE_CURRENT_SOURCE_DIR}/app/src/" SOURCE_PATH_LENGTH)
@@ -27,7 +26,6 @@ list (REMOVE_ITEM Z64C_SRC "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main.c")
 add_library (Z64C_LIB STATIC ${Z64C_SRC})
 target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR})
 target_include_directories (Z64C_LIB PUBLIC ${Z64C_INCLUDE_DIR})
-target_link_libraries (Z64C_LIB ArrayFire::afcpu)
 target_link_libraries (Z64C_LIB CJSON)
 target_link_libraries (Z64C_LIB XXHASH)
 target_link_libraries (Z64C_LIB MT19937_64)

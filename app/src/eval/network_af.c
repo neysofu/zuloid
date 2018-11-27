@@ -4,7 +4,6 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include <arrayfire.h>
 #include <stdlib.h>
 
 #define NETWORK_CPU_WIDTH 128
@@ -37,17 +36,14 @@
 // last layer. After that, I can just add hidden layers.
 struct Network
 {
-	af_array layers[8];
 };
 
 struct TensorIn
 {
-	af_array buffer;
 };
 
 struct TensorOut
 {
-	af_array buffer;
 };
 
 int8_t
@@ -55,11 +51,6 @@ network_eval(struct Network *network,
              struct TensorIn *t_in,
              struct TensorOut *t_out)
 {
-	size_t i = 0;
-	for (size_t i = 0; i < 8; i++) {
-		af_bitxor(&t_in, &t_in, &network->layers[i], false);
-		af_not(&t_in, &t_in);
-	}
 	return 0;
 }
 
