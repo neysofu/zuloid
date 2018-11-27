@@ -1,5 +1,7 @@
 BasedOnStyle: Mozilla
 PointerAlignment: Right
 ColumnLimit: 92
-TabWidth: 2
+ContinuationIndentWidth: 2
+IndentWidth: 4
+TabWidth: 4
 UseTab: ForIndentation
