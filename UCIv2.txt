@@ -1,0 +1,92 @@
+The UCIv2 specification
+=======================
+
+0. Overview
+-----------
+
+The UCIv2 protocol is an improvement and redesign of the original and much
+successful UCI protocol. The revision strives to simplify implementation while
+adding capabilities in a backwards fashion.
+
+1. Communication
+----------------
+
+UCIv2 allows interoperability between chess engines and GUIs via JSON-RPC 2.0.
+The protocol is transport-neutral, but it typically used over stdin/stdout.
+Engines MAY ignore the "jsonrpc" field.
+
+2. Procedures
+-------------
+
+All servers that follow the UCIv2 protocol MAY implement any of the following methods.
+
+2.0. 'uci'
+	The 'uci' method initializes the engine.
+
+2.1 'set'
+	The 'set' method alters the internal state of the engine by changing the
+	value of an internal parameter, setting, or variable.
+
+2.2 'perft'
+	The 'perft' method calculates the move path enumeration from the current
+	position at a certain depth.
+
+2.3 'get'
+	The 'get' method retrieves the value of a certain variable.
+
+	'board:fen'
+	'clock:w-time'
+	'clock:b-time'
+	'clock:increment'
+	'eval:best-move'
+	'eval:best-lines'
+	'eval:drawishness'
+	'eval:mate'
+	'meta:author(s)'
+	'meta:license'
+	'meta:name'
+	'meta:release-date'
+	'meta:url'
+	'meta:version'
+	'settings:cache-size'
+	'settings:resign-rate'
+	'settings:resoluteness'
+	'settings:sharpness'
+	'tablebases:format'
+	'tablebases:path'
+
+2.4 'status'
+	Clients MAY send requests with the 'status' method to check on the engine and make sure it's not frozen.
+
+2.5 'exit'
+	Before exit, clients SHOULD send 'exit' requests to gracefully terminate the program.
+
+2.6 'setup'
+	Clients setup the game state using this method. Every request SHOULD reset all previous knowledge about the position.
+
+3. Example of client and server communication over stdin/stdout
+---------------------------------------------------------------
+
+This is an example communication between engine and GUI. Messages from the engine are indented.
+
+	{"method" : "uci", "params" : {"auth" : "6503e41b-d5b1-4a73-93e6-bbfc19b9e011"}, "id" : 0}
+		{"result" : {"meta:engine" : "CYBORG CHESS", "meta:version" : "3.14", "meta:author(s)" : "John Doe et al.", "meta:url" : "https://cyborgchess.net"}, "id" : 0}
+
+	# [DEBUG] ...
+
+	{"method" : "get", "params" : {"key" : "board:evaluation"}, "id" : 1}
+		{"result" : {"key" : "board:evaluation", "value" : -1.20}, "id" : 1}
+
+	{"method" : "get", "params" : {"key" : "board:castling"}, "id" : 2}
+		{"result" : {"key" : "board:castling", "value" : [false, true, false, false]}, "id" : 2}
+
+	{"method" : "search", "id" : 3}
+		{"method" : "info:search", "params" : {"search:id" : 3, "moves" : ["e2e4", "d2d4", "c2c4"], "evals" : [0.2, 0.2, 0.18]}, "id" : 0}
+		{"result" : {}, "id" : 3}
+
+	{"method" : "exit"}
+
+4. Implementation
+-----------------
+
+Implementing UCIv2 is very easy and requires less code than UCI. UCI implementations require a custom parser and tokenized, but with UCIv2 you can use a library such as cJSON or Modern C++.
