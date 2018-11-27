@@ -1,8 +1,6 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
 #include "chess/board.h"
@@ -10,13 +8,13 @@
 #include "chess/move.h"
 #include "chess/result.h"
 #include "clock.h"
+#include "debug.h"
 #include "globals.h"
 #include "mode.h"
 #include "mt19937-64/mt64.h"
 #include "search/ttable.h"
 #include "settings.h"
 #include "switches.h"
-#include "trace.h"
 #include "utils.h"
 #include "xxHash.h"
 #include <assert.h>
@@ -38,14 +36,13 @@ engine_new(void)
 	engine->mode = MODE_IDLE;
 	engine->exit_status = EX_OK;
 	settings_default(&engine->settings);
-	engine->ttable = ttable_new();
+	engine->ttable = NULL;
 	return engine;
 }
 
 void
 engine_free(struct Engine *engine)
 {
-	TRACE("Freeing all memory.\n");
 	assert(engine);
 	free(engine);
 }
@@ -53,27 +50,32 @@ engine_free(struct Engine *engine)
 int8_t
 engine_main(struct Engine *engine)
 {
-	TRACE("Now entering the main UCI loop.\n");
 	assert(engine);
+	DEBUG("Entered UCI loop.");
 	char *cmd = NULL;
+	char *cmd_iter = NULL;
 	size_t cmd_length = 0;
 	while (engine->mode != MODE_EXIT) {
 		if (getline(&cmd, &cmd_length, stdin) == -1) {
-			TRACE("Something unexpected happened while reading from stdin. Abort.\n");
+			DEBUG("Something unexpected happened while reading from stdin. Abort.");
 			engine->mode = MODE_EXIT;
 			engine->exit_status = EX_IOERR;
 			return engine->exit_status;
 		}
-		if (util_str_is_whitespace(cmd)) {
+		cmd_iter = cmd;
+		while (isspace(*cmd_iter)) {
+			cmd_iter++;
+		}
+		if (!*cmd_iter || *cmd_iter == '#') {
 			continue;
 		}
 		const char *response = engine_rpc(engine, cmd);
 		if (response) {
-			TRACE("Writing the JSON RPC response object to stdout.\n");
+			DEBUG("Writing the JSON RPC response object to stdout.");
 			printf("\t%s\r\n", response);
 			free((void *)(response));
 		}
 	}
-	TRACE("Goodbye.\n");
+	DEBUG("Goodbye.");
 	return engine->exit_status;
 }

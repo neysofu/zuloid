@@ -3,8 +3,9 @@
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  */
 
-#include "trace.h"
 #include "utils.h"
+#include "debug.h"
+#include "rpc.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -36,7 +37,8 @@ bool
 util_str_is_whitespace(const char *str)
 {
 	assert(str);
-	while (isspace(*str) && str++);
+	while (isspace(*str) && str++)
+		;
 	return !*str;
 }
 
@@ -44,9 +46,11 @@ void *
 xmalloc(size_t size)
 {
 	void *ptr = malloc(size);
-	static size_t count = 0;
 	if (UNLIKELY(!ptr)) {
-		printf("\n{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{}}\n");
+		printf("\n{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":%d,\"error\":\"%s\"}"
+		       "}\r\n",
+		       JSONRPC_OOM_CODE,
+		       JSONRPC_OOM_MSG);
 		exit(EX_OSERR);
 	}
 	return ptr;

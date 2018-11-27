@@ -27,7 +27,7 @@ struct TTable
 };
 
 struct TTable *
-ttable_new(void)
+ttable_new(size_t size)
 {
 	struct TTable *ttable = xmalloc(sizeof(struct TTable));
 	ttable->block_size = SWITCH_TTABLE_BLOCK_SIZE / sizeof(struct TTableNode) *
@@ -46,7 +46,7 @@ ttable_free(struct TTable *ttable)
 }
 
 struct TTableNode *
-ttable_probe(struct TTable *ttable, uint64_t key)
+ttable_probe(const struct TTable *ttable, uint64_t key)
 {
 	assert(ttable);
 	/**

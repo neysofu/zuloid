@@ -1,5 +1,4 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
@@ -15,8 +14,7 @@
 #include "switches.h"
 #include <stdint.h>
 
-/**
- * It can store a huge number of chess positions and keep them
+/* It can store a huge number of chess positions and keep them
  * sorted for quick access.
  *
  * Elements of the transpositions table are:
@@ -63,25 +61,22 @@ struct TTableNode
 	struct EvalState eval_state;
 };
 
-/**
- * @brief Create an empty transpositions table.
- * @return A pointer to the new data structure.
- */
+/* Creates an empty transpositions table. */
 struct TTable *
-ttable_new(void);
+ttable_new(size_t size);
 
+/* Frees any memory owned by `ttable`. */
 void
 ttable_free(struct TTable *ttable);
 
-/**
- * @brief Remove any stored transpositions from @ttable and resize it to the
- * default size.
- */
+/* Resets a transpositions table to mint conditions. */
 void
 ttable_clear(struct TTable *ttable);
 
+/* Finds and returns the location of node with id `key` in `ttable`, if any. It
+ * returns NULL on failure. */
 struct TTableNode *
-ttable_probe(struct TTable *ttable, uint64_t key);
+ttable_probe(const struct TTable *ttable, uint64_t key);
 
 void
 ttable_remove(struct TTable *ttable, uint64_t key);

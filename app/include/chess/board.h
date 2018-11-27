@@ -1,11 +1,8 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * @file board.h
- * @brief A piece centric board representation.
- */
+ * A piece centric board representation. */
 
 #pragma once
 
@@ -20,9 +17,6 @@
 #define BOARD_MAX_HALF_MOVES 75
 #define BOARD_AVERAGE_NUM_CANDIDATE_MOVES 28
 #define BOARD_MAX_NUM_LEGAL_MOVES 230
-
-/// @defgroup game_state Game state masks.
-/// @{
 
 /// A mask for the active color.
 #define GAME_STATE_ACTIVE_COLOR_OFFSET 15
@@ -66,10 +60,6 @@ board_setup_960(struct Board *board, int16_t seed);
 
 uint64_t
 board_hash(struct Board *board);
-
-// Prints this chess position to stdout as ASCII art.
-void
-board_print(struct Board *board);
 
 enum Piece
 board_piece_at(struct Board *board, Coord coord);

@@ -85,6 +85,9 @@ Design choices:
 * Nodes dont't store optimal moves because it would waste memory on something
   useless. Once I store moves I also need tensors, and if I have tensors I
   wouldn't need moves. So no moves.
+* What to store on the transpositions table and how to return to search? I could
+  store a linked list of leaves that I have evaluated. The transposition table
+  tells me
 
 An example of search:
 * I start from the start position.
@@ -94,8 +97,30 @@ An example of search:
   * Many, many quiet and possible choices. No obvious candidate. Ex. start.
   * Forced line, maybe two alternatives. Common in endgames.
 * The search must handle these three cases all very well.
-* I start searching until I am confident with a certain
-  for cache behaviour. It needs more continuity.
+* I start searching until I am confident with a certain value that I have a good
+  move.
+* Other engines search until a certain depth, then another one, then another
+  one. This is cool because it is an incremental approach.
+What if I did the same but with uncertainty? I follow lines until they are kind
+of certain to be good. Then I go for safer lines and safer and safer. This way,
+instead of going for depth, I go for uncertainty. This would be a better
+alternative because:
+  It is less mechanic than alpha beta, plays more humanly.
+  As long as the NN is trained well, it can kick ass and is not constrained by
+  stupid depth. I don't care about depth, I only care about level of play. If I
+  want to play a nice tactic because it blocks uncertainty, then let's play
+  that.
+So:
+The algorithm just searched depth-first until you are confident enough in that
+line, then you can backtrace. When you backtrace, you get a bit more confident
+each ply that you have the right candidate moves. Once you are confident enough,
+you make your move. When you want to start searching again, you start working on
+the leaves and search a bit more. Now the questions: How do I pick up search and
+how do I store positions?
+
+OPENING BOOKS
+=============
+Not to worry about, it's client's responsability.
 
 Soooo... how the hell do I do this? I want it to be very strong but also easy on
 resources, and the key to that is considering very little nodes while keeping

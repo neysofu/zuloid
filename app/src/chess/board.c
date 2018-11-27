@@ -9,7 +9,7 @@
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
-#include "trace.h"
+#include "debug.h"
 #include "utils.h"
 #include "xxHash.h"
 #include <assert.h>
@@ -38,40 +38,33 @@ board_setup_960(struct Board *board, int16_t seed)
 	div_t permutations;
 	// Seeds larger than 959 trigger random setup.
 	permutations.quot = (seed < 960 ? seed : rand()) % 960;
-	TRACE("Now setting up the board from the Chess 960 position %d.\n",
-	      permutations.quot);
+	DEBUG("Now setting up the board from the Chess 960 position %d.", permutations.quot);
 	// Bishops.
 	assert(permutations.quot < 960);
 	permutations = div(permutations.quot, 4);
 	permutations.rem = (permutations.rem << 1) + 1;
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
-	                                  << available_files[permutations.rem];
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[permutations.rem];
 	available_files[permutations.rem] = available_files[7];
 	assert(permutations.quot < 240);
 	permutations = div(permutations.quot, 4);
 	permutations.rem <<= 1;
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
-	                                  << available_files[permutations.rem];
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[permutations.rem];
 	available_files[permutations.rem] = available_files[6];
 	// Queen.
 	assert(permutations.quot < 60);
 	permutations = div(permutations.quot, 6);
-	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER
-	                                  << available_files[permutations.rem];
-	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER
-	                                << available_files[permutations.rem];
+	board->bb_pieces[PIECE_BISHOP] |= BB_960_HELPER << available_files[permutations.rem];
+	board->bb_pieces[PIECE_ROOK] |= BB_960_HELPER << available_files[permutations.rem];
 	available_files[permutations.rem] = available_files[5];
 	// Knights.
 	assert(permutations.quot < 10);
 	int_fast8_t knight_2_permutations[10] = { 0, 0, 0, 0, 1, 1, 1, 2, 2, 3 };
 	int_fast8_t knight_1_permutations[10] = { 1, 2, 3, 4, 2, 3, 4, 3, 4, 4 };
 	permutations.rem = knight_1_permutations[permutations.quot];
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER
-	                                  << available_files[permutations.rem];
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[permutations.rem];
 	available_files[permutations.rem] = available_files[4];
 	permutations.rem = knight_2_permutations[permutations.quot];
-	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER
-	                                  << available_files[permutations.rem];
+	board->bb_pieces[PIECE_KNIGHT] |= BB_960_HELPER << available_files[permutations.rem];
 	available_files[permutations.rem] = available_files[3];
 	// Unrolled bubble sort.
 	if (available_files[0] > available_files[1]) {
@@ -109,8 +102,7 @@ board_piece_at(struct Board *board, Coord coord)
 		return PIECE_PAWN;
 	} else if (board->bb_pieces[PIECE_KNIGHT] & mask) {
 		return PIECE_KNIGHT;
-	} else if (board->bb_pieces[PIECE_BISHOP] & board->bb_pieces[PIECE_ROOK] &
-	           mask) {
+	} else if (board->bb_pieces[PIECE_BISHOP] & board->bb_pieces[PIECE_ROOK] & mask) {
 		return PIECE_QUEEN;
 	} else if (board->bb_pieces[PIECE_BISHOP] & mask) {
 		return PIECE_BISHOP;
@@ -143,23 +135,6 @@ enum Color
 board_color_at(struct Board *board, Coord coord)
 {
 	return MIN(board->bb_colors & bb_coord(coord), COLOR_BLACK);
-}
-
-void
-board_print(struct Board *board)
-{
-	printf("    A B C D E F G H\n"
-	       "  ╔═════════════════╗\n");
-	Rank rank = BOARD_SIDE_LENGTH;
-	while (rank-- > 0) {
-		printf("%c ║ ", rank_to_char(rank));
-		for (File file = 0; file < BOARD_SIDE_LENGTH; file++) {
-			printf("%c ", board_square_to_char(board, coord_new(file, rank), '.'));
-		}
-		printf("║ %c\n", rank_to_char(rank));
-	}
-	printf("  ╚═════════════════╝\n"
-	       "    A B C D E F G H\n");
 }
 
 enum Color

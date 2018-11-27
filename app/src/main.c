@@ -5,7 +5,6 @@
 #include "bitboards.h"
 #include "cJSON/cJSON.h"
 #include "engine.h"
-#include "trace.h"
 #include "utils.h"
 #include <stdio.h>
 #include <sys/select.h>
@@ -17,8 +16,7 @@ main(void)
 	 * make sure that line buffering is on. */
 	setlinebuf(stdin);
 	setlinebuf(stdout);
-	TRACE("Line buffering set for all three standard channels.\n");
-	/* Initialize bitboard lookup tables. */
+	/* Initializes bitboard lookup tables. */
 	bb_init();
 	/* Let's make cJSON use xmalloc too for better consistency in case of
 	 * out-of-memory errors. */

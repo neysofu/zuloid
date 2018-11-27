@@ -26,6 +26,10 @@ util_is_stdin_empty(void);
 size_t
 util_timestamp_msec(void);
 
+/* Returns true if it has only whitespace. */
+bool
+util_str_is_whitespace(const char *str);
+
 /* A thin wrapper over `malloc` that exits on OOM errors and prints a
  * JSON-RPC error. */
 void *

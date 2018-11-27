@@ -1,39 +1,31 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
 
 #include "bitboards.h"
 #include "chess/board.h"
 #include "chess/color.h"
 #include "chess/coord.h"
 #include "chess/move.h"
+#include "debug.h"
 #include "switches.h"
-#include "trace.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdint.h>
 
-/**
- * Ordered by '7 + rank - file'.
- */
+/* Ordered by '7 + rank - file'. */
 const uint64_t BB_DIAGONALS[15] = {
-	0x0000000000000080, 0x0000000000008040, 0x0000000000804020,
-	0x0000000080402010, 0x0000008040201008, 0x0000804020100804,
-	0x0080402010080402, 0x8040201008040201, 0x4020100804020100,
-	0x2010080402010000, 0x1008040201000000, 0x0804020100000000,
+	0x0000000000000080, 0x0000000000008040, 0x0000000000804020, 0x0000000080402010,
+	0x0000008040201008, 0x0000804020100804, 0x0080402010080402, 0x8040201008040201,
+	0x4020100804020100, 0x2010080402010000, 0x1008040201000000, 0x0804020100000000,
 	0x0402010000000000, 0x0201000000000000, 0x0100000000000000,
 };
 
-/**
- * Ordered by 'rank + file'.
- */
+/* Ordered by 'rank + file'. */
 const uint64_t BB_ANTI_DIAGONALS[15] = {
-	0x0000000000000001, 0x0000000000000102, 0x0000000000010204,
-	0x0000000001020408, 0x0000000102040810, 0x0000010204081020,
-	0x0001020408102040, 0x0102040810204080, 0x0204081020408000,
-	0x0408102040800000, 0x0810204080000000, 0x1020408000000000,
+	0x0000000000000001, 0x0000000000000102, 0x0000000000010204, 0x0000000001020408,
+	0x0000000102040810, 0x0000010204081020, 0x0001020408102040, 0x0102040810204080,
+	0x0204081020408000, 0x0408102040800000, 0x0810204080000000, 0x1020408000000000,
 	0x2040800000000000, 0x4080000000000000, 0x8000000000000000,
 };
 
@@ -43,7 +35,7 @@ uint64_t BB_KING_THREATS[BOARD_NUM_SQUARES];
 void
 bb_init(void)
 {
-	TRACE("Bitboard lookup tables initialization has started.\n");
+	DEBUG("Bitboard lookup tables initialization has started.");
 	for (Coord coord = 0; coord < BOARD_NUM_SQUARES; coord++) {
 		uint64_t coord_mask = bb_coord(coord);
 		// BB_KNIGHT_THREATS[coord] =
@@ -57,16 +49,14 @@ bb_init(void)
 		uint64_t king_vertical_threats =
 		  (file | MAX(file, file << 1ULL) | MIN(file, file >> 1ULL));
 		BB_KING_THREATS[coord] = king_horizontal_threats & king_vertical_threats;
-		TRACE("King horizontal threats at square n.%d are: 0x%llx.\n",
-		          coord,
-		          king_horizontal_threats);
-		TRACE("King vertical threats at square n.%d are: 0x%llx.\n",
-		          coord,
-		          king_vertical_threats);
-		TRACE("King threats at square n.%d are: 0x%llx.\n",
-		          coord,
-		          BB_KING_THREATS[coord]);
-		TRACE("Bitboard initilization at square n.%d is complete.\n", coord);
+		DEBUG("King horizontal threats at square n.%d are: 0x%llx.",
+		      coord,
+		      king_horizontal_threats);
+		DEBUG("King vertical threats at square n.%d are: 0x%llx.",
+		      coord,
+		      king_vertical_threats);
+		DEBUG("King threats at square n.%d are: 0x%llx.", coord, BB_KING_THREATS[coord]);
+		DEBUG("Bitboard initilization at square n.%d is complete.", coord);
 	}
 }
 

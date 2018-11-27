@@ -59,7 +59,6 @@ settings_default(struct Settings *settings);
  *   - -2: the JSON `value` that was provided is not meaningful for the `name`
  *   setting.
  * Preconditions
- *   All `settings`, `name`, and `value` parameters are non-NULL pointers.
- */
+ *   All `settings`, `name`, and `value` parameters are non-NULL pointers. */
 int8_t
 settings_set_value(struct Settings *settings, const char *name, const struct cJSON *value);

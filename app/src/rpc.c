@@ -2,64 +2,27 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at http://mozilla.org/MPL/2.0/.
  *
- * @file rpc.c
- * @brief This file implements the external APIs to the engine over stdin. */
+ * This file implements the external APIs to the engine over stdin. */
 
+#include "rpc.h"
 #include "cJSON/cJSON.h"
 #include "chess/board.h"
 #include "chess/fen.h"
 #include "chess/legality.h"
 #include "chess/move.h"
 #include "clock.h"
+#include "debug.h"
 #include "engine.h"
 #include "game.h"
 #include "globals.h"
 #include "mt19937-64/mt64.h"
 #include "settings.h"
-#include "trace.h"
 #include "utils.h"
 #include "xxHash.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
 #include <sysexits.h>
-
-#define LITERAL_AUTHORS ("author(s)")
-#define LITERAL_CODE ("code")
-#define LITERAL_DATA ("data")
-#define LITERAL_ERROR ("error")
-#define LITERAL_GAME ("game")
-#define LITERAL_ID ("id")
-#define LITERAL_JSONRPC ("jsonrpc")
-#define LITERAL_KEY ("key")
-#define LITERAL_LICENSE ("license")
-#define LITERAL_MESSAGE ("message")
-#define LITERAL_META ("meta")
-#define LITERAL_METHOD ("method")
-#define LITERAL_NAME ("name")
-#define LITERAL_NOTATION ("notation")
-#define LITERAL_PARAMS ("params")
-#define LITERAL_PATH ("path")
-#define LITERAL_RELEASE_DATE ("release-date")
-#define LITERAL_RESULT ("result")
-#define LITERAL_TREE ("tree")
-#define LITERAL_TWO_POINT_OH ("2.0")
-#define LITERAL_URL ("url")
-#define LITERAL_VALUE ("value")
-#define LITERAL_VERSION ("version")
-
-#define JSONRPC_CHESS_ERROR_CODE (150)
-#define JSONRPC_CHESS_ERROR_MSG ("Invalid notation.")
-#define JSONRPC_INVALID_METHOD_CODE (-32601)
-#define JSONRPC_INVALID_METHOD_MSG ("Method not found.")
-#define JSONRPC_INVALID_PARAMS_CODE (-32602)
-#define JSONRPC_INVALID_PARAMS_MSG ("Invalid parameters.")
-#define JSONRPC_INVALID_REQUEST_CODE (-32600)
-#define JSONRPC_INVALID_REQUEST_MSG ("Invalid request.")
-#define JSONRPC_MODE_ERROR_CODE (100)
-#define JSONRPC_MODE_ERROR_MSG ("Unavailable method during search time.")
-#define JSONRPC_PARSE_ERROR_CODE (-32700)
-#define JSONRPC_PARSE_ERROR_MSG ("Parse error.")
 
 struct cJSON *
 engine_rpc_load(struct Engine *engine, const struct cJSON *params)
@@ -352,7 +315,7 @@ engine_rpc_train(struct Engine *engine, const struct cJSON *params)
 struct cJSON *
 engine_rpc_uci(struct Engine *engine, const struct cJSON *params)
 {
-	TRACE("UCI session initialization via 'uci' command.\n");
+	DEBUG("UCI session initialization via 'uci' command.");
 	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *result = cJSON_AddObjectToObject(response, LITERAL_RESULT);
 	struct cJSON *meta = cJSON_AddObjectToObject(result, LITERAL_META);
@@ -368,7 +331,7 @@ engine_rpc_uci(struct Engine *engine, const struct cJSON *params)
 const char *
 engine_rpc(struct Engine *engine, const char *cmd)
 {
-	TRACE("Parsing the JSON RPC request.\n");
+	DEBUG("Parsing the JSON RPC request.\n");
 	const struct cJSON *request = cJSON_Parse(cmd);
 	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *error;
@@ -376,20 +339,20 @@ engine_rpc(struct Engine *engine, const char *cmd)
 	/* Be aware of threading issues with cJSON_GetErrorPtr. No problem here
 	 * because it is single-threaded. */
 	if (!request || cJSON_GetErrorPtr()) {
-		TRACE("The JSON RPC request is not parsable.\n");
+		DEBUG("The JSON RPC request is not parsable.");
 		error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
 		cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_PARSE_ERROR_CODE);
 		cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_PARSE_ERROR_MSG);
 		goto respond;
 	}
 	if (!cJSON_IsString(cJSON_GetObjectItem(request, LITERAL_METHOD))) {
-		TRACE("The JSON RPC request is parsable but semantically incorrect.\n");
+		DEBUG("The JSON RPC request is parsable but semantically incorrect.");
 		error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
 		cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_INVALID_REQUEST_CODE);
 		cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_INVALID_REQUEST_MSG);
 		goto respond;
 	}
-	TRACE("The JSON RPC request is valid. Now proceeding to method dispatching.\n");
+	DEBUG("The JSON RPC request is valid. Now proceeding to method dispatching.");
 	id = cJSON_GetObjectItem(request, LITERAL_ID);
 	const struct cJSON *params = cJSON_GetObjectItem(request, LITERAL_PARAMS);
 	const char *method = cJSON_GetObjectItem(request, LITERAL_METHOD)->valuestring;
@@ -425,13 +388,13 @@ engine_rpc(struct Engine *engine, const char *cmd)
 			response = engine_rpc_uci(engine, params);
 			break;
 		default:
-			TRACE("Method dispatch failed.\n");
+			DEBUG("Method dispatch failed.\n");
 			error = cJSON_AddObjectToObject(response, LITERAL_ERROR);
 			cJSON_AddNumberToObject(error, LITERAL_CODE, JSONRPC_INVALID_METHOD_CODE);
 			cJSON_AddStringToObject(error, LITERAL_MESSAGE, JSONRPC_INVALID_PARAMS_MSG);
 			goto respond;
 	}
-	TRACE("Method dispatching was successful and the response object is ready.\n");
+	DEBUG("Method dispatching was successful and the response object is ready.");
 	if (id) {
 	respond:
 		cJSON_AddStringToObject(response, LITERAL_JSONRPC, LITERAL_TWO_POINT_OH);
