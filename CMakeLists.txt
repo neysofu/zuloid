@@ -3,13 +3,11 @@
 # file, You can obtain one at http://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required (VERSION 3.4.1)
-project (Z64C LANGUAGES C CXX)
-
+project (Z64C LANGUAGES C)
 set (CMAKE_C_STANDARD 99)
-set (CMAKE_CXX_STANDARD 11)
 
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -Wno-missing-braces -Wextra -Wswitch-default -Wswitch-enum -Wunreachable-code -Wunused-macros")
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
-
 find_package (ArrayFire REQUIRED)
 
 # Useful macros
@@ -24,7 +22,7 @@ add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 # Z64C_LIB
 set (Z64C_INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/app/include/")
 file (GLOB_RECURSE Z64C_SRC "${Z64C_INCLUDE_DIR}/*.h"
-							"${CMAKE_CURRENT_SOURCE_DIR}/app/src/*.c")
+	  "${CMAKE_CURRENT_SOURCE_DIR}/app/src/*.c")
 list (REMOVE_ITEM Z64C_SRC "${CMAKE_CURRENT_SOURCE_DIR}/app/src/main.c")
 add_library (Z64C_LIB STATIC ${Z64C_SRC})
 target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR})
