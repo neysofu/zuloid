@@ -20,7 +20,7 @@ struct Settings
 	uint32_t seed;
 	/* The maximum amount of memory allocated for the transpositions table in
 	 * bytes. */
-	size_t max_cache_size;
+	size_t cache_size;
 	/// Random noise between 0 and 1 that is added to candidade moves' scores to
 	/// improve randomness.
 	float move_selection_noise;

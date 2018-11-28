@@ -85,6 +85,7 @@ engine_rpc_get(struct Engine *engine, const struct cJSON *params)
 	struct cJSON *value;
 	char *buffer;
 	switch (XXH64(key, strlen(key), 0)) {
+		/* "meta:*" */
 		case 0x99bfb67800f8ab48: /* "meta:name" */
 			value = cJSON_CreateString(SOFTWARE_NAME);
 			break;
@@ -104,6 +105,7 @@ engine_rpc_get(struct Engine *engine, const struct cJSON *params)
 		case 0x9f39919c36cf7b1d: /* "meta:url" */
 			value = cJSON_CreateString(SOFTWARE_URL);
 			break;
+		/* "settings:*" */
 		case 0x3dde2c8e2f1ae60c: /* "position:fen" */
 			buffer = xmalloc(FEN_SIZE);
 			board_to_fen(&engine->board, buffer);
@@ -127,39 +129,15 @@ engine_rpc_get(struct Engine *engine, const struct cJSON *params)
 				}
 			}
 			break;
-		case 0x6ef4a701e3e2a582: /* "position:castling" */
-			value = cJSON_CreateObject();
-			cJSON_AddBoolToObject(
-			  value, "WK", engine->board.game_state & GAME_STATE_CASTLING_RIGHT_WK);
-			cJSON_AddBoolToObject(
-			  value, "BK", engine->board.game_state & GAME_STATE_CASTLING_RIGHT_WK);
-			cJSON_AddBoolToObject(
-			  value, "WQ", engine->board.game_state & GAME_STATE_CASTLING_RIGHT_WK);
-			cJSON_AddBoolToObject(
-			  value, "BQ", engine->board.game_state & GAME_STATE_CASTLING_RIGHT_WK);
-			break;
-		case 0x29e651ba535a6cff: /* "position:turn" */
-			if (board_active_color(&engine->board) == COLOR_WHITE) {
-				value = cJSON_CreateNumber(0);
-			} else {
-				value = cJSON_CreateNumber(1);
-			}
-			break;
-		case 0xe255add3561ac54e: /* "position:en-passant" */
-			if (!board_en_passant_is_available(&engine->board)) {
-				value = cJSON_CreateNull();
-			} else {
-				value = cJSON_CreateString("e4");
-			}
-			break;
-		case 0x1edf70458ca59bce: /* "settings:port" */
-			value = cJSON_CreateNumber(engine->settings.port);
-			break;
-		case 0x451f838c8458ea73: /* "settings:max-cache-size" */
-			value = cJSON_CreateNumber(engine->settings.max_cache_size);
+		/* "settings:*" */
+		case 0x451f838c8458ea73: /* "settings:cache-size" */
+			value = cJSON_CreateNumber(engine->settings.cache_size);
 			break;
 		case 0x066a44fc3b92d2ed: /* "settings:move-selection-noise" */
 			value = cJSON_CreateNumber(engine->settings.move_selection_noise);
+			break;
+		case 0x1edf70458ca59bce: /* "settings:port" */
+			value = cJSON_CreateNumber(engine->settings.port);
 			break;
 		case 0x5f81485bdd5a5258: /* "settings:resign-rate" */
 			value = cJSON_CreateNumber(engine->settings.resign_rate);
