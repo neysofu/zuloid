@@ -1,9 +1,6 @@
 [submodule "lib/xxHash"]
 	path = lib/xxHash
 	url = https://github.com/Cyan4973/xxHash
-[submodule "lib/mt19937-64"]
-	path = lib/mt19937-64
-	url = https://github.com/stevemkim/mt19937-64
 [submodule "lib/cJSON"]
 	path = lib/cJSON
 	url = https://github.com/DaveGamble/cJSON/
