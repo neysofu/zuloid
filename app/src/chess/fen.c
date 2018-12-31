@@ -3,11 +3,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/fen.h"
-#include "chess/position.h"
 #include "chess/castling.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
+#include "chess/piece_types.h"
+#include "chess/position.h"
 #include "utils.h"
 #include <assert.h>
 #include <ctype.h>
@@ -34,9 +35,23 @@ char *
 fen_new_from_position(const struct Position *position)
 {
 	assert(position);
-	Piece pieces = position_list_pieces(position);
 	char *fen = handle_oom(malloc(FEN_SIZE));
 	uint_fast8_t free_files_count = 0;
+	Piece pieces_by_square[64];
+	position_list_pieces_by_square(position, pieces_by_square);
+	for (Rank rank = 0; rank < RANK_MAX; rank++) {
+		size_t free_files_count = 0;
+		for (File file = 0; file < FILE_MAX; file++) {
+			Piece piece = pieces_by_square[square_new(file, rank)];
+			if (PIECE_TYPE_NONE == piece) {
+				free_files_count++;
+			} else if (free_files_count > 0) {
+				*fen++ = free_files_count + '0';
+			}
+			*fen++ = piece_to_char(piece);
+		}
+		*fen++ = '/';
+	}
 	/* The last character was set to '/' in the loop but it must be a space. */
 	*(fen - 1) = ' ';
 	*fen++ = color_to_char(position->side_to_move);
@@ -96,12 +111,12 @@ position_set_from_fen(struct Position *position, const char *original_fen)
 			}
 		} else {
 			if (isupper(token[i])) {
-				//position_square(position, square)->color = COLOR_WHITE;
+				// position_square(position, square)->color = COLOR_WHITE;
 			} else {
 				token[i] = toupper(token[i]);
-				//position_square(position, square)->color = COLOR_BLACK;
+				// position_square(position, square)->color = COLOR_BLACK;
 			}
-			//position_square(position, square)->piece = token[i];
+			// position_square(position, square)->piece = token[i];
 		}
 	}
 	token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);

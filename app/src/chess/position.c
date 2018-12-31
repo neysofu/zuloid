@@ -29,7 +29,7 @@ position_hash(const struct Position *pos)
 }
 
 void
-position_list_pieces(const struct Position *pos, Piece ptr[])
+position_list_pieces_by_square(const struct Position *pos, Piece ptr[])
 {
 	assert(pos);
 	assert(ptr);

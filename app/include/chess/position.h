@@ -25,6 +25,9 @@ struct Position
 	int_fast8_t reversible_moves_count;
 };
 
+void
+position_list_pieces_by_square(const struct Position *position, Piece ptr[]);
+
 uint_fast64_t
 position_hash(const struct Position *pos);
 
