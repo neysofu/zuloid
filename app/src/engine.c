@@ -3,16 +3,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "chess/fen.h"
-#include "chess/move.h"
 #include "chess/position.h"
-#include "globals.h"
 #include "search/cache.h"
 #include "settings.h"
-#include "switches.h"
-#include "time.h"
 #include "utils.h"
-#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 
