@@ -1,0 +1,22 @@
+{
+	"$id": "#/rulesets/3x3/game_format",
+	"type": "object",
+	"properties": {
+		"stickers": {
+			"type": "array",
+			"items": {
+				"type": "string",
+				"example": "510331242"
+			}
+		}
+	}
+}
+
+{
+	"$id": "#/rulesets/3x3/move",
+	"type": "object",
+	"properties": {
+		"type": "string",
+		"examples": ["F", "D'", "2R"]
+	}
+}

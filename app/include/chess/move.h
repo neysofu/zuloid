@@ -1,58 +1,29 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * @file move.h
- * @brief Utilities for integer representation of chess moves.
- */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#pragma once
+#ifndef Z64C_CHESS_MOVE_H
+#define Z64C_CHESS_MOVE_H
 
-#include "chess/board.h"
-#include "chess/coord.h"
-#include "chess/dir.h"
-#include "chess/piece.h"
+#include "chess/coordinates.h"
+#include "chess/piece_types.h"
 #include <stdbool.h>
 #include <stdint.h>
 
-// A move from one square to another.
-// TODO: turn it into a uint16_t.
-typedef uint32_t Move;
-
-// Creates a move from one square to another. 'promotion' is ignored if the move
-// is not actually a promotion.
-Move
-move_new(Coord source, Coord destination, enum Piece promotion);
-
-/// @brief Returns the source square of the move @p move.
-Coord
-move_source(Move move);
-
-/// @brief Returns the target square of the move @p move.
-Coord
-move_target(Move move);
-
-enum Piece
-move_piece(Move move);
-
-/// @brief Returns the promotion piece type of ch
-enum Piece
-move_promotion(Move move);
-
-bool
-move_is_capture(Move move, struct Board *board);
-
-bool
-move_is_en_passant(Move move, struct Board *board);
-
-enum Dir
-move_dir(Move move);
+struct Move
+{
+	Bitboard source;
+	Bitboard target;
+	Piece piece;
+	bool is_capture;
+	bool is_en_passant;
+	bool is_promotion;
+};
 
 char *
-move_to_str(Move move, char *str);
+string_new_from_move(struct Move *mv);
 
-Move
-str_to_move(char *str);
+struct Move
+move_set_from_string(struct Move *mv, const char *s);
 
-extern const Move MOVE_NONE;
+#endif

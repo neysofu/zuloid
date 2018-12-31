@@ -1,81 +1,67 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "chess/board.h"
 #include "chess/fen.h"
 #include "chess/move.h"
-#include "chess/result.h"
-#include "clock.h"
-#include "debug.h"
+#include "chess/position.h"
 #include "globals.h"
-#include "mode.h"
-#include "mt19937-64/mt64.h"
-#include "search/ttable.h"
+#include "search/cache.h"
 #include "settings.h"
 #include "switches.h"
+#include "time.h"
 #include "utils.h"
-#include "xxHash.h"
-#include <assert.h>
-#include <stdbool.h>
-#include <stdint.h>
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-#include <sys/select.h>
-#include <sysexits.h>
-#include <unistd.h>
 
 struct Engine *
 engine_new(void)
 {
-	struct Engine *engine = xmalloc(sizeof(struct Engine));
-	engine->board = BOARD_STARTPOS;
-	engine->result = RESULT_NONE;
+	struct Engine *engine = handle_oom(malloc(sizeof(struct Engine)));
+	engine->position = POSITION_DEFAULT;
+	engine->winner = COLOR_NONE;
+	engine->termination = TERMINATION_NONE;
+	engine->game_clocks[COLOR_WHITE] = NULL;
+	engine->game_clocks[COLOR_BLACK] = NULL;
+	engine->settings = DEFAULT_SETTINGS;
+	engine->cache = NULL;
+	engine->notifications_stream = stdout;
 	engine->mode = MODE_IDLE;
-	engine->exit_status = EX_OK;
-	settings_default(&engine->settings);
-	engine->ttable = NULL;
 	return engine;
 }
 
 void
-engine_free(struct Engine *engine)
+engine_delete(struct Engine *engine)
 {
-	assert(engine);
+	if (!engine) {
+		return;
+	}
+	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
+	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
+	cache_delete(engine->cache);
 	free(engine);
 }
 
-int8_t
+int
 engine_main(struct Engine *engine)
 {
-	assert(engine);
-	DEBUG("Entered UCI loop.");
-	char *cmd = NULL;
-	char *cmd_iter = NULL;
-	size_t cmd_length = 0;
+	print_welcome_message();
 	while (engine->mode != MODE_EXIT) {
-		if (getline(&cmd, &cmd_length, stdin) == -1) {
-			DEBUG("Something unexpected happened while reading from stdin. Abort.");
-			engine->mode = MODE_EXIT;
-			engine->exit_status = EX_IOERR;
-			return engine->exit_status;
+		char *str = read_line_from_stream(stdin);
+		if (!str) {
+			printf("{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":0,\"message\":"
+			       "\"Input error\"}}\r\n");
+			return EXIT_FAILURE;
 		}
-		cmd_iter = cmd;
-		while (isspace(*cmd_iter)) {
-			cmd_iter++;
-		}
-		if (!*cmd_iter || *cmd_iter == '#') {
-			continue;
-		}
-		const char *response = engine_rpc(engine, cmd);
+		char *response = engine_call(engine, str);
 		if (response) {
-			DEBUG("Writing the JSON RPC response object to stdout.");
+			/* A tab character before the response string visually separates requests from
+			 * responses in the terminal. */
 			printf("\t%s\r\n", response);
-			free((void *)(response));
+			free(response);
 		}
 	}
-	DEBUG("Goodbye.");
-	return engine->exit_status;
+	return EXIT_SUCCESS;
 }

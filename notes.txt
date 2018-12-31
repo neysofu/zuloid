@@ -48,6 +48,13 @@ It must support:
 - (Optional.) Dynamic growth
 - Shrinking
 
+Quindi...
+
+I need a unique data structure that is fully linear and doesn't require any
+another work on it.
+
+I think the absolutely best option is to use already existing algorithms that are tested and all.
+
 API
 ===
 Un chess engine puo giocare a scacchi. Cosa devo esporre con le APIs? Capacita'
@@ -88,6 +95,78 @@ Design choices:
 * What to store on the transpositions table and how to return to search? I could
   store a linked list of leaves that I have evaluated. The transposition table
   tells me
+
+Ok, so move generation it is! The hash function is not so nice though because of poor locality.
+
+Elements in the transpositions table are stored almost in a linear way.
+
+So I want a data structure that allows me probing and retrieving data in a semi-linear way.
+Maybe I can hash based on the line. A line then contains positions. The basic
+idea is I usually search for positions in lines, so it makes sense that I look
+for that. So I search for this position in the current line and if I find it will be in cache, otherwise it can be a miss. This way I don't waste any cache, which is incredibly good.
+
+I start searching and evaluated nodes are appended to the list. How do I check if a node has already been met? Maybe I can put it in a separate 
+
+What if I store it as an open addressing scheme with interpolation by hash?
+
+What information must I store in every entry? I like the idea of data locality.
+Also because actual transpositions are kind of rare.
+
+So I can have a big array where I store lines by the starting position. Maybe I don't need to check for transpositions because they will clash after the line.
+
+So I start at the default position, right?
+I insert a value with that key hashed and store the evaluation of the main line until I fall back.
+
+A hash table is good because I don't have repetitions. It's not very data local though.
+
+I start storing a string of evaluations. I want the evaluations to be linear...
+
+I want to store lines in my cache. Transpositions are NOT very important. The basic idea is that transpositions will often happen quite near in the search function and thus we can keep a hot cache of the recently met transpositions.
+
+Basecally my cache stores move lines with the correct evaluation, which also may simplify moves. Then I have a filter telling the search if a position was recently met. If it was, then a new line is created and the fetch must be broken.
+
+I really need to work on this but I think it could be valid solutions to the problem.
+
+
+A cache entry either is a value or a pointer to the correct, original position.
+What data structure shall I use?
+
+So my search function has several building blocks:
+1) Recall. Go down to the leaves of the tree and be ready to start your search
+again. This step is only necessary when original search conditions are updated,
+e.g. the position has changed or new time is available. Z64C is designed to reduce dead times and can do all search in a single shot. This step also doesn't influence the tpos detector.
+2) Search. Evaluate new positions and update accordingly the tpos detector. New lines must fit into cache and be compact. This structure can be a blob, just managed via pointers and take up little space.
+
+The ratio between the size of tposdetector and cache depends by the number of transpositions in the position. I can use a good engineered function for that. Scaling as an issue can be done separately.
+This method has the advantage of improving data locality and lookup time. The recall phase uses one data structure and the search updates the other, this way the recall phase can be better mapped by the cache.
+
+It must support:
+1) Detect: look for a recent data structure and decide if it was seen lately or not. It can provide false answer both ways.
+
+How does the cache work? I need to store sequences of position evaluations.
+
+The cache is setup as a sequence of cells. Every cell will store what I need, hopefully 8 bytes is doable.
+So cache lines are sequences of cells. Cache lines can be any power of 2 cells
+long. When I want to create a new line, I hash the key and find the cell
+relative to that hash. Basically, it's just a glorified hash table with variable length values.
+This means that I get to store anything at all I want.
+Now I need to make it lossy, that is I want to support cache behavior.
+
+The transpos detector, on the other hand, is a much finer piece of tech.
+
+The search algorithm can be tuned, this is very important. It is disconnected from the cache behavior.
+
+
+Cerco subito alla profondita' giusta perche' e' perfetta come stima... non devo
+mai risalire. Poi quando devo fare backtrace non so come diamine fare. SF
+rigenerebbe tutto, ma non ha senso e non scala. Quindi devo memorizzare
+abbastanza informazioni da riprendere in mano tutto. E' una lista di posizioni,
+o meglio una lista di mosse con checkpoints. Non ha senso memorizzare cosi'
+tanto, bastano 2 bytes per mossa e quindi per posizione, piu' o meno.
+
+I store a huge, huge number of values and then leaves that I need to explore!
+
+How the hell do I store the tree?
 
 An example of search:
 * I start from the start position.
@@ -200,7 +279,24 @@ written. The question is:
 * Monte Carlo Alpha Beta
   - More efficient than pure MCTS
   - Requires move generation for board
+* Belt-based approach:
+  - Trades space for time? Is it a good idea?
+  - I have to think long and hard about cache replacement strategy. Maybe I can
+	reuse SF components.
+  - I want something that is easy on the CPU. Then I need to focus on heuristics!
+  - How does search work? I certainly don't want to generate all legal moves.
 
+How does it work if I store a node and then want more security? I store all
+nodes with certain security and recompute them if needed. Do I really really
+need the cache though?
+How do I store the leaves?
+So many questions...
+If I need to revaluate a position, I recompute it and consider the new
+position. It will help me also being more right about further positions.
+
+* Generate legal moves
+* Recompute everything
+* Never recompute and start from leaves
 
 ON GPU USAGE
 ============
@@ -249,7 +345,6 @@ What can I do? I need a custom hashing algorithm, possibly many so that I can
 choose the best:
 
 * xxHash with linear probing or any other open addressing scheme.
-*
 
 So basically I should store in different parts of the program:
 * MCTS (I can even store this to disk or cold memory. It doesn't really matter speed of

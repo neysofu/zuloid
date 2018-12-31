@@ -1,69 +1,63 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- *
- * -------------------------------------------------------------------
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  *
  * The `Engine` structure holds a reference to all engine components and wires
  * them together. */
 
-#pragma once
+#ifndef Z64C_ENGINE_H
+#define Z64C_ENGINE_H
 
-#include "chess/board.h"
-#include "chess/legality.h"
-#include "chess/result.h"
+#include "chess/position.h"
 #include "chess/termination.h"
-#include "game.h"
-#include "mode.h"
-#include "search/ttable.h"
+#include "search/cache.h"
 #include "settings.h"
+#include "time/game_clock.h"
 #include <stdbool.h>
 
-/* A self-contained chess engine instance.
- * The `Engine` structure contains all the necessary components to make Z64C
- * work.
- * This structure doesn't takes up very little memory by itself. The most
- * resource-hungry component by far and large is 'struct TTable'. */
-struct Engine
+enum Mode
 {
-	/* The current chess position.
-	 */
-	struct Board board;
-	/* A flag that signals when somebody wins. */
-	struct Result result;
-	/* Indexed by `enum Color`. */
-	struct Clock *time_control[2];
-	struct Settings settings;
-	/* What to do next? `mode` tells us. */
-	enum Mode mode;
-	/* On exit, this variable stores the exit status returned by the process. */
-	int8_t exit_status;
-	struct TTable *ttable;
-	struct Network *network;
+	/* The engine is sitting idle and waiting for commands. */
+	MODE_IDLE,
+	/* The engine is currently busy searching. */
+	MODE_SEARCH,
+	/* The engine is ready to exit. */
+	MODE_EXIT,
 };
 
-/* Create a self-contained engine instance with default settings. */
+struct Engine
+{
+	struct Position position;
+	Color winner;
+	enum Termination termination;
+	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
+	struct GameClock *game_clocks[2];
+	struct Settings settings;
+	struct Cache *cache;
+	struct Network *network;
+	FILE *notifications_stream;
+	enum Mode mode;
+};
+
+/* Creates a self-contained engine instance with default settings. */
 struct Engine *
 engine_new(void);
 
-/* Gracefully kill a `Engine` instance. */
+/* Gracefully kills a `Engine` instance. */
 void
-engine_free(struct Engine *engine);
+engine_delete(struct Engine *engine);
 
-/* Start reading commands from stdin and feen them to `engine` as they come. */
-int8_t
+/* Starts accepting UCIv2 requests from stdin and responds to them in a non-blocking
+ * fashion. */
+int
 engine_main(struct Engine *engine);
 
-/* Runs a "Remote Procedure Call" (RPC) and return the engine's response.
- * All communication must be valid JSON-RPC 2.0.
+/* Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
+ * All communication must be in valid JSON-RPC 2.0.
  *
- * Parameters
- *   `cmd` is a valid pointer to a null-terminated string that encodes JSON-RPC.
  * Result
- *   It returns a pointer to a null-terminated serialized JSON-RPC response
- *   object. The JSON data contains no unnecessary whitespace and doesn't
- *   contain any newline character.
- * Preconditions
- *   `cmd` must be a valid pointer to a null-terminated string. */
-const char *
-engine_rpc(struct Engine *engine, const char *cmd);
+ *   A JSON-RPC response string without line breaks. */
+char *
+engine_call(struct Engine *engine, const char *request);
+
+#endif

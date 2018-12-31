@@ -1,0 +1,19 @@
+{
+	"$id": "#/rulesets/chess/game_format",
+	"type": "object",
+	"properties": {
+		"FEN": {
+			"type": "string"
+		},
+	}
+}
+
+{
+	"$id": "#/rulesets/chess/move",
+	"type": "object",
+	"properties": {
+		"FEN": {
+			"type": "string",
+		},
+	}
+}

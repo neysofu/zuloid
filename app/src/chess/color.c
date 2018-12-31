@@ -1,39 +1,32 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/color.h"
-#include "chess/coord.h"
-#include <stdlib.h>
+#include <assert.h>
 
-Rank
-color_promoting_rank(enum Color color)
+char
+color_to_char(Color c)
 {
-	return color_home_rank(color_other(color));
+	assert(c != COLOR_NONE);
+	return c ? 'b' : 'w';
 }
 
 Rank
-color_home_rank(enum Color color)
-{
-	return color ? 7 : 0;
-}
+color_promoting_rank(Color c);
 
 Rank
-color_pawn_rank(enum Color color)
-{
-	return color ? 6 : 1;
-}
+color_home_rank(Color c);
 
 Rank
-color_en_passant_rank(enum Color color)
-{
-	return color ? 5 : 2;
-}
+color_pawn_rank(Color c);
 
-enum Color
-color_other(enum Color color)
+Rank
+color_en_passant_target_rank(Color c);
+
+Color
+color_other(Color c)
 {
-	return !color;
+	assert(c != COLOR_NONE);
+	return !c;
 }

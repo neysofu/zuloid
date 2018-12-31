@@ -1,13 +1,12 @@
-/**
- * This Source Code Form is subject to the terms of the Mozilla Public
+/* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at http://mozilla.org/MPL/2.0/.
- */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/fen.h"
-#include "bitboards.h"
-#include "chess/board.h"
-#include "chess/coord.h"
+#include "chess/position.h"
+#include "chess/castling.h"
+#include "chess/color.h"
+#include "chess/coordinates.h"
 #include "chess/move.h"
 #include "utils.h"
 #include <assert.h>
@@ -17,152 +16,140 @@
 #include <stdlib.h>
 #include <string.h>
 
-void
-board_to_fen(struct Board *board, char *buffer)
+/*  64 + | pieces
+ *   7 + | slashes
+ *   1 + | active color
+ *   4 + | castling rights
+ *   2 + | en-passant target square
+ *   2 + | half-moves clock
+ *   4 + | full-moves
+ *   5 = | spaces
+ * -----
+ *  89 plus some extra safety space. */
+#define FEN_SIZE (92)
+
+const char *const FEN_SEPARATORS = " _";
+
+char *
+fen_new_from_position(const struct Position *position)
 {
-	assert(board);
-	assert(buffer);
-	Rank rank = BOARD_SIDE_LENGTH;
-	File file;
-	while (rank-- > 0) {
-		for (file = 0; file < BOARD_SIDE_LENGTH; file++) {
-			Coord coord = coord_new(file, rank);
-			uint64_t bb = bb_coord(coord);
-			*buffer++ = board_square_to_char(board, coord, '1');
-		}
-		*(buffer++) = '/';
+	assert(position);
+	Piece pieces = position_list_pieces(position);
+	char *fen = handle_oom(malloc(FEN_SIZE));
+	uint_fast8_t free_files_count = 0;
+	/* The last character was set to '/' in the loop but it must be a space. */
+	*(fen - 1) = ' ';
+	*fen++ = color_to_char(position->side_to_move);
+	*fen++ = ' ';
+	if (position->castling_rights & CASTLING_RIGHT_W_OO) {
+		*fen++ = 'K';
 	}
-	*(buffer - 1) = ' ';
-	*(buffer++) = board_active_color(board) ? 'w' : 'b';
-	*(buffer++) = ' ';
-	if (board_castling_rights(board) & GAME_STATE_CASTLING_RIGHT_WK) {
-		*(buffer++) = 'K';
+	if (position->castling_rights & CASTLING_RIGHT_B_OO) {
+		*fen++ = 'k';
 	}
-	if (board_castling_rights(board) & GAME_STATE_CASTLING_RIGHT_BK) {
-		*(buffer++) = 'k';
+	if (position->castling_rights & CASTLING_RIGHT_W_OOO) {
+		*fen++ = 'Q';
 	}
-	if (board_castling_rights(board) & GAME_STATE_CASTLING_RIGHT_WQ) {
-		*(buffer++) = 'Q';
+	if (position->castling_rights & CASTLING_RIGHT_B_OOO) {
+		*fen++ = 'q';
 	}
-	if (board_castling_rights(board) & GAME_STATE_CASTLING_RIGHT_BQ) {
-		*(buffer++) = 'q';
+	if (*(fen - 1) == ' ') {
+		*fen++ = '-';
 	}
-	if (*(buffer - 1) == ' ') {
-		*(buffer++) = '-';
-	}
-	*(buffer++) = ' ';
-	if (board_en_passant_is_available(board)) {
-		Coord en_passant_coord = board_en_passant_coord(board);
-		*(buffer++) = file_to_char(coord_file(en_passant_coord));
-		*(buffer++) = rank_to_char(coord_rank(en_passant_coord));
+	*fen++ = ' ';
+	if (position->en_passant_target != SQUARE_NONE) {
+		*fen++ = file_to_char(square_file(position->en_passant_target));
+		*fen++ = rank_to_char(square_rank(position->en_passant_target));
 	} else {
-		*(buffer++) = '-';
+		*fen++ = '-';
 	}
-	*(buffer++) = ' ';
+	*fen++ = ' ';
 	// TODO: fullmove number.
-	sprintf(buffer, "%zu 1", board_num_half_moves(board));
-	buffer += 4;
-	*buffer = '\0';
+	sprintf(fen, "%d 1", position->reversible_moves_count);
+	fen += 4;
+	*fen = '\0';
+	return fen;
 }
 
-int8_t
-fen_to_board(char *fen, struct Board *buffer)
+int
+position_set_from_fen(struct Position *position, const char *original_fen)
 {
-	// char *token;
-	// char *save_ptr;
-	// token = strtok_r(fen, WHITESPACE_CHARS, &token);
-	// Coord coord = coord_new(0, BOARD_SIDE_LENGTH);
-	// while ((token = strtok_r(fen, "/", &save_ptr)), coord_rank(coord--) > 0) {
-	//	uint_fast8_t i = 0;
-	//	while (coord.file < BOARD_SIDE_LENGTH && token[i]) {
-	//		if (isdigit(token[i])) {
-	//			while (token[i]-- >= '1' && coord_file(coord) < BOARD_SIDE_LENGTH) {
-	//				//*board_piece_at(board, coord) = SQUARE_NONE; TODO
-	//				coord.file++;
-	//			}
-	//		} else {
-	//			// TODO: sanitize input.
-	//			if (isupper(token[i])) {
-	//				board_square(board, coord)->color = COLOR_WHITE;
-	//				if (token[i] == 'K') {
-	//					board->game_state[COLOR_WHITE].king = coord;
-	//				}
-	//			} else {
-	//				token[i] = toupper(token[i]);
-	//				board_square(board, coord)->color = COLOR_BLACK;
-	//				if (token[i] == 'k') {
-	//					board->color_info[COLOR_BLACK].king = coord;
-	//				}
-	//			}
-	//			board_square(board, coord)->piece = token[i];
-	//			coord.file++;
-	//		}
-	//		i++;
-	//	}
-	//	coord.file = 0;
-	//}
-	//// Active color
-	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	// if (!token) {
-	//	return;
-	//}
-	// switch (tolower(token[0])) {
-	//	case 'w':
-	//		board->game_state |= COLOR_WHITE << GAME_STATE_ACTIVE_COLOR_OFFSET;
-	//		break;
-	//	case 'b':
-	//		board->game_state |= COLOR_BLACK << GAME_STATE_ACTIVE_COLOR_OFFSET;
-	//		break;
-	//	default:
-	//		break;
-	//}
-	//// Castling rights
-	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	// if (!token) {
-	//	return;
-	//}
-	// size_t i = 0;
-	// while (token[i]) {
-	//	switch (token[i++]) {
-	//		case 'K':
-	//			board->game_state |= GAME_STATE_CASTLING_RIGHT_WK;
-	//			break;
-	//		case 'k':
-	//			board->game_state |= GAME_STATE_CASTLING_RIGHT_BK;
-	//			break;
-	//		case 'Q':
-	//			board->game_state |= GAME_STATE_CASTLING_RIGHT_WQ;
-	//			break;
-	//		case 'q':
-	//			board->game_state |= GAME_STATE_CASTLING_RIGHT_BQ;
-	//			break;
-	//		case '-':
-	//			// TODO
-	//			board->game_state;
-	//			break;
-	//		default:
-	//			goto en_passant;
-	//	}
-	//}
-	//// En passant
-	// en_passant:
-	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	// if (!token) {
-	//	return;
-	//} else if (token[0] != '-') {
-	//	board->game_state &= !GAME_STATE_EN_PASSANT_AVAILABILITY;
-	//}
-	//// Num. halfmoves
-	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	// if (!token) {
-	//	return;
-	//}
-	// board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
-	//// Num. fullmoves
-	// token = strtok_r(NULL, WHITESPACE_CHARS, &save_ptr);
-	// if (!token) {
-	//	return;
-	//}
-	// board->game_state |= GAME_STATE_NUM_HALF_MOVES & atoi(token);
+	char fen[FEN_SIZE];
+	strcpy(fen, original_fen);
+	char *save_ptr;
+	char *token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
+	if (!token) {
+		return -1;
+	}
+	Rank rank = RANK_MAX;
+	File file = 0;
+	uint_fast8_t free_files_count = 0;
+	for (size_t i = 0; token[i]; i++) {
+		Square square = square_new(file, rank);
+		if (token[i] == '/') {
+			rank--;
+			file = 0;
+			continue;
+		} else if (isdigit(token[i])) {
+			while (token[i]-- > '0') {
+				//*position_piece_at(position, square) = SQUARE; TODO
+			}
+		} else {
+			if (isupper(token[i])) {
+				//position_square(position, square)->color = COLOR_WHITE;
+			} else {
+				token[i] = toupper(token[i]);
+				//position_square(position, square)->color = COLOR_BLACK;
+			}
+			//position_square(position, square)->piece = token[i];
+		}
+	}
+	token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
+	if (!token) {
+		return -1;
+	}
+	switch (tolower(*token)) {
+		case 'w':
+			break;
+		case 'b':
+			position->side_to_move = COLOR_BLACK;
+			break;
+		default:
+			return -1;
+	}
+	token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
+	if (!token) {
+		return -1;
+	}
+	for (size_t i = 0; token[i]; i++) {
+		switch (token[i]) {
+			case 'K':
+				position->castling_rights |= CASTLING_RIGHT_W_OO;
+				break;
+			case 'k':
+				position->castling_rights |= CASTLING_RIGHT_B_OO;
+				break;
+			case 'Q':
+				position->castling_rights |= CASTLING_RIGHT_W_OOO;
+				break;
+			case 'q':
+				position->castling_rights |= CASTLING_RIGHT_B_OOO;
+				break;
+			case '-':
+				token[i++] = '\0';
+				break;
+			default:
+				return -1;
+		}
+	}
+	token = strtok_r(NULL, FEN_SEPARATORS, &save_ptr);
+	if (!token) {
+		return -1;
+	}
+	token = strtok_r(NULL, FEN_SEPARATORS, &save_ptr);
+	if (!token) {
+		return -1;
+	}
+	position->reversible_moves_count = strtol(fen, NULL, 10);
 	return 0;
 }
