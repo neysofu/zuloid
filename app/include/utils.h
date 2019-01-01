@@ -5,7 +5,6 @@
 #ifndef Z64C_UTILS_H
 #define Z64C_UTILS_H
 
-#include "switches.h"
 #include <stdbool.h>
 #include <stdio.h>
 
