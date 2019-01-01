@@ -52,12 +52,6 @@ engine_call_get(struct Engine *engine, const struct cJSON *params)
 				}
 			}
 			break;
-		case 0xadd81cf390e81050: /* "cache_block_size" */
-			value = cJSON_CreateNumber(engine->settings.cache_block_size);
-			break;
-		case 0xdb8e268abf5db364: /* "max_cache_blocks_count" */
-			value = cJSON_CreateNumber(engine->settings.max_cache_blocks_count);
-			break;
 		case 0x46f9bde5468e310a: /* "move_selection_noise" */
 			value = cJSON_CreateNumber(engine->settings.move_selection_noise);
 			break;

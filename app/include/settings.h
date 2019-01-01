@@ -14,8 +14,6 @@ struct Settings
 	uint_least32_t port;
 	/* The random seed. */
 	uint_least32_t seed;
-	size_t cache_block_size;
-	size_t max_cache_blocks_count;
 	/* Random noise between 0 and 1 that is added to candidade moves' scores to
 	 * improve randomness. */
 	float move_selection_noise;

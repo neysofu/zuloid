@@ -7,8 +7,6 @@
 const struct Settings SETTINGS_DEFAULT = {
 	.port = 34290,
 	.seed = 0xcfca130bUL,
-	.cache_block_size = SIZE_MAX,
-	.max_cache_blocks_count = SIZE_MAX,
 	.move_selection_noise = 0.005,
 	.contempt = 0.5,
 	.selectivity = 0.5,
