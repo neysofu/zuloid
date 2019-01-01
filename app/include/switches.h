@@ -5,7 +5,7 @@
 #ifndef Z64C_SWITCHES_H
 #define Z64C_SWITCHES_H
 
-#define SWITCH_LOG
+#define SWITCH_LOGGING
 /*#define SWITCH_OPENMP*/
 
 #endif

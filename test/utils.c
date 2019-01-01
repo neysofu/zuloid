@@ -8,10 +8,6 @@
 void
 test_utils(void)
 {
-	TEST_ASSERT_EQUAL_INT(1337, MAX(42, 1337));
-	TEST_ASSERT_EQUAL_INT(1337, MAX(1337, 42));
-	TEST_ASSERT_EQUAL_INT(-1, MIN(-1, 0));
-	TEST_ASSERT_EQUAL_INT(3, MIN(3, 3));
 	TEST_ASSERT(string_is_comment_or_whitespace(""));
 	TEST_ASSERT(string_is_comment_or_whitespace("\t  ##spam"));
 	TEST_ASSERT(string_is_comment_or_whitespace("# foobar"));

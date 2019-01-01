@@ -20,10 +20,9 @@ main(void)
 	while (!engine_exit_status(engine)) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
-			printf("{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":0,\"message\":"
+			printf("\t{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":0,\"message\":"
 			       "\"Input error\"}}\r\n");
-			engine_delete(engine);
-			return EXIT_FAILURE;
+			continue;
 		}
 		char *response = engine_send_request(engine, line);
 		if (response) {

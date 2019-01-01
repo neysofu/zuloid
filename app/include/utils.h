@@ -9,19 +9,8 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#define MAX(x, y) ((x) > (y) ? (x) : (y))
-#define MIN(x, y) ((x) < (y) ? (x) : (y))
-
-#define LOG(fmt, args...)                                                                  \
-	do {                                                                                   \
-		if (SWITCH_LOGGING) {                                                              \
-			printf("# %s:%s:%d -- " fmt "\r\n",                                            \
-			       __FILE__ + SOURCE_PATH_LENGTH,                                          \
-			       __func__,                                                               \
-			       __LINE__,                                                               \
-			       ##args);                                                                \
-		}                                                                                  \
-	} while (0)
+void
+logg(const char *format, ...);
 
 void *
 handle_oom(void *ptr);

@@ -7,6 +7,7 @@
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdarg.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -17,6 +18,19 @@
 #elif defined(_WIN32)
 #include <processthreadsapi.h>
 #endif
+
+void
+logg(const char *format, ...)
+{
+#ifdef SWITCH_LOGGING
+	va_list args;
+	va_start(args, format);
+	fprintf(stderr, "# %s:%s:%d -- ", __FILE__ + SOURCE_PATH_LENGTH, __func__, __LINE__);
+	vfprintf(stderr, format, args);
+	fprintf(stderr, "\r\n");
+	va_end(args);
+#endif
+}
 
 bool
 string_is_comment_or_whitespace(const char *str)
@@ -42,16 +56,14 @@ handle_oom(void *ptr)
 struct PID
 get_pid(void)
 {
-	return (struct PID) {
+	return (struct PID)
+	{
 #if defined(__unix__) || defined(_POSIX_VERSION)
-		getpid(),
-		true,
+		getpid(), true,
 #elif defined(_WIN32)
-		GetCurrentProcessId(),
-		true,
+		GetCurrentProcessId(), true,
 #else
-		0,
-		false,
+		0, false,
 #endif
 	};
 }
