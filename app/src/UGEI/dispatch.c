@@ -13,7 +13,7 @@
 #include <string.h>
 
 char *
-engine_call(struct Engine *engine, const char *str)
+engine_send_request(struct Engine *engine, const char *str)
 {
 	if (string_is_comment_or_whitespace(str)) {
 		return NULL;

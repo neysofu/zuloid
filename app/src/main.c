@@ -3,8 +3,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Z64C.h"
-#include "engine.h"
+#include "globals.h"
 #include "utils.h"
+#include <stdio.h>
+
+void
+print_welcome_message(void);
 
 int
 main(void)
@@ -13,15 +17,15 @@ main(void)
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	struct Engine *engine = engine_new();
 	print_welcome_message();
-	while (engine->mode != MODE_EXIT) {
-		char *str = read_line_from_stream(stdin);
-		if (!str) {
+	while (!engine_exit_status(engine)) {
+		char *line = read_line_from_stream(stdin);
+		if (!line) {
 			printf("{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":0,\"message\":"
 			       "\"Input error\"}}\r\n");
 			engine_delete(engine);
 			return EXIT_FAILURE;
 		}
-		char *response = engine_call(engine, str);
+		char *response = engine_send_request(engine, line);
 		if (response) {
 			/* A tab character before the response string visually separates requests from
 			 * responses in the terminal. */
@@ -29,6 +33,21 @@ main(void)
 			free(response);
 		}
 	}
+	const int exit_status = *engine_exit_status(engine);
 	engine_delete(engine);
-	return EXIT_SUCCESS;
+	return exit_status;
+}
+
+void
+print_welcome_message(void)
+{
+	printf("# .:.:. Welcome to Z64C .:.:.\r\n");
+	printf("# version = %s, nr. bits = %lu, release date = %s",
+	       Z64C_VERSION,
+	       ARCHITECTURE_BITS,
+	       Z64C_RELEASE_DATE_ISO_8601);
+	if (get_pid() != -1) {
+		printf(", PID = %d", get_pid());
+	}
+	printf("\r\n");
 }

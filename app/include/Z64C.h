@@ -19,12 +19,15 @@ engine_new(void);
 void
 engine_delete(struct Engine *engine);
 
+const int *
+engine_exit_status(const struct Engine *engine);
+
 /* Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
  * All communication must be in valid JSON-RPC 2.0.
  *
  * Result
  *   A JSON-RPC response string without line breaks. */
 char *
-engine_call(struct Engine *engine, const char *request);
+engine_send_request(struct Engine *engine, const char *request);
 
 #endif

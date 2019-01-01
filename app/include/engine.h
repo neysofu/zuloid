@@ -36,6 +36,7 @@ struct Engine
 	struct Network *network;
 	FILE *notifications_stream;
 	enum Mode mode;
+	int exit_status;
 };
 
 #endif

@@ -32,9 +32,6 @@ string_is_comment_or_whitespace(const char *str);
 int
 get_pid(void);
 
-void
-print_welcome_message(void);
-
 char *
 read_line_from_stream(FILE *stream);
 

@@ -24,6 +24,7 @@ engine_new(void)
 	engine->cache = NULL;
 	engine->notifications_stream = stdout;
 	engine->mode = MODE_IDLE;
+	engine->exit_status = EXIT_SUCCESS;
 	return engine;
 }
 
@@ -37,4 +38,14 @@ engine_delete(struct Engine *engine)
 	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
 	cache_delete(engine->cache);
 	free(engine);
+}
+
+const int *
+engine_exit_status(const struct Engine *engine)
+{
+	if (MODE_EXIT == engine->mode) {
+		return &engine->exit_status;
+	} else {
+		return NULL;
+	}
 }
