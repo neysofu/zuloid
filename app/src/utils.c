@@ -56,12 +56,6 @@ get_pid(void)
 	};
 }
 
-int
-get_architecture_bits(void)
-{
-	return sizeof(void *) * CHAR_BIT;
-}
-
 char *
 read_line_from_stream(FILE *stream)
 {
