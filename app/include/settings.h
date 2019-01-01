@@ -28,6 +28,6 @@ struct Settings
 	struct Tablebase *tablebase;
 };
 
-extern const struct Settings DEFAULT_SETTINGS;
+extern const struct Settings SETTINGS_DEFAULT;
 
 #endif

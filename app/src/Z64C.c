@@ -21,7 +21,7 @@ engine_new(void)
 	engine->termination = TERMINATION_NONE;
 	engine->game_clocks[COLOR_WHITE] = NULL;
 	engine->game_clocks[COLOR_BLACK] = NULL;
-	engine->settings = DEFAULT_SETTINGS;
+	engine->settings = SETTINGS_DEFAULT;
 	engine->cache = NULL;
 	engine->notifications_stream = stdout;
 	engine->mode = MODE_IDLE;

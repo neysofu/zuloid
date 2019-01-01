@@ -4,7 +4,7 @@
 
 #include "settings.h"
 
-const struct Settings DEFAULT_SETTINGS = {
+const struct Settings SETTINGS_DEFAULT = {
 	.port = 34290,
 	.seed = 0xcfca130bUL,
 	.cache_block_size = SIZE_MAX,
