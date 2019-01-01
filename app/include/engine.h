@@ -38,25 +38,4 @@ struct Engine
 	enum Mode mode;
 };
 
-/* Creates a self-contained engine instance with default settings. */
-struct Engine *
-engine_new(void);
-
-/* Gracefully kills a `Engine` instance. */
-void
-engine_delete(struct Engine *engine);
-
-/* Starts accepting UGEI requests from stdin and responds to them in a non-blocking
- * fashion. */
-int
-engine_main(struct Engine *engine);
-
-/* Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
- * All communication must be in valid JSON-RPC 2.0.
- *
- * Result
- *   A JSON-RPC response string without line breaks. */
-char *
-engine_call(struct Engine *engine, const char *request);
-
 #endif

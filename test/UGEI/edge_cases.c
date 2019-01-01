@@ -3,7 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Unity/src/unity.h"
-#include "engine.h"
+#include "Z64C.h"
 
 #define TEST_ASSERT_STRSTR(str, substr) TEST_ASSERT_NOT_NULL(strstr(str, substr))
 

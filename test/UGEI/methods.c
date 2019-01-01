@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Unity/src/unity.h"
+#include "Z64C.h"
 #include "engine.h"
 #include <string.h>
 
