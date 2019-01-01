@@ -4,7 +4,6 @@
 
 #include "cJSON/cJSON.h"
 #include "engine.h"
-#include <stdint.h>
 
 #ifndef Z64C_UGEI_METHODS_H
 #define Z64C_UGEI_METHODS_H

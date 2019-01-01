@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "cJSON/cJSON.h"
-
 #ifndef Z64C_UGEI_ERRORS_H
 #define Z64C_UGEI_ERRORS_H
+
+#include "cJSON/cJSON.h"
 
 enum JsonRpcError
 {
