@@ -13,7 +13,6 @@
 #include "search/cache.h"
 #include "settings.h"
 #include "time/game_clock.h"
-#include <stdbool.h>
 
 enum Mode
 {
@@ -47,7 +46,7 @@ engine_new(void);
 void
 engine_delete(struct Engine *engine);
 
-/* Starts accepting UCIv2 requests from stdin and responds to them in a non-blocking
+/* Starts accepting UGEI requests from stdin and responds to them in a non-blocking
  * fashion. */
 int
 engine_main(struct Engine *engine);
