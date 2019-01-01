@@ -8,6 +8,7 @@
 #include "search/cache.h"
 #include "settings.h"
 #include "utils.h"
+#include <assert.h>
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -43,6 +44,7 @@ engine_delete(struct Engine *engine)
 const int *
 engine_exit_status(const struct Engine *engine)
 {
+	assert(engine);
 	if (MODE_EXIT == engine->mode) {
 		return &engine->exit_status;
 	} else {

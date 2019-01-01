@@ -21,6 +21,7 @@
 bool
 string_is_comment_or_whitespace(const char *str)
 {
+	assert(str);
 	while (isspace(*str)) {
 		str++;
 	}
@@ -64,6 +65,7 @@ get_architecture_bits(void)
 char *
 read_line_from_stream(FILE *stream)
 {
+	assert(stream);
 	size_t str_length = 0;
 	size_t str_max_length = 64;
 	char *str = malloc(str_max_length);
