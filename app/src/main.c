@@ -46,8 +46,9 @@ print_welcome_message(void)
 	       Z64C_VERSION,
 	       ARCHITECTURE_BITS,
 	       Z64C_RELEASE_DATE_ISO_8601);
-	if (get_pid() != -1) {
-		printf(", PID = %d", get_pid());
+	struct PID pid = get_pid();
+	if (pid.success) {
+		printf(", PID = %d", pid.value);
 	}
 	printf("\r\n");
 }

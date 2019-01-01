@@ -38,16 +38,21 @@ handle_oom(void *ptr)
 	exit(EXIT_FAILURE);
 }
 
-int
+struct PID
 get_pid(void)
 {
+	return (struct PID) {
 #if defined(__unix__) || defined(_POSIX_VERSION)
-	return getpid();
+		getpid(),
+		true,
 #elif defined(_WIN32)
-	return GetCurrentProcessId();
+		GetCurrentProcessId(),
+		true,
 #else
-	return -1;
+		0,
+		false,
 #endif
+	};
 }
 
 int

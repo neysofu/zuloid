@@ -29,7 +29,13 @@ handle_oom(void *ptr);
 bool
 string_is_comment_or_whitespace(const char *str);
 
-int
+struct PID
+{
+	int value;
+	bool success;
+};
+
+struct PID
 get_pid(void);
 
 char *
