@@ -29,9 +29,6 @@ cJSON_CreateJsonRpcError(enum JsonRpcError err)
 		case JSONRPC_GENERIC_ERROR:
 			msg = "Generic error";
 			break;
-		case JSONRPC_OOM_CONDITION:
-			msg = "Out-of-memory condition";
-			break;
 		case JSONRPC_UNSUPPORTED_RULESET:
 			msg = "Unsupported ruleset";
 			break;

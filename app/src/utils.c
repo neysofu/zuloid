@@ -48,8 +48,8 @@ handle_oom(void *ptr)
 	if (ptr) {
 		return ptr;
 	}
-	printf("{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":900,\"message\":\"OOM "
-	       "error\"}}\r\n");
+	printf("\t{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":21,\"message\":\"Out-of-"
+	       "memory condition\"}}\r\n");
 	exit(EXIT_FAILURE);
 }
 
@@ -74,25 +74,19 @@ read_line_from_stream(FILE *stream)
 	assert(stream);
 	size_t str_length = 0;
 	size_t str_max_length = 64;
-	char *str = malloc(str_max_length);
-	if (!str) {
-		return NULL;
-	}
+	char *str = handle_oom(malloc(str_max_length));
 	char c;
-	while ((c = fgetc(stdin)) != EOF) {
+	do {
+		c = fgetc(stdin);
+		if (c == EOF) {
+			free(str);
+			return NULL;
+		}
 		str[str_length++] = c;
 		if (str_length == str_max_length) {
-			char *new_str = realloc(str, (str_max_length *= 2));
-			if (!new_str) {
-				free(str);
-				return NULL;
-			}
-			str = new_str;
+			str = handle_oom(realloc(str, (str_max_length *= 2)));
 		}
-		if (c == '\n') {
-			break;
-		}
-	}
+	} while (c != '\n');
 	str[str_length] = '\0';
 	return str;
 }
