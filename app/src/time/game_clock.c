@@ -20,7 +20,7 @@ current_msec_time(void)
 struct GameClock *
 game_clock_new(struct TimeControl *tc)
 {
-	struct GameClock *gc = handle_oom(malloc(sizeof(struct GameClock)));
+	struct GameClock *gc = malloc_or_exit(sizeof(struct GameClock));
 	gc->time_left = tc->time_limit;
 	gc->last_trigger = 0;
 	gc->trigger_count = 0;

@@ -4,6 +4,7 @@
 
 #include "Unity/src/unity.h"
 #include "Z64C.h"
+#include <stdlib.h>
 
 #define TEST_ASSERT_STRSTR(str, substr) TEST_ASSERT_NOT_NULL(strstr(str, substr))
 
@@ -21,9 +22,9 @@ void
 test_jsonrpc_no_response_from_empty_request(void)
 {
 	struct Engine *engine = engine_new();
-	TEST_ASSERT_NULL(engine_send_request(engine, " \t # comment!"));
 	TEST_ASSERT_NULL(engine_send_request(engine, ""));
 	TEST_ASSERT_NULL(engine_send_request(engine, "\r\n"));
+	TEST_ASSERT_NULL(engine_send_request(engine, " \t "));
 	engine_delete(engine);
 }
 

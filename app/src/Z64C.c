@@ -15,7 +15,7 @@
 struct Engine *
 engine_new(void)
 {
-	struct Engine *engine = handle_oom(malloc(sizeof(struct Engine)));
+	struct Engine *engine = malloc_or_exit(sizeof(struct Engine));
 	engine->position = POSITION_DEFAULT;
 	engine->winner = COLOR_NONE;
 	engine->termination = TERMINATION_NONE;

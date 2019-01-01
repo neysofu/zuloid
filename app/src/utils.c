@@ -32,25 +32,54 @@ logg(const char *format, ...)
 #endif
 }
 
-bool
-string_is_comment_or_whitespace(const char *str)
-{
-	assert(str);
-	while (isspace(*str)) {
-		str++;
-	}
-	return !*str || *str == '#';
-}
-
 void *
-handle_oom(void *ptr)
+exit_if_null(void *ptr)
 {
 	if (ptr) {
 		return ptr;
 	}
-	printf("\t{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":21,\"message\":\"Out-of-"
-	       "memory condition\"}}\r\n");
+	puts("\t{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":21,\"message\":\"Out-of-"
+	     "memory condition\"}}");
 	exit(EXIT_FAILURE);
+}
+
+void *
+malloc_or_exit(size_t size)
+{
+	return exit_if_null(malloc(size));
+}
+
+bool
+string_is_whitespace(const char *string)
+{
+	assert(string);
+	while (isspace(*string)) {
+		string++;
+	}
+	return '\0' == *string;
+}
+
+char *
+read_line_from_stream(FILE *stream)
+{
+	assert(stream);
+	size_t str_length = 0;
+	size_t str_max_length = 64;
+	char *str = malloc_or_exit(str_max_length);
+	char c;
+	do {
+		c = fgetc(stdin);
+		if (c == EOF) {
+			free(str);
+			return NULL;
+		}
+		str[str_length++] = c;
+		if (str_length == str_max_length) {
+			str = exit_if_null(realloc(str, (str_max_length *= 2)));
+		}
+	} while (c != '\n');
+	str[str_length] = '\0';
+	return str;
 }
 
 struct PID
@@ -66,27 +95,4 @@ get_pid(void)
 		0, false,
 #endif
 	};
-}
-
-char *
-read_line_from_stream(FILE *stream)
-{
-	assert(stream);
-	size_t str_length = 0;
-	size_t str_max_length = 64;
-	char *str = handle_oom(malloc(str_max_length));
-	char c;
-	do {
-		c = fgetc(stdin);
-		if (c == EOF) {
-			free(str);
-			return NULL;
-		}
-		str[str_length++] = c;
-		if (str_length == str_max_length) {
-			str = handle_oom(realloc(str, (str_max_length *= 2)));
-		}
-	} while (c != '\n');
-	str[str_length] = '\0';
-	return str;
 }

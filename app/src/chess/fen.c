@@ -35,7 +35,7 @@ char *
 fen_new_from_position(const struct Position *position)
 {
 	assert(position);
-	char *fen = handle_oom(malloc(FEN_SIZE));
+	char *fen = malloc_or_exit(FEN_SIZE);
 	uint_fast8_t free_files_count = 0;
 	Piece pieces_by_square[64];
 	position_list_pieces_by_square(position, pieces_by_square);

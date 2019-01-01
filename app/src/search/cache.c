@@ -30,7 +30,7 @@ struct Cache
 struct Cache *
 cache_new(size_t size)
 {
-	struct Cache *cache = handle_oom(malloc(sizeof(struct Cache)));
+	struct Cache *cache = malloc_or_exit(sizeof(struct Cache));
 	cache->entries_count_per_block = size >> CACHE_FRAGMENTATION_FACTOR;
 	memset(cache->blocks, 0, sizeof(cache->blocks));
 	for (size_t i = 0; i < CACHE_BLOCKS_COUNT; i++) {

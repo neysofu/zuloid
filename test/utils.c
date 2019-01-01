@@ -8,8 +8,9 @@
 void
 test_utils(void)
 {
-	TEST_ASSERT(string_is_comment_or_whitespace(""));
-	TEST_ASSERT(string_is_comment_or_whitespace("\t  ##spam"));
-	TEST_ASSERT(string_is_comment_or_whitespace("# foobar"));
-	TEST_ASSERT(string_is_comment_or_whitespace("\n"));
+	TEST_ASSERT(string_is_whitespace(""));
+	TEST_ASSERT(string_is_whitespace("\n"));
+	/* Regression test. */
+	TEST_ASSERT_FALSE(string_is_whitespace("# foobar"));
+	TEST_ASSERT_FALSE(string_is_whitespace("\t  ##  # "));
 }

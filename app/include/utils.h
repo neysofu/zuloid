@@ -12,10 +12,16 @@ void
 logg(const char *format, ...);
 
 void *
-handle_oom(void *ptr);
+exit_if_null(void *ptr);
+
+void *
+malloc_or_exit(size_t size);
 
 bool
-string_is_comment_or_whitespace(const char *str);
+string_is_whitespace(const char *string);
+
+char *
+read_line_from_stream(FILE *stream);
 
 struct PID
 {
@@ -25,8 +31,5 @@ struct PID
 
 struct PID
 get_pid(void);
-
-char *
-read_line_from_stream(FILE *stream);
 
 #endif

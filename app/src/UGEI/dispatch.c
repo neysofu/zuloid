@@ -15,15 +15,15 @@
 char *
 engine_send_request(struct Engine *engine, const char *str)
 {
-	if (string_is_comment_or_whitespace(str)) {
-		return NULL;
-	}
 	struct cJSON *request = cJSON_Parse(str);
 	struct cJSON *response;
 	struct cJSON *id;
 	/* Be aware of threading issues with cJSON_GetErrorPtr. No problem here
 	 * because it is single-threaded. */
-	if (!request || cJSON_GetErrorPtr()) {
+	if (!request) {
+		if (string_is_whitespace(str)) {
+			return NULL;
+		}
 		response = cJSON_CreateObject();
 		cJSON_AddItemToObject(response,
 		                      PROPERTY_NAME_ERROR,

@@ -11,7 +11,7 @@
 struct TimeControl *
 time_control_new_blitz(void)
 {
-	struct TimeControl *tc = handle_oom(malloc(sizeof(struct TimeControl)));
+	struct TimeControl *tc = malloc_or_exit(sizeof(struct TimeControl));
 	*tc = (struct TimeControl) {
 		.time_limit = 3 * 60,
 		.increment = 2,
@@ -22,7 +22,7 @@ time_control_new_blitz(void)
 struct TimeControl *
 time_control_new_rapid(void)
 {
-	struct TimeControl *tc = handle_oom(malloc(sizeof(struct TimeControl)));
+	struct TimeControl *tc = malloc_or_exit(sizeof(struct TimeControl));
 	*tc = (struct TimeControl) {
 		.time_limit = 15 * 60,
 		.increment = 10,
@@ -33,8 +33,8 @@ time_control_new_rapid(void)
 struct TimeControl *
 time_control_new_classical(void)
 {
-	struct TimeControl *tc0 = handle_oom(malloc(sizeof(struct TimeControl)));
-	struct TimeControl *tc1 = handle_oom(malloc(sizeof(struct TimeControl)));
+	struct TimeControl *tc0 = malloc_or_exit(sizeof(struct TimeControl));
+	struct TimeControl *tc1 = malloc_or_exit(sizeof(struct TimeControl));
 	*tc0 = (struct TimeControl) {
 		.time_limit = 90 * 60,
 		.increment = 30,
