@@ -6,8 +6,7 @@
 #define Z64C_TIME_GAME_CLOCK_H
 
 #include "time/time_control.h"
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 
 struct GameClock
 {

@@ -5,8 +5,7 @@
 #ifndef Z64C_TIME_TIME_CONTROL_H
 #define Z64C_TIME_TIME_CONTROL_H
 
-#include <stdio.h>
-#include <stdlib.h>
+#include <stdint.h>
 
 typedef int_least64_t msec_time;
 

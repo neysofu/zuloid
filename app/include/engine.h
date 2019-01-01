@@ -13,6 +13,7 @@
 #include "search/cache.h"
 #include "settings.h"
 #include "time/game_clock.h"
+#include <stdio.h>
 
 enum Mode
 {
