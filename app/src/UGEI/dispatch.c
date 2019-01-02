@@ -12,26 +12,13 @@
 #include <stdio.h>
 #include <string.h>
 
-char *
-engine_send_request(struct Engine *engine, const char *str)
+void
+engine_dispatch_call(struct Engine *engine,
+                     const char *method,
+                     const struct cJSON *params,
+                     struct cJSON *response)
 {
-	struct cJSON *request = cJSON_Parse(str);
-	struct cJSON *method = cJSON_GetObjectItem(request, PROPERTY_NAME_METHOD);
-	struct cJSON *params = cJSON_GetObjectItem(request, PROPERTY_NAME_PARAMS);
-	struct cJSON *id = cJSON_DetachItemFromObject(request, PROPERTY_NAME_ID);
-	struct cJSON *response = !id && method ? NULL : cJSON_CreateObject();
-	if (!method) {
-		if (string_is_whitespace(str)) {
-			return NULL;
-		}
-		id = cJSON_CreateNull();
-		cJSON_AddJsonRpcErrorToObject(
-		  response, request ? JSONRPC_INVALID_REQUEST : JSONRPC_PARSE_ERROR);
-		goto finalize_response_and_clean_up;
-	} else if (!cJSON_IsString(method)) {
-		goto deal_with_invalid_method;
-	}
-	switch (XXH64(method->valuestring, strlen(method->valuestring), 0)) {
+	switch (XXH64(method, strlen(method), 0)) {
 		case 0x3e6da0adb9a81aa0: /* "exit" */
 			engine->mode = MODE_EXIT;
 			break;
@@ -49,11 +36,32 @@ engine_send_request(struct Engine *engine, const char *str)
 			break;
 		case 0xc641b2419f8a3ce1: /* "status" */
 			break;
-		deal_with_invalid_method:
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_METHOD);
 	}
-finalize_response_and_clean_up:
+}
+
+char *
+engine_send_request(struct Engine *engine, const char *str)
+{
+	if (!str || string_is_whitespace(str)) {
+		return NULL;
+	}
+	struct cJSON *request = cJSON_Parse(str);
+	struct cJSON *method = cJSON_GetObjectItem(request, PROPERTY_NAME_METHOD);
+	struct cJSON *params = cJSON_GetObjectItem(request, PROPERTY_NAME_PARAMS);
+	struct cJSON *id = cJSON_DetachItemFromObject(request, PROPERTY_NAME_ID);
+	bool is_valid_request = cJSON_IsString(method);
+	struct cJSON *response = is_valid_request && !id ? NULL : cJSON_CreateObject();
+	if (is_valid_request) {
+		engine_dispatch_call(engine, method->valuestring, params, response);
+	} else if (request) {
+		id = id ? id : cJSON_CreateNull();
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_REQUEST);
+	} else {
+		id = cJSON_CreateNull();
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_PARSE_ERROR);
+	}
 	cJSON_Delete(request);
 	cJSON_AddItemToObject(response, PROPERTY_NAME_ID, id);
 	cJSON_AddStringToObject(response, "jsonrpc", "2.0");
