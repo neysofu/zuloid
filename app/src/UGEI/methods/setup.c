@@ -16,13 +16,11 @@ void
 engine_call_setup(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
 {
 	if (engine->mode != MODE_IDLE) {
-		cJSON_AddItemToObject(
-		  response, PROPERTY_NAME_ERROR, cJSON_CreateJsonRpcError(JSONRPC_GENERIC_ERROR));
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
 		return;
 	}
 	if (!cJSON_IsObject(params)) {
-		cJSON_AddItemToObject(
-		  response, PROPERTY_NAME_ERROR, cJSON_CreateJsonRpcError(JSONRPC_INVALID_PARAMS));
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;
 	}
 	const struct cJSON *fen = cJSON_GetObjectItem(params, PROPERTY_NAME_FEN);

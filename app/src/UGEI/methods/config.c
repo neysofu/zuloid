@@ -29,8 +29,7 @@ engine_call_config(struct Engine *engine,
 	struct cJSON *value = cJSON_GetObjectItem(params, PROPERTY_NAME_VALUE);
 	struct cJSON *error = NULL;
 	if (engine->mode != MODE_IDLE || !(key && value)) {
-		cJSON_AddItemToObject(
-		  response, PROPERTY_NAME_ERROR, cJSON_CreateJsonRpcError(JSONRPC_INVALID_PARAMS));
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;
 	}
 	switch (XXH64(key->valuestring, strlen(key->valuestring), 0)) {
@@ -47,8 +46,6 @@ engine_call_config(struct Engine *engine,
 			engine->settings.selectivity = value->valuedouble;
 			break;
 		default:
-			cJSON_AddItemToObject(response,
-			                      PROPERTY_NAME_ERROR,
-			                      cJSON_CreateJsonRpcError(JSONRPC_UNDEFINED_KEY));
+			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_UNDEFINED_KEY);
 	}
 }

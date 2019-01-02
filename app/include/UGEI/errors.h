@@ -20,7 +20,7 @@ enum JsonRpcError
 	JSONRPC_UNDEFINED_KEY = 902,
 };
 
-struct cJSON *
-cJSON_CreateJsonRpcError(enum JsonRpcError err);
+CJSON_PUBLIC(cJSON *)
+cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError);
 
 #endif

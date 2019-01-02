@@ -6,36 +6,38 @@
 #include "UGEI/property_names.h"
 #include "cJSON/cJSON.h"
 
-struct cJSON *
-cJSON_CreateJsonRpcError(enum JsonRpcError err)
+const char *
+jsonrpc_error_default_message(enum JsonRpcError error)
 {
-	struct cJSON *error = cJSON_CreateObject();
-	cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE, err);
-	char *msg = "";
-	switch (err) {
-		/* TODO: handle all cases. */
+	switch (error) {
 		case JSONRPC_PARSE_ERROR:
-			msg = "Parse error";
-			break;
+			return "Parse error";
 		case JSONRPC_INVALID_PARAMS:
-			msg = "Invalid params";
-			break;
+			return "Invalid params";
 		case JSONRPC_INVALID_METHOD:
-			msg = "Invalid method";
-			break;
+			return "Invalid method";
 		case JSONRPC_INVALID_REQUEST:
-			msg = "Invalid Request";
-			break;
+			return "Invalid Request";
 		case JSONRPC_GENERIC_ERROR:
-			msg = "Generic error";
-			break;
+			return "Generic error";
 		case JSONRPC_UNSUPPORTED_RULESET:
-			msg = "Unsupported ruleset";
-			break;
+			return "Unsupported ruleset";
 		case JSONRPC_UNDEFINED_KEY:
-			msg = "Undefined key";
-			break;
+			return "Undefined key";
 	}
-	cJSON_AddItemToObject(error, PROPERTY_NAME_MESSAGE, cJSON_CreateStringReference(msg));
-	return error;
+	return "Generic error";
+}
+
+CJSON_PUBLIC(cJSON *)
+cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError error)
+{
+	if (!object) {
+		return NULL;
+	}
+	const char *message = jsonrpc_error_default_message(error);
+	struct cJSON *message_item = cJSON_CreateStringReference(message);
+	struct cJSON *error_item = cJSON_AddObjectToObject(object, PROPERTY_NAME_ERROR);
+	cJSON_AddNumberToObject(error_item, PROPERTY_NAME_CODE, error);
+	cJSON_AddItemToObject(error_item, PROPERTY_NAME_MESSAGE, message_item);
+	return error_item;
 }

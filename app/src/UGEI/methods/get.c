@@ -61,9 +61,7 @@ engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON 
 			value = cJSON_CreateNumber(engine->settings.selectivity);
 			break;
 		default:
-			cJSON_AddItemToObject(response,
-			                      PROPERTY_NAME_ERROR,
-			                      cJSON_CreateJsonRpcError(JSONRPC_UNDEFINED_KEY));
+			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_UNDEFINED_KEY);
 			// cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE,
 			// PROPERTY_NAME_UNDEFINED_CODE);  cJSON_AddStringToObject(error,
 			// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_UNDEFINED_MESSAGE);

@@ -25,10 +25,8 @@ engine_send_request(struct Engine *engine, const char *str)
 			return NULL;
 		}
 		id = cJSON_CreateNull();
-		cJSON_AddItemToObject(response,
-		                      PROPERTY_NAME_ERROR,
-		                      cJSON_CreateJsonRpcError(request ? JSONRPC_INVALID_REQUEST
-		                                                       : JSONRPC_PARSE_ERROR));
+		cJSON_AddJsonRpcErrorToObject(
+		  response, request ? JSONRPC_INVALID_REQUEST : JSONRPC_PARSE_ERROR);
 		goto finalize_response_and_clean_up;
 	} else if (!cJSON_IsString(method)) {
 		goto deal_with_invalid_method;
@@ -53,9 +51,7 @@ engine_send_request(struct Engine *engine, const char *str)
 			break;
 		deal_with_invalid_method:
 		default:
-			cJSON_AddItemToObject(response,
-			                      PROPERTY_NAME_ERROR,
-			                      cJSON_CreateJsonRpcError(JSONRPC_INVALID_METHOD));
+			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_METHOD);
 	}
 finalize_response_and_clean_up:
 	cJSON_Delete(request);
