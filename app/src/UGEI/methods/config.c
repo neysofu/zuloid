@@ -20,17 +20,18 @@
 #include <stdio.h>
 #include <string.h>
 
-struct cJSON *
-engine_call_config(struct Engine *engine, const struct cJSON *params)
+void
+engine_call_config(struct Engine *engine,
+                   const struct cJSON *params,
+                   struct cJSON *response)
 {
-	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
 	struct cJSON *value = cJSON_GetObjectItem(params, PROPERTY_NAME_VALUE);
 	struct cJSON *error = NULL;
 	if (engine->mode != MODE_IDLE || !(key && value)) {
 		cJSON_AddItemToObject(
 		  response, PROPERTY_NAME_ERROR, cJSON_CreateJsonRpcError(JSONRPC_INVALID_PARAMS));
-		return response;
+		return;
 	}
 	switch (XXH64(key->valuestring, strlen(key->valuestring), 0)) {
 		case 0x6e87002190572330: /* "seed" */
@@ -50,5 +51,4 @@ engine_call_config(struct Engine *engine, const struct cJSON *params)
 			                      PROPERTY_NAME_ERROR,
 			                      cJSON_CreateJsonRpcError(JSONRPC_UNDEFINED_KEY));
 	}
-	return response;
 }

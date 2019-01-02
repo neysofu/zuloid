@@ -14,10 +14,9 @@
 #include "xxHash/xxhash.h"
 #include <string.h>
 
-struct cJSON *
-engine_call_get(struct Engine *engine, const struct cJSON *params)
+void
+engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
 {
-	struct cJSON *response = cJSON_CreateObject();
 	struct cJSON *error;
 	struct cJSON *result;
 	struct cJSON *value;
@@ -27,7 +26,7 @@ engine_call_get(struct Engine *engine, const struct cJSON *params)
 		// cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE,
 		// PROPERTY_NAME_INVALID_PARAMS_CODE); cJSON_AddStringToObject(error,
 		// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_INVALID_PARAMS_MESSAGE);
-		return response;
+		return;
 	}
 	char *buffer;
 	switch (XXH64(key->valuestring, strlen(key->valuestring), 0)) {
@@ -68,10 +67,9 @@ engine_call_get(struct Engine *engine, const struct cJSON *params)
 			// cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE,
 			// PROPERTY_NAME_UNDEFINED_CODE);  cJSON_AddStringToObject(error,
 			// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_UNDEFINED_MESSAGE);
-			return response;
+			return;
 	}
 	result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	/* Let's finally assembly the response object. */
 	cJSON_AddItemToObject(result, PROPERTY_NAME_VALUE, value);
-	return response;
 }

@@ -7,10 +7,12 @@
 #include "engine.h"
 #include "globals.h"
 
-struct cJSON *
-engine_call_init(struct Engine *engine, const struct cJSON *params)
+void
+engine_call_init(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
 {
-	struct cJSON *response = cJSON_CreateObject();
+	if (!response) {
+		return;
+	}
 	struct cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	struct cJSON *meta = cJSON_AddObjectToObject(result, PROPERTY_NAME_META);
 	cJSON_AddStringToObject(meta, PROPERTY_NAME_COPYRIGHT, Z64C_COPYRIGHT);
@@ -21,5 +23,4 @@ engine_call_init(struct Engine *engine, const struct cJSON *params)
 	cJSON_AddStringToObject(meta, PROPERTY_NAME_VERSION, Z64C_VERSION);
 	struct cJSON *rulesets = cJSON_AddArrayToObject(result, PROPERTY_NAME_RULESETS);
 	cJSON_AddItemToArray(rulesets, cJSON_CreateString("chess"));
-	return response;
 }
