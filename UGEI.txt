@@ -1,7 +1,7 @@
-						UNIVERSAL GAME ENGINE INTERFACE
-								 November 2018
+                        UNIVERSAL GAME ENGINE INTERFACE
+                                 November 2018
 
-									Preamble
+                                    Preamble
 
  The UCI protocol has been the de-facto standard for chess software since its
 introduction in November 2000. It has enjoyed tremendous success and hundreds
@@ -9,8 +9,8 @@ of chess engines support it despite its limitations. With this revision I
 aspire to:
 
  a) Define a new open protocol for all kinds of turn-based strategy games. Its
-	core data model will be a portable game format that integrates well with the
-	APIs.
+    core data model will be a portable game format that integrates well with the
+    APIs.
  b) Foster collaboration between engine developers across all game communities.
     By adopting a single standard, everyone can benefit from better GUI support
     and tooling. There is no such standard at the moment and I hope that UGEI
@@ -18,7 +18,7 @@ aspire to:
  c) Always mantain full backwards compatibility. New features will never break
     existing engines.
 
-								  Conventions
+                                  Conventions
 
  The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
@@ -46,7 +46,7 @@ symbol prepends all messages from the Engine Program to the Client. E.g.
  This document uses JSON Schema to detail JSON APIs. Square brackets (ASCII
 91 and 93) in body text indicate JSON values. E.g. [42], ["spam"], [null].
 
-									Overview
+                                    Overview
 
  UGEI supports communication between two pieces of software - the Engine
 Program and the Client - over JSON-RPC 2.0 messages. The Engine Program MUST
@@ -71,111 +71,111 @@ The JSON data models are transport-agnostic and can also
 storage on disk or download.
 
 {
-	"definitions" : {
-	"game_record": {
-	  	"type": "object",
-	  	"properties": {
-	  		"ruleset": {
-	  			"type": "string",
-	  		},
-	  		"time_control": {
-				"type": "array",
-				"items": { "$ref": "#/definitions/time_control" }
-			},
-	  		"result": {
-	  			"type": "array",
-	  			"items": {
-	  				"type": "number"
-	  			},
-				"description": "A list of points given or retracted from player's records."
-	  		},
-	  		"termination": {
-	  			"enum": [
-					null,
-	  				"normal",
-	  				"agreement",
-	  				"adjudication",
-	  				"claim",
-	  				"flagging",
-	  				"emergency",
-	  				"other",
-	  			],
-	  		},
-			"players_count": {
-				"type": "integer",
-				"$comment": "REQUIRED if the ruleset allows a range of players"
-			},
-	  		"history": {
-				"type": "array",
-	  		},
-	  		"meta": {
-	  			"type": "object",
-	  			"properties": {
-	  				"about": { "type": "string" },
-	  				"event": { "type": "string" },
-	  				"site": { "type": "string" },
-	  				"round": { "type": "integer" },
-	  				"annotator": { "type": "string" },
-	  				"date": { "type": "date-time" },
-	   				"players": {
-	   					"type": "array",
-	   					"items": { "$ref": "#/definitions/player" }
-	   				}
-	  			}
-			}
-		},
-		"required": ["ruleset"]
-	}
+    "definitions" : {
+    "game_record": {
+          "type": "object",
+          "properties": {
+              "ruleset": {
+                  "type": "string",
+              },
+              "time_control": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/time_control" }
+            },
+              "result": {
+                  "type": "array",
+                  "items": {
+                      "type": "number"
+                  },
+                "description": "A list of points given or retracted from player's records."
+              },
+              "termination": {
+                  "enum": [
+                    null,
+                      "normal",
+                      "agreement",
+                      "adjudication",
+                      "claim",
+                      "flagging",
+                      "emergency",
+                      "other",
+                  ],
+              },
+            "players_count": {
+                "type": "integer",
+                "$comment": "REQUIRED if the ruleset allows a range of players"
+            },
+              "history": {
+                "type": "array",
+              },
+              "meta": {
+                  "type": "object",
+                  "properties": {
+                      "about": { "type": "string" },
+                      "event": { "type": "string" },
+                      "site": { "type": "string" },
+                      "round": { "type": "integer" },
+                      "annotator": { "type": "string" },
+                      "date": { "type": "date-time" },
+                       "players": {
+                           "type": "array",
+                           "items": { "$ref": "#/definitions/player" }
+                       }
+                  }
+            }
+        },
+        "required": ["ruleset"]
+    }
 
-	{
-		"player": {
-			"type": "object",
-			"properties": {
-				"name": { "type": "string" },
-				"elo": { "type": "number" },
-				"rank": { "type": "string" },
-				"team": { "type": "string" }
-			},
-			"examples": [{
-				"name": "Boris Vasilievich Spassky",
-				"elo": 2625,
-				"team": "Russia"
-			}, {
-				"name": "Go Seigen",
-				"rank": "9 dan",
-				"team": "Republic of China"
-			}]
-		}
-	}
+    {
+        "player": {
+            "type": "object",
+            "properties": {
+                "name": { "type": "string" },
+                "elo": { "type": "number" },
+                "rank": { "type": "string" },
+                "team": { "type": "string" }
+            },
+            "examples": [{
+                "name": "Boris Vasilievich Spassky",
+                "elo": 2625,
+                "team": "Russia"
+            }, {
+                "name": "Go Seigen",
+                "rank": "9 dan",
+                "team": "Republic of China"
+            }]
+        }
+    }
 
-	{
-		"time_control": {
-			"type": "object",
-			"properties": {
-				"time_limit": {
-					"type": "number"
-				},
-		   		"increment": {
-					"type": "number",
-					"default": 0
-				},
-		   		"delay": {
-					"type": "number",
-					"default": 0
-				},
-		   		"overtime": {
-					"$ref": "#/definitions/time_control"
-				},
-		   		"next_time_control": {
-					"$ref": "#/definitions/time_control"
-				},
-		   		"trigger": {}
-			},
-			"required": ["time_limit"]
-		}
-	}
+    {
+        "time_control": {
+            "type": "object",
+            "properties": {
+                "time_limit": {
+                    "type": "number"
+                },
+                   "increment": {
+                    "type": "number",
+                    "default": 0
+                },
+                   "delay": {
+                    "type": "number",
+                    "default": 0
+                },
+                   "overtime": {
+                    "$ref": "#/definitions/time_control"
+                },
+                   "next_time_control": {
+                    "$ref": "#/definitions/time_control"
+                },
+                   "trigger": {}
+            },
+            "required": ["time_limit"]
+        }
+    }
 
-									["init"]
+                                    ["init"]
 
  The Client MUST initialize the Engine Program by sending a `init` Request before
 any other message. Upon receiving the Request, the Engine Program MAY perform
@@ -185,157 +185,157 @@ metainformation.
 
  The `init` Method does not require any Parameters.
 
-	{
-		"$id": "#/methods/init/result",
-		"type": "object",
-		"properties": {
-			"meta": {
-				"type": "object",
-				"properties": {
-					"copyright": { "type": "string" },
-					"compiler": { "type": "string" },
-					"elo": { "type": "number" },
-					"license": { "type": "string" },
-					"name": { "type": "string" },
-					"rank": { "type": "string" },
-					"release_date": { "type": "date-time" },
-					"url": { "type": "uri" },
-					"version": { "type": "string" },
-				}
-			},
-			"rulesets": {
-				"type": "array",
-				"items": { "$ref": "#/definitions/ruleset" }
-			}
-		},
-		"required": ["rulesets"]
-	}
+    {
+        "$id": "#/methods/init/result",
+        "type": "object",
+        "properties": {
+            "meta": {
+                "type": "object",
+                "properties": {
+                    "copyright": { "type": "string" },
+                    "compiler": { "type": "string" },
+                    "elo": { "type": "number" },
+                    "license": { "type": "string" },
+                    "name": { "type": "string" },
+                    "rank": { "type": "string" },
+                    "release_date": { "type": "date-time" },
+                    "url": { "type": "uri" },
+                    "version": { "type": "string" },
+                }
+            },
+            "rulesets": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/ruleset" }
+            }
+        },
+        "required": ["rulesets"]
+    }
 
-	{
-		"$id": "#/definitions/ruleset",
-		"type": "string",
-		"enum": [
-	  		"chess",
-	  		"chesslosing"
-	  		"chesskingofthehill",
-	  		"go",
-	  		"shogi"
-		]
-	}
+    {
+        "$id": "#/definitions/ruleset",
+        "type": "string",
+        "enum": [
+              "chess",
+              "chesslosing"
+              "chesskingofthehill",
+              "go",
+              "shogi"
+        ]
+    }
 
-									["exit"]
+                                    ["exit"]
 
  Before killing the Engine Program, the Client SHOULD send an `exit` Request.
 The Engine Program SHOULD then send an empty Response and exit gracefully. This
 Method does not require any Parameters.
 
-								   ["config"]
+                                   ["config"]
 
 This method allows the GUI program to tune engine parameters.
 
-	{
-		"$id": "#/methods/config/params",
-		"type": "object",
-		"properties": {
-			"key": { "type": "string" },
-			"value": {}
-		},
-		"required": ["key", "value"]
-	}
+    {
+        "$id": "#/methods/config/params",
+        "type": "object",
+        "properties": {
+            "key": { "type": "string" },
+            "value": {}
+        },
+        "required": ["key", "value"]
+    }
 
-								   [ setup ]
+                                   [ setup ]
 
-	{
-		"$id": "#/methods/setup/params",
-		"$ref": "#/definitions/game_record"
-	}
+    {
+        "$id": "#/methods/setup/params",
+        "$ref": "#/definitions/game_record"
+    }
 
-								  [ refresh ]
+                                  [ refresh ]
 
 Updates the game record with new available information.
 
 {
-	"properties": {
-		"elapsed_time": { "type": "number" },
-		"moves": {}
-	}
+    "properties": {
+        "elapsed_time": { "type": "number" },
+        "moves": {}
+    }
 }
 
-								   [ status ]
+                                   [ status ]
 
-	{
-		"$id": "#/methods/status/params",
-		"type": "object"
-	}
+    {
+        "$id": "#/methods/status/params",
+        "type": "object"
+    }
 
-	{
-		"$id": "#/methods/status/result",
-		"type": "object"
-	}
+    {
+        "$id": "#/methods/status/result",
+        "type": "object"
+    }
 
 Clients MAY send "status" requests at any time to check for freezing or
 latency. This method doesn't have any parameters or result.
 
-			   Examples of Client-to-Engine-Program communication
+               Examples of Client-to-Engine-Program communication
 
  The ["jsonrpc"] property is omitted for brevity. You should always use it for
 real world IPC.
 
    > {"method": "init","id":0}
    < {"id":0}
-			"result": {
-				"meta": {
-					"name": "Foobar",
-					"url": "https://foo.bar"
-				}
-			},
-			"id": 0
-		}
+            "result": {
+                "meta": {
+                    "name": "Foobar",
+                    "url": "https://foo.bar"
+                }
+            },
+            "id": 0
+        }
 
-	--> {
-			"method": "setup",
-			"params": {
-				"ruleset": "risk",
-				"setup": {
-					"side-to-move": 0,
-					"sides": [{
-						"troops": {
-							"Russia": 2,
-							"Kamchatka": 6,
-							"Alaska": 3,
-							...
-						},
-						"cards": [{
-							"territory": "Russia",
-							"symbol": "cavalry"
-						}]
-					}, {
-						...
-					}]
-				}
-			},
-			"id": 1
-		}
-	<-- { "id": 1 }
+    --> {
+            "method": "setup",
+            "params": {
+                "ruleset": "risk",
+                "setup": {
+                    "side-to-move": 0,
+                    "sides": [{
+                        "troops": {
+                            "Russia": 2,
+                            "Kamchatka": 6,
+                            "Alaska": 3,
+                            ...
+                        },
+                        "cards": [{
+                            "territory": "Russia",
+                            "symbol": "cavalry"
+                        }]
+                    }, {
+                        ...
+                    }]
+                }
+            },
+            "id": 1
+        }
+    <-- { "id": 1 }
 
-	--> {
-			"method": "search",
-			"params": {
-				"notifications": true
-			},
-			"id": 3
-		}
-	<-- {
-			"method": "#search",
-			"result": {},
-			"id": 3
-		}
-	<-- {"method": "#search", "result": {}, "id": 3}
-	<-- {"method": "#search", "result": {}, "id": 3}
-	<-- {"method": "#search", "result": {}, "id": 3}
-	<-- {"method": "stop", "id": 3}
+    --> {
+            "method": "search",
+            "params": {
+                "notifications": true
+            },
+            "id": 3
+        }
+    <-- {
+            "method": "#search",
+            "result": {},
+            "id": 3
+        }
+    <-- {"method": "#search", "result": {}, "id": 3}
+    <-- {"method": "#search", "result": {}, "id": 3}
+    <-- {"method": "#search", "result": {}, "id": 3}
+    <-- {"method": "stop", "id": 3}
 
-									 Errors
+                                     Errors
 
  * 0: "Generic error"
 20-49: hardware or system problems
@@ -352,7 +352,7 @@ real world IPC.
 1000-1399: game-specific errors
  * 1000: "Invalid game logic"
 
-							A note on extensibility
+                            A note on extensibility
 
 UGEI is designed with this use case in mind.
 
@@ -363,38 +363,38 @@ You may find UGEI useful for:
 
   - "tablebase:format"
     The format of the tablebase that 'tablbase:path' points to. Common formats are:
-	- "Nalimov"
-	- "Syzgi"
-	- "Lomonosov"
-	- "Gaviota"
+    - "Nalimov"
+    - "Syzgi"
+    - "Lomonosov"
+    - "Gaviota"
   - "tablebase:path"
     A filepath that points to tablebases.
 
 'game:board:fen'
-	'game:history'
-	'game:pgn'
-	'game:result'
-	'game:variant'
-	'clock'
-	'eval:best-move'
-	'eval:best-lines'
-	'eval:drawishness'
-	'eval:mate'
-	'settings:cache-size'
-	'settings:resign-rate'
-	'settings:resoluteness'
-	'settings:sharpness'
+    'game:history'
+    'game:pgn'
+    'game:result'
+    'game:variant'
+    'clock'
+    'eval:best-move'
+    'eval:best-lines'
+    'eval:drawishness'
+    'eval:mate'
+    'settings:cache-size'
+    'settings:resign-rate'
+    'settings:resoluteness'
+    'settings:sharpness'
 
 2.4 'status'
-	Clients MAY send requests with the 'status' method to check on the engine
-	and make sure it's not frozen.
+    Clients MAY send requests with the 'status' method to check on the engine
+    and make sure it's not frozen.
 
 2.6 'setup'
-	Clients setup the game state using this method. Every request SHOULD reset
-	all previous knowledge about the position.
+    Clients setup the game state using this method. Every request SHOULD reset
+    all previous knowledge about the position.
 
 2.7 'go-to'
-	Go to a specific position while being in the same game.
+    Go to a specific position while being in the same game.
 
 3. Example of client and server communication over stdin/stdout
 ---------------------------------------------------------------
@@ -403,7 +403,7 @@ Implementing UGEI is very easy and requires less code than UCI. UCI
 implementations require a custom parser and tokenized, but with UGEI you can
 use a library such as cJSON or Modern C++.
 
-							  Links and resources
+                              Links and resources
 
 * JSON-RPC 2.0 specification.
   <https://www.jsonrpc.org/specification>
