@@ -3,13 +3,14 @@
 
 									Preamble
 
-The UCI protocol has been the de-facto standard for chess software since its
+ The UCI protocol has been the de-facto standard for chess software since its
 introduction in November 2000. It has enjoyed tremendous success and hundreds
 of chess engines support it despite its limitations. With this revision I
 aspire to:
 
- a) Define a new open protocol for all kinds of strategy games. Its core data
-    model shall be a new game format that integrates well with the APIs.
+ a) Define a new open protocol for all kinds of turn-based strategy games. Its
+	core data model will be a portable game format that integrates well with the
+	APIs.
  b) Foster collaboration between engine developers across all game communities.
     By adopting a single standard, everyone can benefit from better GUI support
     and tooling. There is no such standard at the moment and I hope that UGEI
@@ -19,32 +20,52 @@ aspire to:
 
 								  Conventions
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
+ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
 "SHOULD NOT", "RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be
 interpreted as described in RFC 2119.
 
-The "engine" means the computer program that implements game logic and AI
+ The "Engine Progam" means the software that implements game logic and AI
 capabilities.
-The "client" means the parent program of the engine that displays the
-final result to the end user.
-To "search" means to perform some calculations to achieve better play. Ideally,
+ The "Client" means the software that communicates with the Engine Program and
+provides a game interface for the end user.
+ To "search" means to perform some calculations to achieve better play. Ideally,
 searching ad infinitum will converge to perfect play.
-A "move" means the smallest atomic event worthy of notice during a game.
-Sequences of moves form whole games. Some games allow for many moves in the
-same turn: Risk, for example, allows for infinitely many attacks.
-This document uses JSON Schema to detail JSON APIs.
+ A "move" means the smallest atomic event worthy of notice during a game. A
+sequence of moves forms a player's turn; a sequence of players' turns forms a
+whole game. For example, chess and Go only allow one move per player turn,
+while Risk and draughts allow many more.
+
+ Lines in this document with a three spaces indentation give examples of
+Client and Engine Program communication. The "greater-than" symbol prepends all
+messages from the Client to the Engine Program; similarly, the "greater-then"
+symbol prepends all messages from the Engine Program to the Client. E.g.
+
+   > Client to Engine program
+   < Engine Program to Client
+
+ This document uses JSON Schema to detail JSON APIs. Square brackets (ASCII
+91 and 93) in body text indicate JSON values. E.g. [42], ["spam"], [null].
 
 									Overview
 
-UGEI supports communication between two pieces of software - the engine and the
-client - over JSON-RPC 2.0 messages. Immediately after startup until exiting
-the game engine MUST complete incoming messages even when searching. from stdin
-and write replies to stdout.
-Every UGEI
-message MUST be followed by a CRLF byte sequence and MUST be minified as to fit
-in a single line of text. Lines that start with the '#' character are marked
-as comments and the client SHOULD ignore them. The game engine MAY print
-comments at any time inside the UGEI loop.
+ UGEI supports communication between two pieces of software - the Engine
+Program and the Client - over JSON-RPC 2.0 messages. The Engine Program MUST
+read and, if necessary, reply to all incoming messages for its whole lifetime.
+The Engine Program, being the Server, MUST accept Request objects even when
+searching.
+ Th
+ The Engine Program SHOULD read incoming messages from standard input and
+SHOULD write outgoing messages from standard output. The UGEI standard is transport-agnostic and is not command-line specific
+
+ * MUST each be terminated by a (CR)LF byte sequence.
+ * MUST NOT contain 
+ * SHOULD be minified for better performance.
+
+ Optionally, the Engine Program MAY also output lines that start with a number
+sign (ASCII 35) and serve other purposes, such as logging or debugging
+messages. The Client MUST ignore such messages.
+
+   < # The Client MUST ignore this line.
 
 The JSON data models are transport-agnostic and can also 
 storage on disk or download.
@@ -154,11 +175,15 @@ storage on disk or download.
 		}
 	}
 
-									[ init ]
+									["init"]
 
-Clients MUST initialize game engines sending first the "init" method before
-sending other requests. Upon receiving the "init" request, game engines can
-perform expensive initialization operations and copy protection checks.
+ The Client MUST initialize the Engine Program by sending a `init` Request before
+any other message. Upon receiving the Request, the Engine Program MAY perform
+expensive one-time operations such as copy protection check or reading support
+files into memory. After initialization, the Response object MAY include
+metainformation.
+
+ The `init` Method does not require any Parameters.
 
 	{
 		"$id": "#/methods/init/result",
@@ -192,81 +217,42 @@ perform expensive initialization operations and copy protection checks.
 		"enum": [
 	  		"chess",
 	  		"chesslosing"
-	  		"chessracingkings",
-	  		"chessthreecheck",
 	  		"chesskingofthehill",
 	  		"go",
-	  		"shogi",
-	  		"risk",
-	  		"RisiKo!",
-			"2x2",
-			"3x3"
+	  		"shogi"
 		]
 	}
 
-									[ exit ]
+									["exit"]
 
-On exit, the GUI program SHOULD send an "exit" notification to the engine.
+ Before killing the Engine Program, the Client SHOULD send an `exit` Request.
+The Engine Program SHOULD then send an empty Response and exit gracefully. This
+Method does not require any Parameters.
 
-									[ dump ]
-
-	{
-		"$schema": "http://json-schema.org/schema#",
-		"$id": "dump params",
-		"type": "object",
-		"properties": {
-			"location": { "type": "uri" }
-			"max-size-in-bytes": {
-				"type": "integer",
-				"minimum": 0
-			},
-		}
-	}
-
-									[ load ]
-
-	{
-		"$schema": "http://json-schema.org/schema#",
-		"$id": "load params",
-		"type": "object",
-		"properties": {
-			"location": { "type": "uri" }
-		}
-	}
-
-								   [ config ]
+								   ["config"]
 
 This method allows the GUI program to tune engine parameters.
 
 	{
-		"$id": "#/methods/configure/params",
+		"$id": "#/methods/config/params",
 		"type": "object",
 		"properties": {
 			"key": { "type": "string" },
-			"value": true
+			"value": {}
 		},
 		"required": ["key", "value"]
-	}
-
-	{
-		"$id": "#/methods/configure/result",
-		"type": "object"
 	}
 
 								   [ setup ]
 
 	{
-		"$id": "#/methods/set_up/params",
-		"type": "object",
-		"properties": {
-			"game_record": { "$ref": "#/definitions/game_record" }
-		},
-		"required": ["game_record"]
+		"$id": "#/methods/setup/params",
+		"$ref": "#/definitions/game_record"
 	}
 
 								  [ refresh ]
 
-Update the game record with new available information.
+Updates the game record with new available information.
 
 {
 	"properties": {
@@ -290,18 +276,13 @@ Update the game record with new available information.
 Clients MAY send "status" requests at any time to check for freezing or
 latency. This method doesn't have any parameters or result.
 
-					Examples of GUI-to-engine communication
+			   Examples of Client-to-Engine-Program communication
 
-The "jsonrpc" member is omitted for brevity. You should always use it for real world IPC.
+ The ["jsonrpc"] property is omitted for brevity. You should always use it for
+real world IPC.
 
-	--> {
-			"method": "UGEI",
-			"params": {
-				"auth": "API-SECRET-TOKEN"
-			},
-			"id": 0
-		}
-	<-- {
+   > {"method": "init","id":0}
+   < {"id":0}
 			"result": {
 				"meta": {
 					"name": "Foobar",
@@ -405,10 +386,12 @@ You may find UGEI useful for:
 	'settings:sharpness'
 
 2.4 'status'
-	Clients MAY send requests with the 'status' method to check on the engine and make sure it's not frozen.
+	Clients MAY send requests with the 'status' method to check on the engine
+	and make sure it's not frozen.
 
 2.6 'setup'
-	Clients setup the game state using this method. Every request SHOULD reset all previous knowledge about the position.
+	Clients setup the game state using this method. Every request SHOULD reset
+	all previous knowledge about the position.
 
 2.7 'go-to'
 	Go to a specific position while being in the same game.
@@ -416,7 +399,9 @@ You may find UGEI useful for:
 3. Example of client and server communication over stdin/stdout
 ---------------------------------------------------------------
 
-Implementing UGEI is very easy and requires less code than UCI. UCI implementations require a custom parser and tokenized, but with UGEI you can use a library such as cJSON or Modern C++.
+Implementing UGEI is very easy and requires less code than UCI. UCI
+implementations require a custom parser and tokenized, but with UGEI you can
+use a library such as cJSON or Modern C++.
 
 							  Links and resources
 
@@ -426,3 +411,5 @@ Implementing UGEI is very easy and requires less code than UCI. UCI implementati
   <http://wbec-ridderkerk.nl/html/UCIProtocol.html>
 * JSON Schema project webpage.
   <https://json-schema.org/>
+* Relevant XKCD
+  <https://xkcd.com/927/>
