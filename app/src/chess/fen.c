@@ -52,10 +52,12 @@ fen_new_from_position(const struct Position *position)
 		}
 		*fen++ = '/';
 	}
+	logg("Pieces are now listed in the FEN");
 	/* The last character was set to '/' in the loop but it must be a space. */
 	*(fen - 1) = ' ';
 	*fen++ = color_to_char(position->side_to_move);
 	*fen++ = ' ';
+	logg("Color done");
 	if (position->castling_rights & CASTLING_RIGHT_W_OO) {
 		*fen++ = 'K';
 	}
@@ -90,6 +92,7 @@ int
 position_set_from_fen(struct Position *position, const char *original_fen)
 {
 	char fen[FEN_SIZE];
+	logg("Setting pieces up");
 	strcpy(fen, original_fen);
 	char *save_ptr;
 	char *token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
@@ -99,28 +102,21 @@ position_set_from_fen(struct Position *position, const char *original_fen)
 	Rank rank = RANK_MAX;
 	File file = 0;
 	uint_fast8_t free_files_count = 0;
-	for (size_t i = 0; token[i]; i++) {
+	for (size_t i = 0; token[i] && rank + 1 && file + 1; i++) {
 		Square square = square_new(file, rank);
 		if (token[i] == '/') {
 			rank--;
 			file = 0;
-			continue;
 		} else if (isdigit(token[i])) {
 			while (token[i]-- > '0') {
-				//*position_piece_at(position, square) = SQUARE; TODO
+				position_set_piece_at_square(position, square, PIECE_TYPE_NONE);
 			}
 		} else {
-			if (isupper(token[i])) {
-				// position_square(position, square)->color = COLOR_WHITE;
-			} else {
-				token[i] = toupper(token[i]);
-				// position_square(position, square)->color = COLOR_BLACK;
-			}
-			// position_square(position, square)->piece = token[i];
+			position_set_piece_at_square(position, square, char_to_piece(token[i]));
 		}
 	}
-	token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
-	if (!token) {
+	logg("Pieces are set");
+	if (!(token = strtok_r(fen, FEN_SEPARATORS, &save_ptr))) {
 		return -1;
 	}
 	switch (tolower(*token)) {
@@ -132,8 +128,8 @@ position_set_from_fen(struct Position *position, const char *original_fen)
 		default:
 			return -1;
 	}
-	token = strtok_r(fen, FEN_SEPARATORS, &save_ptr);
-	if (!token) {
+	logg("Correctly parsed the side to move");
+	if (!(token = strtok_r(fen, FEN_SEPARATORS, &save_ptr))) {
 		return -1;
 	}
 	for (size_t i = 0; token[i]; i++) {
@@ -166,5 +162,6 @@ position_set_from_fen(struct Position *position, const char *original_fen)
 		return -1;
 	}
 	position->reversible_moves_count = strtol(fen, NULL, 10);
+	logg("Side to move: %d", position->side_to_move);
 	return 0;
 }

@@ -4,6 +4,7 @@
 
 #include "utils.h"
 #include "globals.h"
+#include "switches.h"
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
@@ -27,7 +28,7 @@ logg(const char *format, ...)
 	va_start(args, format);
 	fprintf(stderr, "# %s:%s:%d -- ", __FILE__ + SOURCE_PATH_LENGTH, __func__, __LINE__);
 	vfprintf(stderr, format, args);
-	fprintf(stderr, "\r\n");
+	fputc('\n', stderr);
 	va_end(args);
 #endif
 }

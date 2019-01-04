@@ -5,6 +5,7 @@
 #include "chess/fen.h"
 #include "Unity/src/unity.h"
 #include "chess/position.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -39,13 +40,14 @@ const char *const INVALID_FEN[] = {
 void
 test_fen(void)
 {
-	//for (size_t i = 0; VALID_FEN[i]; i++) {
-	//	char *fen;
-	//	struct Position pos = POSITION_DEFAULT;
-	//	position_set_from_fen(&pos, VALID_FEN[i]);
-	//	fen = fen_new_from_position(&pos);
-	//	TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], fen);
-	//	free(fen);
-	//	pos = POSITION_DEFAULT;
-	//}
+	logg("Starting FEN testing");
+	for (size_t i = 0; VALID_FEN[i]; i++) {
+		char *fen;
+		struct Position position = POSITION_DEFAULT;
+		position_set_from_fen(&position, VALID_FEN[i]);
+		logg("Position set from FEN.");
+		fen = fen_new_from_position(&position);
+		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], fen);
+		free(fen);
+	}
 }

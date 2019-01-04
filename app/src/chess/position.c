@@ -10,6 +10,7 @@
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
+#include "chess/piece_types.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <assert.h>
@@ -26,6 +27,19 @@ position_hash(const struct Position *pos)
 {
 	assert(pos);
 	return XXH64(pos, sizeof(struct Position), 0);
+}
+
+void
+position_set_piece_at_square(struct Position *position, Square square, Piece piece)
+{
+	Bitboard bitboard = square_to_bitboard(square);
+	if (piece_type(piece) == PIECE_TYPE_QUEEN) {
+		position->occupancy_by_piece_type[PIECE_TYPE_BISHOP] |= bitboard;
+		position->occupancy_by_piece_type[PIECE_TYPE_ROOK] |= bitboard;
+	} else {
+		position->occupancy_by_piece_type[piece_type(piece)] |= bitboard;
+	}
+	position->occupancy_by_color[piece_color(piece)] |= bitboard;
 }
 
 void

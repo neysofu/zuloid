@@ -26,6 +26,9 @@ struct Position
 };
 
 void
+position_set_piece_at_square(struct Position *position, Square square, Piece piece);
+
+void
 position_list_pieces_by_square(const struct Position *position, Piece ptr[]);
 
 uint_fast64_t

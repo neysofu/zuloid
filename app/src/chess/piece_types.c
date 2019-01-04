@@ -9,7 +9,7 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-Piece
+enum PieceType
 piece_type(Piece p)
 {
 	return p & 0b111;
@@ -60,6 +60,8 @@ char_to_piece(char c)
 			return PIECE_TYPE_NONE;
 	}
 }
+
+const Piece PIECE_MAX = PIECE_TYPE_QUEEN | PIECE_COLOR_BLACK;
 
 // Bitboard
 // rook_threats(Square sq)

@@ -18,8 +18,8 @@ enum PieceType
 	PIECE_TYPE_BISHOP = 0x2,
 	PIECE_TYPE_KING = 0x3,
 	PIECE_TYPE_ROOK = 0x4,
+	PIECE_TYPE_NONE = 0x5,
 	PIECE_TYPE_QUEEN = 0x6,
-	PIECE_TYPE_NONE = 0x7,
 };
 
 enum PieceColor
@@ -28,14 +28,22 @@ enum PieceColor
 	PIECE_COLOR_BLACK = 0x8,
 };
 
-#define CORE_PIECE_TYPES_COUNT (5)
-#define PIECE_MAX (0x14)
+enum
+{
+	CORE_PIECE_TYPES_COUNT = 5,
+};
+
+extern const Piece PIECE_MAX;
+extern const Piece PIECE_EMPTY;
 
 bool
 piece_is_valid(Piece p);
 
 Color
 piece_color(Piece p);
+
+enum PieceType
+piece_type(Piece piece);
 
 Piece
 piece_colorless(Piece p);
