@@ -2,6 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #ifndef Z64C_H
 #define Z64C_H
 
@@ -30,4 +34,8 @@ engine_exit_status(const struct Engine *engine);
 char *
 engine_send_request(struct Engine *engine, const char *request);
 
+#endif
+
+#ifdef __cplusplus
+}
 #endif
