@@ -24,8 +24,9 @@ jsonrpc_error_default_message(enum JsonRpcError error)
 			return "Unsupported ruleset";
 		case JSONRPC_UNDEFINED_KEY:
 			return "Undefined key";
+		default:
+			return "Generic error";
 	}
-	return "Generic error";
 }
 
 CJSON_PUBLIC(cJSON *)

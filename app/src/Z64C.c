@@ -3,8 +3,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "Z64C.h"
-#include "engine.h"
 #include "chess/position.h"
+#include "engine.h"
 #include "search/cache.h"
 #include "settings.h"
 #include "utils.h"
@@ -16,16 +16,17 @@ struct Engine *
 engine_new(void)
 {
 	struct Engine *engine = malloc_or_exit(sizeof(struct Engine));
-	engine->position = POSITION_DEFAULT;
-	engine->winner = COLOR_NONE;
-	engine->termination = TERMINATION_NONE;
-	engine->game_clocks[COLOR_WHITE] = NULL;
-	engine->game_clocks[COLOR_BLACK] = NULL;
-	engine->settings = SETTINGS_DEFAULT;
-	engine->cache = NULL;
-	engine->notifications_stream = stdout;
-	engine->mode = MODE_IDLE;
-	engine->exit_status = EXIT_SUCCESS;
+	*engine = (struct Engine){
+		.position = POSITION_DEFAULT,
+		.winner = COLOR_NONE,
+		.termination = TERMINATION_NONE,
+		.game_clocks = { NULL, NULL },
+		.settings = SETTINGS_DEFAULT,
+		.cache = NULL,
+		.notifications_stream = stdout,
+		.mode = MODE_IDLE,
+		.exit_status = EXIT_SUCCESS,
+	};
 	return engine;
 }
 
@@ -44,7 +45,6 @@ engine_delete(struct Engine *engine)
 const int *
 engine_exit_status(const struct Engine *engine)
 {
-	assert(engine);
 	if (MODE_EXIT == engine->mode) {
 		return &engine->exit_status;
 	} else {
