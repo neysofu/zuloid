@@ -156,7 +156,7 @@ position_set_from_fen(struct Position *position, const char *fen)
 		File file = char_to_file(*fen);
 		Rank rank = char_to_rank(*(fen + 1));
 		Square square = square_new(file, rank);
-		position->is_en_passant_available = square != SQUARE_NONE;
+		position->is_en_passant_available = file != FILE_NONE && rank != RANK_NONE;
 		position->en_passant_target = square;
 	}
 	fen_go_to_next_token(&fen);
