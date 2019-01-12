@@ -2,9 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "chess/color.h"
 #include "chess/coordinates.h"
-
+#include "chess/color.h"
 
 #define SQUARE(file, rank) (((file) << 3) | (rank))
 #define SQUARE_FILE(square) ((square) >> 3)
@@ -29,13 +28,13 @@ file_to_char(File f)
 File
 char_to_file(char c)
 {
-	return (c >= '1' && c <= '8') ? c - '1' : FILE_NONE;
+	return (c >= 'a' && c <= 'h') ? c - 'a' : FILE_NONE;
 }
 
 Rank
 char_to_rank(char c)
 {
-	return (c >= 'a' && c <= 'h') ? c - 'a' : RANK_NONE;
+	return (c >= '1' && c <= '8') ? c - '1' : RANK_NONE;
 }
 
 File

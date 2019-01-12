@@ -17,7 +17,14 @@ extern void test_jsonrpc_no_response_to_invalid_request_with_no_id(void);
 extern void test_jsonrpc_no_response_to_empty_request(void);
 
 extern void test_method_init_metadata(void);
-extern void test_method_init_reentrant(void);
+extern void test_method_init_reentrancy(void);
+extern void test_method_exit(void);
+
+extern void test_fen_init(void);
+extern void test_fen(void);
+
+extern void test_file_to_char(void);
+extern void test_char_to_file(void);
 
 int
 main(void)
@@ -35,14 +42,16 @@ main(void)
 	RUN_TEST(test_jsonrpc_response_with_id_to_invalid_request_with_id);
 	RUN_TEST(test_jsonrpc_no_response_to_invalid_request_with_no_id);
 	RUN_TEST(test_jsonrpc_no_response_to_empty_request);
-	//RUN_TEST(test_request_without_id_shall_not_get_response);
-	////RUN_TEST(test_fen);
-	//RUN_TEST(test_jsonrpc_exit);
-	//RUN_TEST(test_jsonrpc_init);
-	//RUN_TEST(test_send_request_edge_cases);
-	//RUN_TEST(test_jsonrpc_set_then_get);
-	////RUN_TEST(test_jsonrpc_setup);
-	//RUN_TEST(test_jsonrpc_status);
-	//RUN_TEST(test_utils);
+
+	RUN_TEST(test_method_init_metadata);
+	RUN_TEST(test_method_init_reentrancy);
+	RUN_TEST(test_method_exit);
+
+	RUN_TEST(test_fen_init);
+	RUN_TEST(test_fen);
+
+	RUN_TEST(test_file_to_char);
+	RUN_TEST(test_char_to_file);
+
     return UNITY_END();
 }

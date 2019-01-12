@@ -20,9 +20,11 @@ struct Position
 	Bitboard occupancy_by_color[2];
 	Bitboard occupancy_by_piece_type[CORE_PIECE_TYPES_COUNT];
 	Color side_to_move;
+	bool is_en_passant_available;
 	Square en_passant_target;
 	CastlingRights castling_rights;
 	int_fast8_t reversible_moves_count;
+	int moves_count;
 };
 
 void
@@ -49,5 +51,6 @@ char
 position_square_to_char(const struct Position *pos, Square sq);
 
 extern const struct Position POSITION_DEFAULT;
+extern const struct Position POSITION_EMPTY;
 
 #endif

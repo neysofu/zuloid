@@ -26,9 +26,9 @@ logg(const char *format, ...)
 #ifdef SWITCH_LOGGING
 	va_list args;
 	va_start(args, format);
-	fprintf(stderr, "# %s:%s:%d -- ", __FILE__ + SOURCE_PATH_LENGTH, __func__, __LINE__);
-	vfprintf(stderr, format, args);
-	fputc('\n', stderr);
+	fprintf(stdout, "# %s:%s:%d -- ", __FILE__ + SOURCE_PATH_LENGTH, __func__, __LINE__);
+	vfprintf(stdout, format, args);
+	putchar('\n');
 	va_end(args);
 #endif
 }

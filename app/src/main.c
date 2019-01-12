@@ -11,7 +11,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-void
+static void
 print_welcome_message(void);
 
 int
@@ -43,7 +43,7 @@ main(void)
 	return exit_status;
 }
 
-void
+static void
 print_welcome_message(void)
 {
 	puts("# .:.:. Welcome to Z64C .:.:.");
