@@ -121,22 +121,20 @@ position_set_from_fen(struct Position *position, const char *fen)
 			fen++;
 		}
 	}
-	if (!fen_go_to_next_token(&fen)) {
-		return -1;
+	fen_go_to_next_token(&fen);
+	if (*fen) {
+		switch (tolower(*fen)) {
+			case 'w':
+				break;
+			case 'b':
+				position->side_to_move = COLOR_BLACK;
+				break;
+			default:
+				return -1;
+		}
 	}
-	switch (tolower(*fen)) {
-		case 'w':
-			break;
-		case 'b':
-			position->side_to_move = COLOR_BLACK;
-			break;
-		default:
-			return -2;
-	}
-	if (!fen_go_to_next_token(&fen)) {
-		return -1;
-	}
-	while (*fen && isalpha(*fen)) {
+	fen_go_to_next_token(&fen);
+	while (isalpha(*fen)) {
 		switch (*fen) {
 			case 'K':
 				position->castling_rights |= CASTLING_RIGHT_W_OO;
@@ -153,24 +151,17 @@ position_set_from_fen(struct Position *position, const char *fen)
 		}
 		fen++;
 	}
-	if (!fen_go_to_next_token(&fen)) {
-		return -1;
-	}
-	if ('-' == *fen) {
-		position->is_en_passant_available = false;
-	} else if (*(fen + 1)) {
+	fen_go_to_next_token(&fen);
+	if (*fen && *(fen + 1)) {
 		File file = char_to_file(*fen);
 		Rank rank = char_to_rank(*(fen + 1));
-		position->is_en_passant_available = true;
-		position->en_passant_target = square_new(file, rank);
+		Square square = square_new(file, rank);
+		position->is_en_passant_available = square != SQUARE_NONE;
+		position->en_passant_target = square;
 	}
-	if (!fen_go_to_next_token(&fen)) {
-		return -1;
-	}
+	fen_go_to_next_token(&fen);
 	position->reversible_moves_count = strtol(fen, NULL, 10);
-	if (!fen_go_to_next_token(&fen)) {
-		return -1;
-	}
+	fen_go_to_next_token(&fen);
 	position->moves_count = strtol(fen, NULL, 10);
 	return 0;
 }

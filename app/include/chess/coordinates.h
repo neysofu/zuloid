@@ -35,7 +35,7 @@ static const Square SQUARE_MAX = 077;
 
 static const File FILE_NONE = 010;
 static const Rank RANK_NONE = 010;
-static const Square SQUARE_NONE = 0100;
+static const Square SQUARE_NONE = 0110;
 
 char
 file_to_char(File f);
