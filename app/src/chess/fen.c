@@ -92,6 +92,14 @@ fen_new_from_position(const struct Position *position)
 	return fen_copy;
 }
 
+bool
+fen_go_to_next_token(const char **fen)
+{
+	*fen += strcspn(*fen, FEN_SEPARATORS);
+	*fen += strspn(*fen, FEN_SEPARATORS);
+	return **fen;
+}
+
 int
 position_set_from_fen(struct Position *position, const char *fen)
 {
@@ -113,21 +121,22 @@ position_set_from_fen(struct Position *position, const char *fen)
 			fen++;
 		}
 	}
-	if (!*(fen += strspn(fen, FEN_SEPARATORS))) {
+	if (!fen_go_to_next_token(&fen)) {
 		return -1;
 	}
-	switch (tolower(*fen++)) {
+	switch (tolower(*fen)) {
 		case 'w':
 			break;
 		case 'b':
-			fen++;
 			position->side_to_move = COLOR_BLACK;
 			break;
 		default:
 			return -2;
 	}
-	fen += strspn(fen, FEN_SEPARATORS);
-	while (*fen && !strchr(FEN_SEPARATORS, *fen)) {
+	if (!fen_go_to_next_token(&fen)) {
+		return -1;
+	}
+	while (*fen && isalpha(*fen)) {
 		switch (*fen) {
 			case 'K':
 				position->castling_rights |= CASTLING_RIGHT_W_OO;
@@ -144,21 +153,24 @@ position_set_from_fen(struct Position *position, const char *fen)
 		}
 		fen++;
 	}
-	fen += strspn(fen, FEN_SEPARATORS);
+	if (!fen_go_to_next_token(&fen)) {
+		return -1;
+	}
 	if ('-' == *fen) {
 		position->is_en_passant_available = false;
-		fen++;
-	} else if (*fen && *(fen + 1)) {
-		File file = char_to_file(*fen++);
-		Rank rank = char_to_rank(*fen++);
+	} else if (*(fen + 1)) {
+		File file = char_to_file(*fen);
+		Rank rank = char_to_rank(*(fen + 1));
 		position->is_en_passant_available = true;
 		position->en_passant_target = square_new(file, rank);
 	}
-	fen += strspn(fen, FEN_SEPARATORS);
-	char *mutable_fen;
-	position->reversible_moves_count = strtol(fen, &mutable_fen, 10);
-	fen += mutable_fen - fen;
-	fen += strspn(fen + strcspn(fen, FEN_SEPARATORS), FEN_SEPARATORS);
+	if (!fen_go_to_next_token(&fen)) {
+		return -1;
+	}
+	position->reversible_moves_count = strtol(fen, NULL, 10);
+	if (!fen_go_to_next_token(&fen)) {
+		return -1;
+	}
 	position->moves_count = strtol(fen, NULL, 10);
 	return 0;
 }
