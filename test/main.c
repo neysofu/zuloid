@@ -26,6 +26,8 @@ extern void test_fen(void);
 extern void test_file_to_char(void);
 extern void test_char_to_file(void);
 
+extern void test_color_other(void);
+
 int
 main(void)
 {
@@ -52,6 +54,8 @@ main(void)
 
 	RUN_TEST(test_file_to_char);
 	RUN_TEST(test_char_to_file);
+
+	RUN_TEST(test_color_other);
 
     return UNITY_END();
 }

@@ -17,21 +17,21 @@ enum
 };
 
 char
-color_to_char(Color c);
+color_to_char(Color color);
 
 Rank
-color_promoting_rank(Color c);
+color_promoting_rank(Color color);
 
 Rank
-color_home_rank(Color c);
+color_home_rank(Color color);
 
 Rank
-color_pawn_rank(Color c);
+color_pawn_rank(Color color);
 
 Rank
-color_en_passant_target_rank(Color c);
+color_en_passant_target_rank(Color color);
 
 Color
-color_other(Color c);
+color_other(Color color);
 
 #endif

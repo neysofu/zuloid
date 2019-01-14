@@ -6,27 +6,39 @@
 #include <assert.h>
 
 char
-color_to_char(Color c)
+color_to_char(Color color)
 {
-	assert(c != COLOR_NONE);
-	return c ? 'b' : 'w';
+	assert(color != COLOR_NONE);
+	return color ? 'b' : 'w';
 }
 
 Rank
-color_promoting_rank(Color c);
+color_promoting_rank(Color color) {
+	assert(color != COLOR_NONE);
+	return color ? 0 : 7;
+}
 
 Rank
-color_home_rank(Color c);
+color_home_rank(Color color) {
+	assert(color != COLOR_NONE);
+	return color ? 7 : 0;
+}
 
 Rank
-color_pawn_rank(Color c);
+color_pawn_rank(Color color) {
+	assert(color != COLOR_NONE);
+	return color ? 6 : 1;
+}
 
 Rank
-color_en_passant_target_rank(Color c);
+color_en_passant_target_rank(Color color) {
+	assert(color != COLOR_NONE);
+	return color ? 2 : 5;
+}
 
 Color
-color_other(Color c)
+color_other(Color color)
 {
-	assert(c != COLOR_NONE);
-	return !c;
+	assert(color != COLOR_NONE);
+	return !color;
 }
