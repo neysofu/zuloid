@@ -52,8 +52,7 @@ file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC ${SRC_FILES})
 target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR} PUBLIC ${INCLUDE_DIR})
-target_link_libraries (Z64C_LIB cjson)
-target_link_libraries (Z64C_LIB XXHASH)
+target_link_libraries (Z64C_LIB cjson XXHASH)
 target_compile_definitions (Z64C_LIB PRIVATE
 	SRC_DIR_LENGTH=${SRC_DIR_LENGTH}
 	BUILD_DATE_ISO_8601=\"${BUILD_DATE_ISO_8601}\"
@@ -69,6 +68,5 @@ target_link_libraries (Z64C Z64C_LIB)
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable (Z64C_TEST ${TEST_FILES})
 target_include_directories (Z64C_TEST PUBLIC ${INCLUDE_DIR})
-target_link_libraries (Z64C_TEST Z64C_LIB)
-target_link_libraries (Z64C_TEST UNITY)
+target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
 add_test (NAME Z64C COMMAND Z64C_TEST)
