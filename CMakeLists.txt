@@ -55,6 +55,9 @@ target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR})
 target_include_directories (Z64C_LIB PUBLIC ${Z64C_INCLUDE_DIR})
 target_link_libraries (Z64C_LIB cjson)
 target_link_libraries (Z64C_LIB XXHASH)
+target_compile_definitions (Z64C_LIB PRIVATE Z64C_VERSION_MAJOR=${PROJECT_VERSION_MAJOR}
+	Z64C_VERSION_MINOR=${PROJECT_VERSION_MINOR}
+	Z64C_VERSION_PATCH=${PROJECT_VERSION_PATCH})
 
 # Z64C
 add_executable (Z64C ${Z64C_SRC} "${CMAKE_CURRENT_SOURCE_DIR}/src/main.c")

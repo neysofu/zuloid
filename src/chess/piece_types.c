@@ -12,7 +12,7 @@
 enum PieceType
 piece_type(Piece p)
 {
-	return p & 0b111;
+	return p & 0x7;
 }
 
 Color

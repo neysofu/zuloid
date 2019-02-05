@@ -4,4 +4,5 @@
 
 #include "globals.h"
 
-const char *const Z64C_VERSION = "0.10.0";
+const char *const Z64C_VERSION =
+  Z64C_VERSION_MAJOR "." Z64C_VERSION_MINOR "." Z64C_VERSION_PATCH;
