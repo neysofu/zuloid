@@ -45,8 +45,8 @@ main(void)
 static void
 print_welcome_message(void)
 {
-	puts("# .:.:. Welcome to Z64C .:.:.");
-	printf("# version = %s, nr. bits = %lu", Z64C_VERSION, ARCHITECTURE_BITS);
+	printf("# .:.:. Welcome to Z64C .:.:.\n"
+	       "# version = %s, nr. bits = %lu", Z64C_VERSION, ARCHITECTURE_BITS);
 	struct PID pid = get_pid();
 	if (pid.success) {
 		printf(", PID = %d", pid.value);
