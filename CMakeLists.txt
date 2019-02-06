@@ -54,7 +54,7 @@ list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_LIB cjson XXHASH)
-target_compile_definitions (Z64C_LIB PRIVATE
+target_compile_definitions (Z64C_LIB PUBLIC
 	SRC_DIR_LENGTH=${SRC_DIR_LENGTH}
 	BUILD_DATE_ISO_8601=\"${BUILD_DATE_ISO_8601}\"
 	Z64C_VERSION_MAJOR=\"${PROJECT_VERSION_MAJOR}\"
