@@ -3,10 +3,11 @@
 # file, You can obtain one at https://mozilla.org/MPL/2.0/.
 
 cmake_minimum_required (VERSION 3.4)
-project (Z64C VERSION 0.10.0 LANGUAGES C)
 
 set (CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 set (CMAKE_POLICY_DEFAULT_CMP0042 NEW)
+
+project (Z64C VERSION 0.10.0 LANGUAGES C)
 
 set (CMAKE_C_FLAGS_DEBUG "-g -ftrapv")
 set (CMAKE_C_FLAGS_RELEASE "-O3")
@@ -50,8 +51,8 @@ set_property (TARGET UNITY PROPERTY C_STANDARD 90)
 # Z64C_LIB
 file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
-add_library (Z64C_LIB STATIC ${SRC_FILES})
-target_include_directories (Z64C_LIB PUBLIC ${LIB_DIR} PUBLIC ${INCLUDE_DIR})
+add_library (Z64C_LIB STATIC "${SRC_FILES}")
+target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_LIB cjson XXHASH)
 target_compile_definitions (Z64C_LIB PRIVATE
 	SRC_DIR_LENGTH=${SRC_DIR_LENGTH}
@@ -66,7 +67,7 @@ target_link_libraries (Z64C Z64C_LIB)
 
 # Z64C_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
-add_executable (Z64C_TEST ${TEST_FILES})
-target_include_directories (Z64C_TEST PUBLIC ${INCLUDE_DIR})
+add_executable (Z64C_TEST "${TEST_FILES}")
+target_include_directories (Z64C_TEST PRIVATE "${INCLUDE_DIR}")
 target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
 add_test (NAME Z64C COMMAND Z64C_TEST)
