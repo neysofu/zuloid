@@ -20,19 +20,6 @@
 #include <processthreadsapi.h>
 #endif
 
-void
-logg(const char *format, ...)
-{
-#ifdef SWITCH_LOGGING
-	va_list args;
-	va_start(args, format);
-	fprintf(stdout, "# %s:%s:%d -- ", __FILE__ + SRC_DIR_LENGTH, __func__, __LINE__);
-	vfprintf(stdout, format, args);
-	putchar('\n');
-	va_end(args);
-#endif
-}
-
 void *
 exit_if_null(void *ptr)
 {
