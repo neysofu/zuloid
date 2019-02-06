@@ -21,8 +21,7 @@ engine_call_setup(struct Engine *engine, const struct cJSON *params, struct cJSO
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
 	} else if (!cJSON_IsString(fen)) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
-	} else {
-		position_set_from_fen(&engine->position, fen->valuestring);
-		cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	}
+	position_set_from_fen(&engine->position, fen->valuestring);
+	cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 }
