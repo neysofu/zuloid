@@ -399,8 +399,6 @@ You may find UGEI useful for:
     'eval:drawishness'
     'eval:mate'
     'settings:cache-size'
-    'settings:resign-rate'
-    'settings:resoluteness'
     'settings:sharpness'
 
 2.4 'status'
