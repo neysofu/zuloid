@@ -22,9 +22,17 @@ const char *const VALID_FEN[] = {
 	"2rq2k1/1p1b1rpp/5b2/pN3p2/Q1Nnp3/P2P2P1/1P2PPBP/2R1R1K1 w - - 1 20",
 	"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d3 0 1",
 	"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b KQkq d4 0 1",
-	//"rnbqkbnr/pppppppp/8/9/3P4/8/PPP1PPPP/RNBQKBNR b AHah d4 0 1",
-	//"rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b aAhH d4 0 1",
-	//"bnrqkr1b/pppppppp/5n2/8/4P3/8/PPPP1PPP/BNRQKRNB w cFfC - 1 2",
+	"R2K1B1R/PPP2QPP/5N1N/1n2q3/8/1p3n2/pbpp3p/1kr4r w KQkq - 0 1",
+	"8/3p4/1P2R1p1/7p/pP5R/1p4r1/2p3p1/k1K2B2 w - - 0 0",
+	"1KB2R1R/2P1B3/1P1Q4/1n3N2/qpp2n1P/8/6pp/r3rbk1 w - - 0 0",
+	"2kr4/K1pp4/1p6/8/8/8/7Q/3R4 w - - 2 23",
+	"r6r/ppp2Bpp/2n1b3/2R5/3k4/B7/P1P1KPPP/8 w - - 0 13",
+	"r2q1rk1/pb1nbppp/1pp1pn2/3pN3/2PPP3/2N3P1/PP3PBP/R1BQ1RK1 w - - 0 1",
+	"4R1K1/P5P1/3P1PP1/3BR3/5b2/p1p2p2/1Q3qpp/r3rk2 b - - 0 1",
+	"1KR4R/PPPB1P1P/4Q1Pq/4P1b1/1B1Nn3/3p3p/ppp2pp1/1kr2bnr w - - 0 1",
+	/* "rnbqkbnr/pppppppp/8/9/3P4/8/PPP1PPPP/RNBQKBNR b AHah d4 0 1",
+	 * "rnbqkbnr/pppppppp/8/8/3P4/8/PPP1PPPP/RNBQKBNR b aAhH d4 0 1",
+	 * "bnrqkr1b/pppppppp/5n2/8/4P3/8/PPPP1PPP/BNRQKRNB w cFfC - 1 2", */
 	"",
 };
 
@@ -32,10 +40,9 @@ void
 test_fen(void)
 {
 	for (size_t i = 0; VALID_FEN[i][0]; i++) {
-		char *fen;
 		struct Position position;
 		position_set_from_fen(&position, VALID_FEN[i]);
-		fen = fen_new_from_position(&position);
+		char *fen = fen_new_from_position(&position);
 		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], fen);
 		free(fen);
 	}
