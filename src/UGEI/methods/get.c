@@ -17,22 +17,15 @@
 void
 engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
 {
-	struct cJSON *error;
-	struct cJSON *result;
 	struct cJSON *value;
-	const struct cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
+	struct cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
 	if (!cJSON_IsObject(params) || !cJSON_IsString(key)) {
-		error = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
-		// cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE,
-		// PROPERTY_NAME_INVALID_PARAMS_CODE); cJSON_AddStringToObject(error,
-		// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_INVALID_PARAMS_MESSAGE);
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;
 	}
-	char *buffer;
 	switch (XXH64(key->valuestring, strlen(key->valuestring), 0)) {
 		case 0x63f596aaf1c3bed7: /* FEN */
-			buffer = fen_new_from_position(&engine->position);
-			value = cJSON_CreateString(buffer);
+			value = cJSON_CreateString(fen_new_from_position(&engine->position));
 			break;
 		case 0x919aee5c3985d5bc: /* "result" */
 			if (engine->termination == TERMINATION_NONE) {
@@ -67,7 +60,7 @@ engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON 
 			// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_UNDEFINED_MESSAGE);
 			return;
 	}
-	result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
-	/* Let's finally assembly the response object. */
+	struct cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	cJSON_AddItemToObject(result, PROPERTY_NAME_VALUE, value);
+	return;
 }

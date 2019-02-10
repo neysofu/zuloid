@@ -15,5 +15,4 @@
 void
 engine_call_search(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
 {
-	cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 }

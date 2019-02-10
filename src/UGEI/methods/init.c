@@ -8,7 +8,7 @@
 #include "globals.h"
 
 void
-engine_call_init(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
+engine_call_init(struct cJSON *response)
 {
 	struct cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	struct cJSON *meta = cJSON_AddObjectToObject(result, PROPERTY_NAME_META);

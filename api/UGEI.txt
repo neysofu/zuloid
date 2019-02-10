@@ -81,7 +81,7 @@ storage on disk or download.
               "time_control": {
                 "type": "array",
                 "items": { "$ref": "#/definitions/time_control" }
-            },
+              },
               "result": {
                   "type": "array",
                   "items": {
@@ -101,12 +101,12 @@ storage on disk or download.
                       "other",
                   ],
               },
-            "players_count": {
-                "type": "integer",
-                "$comment": "REQUIRED if the ruleset allows a range of players"
-            },
+              "players_count": {
+                  "type": "integer",
+                  "$comment": "REQUIRED if the ruleset allows a range of players"
+              },
               "history": {
-                "type": "array",
+                  "type": "array",
               },
               "meta": {
                   "type": "object",

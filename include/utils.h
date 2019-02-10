@@ -16,7 +16,7 @@
 		putchar('\n');                                                                     \
 	} while (0)
 #else
-#define LOGF(fmt, ...)
+#define LOGF(...)
 #endif
 
 void *

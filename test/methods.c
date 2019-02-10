@@ -6,13 +6,27 @@
 #include "Unity/src/unity.h"
 #include "Z64C.h"
 #include "globals.h"
+#include "utils.h"
 #include <string.h>
+
+void
+test_method_get_settings(void)
+{
+	struct Engine *engine = engine_new();
+	engine_call(
+	  engine, "{\"method\":\"config\",\"params\":{\"key\":\"contempt\",\"value\":0.8512}}");
+	char *response = engine_call(
+	  engine, "{\"method\":\"get\",\"params\":{\"key\":\"contempt\"},\"id\":0}");
+	TEST_ASSERT(strstr(response, "0.851"));
+	free(response);
+	free(engine);
+}
 
 void
 test_method_init_metadata(void)
 {
 	struct Engine *engine = engine_new();
-	char *response = engine_send_request(engine, "{\"method\":\"init\",\"id\":null}");
+	char *response = engine_call(engine, "{\"method\":\"init\",\"id\":null}");
 	TEST_ASSERT(response);
 	TEST_ASSERT(strstr(response, PROPERTY_NAME_META));
 	TEST_ASSERT(strstr(response, Z64C_COPYRIGHT));
@@ -25,8 +39,8 @@ void
 test_method_init_reentrancy(void)
 {
 	struct Engine *engine = engine_new();
-	engine_send_request(engine, "{\"method\":\"init\"}");
-	char *response = engine_send_request(engine, "{\"method\":\"init\",\"id\":null}");
+	engine_call(engine, "{\"method\":\"init\"}");
+	char *response = engine_call(engine, "{\"method\":\"init\",\"id\":null}");
 	TEST_ASSERT(response);
 	TEST_ASSERT_NULL(strstr(response, PROPERTY_NAME_ERROR));
 	free(response);
@@ -34,12 +48,26 @@ test_method_init_reentrancy(void)
 }
 
 void
-test_method_exit(void)
+test_exit_status(void)
 {
 	struct Engine *engine = engine_new();
-	engine_send_request(engine, "{\"method\":\"exit\"}");
 	const int *exit_status = engine_exit_status(engine);
+	TEST_ASSERT_NULL(exit_status);
+	engine_call(engine, "{\"method\":\"exit\"}");
+	exit_status = engine_exit_status(engine);
 	TEST_ASSERT_NOT_NULL(exit_status);
 	TEST_ASSERT_EQUAL_INT(*exit_status, EXIT_SUCCESS);
+	free(engine);
+}
+
+void
+test_method_setup_basic_fen(void)
+{
+#define FEN "R2K1B1R/PPP2QPP/5N1N/1n2q3/8/1p3n2/pbpp3p/1kr4r w KQkq - 0 1"
+	struct Engine *engine = engine_new();
+	engine_call(engine, "{\"method\":\"setup\",\"params\":{\"fen\":\"" FEN "\"}}");
+	char *response = engine_call(engine, "{\"method\":\"get\",\"params\":{\"key\":\"FEN\"},\"id\":0}");
+	TEST_ASSERT_TRUE(strstr(response, FEN));
+	free(response);
 	free(engine);
 }

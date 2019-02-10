@@ -29,7 +29,7 @@ main(void)
 			engine_delete(engine);
 			return EXIT_SUCCESS;
 		}
-		char *response = engine_send_request(engine, line);
+		char *response = engine_call(engine, line);
 		if (response) {
 			/* A tab character before the response string visually separates requests from
 			 * responses in the terminal. */

@@ -2,10 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 #ifndef Z64C_H
 #define Z64C_H
 
@@ -15,7 +11,7 @@ struct Engine;
 /* Creates a self-contained engine instance with default settings.
  *
  * Result
- *   NULL on failure, a valid pointer on success. */
+ *  NULL on failure; a valid pointer on success. */
 struct Engine *
 engine_new(void);
 
@@ -23,19 +19,17 @@ engine_new(void);
 void
 engine_delete(struct Engine *engine);
 
-const int *
-engine_exit_status(const struct Engine *engine);
-
 /* Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
  * All communication must be in valid JSON-RPC 2.0.
  *
  * Result
  *   A JSON-RPC response string without line breaks. */
 char *
-engine_send_request(struct Engine *engine, const char *request);
+engine_call(struct Engine *engine, const char *request);
 
-#endif
+/*
+ * */
+const int *
+engine_exit_status(const struct Engine *engine);
 
-#ifdef __cplusplus
-}
 #endif

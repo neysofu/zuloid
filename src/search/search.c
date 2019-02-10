@@ -34,7 +34,7 @@ engine_search(struct Engine *engine, uint_fast32_t dispersion_threshold)
 	 *  - It was searched in this round
 	 *  - I have explicit confidence. */
 	struct CacheEntry *cache_entry = cache_get(engine->cache, &engine->position);
-	if (cache_entry && cache_entry->data >= dispersion_threshold) {
+	if (cache_entry) {
 		return;
 	} else if (cache_entry) {
 		return;

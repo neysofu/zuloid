@@ -5,6 +5,7 @@
 #ifndef Z64C_TIME_TIME_CONTROL_H
 #define Z64C_TIME_TIME_CONTROL_H
 
+#include "cJSON/cJSON.h"
 #include <stdint.h>
 
 typedef int_least64_t msec_time;
@@ -38,6 +39,7 @@ struct TimeControl
 };
 
 /* Handy initializers for three standard FIDE time controls:
+ * - bullet (1+0),
  * - blitz (3+2),
  * - rapid (15+10), and
  * - classical (90+30 plus 30 extra minutes after move 40). */
@@ -47,6 +49,9 @@ struct TimeControl *
 time_control_new_rapid(void);
 struct TimeControl *
 time_control_new_classical(void);
+
+struct TimeControl *
+time_control_new_from_json(struct cJSON *json);
 
 void
 time_control_delete(struct TimeControl *tc);

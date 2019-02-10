@@ -15,7 +15,7 @@ void
 engine_call_get(const struct Engine *engine, const struct cJSON *params, struct cJSON *response);
 
 void
-engine_call_init(struct Engine *engine, const struct cJSON *params, struct cJSON *response);
+engine_call_init(struct cJSON *response);
 
 void
 engine_call_search(struct Engine *engine, const struct cJSON *parms, struct cJSON *response);

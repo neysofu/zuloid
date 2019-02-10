@@ -19,6 +19,9 @@ engine_dispatch_call(struct Engine *engine,
                      struct cJSON *response)
 {
 	switch (XXH64(method, strlen(method), 0)) {
+		case 0x284938c798d362a8: /* "config" */
+			engine_call_config(engine, params, response);
+			break;
 		case 0x3e6da0adb9a81aa0: /* "exit" */
 			engine->mode = MODE_EXIT;
 			break;
@@ -26,10 +29,7 @@ engine_dispatch_call(struct Engine *engine,
 			engine_call_get(engine, params, response);
 			break;
 		case 0xbbb05418c88423aa: /* "init" */
-			engine_call_init(engine, params, response);
-			break;
-		case 0x284938c798d362a8: /* "config" */
-			engine_call_config(engine, params, response);
+			engine_call_init(response);
 			break;
 		case 0x71e6f6d1e157dbfe: /* "search" */
 			engine_call_search(engine, params, response);
@@ -45,7 +45,7 @@ engine_dispatch_call(struct Engine *engine,
 }
 
 char *
-engine_send_request(struct Engine *engine, const char *str)
+engine_call(struct Engine *engine, const char *str)
 {
 	if (!str || string_is_whitespace(str)) {
 		return NULL;

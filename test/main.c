@@ -16,9 +16,11 @@ extern void test_jsonrpc_response_with_id_to_invalid_request_with_id(void);
 extern void test_jsonrpc_no_response_to_invalid_request_with_no_id(void);
 extern void test_jsonrpc_no_response_to_empty_request(void);
 
+extern void test_method_get_settings(void);
 extern void test_method_init_metadata(void);
 extern void test_method_init_reentrancy(void);
-extern void test_method_exit(void);
+extern void test_exit_status(void);
+extern void test_method_setup_basic_fen(void);
 
 extern void test_fen_init(void);
 extern void test_fen(void);
@@ -45,9 +47,11 @@ main(void)
 	RUN_TEST(test_jsonrpc_no_response_to_invalid_request_with_no_id);
 	RUN_TEST(test_jsonrpc_no_response_to_empty_request);
 
+	RUN_TEST(test_method_get_settings);
 	RUN_TEST(test_method_init_metadata);
 	RUN_TEST(test_method_init_reentrancy);
-	RUN_TEST(test_method_exit);
+	RUN_TEST(test_exit_status);
+	RUN_TEST(test_method_setup_basic_fen);
 
 	RUN_TEST(test_fen_init);
 	RUN_TEST(test_fen);
