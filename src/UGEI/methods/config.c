@@ -4,14 +4,13 @@
  *
  * This file implements the external APIs to the engine over stdin. */
 
-#include "UGEI/errors.h"
-#include "UGEI/property_names.h"
 #include "cJSON/cJSON.h"
 #include "chess/fen.h"
 #include "chess/move.h"
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
+#include "jsonrpc_errors.h"
 #include "settings.h"
 #include "time.h"
 #include "utils.h"
@@ -21,12 +20,10 @@
 #include <string.h>
 
 void
-engine_call_config(struct Engine *engine,
-                   const cJSON *params,
-                   cJSON *response)
+engine_call_config(struct Engine *engine, const cJSON *params, cJSON *response)
 {
-	cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
-	cJSON *value = cJSON_GetObjectItem(params, PROPERTY_NAME_VALUE);
+	cJSON *key = cJSON_GetObjectItem(params, "key");
+	cJSON *value = cJSON_GetObjectItem(params, "value");
 	if (engine->mode != MODE_IDLE || !cJSON_IsString(key)) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;

@@ -13,6 +13,4 @@ extern const char *const Z64C_RELEASE_DATE_ISO_8601;
 extern const char *const Z64C_URL;
 extern const char *const Z64C_VERSION;
 
-extern const size_t ARCHITECTURE_BITS;
-
 #endif

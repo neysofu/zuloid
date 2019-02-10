@@ -2,8 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "UGEI/errors.h"
-#include "UGEI/property_names.h"
+#include "jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 #include "chess/fen.h"
 #include "chess/position.h"
@@ -18,7 +17,7 @@ void
 engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *value;
-	cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
+	cJSON *key = cJSON_GetObjectItem(params, "key");
 	if (!cJSON_IsObject(params) || !cJSON_IsString(key)) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;
@@ -55,12 +54,9 @@ engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 			break;
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_UNDEFINED_KEY);
-			// cJSON_AddNumberToObject(error, PROPERTY_NAME_CODE,
-			// PROPERTY_NAME_UNDEFINED_CODE);  cJSON_AddStringToObject(error,
-			// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_UNDEFINED_MESSAGE);
 			return;
 	}
-	cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
-	cJSON_AddItemToObject(result, PROPERTY_NAME_VALUE, value);
+	cJSON *result = cJSON_AddObjectToObject(response, "result");
+	cJSON_AddItemToObject(result, "value", value);
 	return;
 }

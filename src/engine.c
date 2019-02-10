@@ -3,12 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "UGEI/errors.h"
 #include "UGEI/methods.h"
-#include "UGEI/property_names.h"
 #include "cJSON/cJSON.h"
 #include "chess/position.h"
 #include "engine.h"
+#include "jsonrpc_errors.h"
 #include "search/cache.h"
 #include "settings.h"
 #include "utils.h"
@@ -38,9 +37,9 @@ engine_new(void)
 
 void
 engine_dispatch_call(struct Engine *engine,
-                     const char *method,
                      const cJSON *params,
-                     cJSON *response)
+                     cJSON *response,
+                     const char *method)
 {
 	switch (XXH64(method, strlen(method), 0)) {
 		case 0x284938c798d362a8: /* "config" */
@@ -71,26 +70,24 @@ engine_dispatch_call(struct Engine *engine,
 char *
 engine_call(struct Engine *engine, const char *str)
 {
-	if (!str || string_is_whitespace(str)) {
-		return NULL;
-	}
+	assert(engine);
+	assert(str);
 	cJSON *request = cJSON_Parse(str);
-	cJSON *method = cJSON_GetObjectItem(request, PROPERTY_NAME_METHOD);
-	cJSON *params = cJSON_GetObjectItem(request, PROPERTY_NAME_PARAMS);
-	cJSON *id = cJSON_DetachItemFromObject(request, PROPERTY_NAME_ID);
-	bool is_valid_request = cJSON_IsString(method);
-	cJSON *response = is_valid_request && !id ? NULL : cJSON_CreateObject();
-	if (is_valid_request) {
-		engine_dispatch_call(engine, method->valuestring, params, response);
-	} else if (request) {
+	cJSON *method = cJSON_GetObjectItem(request, "method");
+	cJSON *params = cJSON_GetObjectItem(request, "params");
+	cJSON *id = cJSON_DetachItemFromObject(request, "id");
+	cJSON *response = NULL;
+	if (cJSON_IsString(method)) {
+		response = id ? cJSON_CreateObject() : NULL;
+		engine_dispatch_call(engine, params, response, method->valuestring);
+	} else if (!string_is_whitespace(str)) {
 		id = id ? id : cJSON_CreateNull();
-		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_REQUEST);
-	} else {
-		id = cJSON_CreateNull();
-		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_PARSE_ERROR);
+		response = cJSON_CreateObject();
+		cJSON_AddJsonRpcErrorToObject(
+		  response, request ? JSONRPC_INVALID_REQUEST : JSONRPC_PARSE_ERROR);
 	}
 	cJSON_Delete(request);
-	cJSON_AddItemToObject(response, PROPERTY_NAME_ID, id);
+	cJSON_AddItemToObject(response, "id", id);
 	cJSON_AddStringToObject(response, "jsonrpc", "2.0");
 	char *response_string = cJSON_PrintUnformatted(response);
 	cJSON_Delete(response);

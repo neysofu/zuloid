@@ -3,7 +3,6 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "time/time_control.h"
-#include "UGEI/property_names.h"
 #include "cJSON/cJSON.h"
 #include "utils.h"
 #include <assert.h>
@@ -52,9 +51,9 @@ time_control_new_from_json(struct cJSON *json)
 {
 	struct TimeControl *time_control = malloc_or_exit(sizeof(struct TimeControl));
 	*time_control = (struct TimeControl){ 0 };
-	struct cJSON *time_limit = cJSON_GetObjectItem(json, PROPERTY_NAME_TIME_LIMIT);
-	struct cJSON *increment = cJSON_GetObjectItem(json, PROPERTY_NAME_INCREMENT);
-	struct cJSON *delay = cJSON_GetObjectItem(json, PROPERTY_NAME_DELAY);
+	struct cJSON *time_limit = cJSON_GetObjectItem(json, "time_limit");
+	struct cJSON *increment = cJSON_GetObjectItem(json, "increment");
+	struct cJSON *delay = cJSON_GetObjectItem(json, "delay");
 	if (time_limit) {
 		time_control->time_limit = time_limit->valuedouble;
 	}

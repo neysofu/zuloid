@@ -20,12 +20,13 @@ main(void)
 	/* Most systems do use line buffering on I/O, but it's not standard. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
-	cJSON_InitHooks(&(struct cJSON_Hooks){ malloc_or_exit, free });
+	cJSON_InitHooks(&(cJSON_Hooks){ malloc_or_exit, free });
 	struct Engine *engine = engine_new();
 	print_welcome_message();
 	while (engine->mode != MODE_EXIT) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
+			/* EOF. */
 			engine_delete(engine);
 			return EXIT_SUCCESS;
 		}
@@ -45,13 +46,10 @@ main(void)
 static void
 print_welcome_message(void)
 {
-	printf("# .:.:. Welcome to Z64C .:.:.\n"
-	       "# version = %s, nr. bits = %lu",
-	       Z64C_VERSION,
-	       ARCHITECTURE_BITS);
+	printf("# Welcome to Z64C %s (%s)\n", Z64C_VERSION, Z64C_RELEASE_DATE_ISO_8601);
+	printf("# backend = CPU\n");
 	struct PID pid = get_pid();
 	if (pid.success) {
-		printf(", PID = %d", pid.value);
+		printf("# PID = %d\n", pid.value);
 	}
-	putchar('\n');
 }

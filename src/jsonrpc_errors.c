@@ -2,8 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "UGEI/errors.h"
-#include "UGEI/property_names.h"
+#include "jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 
 const char *
@@ -37,8 +36,8 @@ cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError error)
 	}
 	const char *message = jsonrpc_error_default_message(error);
 	cJSON *message_item = cJSON_CreateStringReference(message);
-	cJSON *error_item = cJSON_AddObjectToObject(object, PROPERTY_NAME_ERROR);
-	cJSON_AddNumberToObject(error_item, PROPERTY_NAME_CODE, error);
-	cJSON_AddItemToObject(error_item, PROPERTY_NAME_MESSAGE, message_item);
+	cJSON *error_item = cJSON_AddObjectToObject(object, "error");
+	cJSON_AddNumberToObject(error_item, "code", error);
+	cJSON_AddItemToObject(error_item, "message", message_item);
 	return error_item;
 }

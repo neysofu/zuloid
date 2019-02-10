@@ -2,7 +2,6 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "UGEI/property_names.h"
 #include "Unity/src/unity.h"
 #include "engine.h"
 #include "globals.h"
@@ -28,7 +27,7 @@ test_method_init_metadata(void)
 	struct Engine *engine = engine_new();
 	char *response = engine_call(engine, "{\"method\":\"init\",\"id\":null}");
 	TEST_ASSERT(response);
-	TEST_ASSERT(strstr(response, PROPERTY_NAME_META));
+	TEST_ASSERT(strstr(response, "meta"));
 	TEST_ASSERT(strstr(response, Z64C_COPYRIGHT));
 	TEST_ASSERT(strstr(response, Z64C_VERSION));
 	free(response);
@@ -42,7 +41,7 @@ test_method_init_reentrancy(void)
 	engine_call(engine, "{\"method\":\"init\"}");
 	char *response = engine_call(engine, "{\"method\":\"init\",\"id\":null}");
 	TEST_ASSERT(response);
-	TEST_ASSERT_NULL(strstr(response, PROPERTY_NAME_ERROR));
+	TEST_ASSERT_NULL(strstr(response, "error"));
 	free(response);
 	free(engine);
 }
