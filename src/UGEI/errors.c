@@ -36,8 +36,8 @@ cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError error)
 		return NULL;
 	}
 	const char *message = jsonrpc_error_default_message(error);
-	struct cJSON *message_item = cJSON_CreateStringReference(message);
-	struct cJSON *error_item = cJSON_AddObjectToObject(object, PROPERTY_NAME_ERROR);
+	cJSON *message_item = cJSON_CreateStringReference(message);
+	cJSON *error_item = cJSON_AddObjectToObject(object, PROPERTY_NAME_ERROR);
 	cJSON_AddNumberToObject(error_item, PROPERTY_NAME_CODE, error);
 	cJSON_AddItemToObject(error_item, PROPERTY_NAME_MESSAGE, message_item);
 	return error_item;

@@ -39,8 +39,8 @@ engine_new(void)
 void
 engine_dispatch_call(struct Engine *engine,
                      const char *method,
-                     const struct cJSON *params,
-                     struct cJSON *response)
+                     const cJSON *params,
+                     cJSON *response)
 {
 	switch (XXH64(method, strlen(method), 0)) {
 		case 0x284938c798d362a8: /* "config" */
@@ -74,12 +74,12 @@ engine_call(struct Engine *engine, const char *str)
 	if (!str || string_is_whitespace(str)) {
 		return NULL;
 	}
-	struct cJSON *request = cJSON_Parse(str);
-	struct cJSON *method = cJSON_GetObjectItem(request, PROPERTY_NAME_METHOD);
-	struct cJSON *params = cJSON_GetObjectItem(request, PROPERTY_NAME_PARAMS);
-	struct cJSON *id = cJSON_DetachItemFromObject(request, PROPERTY_NAME_ID);
+	cJSON *request = cJSON_Parse(str);
+	cJSON *method = cJSON_GetObjectItem(request, PROPERTY_NAME_METHOD);
+	cJSON *params = cJSON_GetObjectItem(request, PROPERTY_NAME_PARAMS);
+	cJSON *id = cJSON_DetachItemFromObject(request, PROPERTY_NAME_ID);
 	bool is_valid_request = cJSON_IsString(method);
-	struct cJSON *response = is_valid_request && !id ? NULL : cJSON_CreateObject();
+	cJSON *response = is_valid_request && !id ? NULL : cJSON_CreateObject();
 	if (is_valid_request) {
 		engine_dispatch_call(engine, method->valuestring, params, response);
 	} else if (request) {

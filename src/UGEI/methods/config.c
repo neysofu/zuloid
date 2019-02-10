@@ -22,11 +22,11 @@
 
 void
 engine_call_config(struct Engine *engine,
-                   const struct cJSON *params,
-                   struct cJSON *response)
+                   const cJSON *params,
+                   cJSON *response)
 {
-	struct cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
-	struct cJSON *value = cJSON_GetObjectItem(params, PROPERTY_NAME_VALUE);
+	cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
+	cJSON *value = cJSON_GetObjectItem(params, PROPERTY_NAME_VALUE);
 	if (engine->mode != MODE_IDLE || !cJSON_IsString(key)) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;

@@ -13,9 +13,9 @@
 #include "time.h"
 
 void
-engine_call_setup(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
+engine_call_setup(struct Engine *engine, const cJSON *params, cJSON *response)
 {
-	struct cJSON *fen = cJSON_GetObjectItem(params, PROPERTY_NAME_FEN);
+	cJSON *fen = cJSON_GetObjectItem(params, PROPERTY_NAME_FEN);
 	if (engine->mode != MODE_IDLE) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
 	} else if (!cJSON_IsString(fen)) {

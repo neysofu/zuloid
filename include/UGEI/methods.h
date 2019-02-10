@@ -9,18 +9,18 @@
 #define Z64C_UGEI_METHODS_H
 
 void
-engine_call_config(struct Engine *engine, const struct cJSON *params, struct cJSON *response);
+engine_call_config(struct Engine *engine, const cJSON *params, cJSON *response);
 
 void
-engine_call_get(const struct Engine *engine, const struct cJSON *params, struct cJSON *response);
+engine_call_get(const struct Engine *engine, const cJSON *params, cJSON *response);
 
 void
-engine_call_init(struct cJSON *response);
+engine_call_init(cJSON *response);
 
 void
-engine_call_search(struct Engine *engine, const struct cJSON *parms, struct cJSON *response);
+engine_call_search(struct Engine *engine, const cJSON *parms, cJSON *response);
 
 void
-engine_call_setup(struct Engine *engine, const struct cJSON *parms, struct cJSON *response);
+engine_call_setup(struct Engine *engine, const cJSON *parms, cJSON *response);
 
 #endif

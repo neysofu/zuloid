@@ -13,6 +13,6 @@
 #include "time.h"
 
 void
-engine_call_search(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
+engine_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 }

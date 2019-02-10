@@ -15,10 +15,10 @@
 #include <string.h>
 
 void
-engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON *response)
+engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 {
-	struct cJSON *value;
-	struct cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
+	cJSON *value;
+	cJSON *key = cJSON_GetObjectItem(params, PROPERTY_NAME_KEY);
 	if (!cJSON_IsObject(params) || !cJSON_IsString(key)) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_PARAMS);
 		return;
@@ -60,7 +60,7 @@ engine_call_get(struct Engine *engine, const struct cJSON *params, struct cJSON 
 			// PROPERTY_NAME_MESSAGE, PROPERTY_NAME_UNDEFINED_MESSAGE);
 			return;
 	}
-	struct cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
+	cJSON *result = cJSON_AddObjectToObject(response, PROPERTY_NAME_RESULT);
 	cJSON_AddItemToObject(result, PROPERTY_NAME_VALUE, value);
 	return;
 }
