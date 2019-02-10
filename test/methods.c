@@ -4,7 +4,7 @@
 
 #include "UGEI/property_names.h"
 #include "Unity/src/unity.h"
-#include "Z64C.h"
+#include "engine.h"
 #include "globals.h"
 #include "utils.h"
 #include <string.h>
@@ -48,25 +48,13 @@ test_method_init_reentrancy(void)
 }
 
 void
-test_exit_status(void)
-{
-	struct Engine *engine = engine_new();
-	const int *exit_status = engine_exit_status(engine);
-	TEST_ASSERT_NULL(exit_status);
-	engine_call(engine, "{\"method\":\"exit\"}");
-	exit_status = engine_exit_status(engine);
-	TEST_ASSERT_NOT_NULL(exit_status);
-	TEST_ASSERT_EQUAL_INT(*exit_status, EXIT_SUCCESS);
-	free(engine);
-}
-
-void
 test_method_setup_basic_fen(void)
 {
 #define FEN "R2K1B1R/PPP2QPP/5N1N/1n2q3/8/1p3n2/pbpp3p/1kr4r w KQkq - 0 1"
 	struct Engine *engine = engine_new();
 	engine_call(engine, "{\"method\":\"setup\",\"params\":{\"fen\":\"" FEN "\"}}");
-	char *response = engine_call(engine, "{\"method\":\"get\",\"params\":{\"key\":\"FEN\"},\"id\":0}");
+	char *response =
+	  engine_call(engine, "{\"method\":\"get\",\"params\":{\"key\":\"FEN\"},\"id\":0}");
 	TEST_ASSERT_TRUE(strstr(response, FEN));
 	free(response);
 	free(engine);

@@ -4,7 +4,7 @@
 
 #include "UGEI/property_names.h"
 #include "Unity/src/unity.h"
-#include "Z64C.h"
+#include "engine.h"
 #include <stdlib.h>
 #include <string.h>
 

@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Z64C.h"
+#include "engine.h"
 #include "chess/position.h"
 #include "engine.h"
 #include "search/cache.h"
@@ -45,7 +45,7 @@ engine_delete(struct Engine *engine)
 const int *
 engine_exit_status(const struct Engine *engine)
 {
-	if (MODE_EXIT == engine->mode) {
+	if (engine->mode == MODE_EXIT) {
 		return &engine->exit_status;
 	} else {
 		return NULL;

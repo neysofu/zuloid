@@ -2,8 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "Z64C.h"
 #include "cJSON/cJSON.h"
+#include "engine.h"
 #include "globals.h"
 #include "switches.h"
 #include "utils.h"
@@ -23,7 +23,7 @@ main(void)
 	cJSON_InitHooks(&(struct cJSON_Hooks){ malloc_or_exit, free });
 	struct Engine *engine = engine_new();
 	print_welcome_message();
-	while (!engine_exit_status(engine)) {
+	while (engine->mode != MODE_EXIT) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
 			engine_delete(engine);
@@ -37,7 +37,7 @@ main(void)
 			free(response);
 		}
 	}
-	int exit_status = *engine_exit_status(engine);
+	int exit_status = engine->exit_status;
 	engine_delete(engine);
 	return exit_status;
 }
@@ -46,7 +46,9 @@ static void
 print_welcome_message(void)
 {
 	printf("# .:.:. Welcome to Z64C .:.:.\n"
-	       "# version = %s, nr. bits = %lu", Z64C_VERSION, ARCHITECTURE_BITS);
+	       "# version = %s, nr. bits = %lu",
+	       Z64C_VERSION,
+	       ARCHITECTURE_BITS);
 	struct PID pid = get_pid();
 	if (pid.success) {
 		printf(", PID = %d", pid.value);

@@ -42,4 +42,23 @@ struct Engine
 	int exit_status;
 };
 
+/* Creates a self-contained engine instance with default settings.
+ *
+ * Result
+ *  NULL on failure; a valid pointer on success. */
+struct Engine *
+engine_new(void);
+
+/* Gracefully kills `engine`. No shutdown JSON-RPC Request is needed. */
+void
+engine_delete(struct Engine *engine);
+
+/* Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
+ * All communication must be in valid JSON-RPC 2.0.
+ *
+ * Result
+ *   A JSON-RPC response string without line breaks. */
+char *
+engine_call(struct Engine *engine, const char *request);
+
 #endif

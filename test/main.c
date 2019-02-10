@@ -19,7 +19,6 @@ extern void test_jsonrpc_no_response_to_empty_request(void);
 extern void test_method_get_settings(void);
 extern void test_method_init_metadata(void);
 extern void test_method_init_reentrancy(void);
-extern void test_exit_status(void);
 extern void test_method_setup_basic_fen(void);
 
 extern void test_fen_init(void);
@@ -50,7 +49,6 @@ main(void)
 	RUN_TEST(test_method_get_settings);
 	RUN_TEST(test_method_init_metadata);
 	RUN_TEST(test_method_init_reentrancy);
-	RUN_TEST(test_exit_status);
 	RUN_TEST(test_method_setup_basic_fen);
 
 	RUN_TEST(test_fen_init);

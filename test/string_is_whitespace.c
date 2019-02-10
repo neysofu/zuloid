@@ -4,7 +4,6 @@
 
 #include "utils.h"
 #include "Unity/src/unity.h"
-#include "Z64C.h"
 #include <stdlib.h>
 
 void
