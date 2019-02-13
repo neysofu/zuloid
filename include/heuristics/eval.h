@@ -9,11 +9,8 @@
 
 struct Eval
 {
-	uint_fast32_t score;
-	uint_fast32_t uncertainty;
+	double score;
+	double dispersion;
 };
-
-void
-positions_eval(const struct Position *position, struct Eval *eval);
 
 #endif

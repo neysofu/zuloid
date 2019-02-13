@@ -10,6 +10,7 @@
 
 #include "chess/position.h"
 #include "chess/termination.h"
+#include "heuristics/eval_function.h"
 #include "search/cache.h"
 #include "search/search_results.h"
 #include "settings.h"
@@ -35,7 +36,7 @@ struct Engine
 	struct GameClock *game_clocks[2];
 	struct Settings settings;
 	struct Cache *cache;
-	struct Network *network;
+	struct EvalFunction *eval_function;
 	struct SearchResults search_results;
 	FILE *notifications_stream;
 	enum Mode mode;

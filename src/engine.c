@@ -28,6 +28,7 @@ engine_new(void)
 		.game_clocks = { NULL, NULL },
 		.settings = SETTINGS_DEFAULT,
 		.cache = NULL,
+		.eval_function = NULL,
 		.notifications_stream = stdout,
 		.mode = MODE_IDLE,
 		.exit_status = EXIT_SUCCESS,
