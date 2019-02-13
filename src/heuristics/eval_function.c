@@ -8,7 +8,7 @@
 struct EvalFn
 {
 	uint_fast64_t seed;
-}
+};
 
 struct EvalFn *
 evalfn_new(void)
