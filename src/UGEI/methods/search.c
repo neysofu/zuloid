@@ -8,5 +8,6 @@
 void
 engine_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
 {
-	cJSON *evaluation = cJSON_AddObjectToObject(response, "evaluation");
+	cJSON *result = cJSON_AddObjectToObject(response, "result");
+	cJSON *evaluation = cJSON_AddNumberToObject(result, "evaluation", 0);
 }
