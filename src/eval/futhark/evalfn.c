@@ -2,7 +2,9 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "eval/evalfn.h"
 #include "chess/position.h"
+#include "eval/eval.h"
 #include <stdint.h>
 
 struct EvalFn
@@ -26,6 +28,8 @@ evalfn_delete(struct EvalFn *evalfn)
 	free(evalfn);
 }
 
-void
-evalfn_run(struct EvalFn *evalfn, struct Eval *eval)
-{}
+int
+evalfn_run(struct EvalFn *evalfn, struct Position *position, struct Eval *eval)
+{
+	return 0;
+}

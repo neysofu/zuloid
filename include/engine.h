@@ -10,7 +10,7 @@
 
 #include "chess/position.h"
 #include "chess/termination.h"
-#include "eval/eval_function.h"
+#include "eval/evalfn.h"
 #include "search/cache.h"
 #include "search/search_results.h"
 #include "settings.h"

@@ -2,8 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef Z64C_HEURISTICS_EVAL_H
-#define Z64C_HEURISTICS_EVAL_H
+#ifndef Z64C_EVAL_EVAL_H
+#define Z64C_EVAL_EVAL_H
 
 #include <stdint.h>
 
