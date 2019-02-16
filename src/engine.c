@@ -37,6 +37,18 @@ engine_new(void)
 }
 
 void
+engine_delete(struct Engine *engine)
+{
+	if (!engine) {
+		return;
+	}
+	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
+	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
+	cache_delete(engine->cache);
+	free(engine);
+}
+
+void
 engine_dispatch_call(struct Engine *engine,
                      const cJSON *params,
                      cJSON *response,
@@ -93,16 +105,4 @@ engine_call(struct Engine *engine, const char *str)
 	char *response_string = cJSON_PrintUnformatted(response);
 	cJSON_Delete(response);
 	return response_string;
-}
-
-void
-engine_delete(struct Engine *engine)
-{
-	if (!engine) {
-		return;
-	}
-	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
-	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
-	cache_delete(engine->cache);
-	free(engine);
 }
