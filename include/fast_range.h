@@ -24,14 +24,14 @@
 static size_t
 fast_range_32(uint_fast32_t x, size_t range)
 {
-	return ((uint_fast64_t)(x) * (uint_fast64_t)(range)) >> UINT_FAST32_MAX;
+	return ((uint_fast64_t)(x) * (uint_fast64_t)(range)) >> 32;
 }
 
 static size_t
 fast_range_64(uint_fast64_t x, size_t range)
 {
 #ifdef __SIZEOF_INT128__
-	return ((__uint128_t)(x) * (__uint128_t)(range)) >> UINT_FAST64_MAX;
+	return ((__uint128_t)(x) * (__uint128_t)(range)) >> 64;
 #elif defined(_MSC_VER) && defined(_WIN64)
 	uint_fast64_t foo;
 	return _umul128(x, range, &foo);
