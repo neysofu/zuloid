@@ -8,6 +8,7 @@
 void
 test_cache_single_key_retrieval(void)
 {
-	struct Cache *cache = cache_new(32);
+	struct Cache *cache = cache_new(1024);
 	struct CacheEntry *entry = cache_get(cache, &POSITION_DEFAULT);
+	TEST_ASSERT_NOT_NULL(entry);
 }

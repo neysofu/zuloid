@@ -5,13 +5,14 @@
 #ifndef Z64C_UTILS_H
 #define Z64C_UTILS_H
 
+#include "switches.h"
 #include <stdbool.h>
 #include <stdio.h>
 
 #ifdef SWITCH_LOGGING
 #define LOGF(...)                                                                          \
 	do {                                                                                   \
-		printf("# %s:%s:%d -- ", &__FILE__[SRC_DIR_LENGTH], __func__, __LINE__);           \
+		printf("# %s:%s:%d -- ", &__FILE__[PROJECT_DIR_LENGTH], __func__, __LINE__);       \
 		printf(__VA_ARGS__);                                                               \
 		putchar('\n');                                                                     \
 	} while (0)
