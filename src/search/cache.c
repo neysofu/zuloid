@@ -6,7 +6,6 @@
 #include "fast_range.h"
 #include "globals.h"
 #include "switches.h"
-#include "utils.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>
@@ -29,7 +28,6 @@ struct Cache
 struct Cache *
 cache_new(size_t size_in_bytes)
 {
-	LOGF("cache_new");
 	struct Cache *cache =
 	  malloc_or_exit(sizeof(struct Cache) + size_in_bytes + CACHE_CELL_SIZE);
 	*cache = (struct Cache){
@@ -54,7 +52,6 @@ cache_get(struct Cache *cache, const struct Position *position)
 	 * 4. Else, the item is not found.
 	 * 5. Since it wasn't found, we need to find some space for it.
 	 * */
-	LOGF("Entered cache_get");
 	size_t i;
 	switch (WORD_SIZE) {
 		case 64:
@@ -64,7 +61,6 @@ cache_get(struct Cache *cache, const struct Position *position)
 			i = fast_range_32(XXH32(position, sizeof(struct Position), 0), cache->size);
 			break;
 	}
-	LOGF("i is %zu", i);
 	uint_fast32_t signature = XXH32(position, sizeof(struct Position), 0);
 	struct CacheEntry *entry = &cache->entries[i];
 	for (size_t offset = 0; offset < CACHE_CELL_SIZE; offset++, entry++) {
