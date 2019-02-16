@@ -23,7 +23,7 @@
 static size_t
 fast_range_32(uint_fast32_t x, size_t range)
 {
-	return ((uint64_t)(x)*range) >> UINT_FAST64_MAX;
+	return ((uint_fast64_t)(x) * range) >> UINT_FAST64_MAX;
 }
 
 static size_t

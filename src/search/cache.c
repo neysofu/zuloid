@@ -9,6 +9,7 @@
 #include "utils.h"
 #include <assert.h>
 #include <math.h>
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -18,15 +19,15 @@
 struct Cache
 {
 	size_t size;
-	struct CacheEntry *entries;
+	struct CacheEntry entries[];
 };
 
 struct Cache *
 cache_new(size_t size_in_bytes)
 {
-	struct Cache *cache = malloc_or_exit(sizeof(struct Cache));
+	struct Cache *cache = malloc_or_exit(sizeof(struct Cache) + size_in_bytes);
 	*cache = (struct Cache){
-		.size = size_in_bytes / sizeof(struct CacheEntry), .entries = malloc(size_in_bytes),
+		.size = size_in_bytes / sizeof(struct CacheEntry),
 	};
 	memset(cache->entries, 0, size_in_bytes);
 	return cache;
@@ -43,12 +44,26 @@ cache_get(struct Cache *cache, struct Position *position)
 {
 	assert(cache);
 	assert(position);
-	uint_fast64_t hash = XXH64(position, sizeof(struct Position), 0);
+	size_t i;
+	switch (WORD_SIZE) {
+		case 64:
+			i = fast_range_64(XXH64(position, sizeof(struct Position), 0), cache->size);
+			break;
+		default:
+			i = fast_range_32(XXH32(position, sizeof(struct Position), 0), cache->size);
+			break;
+	}
 	int_fast32_t signature = XXH32(position, sizeof(struct Position), 0);
-	size_t i = fast_range_64(hash, cache->size);
-	struct CacheEntry *entry = cache->entries + i;
-	while (entry->signature == signature || entry->signature == 0) {
-		entry++;
+	struct CacheEntry *entry = &cache->entries[i];
+	uint_least8_t min_temperature = UINT_LEAST8_MAX;
+	for (size_t offset = 0; offset < 32; offset++, entry++) {
+		if (entry->signature == signature && entry->offset == offset) {
+			break;
+		} else if (entry->temperature < min_temperature) {
+			min_temperature = entry->temperature;
+		} else if (entry->offset == UINT_LEAST8_MAX) {
+			break;
+		}
 	}
 	return entry;
 }

@@ -6,6 +6,8 @@
 #include <limits.h>
 #include <stdlib.h>
 
+const size_t WORD_SIZE = sizeof(void *) * CHAR_BIT;
+
 const char *const Z64C_COPYRIGHT = "Copyright (c) 2018-2019 Filippo Costa et al.";
 const char *const Z64C_LICENSE = "MPL-2.0";
 const char *const Z64C_RELEASE_DATE_ISO_8601 = BUILD_DATE_ISO_8601;
