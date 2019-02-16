@@ -5,11 +5,12 @@
 #include "eval/evaluator.h"
 #include "chess/position.h"
 #include "eval/eval.h"
+#include "utils.h"
 #include <stdint.h>
 
 struct Evaluator
 {
-	uint_fast64_t seed;
+	double seed;
 };
 
 struct Evaluator *
