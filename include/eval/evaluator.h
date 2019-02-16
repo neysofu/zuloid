@@ -6,7 +6,7 @@
 #define Z64C_EVAL_EVALUATOR_H
 
 #include "chess/position.h"
-#include "eval/eval.h"
+#include "eval/evaluation.h"
 
 struct Evaluator;
 
@@ -17,6 +17,8 @@ void
 evaluator_delete(struct Evaluator *evaluator);
 
 int
-evaluator_run(struct Evaluator *evaluator, struct Position *position, struct Eval *eval);
+evaluator_run(struct Evaluator *evaluator,
+              struct Position *position,
+              struct Evaluation *ptr);
 
 #endif
