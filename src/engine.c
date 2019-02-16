@@ -6,7 +6,7 @@
 #include "UGEI/methods.h"
 #include "cJSON/cJSON.h"
 #include "chess/position.h"
-#include "engine.h"
+#include "eval/evaluator.h"
 #include "jsonrpc_errors.h"
 #include "search/cache.h"
 #include "settings.h"
@@ -28,7 +28,7 @@ engine_new(void)
 		.game_clocks = { NULL, NULL },
 		.settings = SETTINGS_DEFAULT,
 		.cache = NULL,
-		.eval_function = NULL,
+		.evaluator = NULL,
 		.notifications_stream = stdout,
 		.mode = MODE_IDLE,
 		.exit_status = EXIT_SUCCESS,
@@ -45,6 +45,7 @@ engine_delete(struct Engine *engine)
 	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
 	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
 	cache_delete(engine->cache);
+	evaluator_delete(engine->evaluator);
 	free(engine);
 }
 

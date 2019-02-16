@@ -2,21 +2,21 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef Z64C_EVAL_EVALFN_H
-#define Z64C_EVAL_EVALFN_H
+#ifndef Z64C_EVAL_EVALUATOR_H
+#define Z64C_EVAL_EVALUATOR_H
 
 #include "chess/position.h"
 #include "eval/eval.h"
 
-struct EvalFn;
+struct Evaluator;
 
-struct EvalFn *
-evaln_new(void);
+struct Evaluator *
+evaluator_new(void);
 
 void
-evalfn_delete(struct EvalFn *evalfn);
+evaluator_delete(struct Evaluator *evaluator);
 
 int
-evalfn_run(struct EvalFn *evalfn, struct Position *position, struct Eval *eval);
+evaluator_run(struct Evaluator *evaluator, struct Position *position, struct Eval *eval);
 
 #endif
