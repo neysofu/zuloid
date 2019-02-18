@@ -8,46 +8,18 @@
 #include <string.h>
 
 void
-test_jsonrpc_error_response_to_unparsable_request(void)
+test_jsonrpc_compliance(void)
 {
 	struct Engine *engine = engine_new();
 	char *response = engine_call(engine, "spam");
 	TEST_ASSERT(response && strstr(response, "error"));
 	free(response);
-	free(engine);
-}
-
-void
-test_jsonrpc_error_response_to_invalid_request(void)
-{
-	struct Engine *engine = engine_new();
-	char *response = engine_call(engine, "{}");
+	response = engine_call(engine, "{}");
 	free(response);
-	free(engine);
-}
-
-void
-test_jsonrpc_response_with_id_to_invalid_request_with_id(void)
-{
-	struct Engine *engine = engine_new();
-	char *response = engine_call(engine, "{\"id\":42}");
+	response = engine_call(engine, "{\"id\":42}");
 	TEST_ASSERT(response && strstr(response, "42"));
 	free(response);
-	free(engine);
-}
-
-void
-test_jsonrpc_no_response_to_invalid_request_with_no_id(void)
-{
-	struct Engine *engine = engine_new();
 	TEST_ASSERT_NULL(engine_call(engine, "{\"method\":\"abcxyz\",\"params\":[]}"));
-	free(engine);
-}
-
-void
-test_jsonrpc_no_response_to_empty_request(void)
-{
-	struct Engine *engine = engine_new();
 	TEST_ASSERT_NULL(engine_call(engine, ""));
 	TEST_ASSERT_NULL(engine_call(engine, "\t \r\n"));
 	free(engine);

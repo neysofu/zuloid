@@ -7,31 +7,11 @@
 #include <stdlib.h>
 
 void
-test_string_is_whitespace_empty_string(void)
+test_whitespace_detection(void)
 {
 	TEST_ASSERT(string_is_whitespace(""));
-}
-
-void
-test_string_is_whitespace_many_kinds_of_whitespace(void)
-{
 	TEST_ASSERT(string_is_whitespace(" \v\t\r\n"));
-}
-
-void
-test_string_is_whitespace_partially_whitespace(void)
-{
 	TEST_ASSERT_FALSE(string_is_whitespace(" some spam"));
-}
-
-void
-test_string_is_whitespace_final_non_whitespace_character(void)
-{
 	TEST_ASSERT_FALSE(string_is_whitespace(" ."));
-}
-
-void
-test_string_is_whitespace_number_sign(void)
-{
 	TEST_ASSERT_FALSE(string_is_whitespace("#"));
 }

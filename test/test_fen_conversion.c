@@ -11,6 +11,7 @@
 #include <string.h>
 
 const char *const VALID_FEN[] = {
+	"rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
 	"1r2r1k1/p4ppp/1pn5/3Q4/8/5N1P/PP3PP1/R5K1 b - - 0 2",
 	"r3qbk1/pbp3pp/8/2p5/1rNnPP2/1PQPB3/2P3PP/R4R1K b - - 1 16",
 	"4r1k1/1bq1rp1p/p2p2p1/1p2b3/3BP3/P1P5/1P3QPP/1B2RR1K w - - 0 26",
@@ -37,7 +38,7 @@ const char *const VALID_FEN[] = {
 };
 
 void
-test_fen(void)
+test_fen_conversion(void)
 {
 	for (size_t i = 0; VALID_FEN[i][0]; i++) {
 		struct Position position;
@@ -46,12 +47,4 @@ test_fen(void)
 		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], fen);
 		free(fen);
 	}
-}
-
-void
-test_fen_init(void)
-{
-	char *fen = fen_new_from_position(&POSITION_DEFAULT);
-	TEST_ASSERT_EQUAL_STRING("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", fen);
-	free(fen);
 }
