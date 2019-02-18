@@ -66,7 +66,7 @@ engine_dispatch_call(struct Engine *engine,
 			engine_call_get(engine, params, response);
 			break;
 		case 0xbbb05418c88423aa: /* "init" */
-			engine_call_init(response);
+			engine_call_init(engine, params, response);
 			break;
 		case 0x71e6f6d1e157dbfe: /* "search" */
 			engine_call_search(engine, params, response);

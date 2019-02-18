@@ -5,9 +5,10 @@
 #include "cJSON/cJSON.h"
 #include "engine.h"
 #include "globals.h"
+#include <assert.h>
 
 void
-engine_call_init(cJSON *response)
+engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
 	cJSON *meta = cJSON_AddObjectToObject(result, "meta");

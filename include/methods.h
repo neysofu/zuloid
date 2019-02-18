@@ -10,16 +10,12 @@
 
 void
 engine_call_config(struct Engine *engine, const cJSON *params, cJSON *response);
-
 void
 engine_call_get(const struct Engine *engine, const cJSON *params, cJSON *response);
-
 void
-engine_call_init(cJSON *response);
-
+engine_call_init(struct Engine *engine, const cJSON *parms, cJSON *response);
 void
 engine_call_search(struct Engine *engine, const cJSON *parms, cJSON *response);
-
 void
 engine_call_setup(struct Engine *engine, const cJSON *parms, cJSON *response);
 
