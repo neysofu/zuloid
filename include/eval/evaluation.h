@@ -5,12 +5,14 @@
 #ifndef Z64C_EVAL_EVALUATION_H
 #define Z64C_EVAL_EVALUATION_H
 
+#include "chess/move.h"
 #include <stdint.h>
 
 struct Evaluation
 {
 	int_fast32_t score;
-	uint_fast32_t dispersion;
+	float dispersion;
+	struct Move candidate_moves[256];
 };
 
 #endif
