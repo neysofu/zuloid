@@ -8,6 +8,12 @@
 #include "chess/position.h"
 #include "eval/evaluation.h"
 
+enum BackEnd
+{
+	BACKEND_CPU,
+	BACKEND_OPENCL,
+};
+
 struct Evaluator;
 
 struct Evaluator *

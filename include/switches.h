@@ -5,7 +5,10 @@
 #ifndef Z64C_SWITCHES_H
 #define Z64C_SWITCHES_H
 
+#include "eval/evaluator.h"
+
+#define SWITCH_BACKEND BACKEND_CPU
 #define SWITCH_LOGGING
-/*#define SWITCH_OPENMP*/
+#define SWITCH_OPENMP
 
 #endif
