@@ -3,7 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "UGEI/methods.h"
+#include "methods.h"
 #include "cJSON/cJSON.h"
 #include "chess/position.h"
 #include "eval/evaluator.h"
