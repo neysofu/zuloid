@@ -40,6 +40,27 @@ string (TIMESTAMP BUILD_DATE_ISO_8601 "%Y-%m-%d")
 
 find_package (OpenCL REQUIRED)
 
+function (hexdump_resources target sources)
+	file (WRITE ${target} "")
+	foreach (source ${sources})
+		file (READ ${source} file_contents HEX)
+		get_filename_component (resource_name ${source} NAME_WE)
+		get_filename_component (resource_extension ${source} EXT)
+		string (REGEX REPLACE "([.])" "_" resource_extension ${resource_extension})
+		string (REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," file_contents ${file_contents})
+		file (APPEND ${target} "const unsigned char ${resource_name}${resource_extension}[] = {${file_contents}0};\n")
+	endforeach()
+endfunction ()
+
+# Resources hexdump
+# Triggers a CMake reconfiguration by adding resource files as dependencies.
+file (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/resources/")
+configure_file ("${SRC_DIR}/eval/opencl/network.cl" "${CMAKE_CURRENT_BINARY_DIR}/resources/")
+set (RESOURCE_FILES "${SRC_DIR}/eval/opencl/network.cl")
+set (RESOURCES_C "${CMAKE_CURRENT_BINARY_DIR}/resources.c")
+hexdump_resources ("${RESOURCES_C}" ${RESOURCE_FILES})
+add_library (RESOURCES STATIC "${RESOURCES_C}")
+
 # cJSON
 set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
@@ -55,7 +76,7 @@ file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
-target_link_libraries (Z64C_LIB cjson XXHASH ${OpenCL_LIBRARIES})
+target_link_libraries (Z64C_LIB cjson XXHASH ${OpenCL_LIBRARIES} RESOURCES)
 target_compile_definitions (Z64C_LIB PUBLIC
 	PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
 	BUILD_DATE_ISO_8601=\"${BUILD_DATE_ISO_8601}\"
