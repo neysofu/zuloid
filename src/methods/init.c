@@ -5,11 +5,18 @@
 #include "cJSON/cJSON.h"
 #include "engine.h"
 #include "globals.h"
+#include "jsonrpc_errors.h"
 #include <assert.h>
 
 void
 engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
+	engine->evaluator = evaluator_new();
+	// if (engine->evaluator->error) {
+	//	/** FIXME */
+	//	cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
+	//	return;
+	//}
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
 	cJSON *meta = cJSON_AddObjectToObject(result, "meta");
 	cJSON_AddStringToObject(meta, "copyright", Z64C_COPYRIGHT);
