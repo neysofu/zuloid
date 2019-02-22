@@ -381,6 +381,7 @@ real world IPC.
  * 902: "Undefined key"
 1000-1399: game-specific errors
  * 1000: "Invalid game logic"
+1400: "Mode error"
 
                             A note on extensibility
 

@@ -23,6 +23,8 @@ jsonrpc_error_default_message(enum JsonRpcError error)
 			return "Unsupported ruleset";
 		case JSONRPC_UNDEFINED_KEY:
 			return "Undefined key";
+		case JSONRPC_MODE_ERROR:
+			return "Mode error";
 		default:
 			return "Generic error";
 	}
