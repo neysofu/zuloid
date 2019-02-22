@@ -98,6 +98,8 @@ evaluator_delete(struct Evaluator *evaluator)
 	if (!evaluator) {
 		return;
 	}
+	clFlush(evaluator->queue);
+	clFinish(evaluator->queue);
 	clReleaseContext(evaluator->context);
 	clReleaseProgram(evaluator->program);
 	clReleaseCommandQueue(evaluator->queue);
