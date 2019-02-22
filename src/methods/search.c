@@ -4,10 +4,15 @@
 
 #include "cJSON/cJSON.h"
 #include "engine.h"
+#include "jsonrpc_errors.h"
 
 void
 engine_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
 {
+	if (engine->mode != MODE_IDLE) {
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_MODE_ERROR);
+		return;
+	}
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
-	cJSON *evaluation = cJSON_AddNumberToObject(result, "evaluation", 0);
+	cJSON *evaluation = cJSON_AddNumberToObject(result, "cp", 0);
 }
