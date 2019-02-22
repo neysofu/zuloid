@@ -14,7 +14,7 @@
 #include <CL/cl.h>
 #endif
 
-extern const char network_cl[];
+extern const char kernels_cl[];
 
 struct Kernels
 {
@@ -59,7 +59,7 @@ int
 evaluator_init_program(struct Evaluator *evaluator)
 {
 	int error;
-	char *sources[1] = { network_cl };
+	char *sources[1] = { kernels_cl };
 	evaluator->program = clCreateProgramWithSource(
 	  evaluator->context, 1, sources, NULL, &error);
 	clBuildProgram(evaluator->program, 0, NULL, NULL, NULL, NULL);

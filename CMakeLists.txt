@@ -53,7 +53,7 @@ endfunction ()
 
 # Resources hexdump
 set (RESOURCES_C "${CMAKE_CURRENT_BINARY_DIR}/resources.c")
-hexdump_resource ("${SRC_DIR}/eval/opencl/network.cl" ${RESOURCES_C})
+hexdump_resource ("${SRC_DIR}/eval/opencl/kernels.cl" ${RESOURCES_C})
 add_library (RESOURCES STATIC "${RESOURCES_C}")
 
 # cJSON
