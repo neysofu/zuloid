@@ -40,25 +40,20 @@ string (TIMESTAMP BUILD_DATE_ISO_8601 "%Y-%m-%d")
 
 find_package (OpenCL REQUIRED)
 
-function (hexdump_resources target sources)
-	file (WRITE ${target} "")
-	foreach (source ${sources})
-		file (READ ${source} file_contents HEX)
-		get_filename_component (resource_name ${source} NAME_WE)
-		get_filename_component (resource_extension ${source} EXT)
-		string (REGEX REPLACE "([.])" "_" resource_extension ${resource_extension})
-		string (REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," file_contents ${file_contents})
-		file (APPEND ${target} "const unsigned char ${resource_name}${resource_extension}[] = {${file_contents}0};\n")
-	endforeach()
+function (hexdump_resource source target)
+	# Triggers a CMake reconfiguration by adding resource files as dependencies.
+	configure_file ("${source}" "${CMAKE_CURRENT_BINARY_DIR}")
+	file (READ ${source} file_contents HEX)
+	get_filename_component (resource_name ${source} NAME_WE)
+	get_filename_component (resource_extension ${source} EXT)
+	string (REGEX REPLACE "([^a-zA-Z/d])" "_" resource_name "${resource_name}${resource_extension}")
+	string (REGEX REPLACE "([0-9a-f][0-9a-f])" "0x\\1," file_contents ${file_contents})
+	file (WRITE ${target} "const unsigned char ${resource_name}[] = {${file_contents}0};\n")
 endfunction ()
 
 # Resources hexdump
-# Triggers a CMake reconfiguration by adding resource files as dependencies.
-file (MAKE_DIRECTORY "${CMAKE_CURRENT_BINARY_DIR}/resources/")
-configure_file ("${SRC_DIR}/eval/opencl/network.cl" "${CMAKE_CURRENT_BINARY_DIR}/resources/")
-set (RESOURCE_FILES "${SRC_DIR}/eval/opencl/network.cl")
 set (RESOURCES_C "${CMAKE_CURRENT_BINARY_DIR}/resources.c")
-hexdump_resources ("${RESOURCES_C}" ${RESOURCE_FILES})
+hexdump_resource ("${SRC_DIR}/eval/opencl/network.cl" ${RESOURCES_C})
 add_library (RESOURCES STATIC "${RESOURCES_C}")
 
 # cJSON
