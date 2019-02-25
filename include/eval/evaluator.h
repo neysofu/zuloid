@@ -7,6 +7,7 @@
 
 #include "chess/position.h"
 #include "eval/evaluation.h"
+#include <stdio.h>
 
 enum BackEnd
 {
@@ -18,6 +19,12 @@ struct Evaluator;
 
 struct Evaluator *
 evaluator_new(void);
+
+int
+evaluator_save(struct Evaluator *evaluator, FILE *file);
+
+int
+evaluator_read(struct Evaluator *evaluator, FILE *file);
 
 void
 evaluator_delete(struct Evaluator *evaluator);

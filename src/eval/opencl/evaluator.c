@@ -7,6 +7,7 @@
 #include "eval/evaluation.h"
 #include "utils.h"
 #include <stdint.h>
+#include <stdio.h>
 
 #ifdef __APPLE__
 #include <OpenCL/cl.h>
@@ -60,8 +61,8 @@ evaluator_init_program(struct Evaluator *evaluator)
 {
 	int error;
 	char *sources[1] = { kernels_cl };
-	evaluator->program = clCreateProgramWithSource(
-	  evaluator->context, 1, sources, NULL, &error);
+	evaluator->program =
+	  clCreateProgramWithSource(evaluator->context, 1, sources, NULL, &error);
 	clBuildProgram(evaluator->program, 0, NULL, NULL, NULL, NULL);
 	return error;
 }
@@ -90,6 +91,18 @@ evaluator_new(void)
 	  clCreateCommandQueue(evaluator->context, evaluator->device, 0, &cl_error);
 	evaluator_init_kernels(evaluator);
 	return evaluator;
+}
+
+int
+evaluator_save(struct Evaluator *evaluator, FILE *file)
+{
+	return 0;
+}
+
+int
+evaluator_read(struct Evaluator *evaluator, FILE *file)
+{
+	return 0;
 }
 
 void

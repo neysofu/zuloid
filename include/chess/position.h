@@ -10,8 +10,8 @@
 
 #include "chess/castling.h"
 #include "chess/color.h"
-#include "chess/piece_types.h"
 #include "chess/coordinates.h"
+#include "chess/piece_types.h"
 #include <stdbool.h>
 #include <stdlib.h>
 
@@ -23,8 +23,8 @@ struct Position
 	bool is_en_passant_available;
 	Square en_passant_target;
 	CastlingRights castling_rights;
-	int_fast8_t reversible_moves_count;
-	int moves_count;
+	uint_fast8_t reversible_moves_count;
+	uint_fast32_t moves_count;
 };
 
 void

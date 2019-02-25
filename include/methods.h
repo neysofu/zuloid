@@ -18,5 +18,9 @@ void
 engine_call_search(struct Engine *engine, const cJSON *parms, cJSON *response);
 void
 engine_call_setup(struct Engine *engine, const cJSON *parms, cJSON *response);
+void
+engine_call_status(struct Engine *engine, const cJSON *parms, cJSON *response);
+void
+engine_call_stop(struct Engine *engine, const cJSON *parms, cJSON *response);
 
 #endif

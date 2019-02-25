@@ -75,6 +75,10 @@ engine_dispatch_call(struct Engine *engine,
 			engine_call_setup(engine, params, response);
 			break;
 		case 0xc641b2419f8a3ce1: /* "status" */
+			engine_call_status(engine, params, response);
+			break;
+		case 0xd8d95334d91f61fc: /* "stop" */
+			engine_call_stop(engine, params, response);
 			break;
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_METHOD);
