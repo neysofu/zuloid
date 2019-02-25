@@ -264,6 +264,29 @@ This method allows the Client to tune the Engine Program's parameters.
 
 								   ["search"]
 
+ With the ["search"] method, the Client is asking the Engine Program for an
+evaluation. The evaluation report will be found in the response object. How to
+search ad infinitum?
+
+	{
+		"$id": "#/methods/search/params",
+		"type": "object",
+		"properties": {
+			"pov": {
+				"type": "number"
+			},
+			"depth": {
+				"type": "number"
+			},
+			"nodes": {
+				"type": "number"
+			},
+			"mate": {
+				"type": "number"
+			}
+		}
+	}
+
 	{
         "$id": "#/methods/search/result",
         "type": "object",
@@ -276,6 +299,10 @@ This method allows the Client to tune the Engine Program's parameters.
 			},
 			"lines": {
 				"type": "array"
+			},
+			"time": {
+				"type": "enum",
+				"values": ""
 			}
         },
 	}
