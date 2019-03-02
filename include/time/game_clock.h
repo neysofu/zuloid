@@ -5,14 +5,15 @@
 #ifndef Z64C_TIME_GAME_CLOCK_H
 #define Z64C_TIME_GAME_CLOCK_H
 
+#include "tictoc/tictoc.h"
 #include "time/time_control.h"
 #include <stdint.h>
 
 struct GameClock
 {
-	msec_time time_left;
-	msec_time last_trigger;
-	uint_least16_t trigger_count;
+	float time_left_in_seconds;
+	TicTocTimer timer;
+	int moves_count;
 	struct TimeControl *time_control;
 };
 
@@ -22,7 +23,7 @@ game_clock_new(struct TimeControl *tc);
 void
 game_clock_delete(struct GameClock *gc);
 
-msec_time
+float
 game_clock_start(struct GameClock *gc);
 
 void

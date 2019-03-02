@@ -2,15 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef Z64C_CHESS_MOVE_GENERATOR_H
-#define Z64C_CHESS_MOVE_GENERATOR_H
+#include "eval/evaluation.h"
+#include <stdint.h>
 
-#include "chess/position.h"
-
-struct MoveGenerator
-{
-	struct Position *position;
-	Move moves[255];
+const struct Evaluation EVALUATION_EVEN = {
+	.centipawns = 0,
+	.dispersion = 0,
 };
-
-#endif

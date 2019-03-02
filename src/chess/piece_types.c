@@ -9,59 +9,43 @@
 #include <ctype.h>
 #include <stdbool.h>
 
-enum PieceType
-piece_type(Piece p)
-{
-	return p & 0x7;
-}
-
-Color
-piece_color(Piece p)
-{
-	return p >> 3;
-}
-
 char
-piece_to_char(Piece p)
+piece_to_char(struct Piece piece)
 {
-	assert(p <= PIECE_MAX);
-	return "PNBKR\0Q\0pnbkr\0q\0"[p];
+	return "pPnNbBkKrR\0\0qQ\0\0"[piece.piece_type + piece.color];
 }
 
-Piece
+struct Piece
 char_to_piece(char c)
 {
-	switch (c) {
-		case 'P':
-			return PIECE_TYPE_PAWN;
-		case 'N':
-			return PIECE_TYPE_KNIGHT;
-		case 'B':
-			return PIECE_TYPE_BISHOP;
-		case 'K':
-			return PIECE_TYPE_KING;
-		case 'R':
-			return PIECE_TYPE_ROOK;
-		case 'Q':
-			return PIECE_TYPE_QUEEN;
+	enum PieceType piece_type;
+	switch (tolower(c)) {
 		case 'p':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_PAWN;
+			piece_type = PIECE_TYPE_PAWN;
+			break;
 		case 'n':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_KNIGHT;
+			piece_type = PIECE_TYPE_KNIGHT;
+			break;
 		case 'b':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_BISHOP;
+			piece_type = PIECE_TYPE_BISHOP;
+			break;
 		case 'k':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_KING;
+			piece_type = PIECE_TYPE_KING;
+			break;
 		case 'r':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_ROOK;
-		case 'q':
-			return PIECE_COLOR_BLACK | PIECE_TYPE_QUEEN;
+			piece_type = PIECE_TYPE_ROOK;
+			break;
+		case 'Q':
+			piece_type = PIECE_TYPE_QUEEN;
+			break;
 		default:
-			return PIECE_TYPE_NONE;
+			piece_type = PIECE_TYPE_NONE;
+			break;
 	}
+	return (struct Piece){ .piece_type = piece_type, .color = islower(c) };
 }
 
-const Piece PIECE_MAX = PIECE_TYPE_QUEEN | PIECE_COLOR_BLACK;
+const struct Piece PIECE_NONE = { .piece_type = PIECE_TYPE_NONE, .color = COLOR_NONE };
 
 // Bitboard
 // rook_threats(Square sq)

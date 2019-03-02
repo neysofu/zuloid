@@ -9,29 +9,27 @@
 #include "eval/evaluation.h"
 #include <stdio.h>
 
-enum BackEnd
-{
-	BACKEND_CPU,
-	BACKEND_OPENCL,
-};
-
 struct Evaluator;
 
 struct Evaluator *
 evaluator_new(void);
 
-int
-evaluator_save(struct Evaluator *evaluator, FILE *file);
-
-int
-evaluator_read(struct Evaluator *evaluator, FILE *file);
-
 void
 evaluator_delete(struct Evaluator *evaluator);
 
 int
-evaluator_run(struct Evaluator *evaluator,
-              struct Position *position,
-              struct Evaluation *ptr);
+evaluator_import(struct Evaluator *evaluator, FILE *file);
+
+int
+evaluator_export(struct Evaluator *evaluator, FILE *file);
+
+int
+evaluator_load_positions(struct Evaluator *evaluator,
+                         struct Position *positions,
+                         size_t positions_count,
+                         struct Evaluation *ptr);
+
+int
+evaluator_run(struct Evaluator *evaluator);
 
 #endif

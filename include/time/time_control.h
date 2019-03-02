@@ -8,8 +8,6 @@
 #include "cJSON/cJSON.h"
 #include <stdint.h>
 
-typedef int_least64_t msec_time;
-
 /* A unilateral (i.e. for one player only) time control with support for increments,
  * delays, and transition to a different time control after a certain amount of
  * moves. All timestamps have millisecond precision.
@@ -22,12 +20,10 @@ typedef int_least64_t msec_time;
  *   https://www.chessprogramming.org/Time_Management#Time_Controls */
 struct TimeControl
 {
-	msec_time time_limit;
-	msec_time increment;
-	msec_time delay;
-	uint_least16_t max_trigger_count;
-	/* Support for multistage time controls as commonly seen in tournaments. The trigger
-	 * event is move n.`trigger_move`. */
+	float time_limit_in_seconds;
+	float increment_in_seconds;
+	float delay_in_seconds;
+	int max_moves_count;
 	struct TimeControl *next_time_control;
 	struct TimeControl *previous_time_control;
 	/* After main time is expired, this optional time control will kick in. It
@@ -44,14 +40,10 @@ struct TimeControl
  * - rapid (15+10), and
  * - classical (90+30 plus 30 extra minutes after move 40). */
 struct TimeControl *
-time_control_new_blitz(void);
-struct TimeControl *
-time_control_new_rapid(void);
-struct TimeControl *
-time_control_new_classical(void);
+time_control_new_bullet(void);
 
 struct TimeControl *
-time_control_new_from_json(struct cJSON *json);
+time_control_new_from_json(const cJSON *json);
 
 void
 time_control_delete(struct TimeControl *tc);

@@ -2,8 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "search/cache.h"
-#include "fast_range.h"
+#include "cache/cache.h"
+#include "cache/fast_range.h"
 #include "globals.h"
 #include "switches.h"
 #include <assert.h>
@@ -17,12 +17,20 @@
 
 const size_t CACHE_CELL_SIZE = 32;
 
+struct CacheSlot
+{
+	int_least32_t signature;
+	uint_least8_t offset;
+	uint_least8_t temperature;
+	struct CacheEntry entry;
+};
+
 struct Cache
 {
 	uint_fast8_t temperature_indicator;
 	double load_factor;
 	size_t size;
-	struct CacheEntry entries[];
+	struct CacheSlot slots[];
 };
 
 struct Cache *
@@ -31,9 +39,9 @@ cache_new(size_t size_in_bytes)
 	struct Cache *cache =
 	  malloc_or_exit(sizeof(struct Cache) + size_in_bytes + CACHE_CELL_SIZE);
 	*cache = (struct Cache){
-		.size = size_in_bytes / sizeof(struct CacheEntry),
+		.size = size_in_bytes / sizeof(struct CacheSlot),
 	};
-	memset(cache->entries, 0, size_in_bytes + CACHE_CELL_SIZE);
+	memset(cache->slots, 0, size_in_bytes + CACHE_CELL_SIZE);
 	return cache;
 }
 
@@ -62,17 +70,17 @@ cache_get(struct Cache *cache, const struct Position *position)
 			break;
 	}
 	uint_fast32_t signature = XXH32(position, sizeof(struct Position), 0);
-	struct CacheEntry *entry = &cache->entries[i];
-	for (size_t offset = 0; offset < CACHE_CELL_SIZE; offset++, entry++) {
-		if (entry->signature == 0) {
+	struct CacheSlot *slot = &cache->slots[i];
+	for (size_t offset = 0; offset < CACHE_CELL_SIZE; offset++, slot++) {
+		if (slot->signature == 0) {
 			/* Not found. Insert it. */
-			entry->signature = signature;
-			entry->offset = offset;
-			entry->temperature = offset;
-			return entry;
-		} else if (entry->signature == signature && entry->offset == offset) {
+			slot->signature = signature;
+			slot->offset = offset;
+			slot->temperature = offset;
+			return &slot->entry;
+		} else if (slot->signature == signature && slot->offset == offset) {
 			/* Found the right entry. */
-			return entry;
+			return &slot->entry;
 		}
 	}
 	/* The whole cell is filled up. Do some clean up and find it a spot. TODO. */

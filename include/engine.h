@@ -11,33 +11,28 @@
 #include "chess/position.h"
 #include "chess/termination.h"
 #include "eval/evaluator.h"
-#include "search/cache.h"
-#include "search/search_results.h"
+#include "cache/cache.h"
 #include "settings.h"
 #include "time/game_clock.h"
 #include <stdio.h>
 
 enum Mode
 {
-	/* The engine is sitting idle and waiting for commands. */
 	MODE_IDLE,
-	/* The engine is currently busy searching. */
 	MODE_SEARCH,
-	/* The engine is ready to exit. */
 	MODE_EXIT,
 };
 
 struct Engine
 {
 	struct Position position;
-	Color winner;
+	enum Color winner;
 	enum Termination termination;
 	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
 	struct GameClock *game_clocks[2];
 	struct Settings settings;
 	struct Cache *cache;
 	struct Evaluator *evaluator;
-	struct SearchResults search_results;
 	FILE *notifications_stream;
 	enum Mode mode;
 	int exit_status;

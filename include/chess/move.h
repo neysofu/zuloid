@@ -12,18 +12,15 @@
 
 struct Move
 {
-	Bitboard source;
-	Bitboard target;
-	Piece piece;
-	bool is_capture;
-	bool is_en_passant;
-	bool is_promotion;
+	Square source;
+	Square target;
+	enum PieceType promotion;
 };
 
 char *
-string_new_from_move(struct Move *mv);
+move_to_string(struct Move move);
 
 struct Move
-move_set_from_string(struct Move *mv, const char *s);
+string_to_move(const char *string);
 
 #endif

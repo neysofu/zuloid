@@ -3,12 +3,12 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "methods.h"
 #include "cJSON/cJSON.h"
+#include "cache/cache.h"
 #include "chess/position.h"
 #include "eval/evaluator.h"
 #include "jsonrpc_errors.h"
-#include "search/cache.h"
+#include "methods.h"
 #include "settings.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
@@ -88,8 +88,6 @@ engine_dispatch_call(struct Engine *engine,
 char *
 engine_call(struct Engine *engine, const char *str)
 {
-	assert(engine);
-	assert(str);
 	cJSON *request = cJSON_Parse(str);
 	cJSON *method = cJSON_GetObjectItem(request, "method");
 	cJSON *params = cJSON_GetObjectItem(request, "params");

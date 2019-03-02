@@ -11,9 +11,9 @@
 struct Settings
 {
 	/* This is the network port in use for engine clusters. */
-	uint_least32_t port;
+	int port;
 	/* The random seed. */
-	uint_least32_t seed;
+	int seed;
 	/* Random noise between 0 and 1 that is added to candidade moves' scores to
 	 * improve randomness. */
 	float move_selection_noise;

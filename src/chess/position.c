@@ -23,10 +23,10 @@
 #include <string.h>
 
 void
-position_set_piece_at_square(struct Position *position, Square square, Piece piece)
+position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
 {
 	Bitboard bitboard = square_to_bitboard(square);
-	enum PieceType ptype = piece_type(piece);
+	enum PieceType ptype = piece.piece_type;
 	switch (ptype) {
 		case PIECE_TYPE_NONE:
 			return;
@@ -35,47 +35,24 @@ position_set_piece_at_square(struct Position *position, Square square, Piece pie
 			position->occupancy_by_piece_type[PIECE_TYPE_ROOK] |= bitboard;
 			break;
 		default:
-			position->occupancy_by_piece_type[piece_type(piece)] |= bitboard;
+			position->occupancy_by_piece_type[piece.piece_type] |= bitboard;
 	}
-	position->occupancy_by_color[piece_color(piece)] |= bitboard;
+	position->occupancy_by_color[piece.color] |= bitboard;
 }
 
 void
-position_list_pieces_by_square(const struct Position *pos, Piece ptr[])
+position_list_pieces_by_square(const struct Position *position, struct Piece *ptr)
 {
-	assert(pos);
-	assert(ptr);
 	for (Square i = 0; i <= SQUARE_MAX; i++) {
 		Bitboard bb = square_to_bitboard(i);
-		ptr[i] = 0;
-		if (pos->occupancy_by_piece_type[PIECE_TYPE_KNIGHT] & bb) {
-			ptr[i] |= PIECE_TYPE_KNIGHT;
-		}
-		if (pos->occupancy_by_piece_type[PIECE_TYPE_BISHOP] & bb) {
-			ptr[i] |= PIECE_TYPE_BISHOP;
-		}
-		if (pos->occupancy_by_piece_type[PIECE_TYPE_KING] & bb) {
-			ptr[i] |= PIECE_TYPE_KING;
-		}
-		if (pos->occupancy_by_piece_type[PIECE_TYPE_ROOK] & bb) {
-			ptr[i] |= PIECE_TYPE_ROOK;
-		}
-		if (pos->occupancy_by_piece_type[PIECE_TYPE_PAWN] & bb) {
-			ptr[i] |= PIECE_TYPE_PAWN;
-		} else if (!ptr[i]) {
-			ptr[i] |= PIECE_TYPE_NONE;
-		}
-		if (pos->occupancy_by_color[COLOR_BLACK] & bb) {
-			ptr[i] |= PIECE_COLOR_BLACK;
-		}
+		ptr[i].color = position->occupancy_by_color[COLOR_BLACK] && bb;
 	}
 }
 
 void
-position_flip_side_to_move(struct Position *pos)
+position_flip_side_to_move(struct Position *position)
 {
-	assert(pos);
-	pos->side_to_move = color_other(pos->side_to_move);
+	position->side_to_move ^= 1;
 }
 
 const struct Position POSITION_DEFAULT = {

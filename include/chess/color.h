@@ -7,9 +7,7 @@
 
 #include "chess/coordinates.h"
 
-typedef int_fast8_t Color;
-
-enum
+enum Color
 {
 	COLOR_WHITE = 0,
 	COLOR_BLACK = 1,
@@ -17,21 +15,21 @@ enum
 };
 
 char
-color_to_char(Color color);
+color_to_char(enum Color color);
 
 Rank
-color_promoting_rank(Color color);
+color_promoting_rank(enum Color color);
 
 Rank
-color_home_rank(Color color);
+color_home_rank(enum Color color);
 
 Rank
-color_pawn_rank(Color color);
+color_pawn_rank(enum Color color);
 
 Rank
-color_en_passant_target_rank(Color color);
+color_en_passant_target_rank(enum Color color);
 
-Color
-color_other(Color color);
+enum Color
+color_other(enum Color color);
 
 #endif

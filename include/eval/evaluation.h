@@ -7,12 +7,22 @@
 
 #include "chess/move.h"
 #include <stdint.h>
+#include <stdlib.h>
 
 struct Evaluation
 {
-	int_fast32_t score;
+	float game_phase_indicator;
 	float dispersion;
-	struct Move candidate_moves[256];
+	float centipawns;
+	size_t moves_count;
+	struct
+	{
+		Square source;
+		Square target;
+	} * sliding_moves;
+	bool castling_oo;
+	bool castling_ooo;
+	bool en_passant;
 };
 
 #endif

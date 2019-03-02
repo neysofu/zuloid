@@ -6,38 +6,38 @@
 #include <assert.h>
 
 char
-color_to_char(Color color)
+color_to_char(enum Color color)
 {
 	assert(color != COLOR_NONE);
 	return color ? 'b' : 'w';
 }
 
 Rank
-color_promoting_rank(Color color) {
+color_promoting_rank(enum Color color) {
 	assert(color != COLOR_NONE);
 	return color ? 0 : 7;
 }
 
 Rank
-color_home_rank(Color color) {
+color_home_rank(enum Color color) {
 	assert(color != COLOR_NONE);
 	return color ? 7 : 0;
 }
 
 Rank
-color_pawn_rank(Color color) {
+color_pawn_rank(enum Color color) {
 	assert(color != COLOR_NONE);
 	return color ? 6 : 1;
 }
 
 Rank
-color_en_passant_target_rank(Color color) {
+color_en_passant_target_rank(enum Color color) {
 	assert(color != COLOR_NONE);
 	return color ? 2 : 5;
 }
 
-Color
-color_other(Color color)
+enum Color
+color_other(enum Color color)
 {
 	assert(color != COLOR_NONE);
 	return !color;

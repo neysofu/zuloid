@@ -122,9 +122,7 @@ evaluator_delete(struct Evaluator *evaluator)
 }
 
 int
-evaluator_run(struct Evaluator *evaluator,
-              struct Position *position,
-              struct Evaluation *ptr)
+evaluator_run(struct Evaluator *evaluator)
 {
 	clFinish(evaluator->queue);
 	return 0;

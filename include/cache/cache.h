@@ -14,15 +14,8 @@
  * It is optimized for costly cache misses and low memory overhead. */
 struct Cache;
 
-/* Each entry must have enough to: find out if it's dispersive enough. Find out
- * if it must be kept at all times. IDEA: on each fetch, the poorest entry will
- * be discarded. The hotter the entries, the more they will be close to their
- * original spot. */
 struct CacheEntry
 {
-	int_least32_t signature;
-	uint_least8_t offset;
-	uint_least8_t temperature;
 	uint_least8_t evaluation;
 	uint_least8_t dispersion;
 };

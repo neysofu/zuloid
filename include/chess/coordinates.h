@@ -29,13 +29,13 @@ typedef int_fast8_t Rank;
 typedef int_fast8_t Square;
 typedef uint_fast64_t Bitboard;
 
-static const File FILE_MAX = 07;
-static const Rank RANK_MAX = 07;
-static const Square SQUARE_MAX = 077;
+static const File FILE_MAX = 7;
+static const Rank RANK_MAX = 7;
+static const Square SQUARE_MAX = 63;
 
-static const File FILE_NONE = 010;
-static const Rank RANK_NONE = 010;
-static const Square SQUARE_NONE = 0110;
+static const File FILE_NONE = -1;
+static const Rank RANK_NONE = -1;
+static const Square SQUARE_NONE = -1;
 
 char
 file_to_char(File f);

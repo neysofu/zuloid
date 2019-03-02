@@ -27,6 +27,7 @@
  *   5 = | spaces
  * -----
  *  92 plus some extra safety space. */
+
 enum
 {
 	FEN_SIZE = 127
@@ -40,14 +41,14 @@ fen_new_from_position(const struct Position *position)
 	assert(position);
 	char *fen = malloc_or_exit(FEN_SIZE);
 	char *fen_copy = fen;
-	Piece pieces_by_square[64];
+	struct Piece pieces_by_square[64];
 	position_list_pieces_by_square(position, pieces_by_square);
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		size_t free_files_count = 0;
 		for (File file = 0; file <= FILE_MAX; file++) {
 			Square square = square_new(file, rank);
-			Piece piece = pieces_by_square[square];
-			if (PIECE_TYPE_NONE == piece) {
+			struct Piece piece = pieces_by_square[square];
+			if (piece.piece_type == PIECE_TYPE_NONE) {
 				if (free_files_count++) {
 					*(fen - 1) += 1;
 				} else {
@@ -88,7 +89,7 @@ fen_new_from_position(const struct Position *position)
 		*fen++ = '-';
 	}
 	*fen++ = ' ';
-	snprintf(fen, 12, "%d %d", position->reversible_moves_count, position->moves_count);
+	snprintf(fen, 12, "%zu %zu", position->reversible_moves_count, position->moves_count);
 	return fen_copy;
 }
 

@@ -19,33 +19,27 @@ struct Position
 {
 	Bitboard occupancy_by_color[2];
 	Bitboard occupancy_by_piece_type[CORE_PIECE_TYPES_COUNT];
-	Color side_to_move;
+	enum Color side_to_move;
 	bool is_en_passant_available;
 	Square en_passant_target;
 	CastlingRights castling_rights;
-	uint_fast8_t reversible_moves_count;
-	uint_fast32_t moves_count;
+	size_t reversible_moves_count;
+	size_t moves_count;
 };
 
 void
-position_set_piece_at_square(struct Position *position, Square square, Piece piece);
+position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
 
 void
-position_list_pieces_by_square(const struct Position *position, Piece ptr[]);
+position_list_pieces_by_square(const struct Position *position, struct Piece ptr[]);
 
-Color
-position_color_at(const struct Position *pos, Square sq);
-
-void
-position_flip_side_to_move(struct Position *pos);
-
-size_t
-position_generate_legal_moves(const struct Position *pos);
+enum Color
+position_color_at(const struct Position *position, Square square);
 
 // Returns the lowercase letter that FEN uses to represent the piece at 'coord';
 // if none, returns ".".
 char
-position_square_to_char(const struct Position *pos, Square sq);
+position_square_to_char(const struct Position *position, Square square);
 
 extern const struct Position POSITION_DEFAULT;
 extern const struct Position POSITION_EMPTY;

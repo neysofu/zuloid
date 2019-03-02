@@ -5,7 +5,7 @@
 #ifndef Z64C_TIME_TIME_MANAGER_H
 #define Z64C_TIME_TIME_MANAGER_H
 
-msec_time
-game_clock_estimate_thinking_time(struct GameClock *game_clock, int moves_count);
+float
+game_clock_estimate_thinking_time_in_seconds(struct GameClock *game_clock, int moves_count);
 
 #endif
