@@ -7,3 +7,6 @@
 [submodule "lib/Unity"]
 	path = lib/Unity
 	url = https://github.com/ThrowTheSwitch/Unity
+[submodule "lib/tictoc"]
+	path = lib/tictoc
+	url = https://github.com/neysofu/tictoc
