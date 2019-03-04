@@ -42,23 +42,21 @@ malloc_or_exit(size_t size)
 bool
 string_is_whitespace(const char *string)
 {
-	assert(string);
 	while (isspace(*string)) {
 		string++;
 	}
-	return '\0' == *string;
+	return *string == '\0';
 }
 
 char *
 read_line_from_stream(FILE *stream)
 {
-	assert(stream);
 	size_t str_length = 0;
 	size_t str_max_length = 64;
 	char *str = malloc_or_exit(str_max_length);
 	char c;
 	do {
-		c = fgetc(stdin);
+		c = fgetc(stream);
 		if (c == EOF) {
 			free(str);
 			return NULL;

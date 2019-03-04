@@ -6,15 +6,13 @@
 #include "cJSON/cJSON.h"
 #include "cache/cache.h"
 #include "chess/position.h"
-#include "eval/evaluator.h"
+#include "core/evaluator.h"
 #include "jsonrpc_errors.h"
 #include "methods.h"
 #include "settings.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
-#include <assert.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
 
 struct Engine *

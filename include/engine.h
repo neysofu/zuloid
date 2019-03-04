@@ -10,7 +10,7 @@
 
 #include "chess/position.h"
 #include "chess/termination.h"
-#include "eval/evaluator.h"
+#include "core/evaluator.h"
 #include "cache/cache.h"
 #include "settings.h"
 #include "time/game_clock.h"

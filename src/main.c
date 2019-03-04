@@ -48,7 +48,7 @@ print_welcome_message(void)
 {
 	printf("# Welcome to Z64C %s (%s)\n", Z64C_VERSION, Z64C_RELEASE_DATE_ISO_8601);
 	printf("# backend = CPU\n");
-	printf("# word size = %zu\n", WORD_SIZE);
+	printf("# word size = %d\n", WORD_SIZE);
 	struct PID pid = get_pid();
 	if (pid.success) {
 		printf("# PID = %d\n", pid.value);

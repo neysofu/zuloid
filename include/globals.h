@@ -7,7 +7,7 @@
 
 #include <stdlib.h>
 
-extern const size_t WORD_SIZE;
+extern const int WORD_SIZE;
 
 extern const char *const Z64C_COPYRIGHT;
 extern const char *const Z64C_LICENSE;

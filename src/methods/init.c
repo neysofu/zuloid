@@ -12,6 +12,8 @@ void
 engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	engine->evaluator = evaluator_new();
+	engine->game_clocks[COLOR_WHITE] = game_clock_new(time_control_new_bullet());
+	engine->game_clocks[COLOR_BLACK] = game_clock_new(time_control_new_bullet());
 	// if (engine->evaluator->error) {
 	//	/** FIXME */
 	//	cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);

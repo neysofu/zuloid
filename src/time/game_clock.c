@@ -29,7 +29,13 @@ float
 game_clock_start(struct GameClock *gc)
 {
 	gc->timer = tic();
-	return gc->time_left_in_seconds;
+	float time_left_in_seconds = gc->time_left_in_seconds;
+	struct TimeControl *overtime = gc->time_control->overtime;
+	while (overtime) {
+		time_left_in_seconds += overtime->time_limit_in_seconds;
+		overtime = overtime->overtime;
+	}
+	return time_left_in_seconds;
 }
 
 void
