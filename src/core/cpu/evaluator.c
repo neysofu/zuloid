@@ -3,24 +3,48 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "core/evaluator.h"
+#include "cJSON/cJSON.h"
 #include "chess/position.h"
 #include "core/cpu/evaluation.h"
 #include "utils.h"
+#include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
 
 struct Evaluator
 {
-	void *file_buffer;
-	size_t layers_count;
-	int_least32_t **weights;
+	FILE *import;
+	size_t tensors_count;
+	struct Tensor **tensors;
 };
+
+struct Tensor
+{
+	size_t weights_count;
+	int_least32_t *weights;
+};
+
+struct Tensor *
+tensor_new_from_json(cJSON *value)
+{
+	cJSON *weights = cJSON_GetObjectItem(value, "weights");
+	struct Tensor *tensor = malloc_or_exit(sizeof(struct Tensor));
+	tensor->weights_count = cJSON_GetArraySize(weights);
+	tensor->weights = malloc_or_exit(sizeof(int_least32_t) * tensor->weights_count);
+	weights = weights->child;
+	for (size_t i = 0; i < tensor->weights_count; i++) {
+		tensor->weights[i] = weights->valuedouble;
+		weights = weights->next;
+	}
+	return tensor;
+}
 
 struct Evaluator *
 evaluator_new(void)
 {
 	struct Evaluator *evaluator = malloc_or_exit(sizeof(struct Evaluator));
-	evaluator->file_buffer = NULL;
+	evaluator->tensors_count = 0;
+	evaluator->tensors = NULL;
 	return evaluator;
 }
 
@@ -30,7 +54,7 @@ evaluator_delete(struct Evaluator *evaluator)
 	if (!evaluator) {
 		return;
 	}
-	free(evaluator->file_buffer);
+	free(evaluator->tensors);
 	free(evaluator);
 }
 
@@ -43,8 +67,13 @@ evaluator_import(struct Evaluator *evaluator, const char *path)
 	}
 	fseek(stream, 0, SEEK_END);
 	size_t file_length = ftell(stream);
-	evaluator->file_buffer = malloc_or_exit(file_length);
-	fread(evaluator->file_buffer, 1, file_length, stream);
+	char *buffer = malloc_or_exit(file_length);
+	fread(buffer, 1, file_length, stream);
 	fclose(stream);
+	cJSON *json = cJSON_Parse(buffer);
+	cJSON *tensor_0 = cJSON_GetObjectItem(json, "tensor_0");
+	evaluator->tensors_count = 1;
+	evaluator->tensors = malloc_or_exit(sizeof(struct Tensor *) * evaluator->tensors_count);
+	evaluator->tensors[0] = tensor_new_from_json(tensor_0);
 	return 0;
 }

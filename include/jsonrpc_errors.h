@@ -16,10 +16,14 @@ enum JsonRpcError
 	JSONRPC_INVALID_REQUEST = -32600,
 	/* UGEI-specific. */
 	JSONRPC_GENERIC_ERROR = 0,
+	JSONRPC_OOM = 21,
 	JSONRPC_UNSUPPORTED_RULESET = 900,
 	JSONRPC_UNDEFINED_KEY = 902,
 	JSONRPC_MODE_ERROR = 1400,
 };
+
+const char *
+jsonrpc_error_default_message(enum JsonRpcError error);
 
 CJSON_PUBLIC(cJSON *)
 cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError);

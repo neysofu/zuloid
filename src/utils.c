@@ -4,8 +4,8 @@
 
 #include "utils.h"
 #include "globals.h"
+#include "jsonrpc_errors.h"
 #include "switches.h"
-#include <assert.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -25,12 +25,11 @@ exit_if_null(void *ptr)
 {
 	if (ptr) {
 		return ptr;
-	} else {
-		puts(
-		  "\t{\"jsonrpc\":\"2.0\",\"id\":null,\"error\":{\"code\":21,\"message\":\"Out-of-"
-		  "memory condition\"}}");
-		exit(EXIT_FAILURE);
 	}
+	printf("\t{\"error\":{\"code\":%d,\"message\":\"%s\"},\"id\":null,\"jsonrpc\":2.0}\n",
+	       JSONRPC_OOM,
+	       jsonrpc_error_default_message(JSONRPC_OOM));
+	exit(EXIT_FAILURE);
 }
 
 void *

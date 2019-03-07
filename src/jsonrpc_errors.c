@@ -19,6 +19,8 @@ jsonrpc_error_default_message(enum JsonRpcError error)
 			return "Invalid Request";
 		case JSONRPC_GENERIC_ERROR:
 			return "Generic error";
+		case JSONRPC_OOM:
+			return "Out-of-memory condition";
 		case JSONRPC_UNSUPPORTED_RULESET:
 			return "Unsupported ruleset";
 		case JSONRPC_UNDEFINED_KEY:

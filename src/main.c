@@ -23,13 +23,11 @@ main(void)
 	cJSON_InitHooks(&(cJSON_Hooks){ malloc_or_exit, free });
 	struct Engine *engine = engine_new();
 	print_welcome_message();
-#ifdef SWITCH_INIT_IMMEDIATELY
-	engine_call(engine, "{\"method\":\"init\"}");
-#endif
+	printf("# Copy and paste to init:\n");
+	printf("# {\"method\":\"init\",\"id\":0}\n");
 	while (engine->mode != MODE_EXIT) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
-			/* EOF. */
 			engine_delete(engine);
 			return EXIT_SUCCESS;
 		}
@@ -44,6 +42,12 @@ main(void)
 	int exit_status = engine->exit_status;
 	engine_delete(engine);
 	return exit_status;
+}
+
+void
+print_jsonrpc_response(const char *response)
+{
+	printf("\t%s\n", response);
 }
 
 static void

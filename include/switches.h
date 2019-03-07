@@ -13,7 +13,6 @@ enum
 
 #define SWITCH_BACKEND BACKEND_CPU
 #define SWITCH_LOGGING
-#define SWITCH_INIT_IMMEDIATELY
 #define SWITCH_OPENMP
 
 #endif
