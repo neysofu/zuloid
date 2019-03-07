@@ -16,9 +16,9 @@ void
 evaluator_delete(struct Evaluator *evaluator);
 
 int
-evaluator_import(struct Evaluator *evaluator, FILE *file);
+evaluator_import(struct Evaluator *evaluator, const char *path);
 
 int
-evaluator_export(struct Evaluator *evaluator, FILE *file);
+evaluator_export(struct Evaluator *evaluator, const char *path);
 
 #endif

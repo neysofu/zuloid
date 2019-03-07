@@ -23,6 +23,9 @@ main(void)
 	cJSON_InitHooks(&(cJSON_Hooks){ malloc_or_exit, free });
 	struct Engine *engine = engine_new();
 	print_welcome_message();
+#ifdef SWITCH_INIT_IMMEDIATELY
+	engine_call(engine, "{\"method\":\"init\"}");
+#endif
 	while (engine->mode != MODE_EXIT) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
