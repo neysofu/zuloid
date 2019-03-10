@@ -11,7 +11,6 @@ enum Color
 {
 	COLOR_WHITE = 0,
 	COLOR_BLACK = 1,
-	COLOR_NONE = -1,
 };
 
 char

@@ -26,8 +26,6 @@ enum Mode
 struct Engine
 {
 	struct Position position;
-	enum Color winner;
-	enum Termination termination;
 	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
 	struct TimeControl *time_controls[2];
 	struct GameClock *game_clocks[2];

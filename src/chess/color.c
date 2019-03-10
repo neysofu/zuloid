@@ -3,42 +3,35 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/color.h"
-#include <assert.h>
 
 char
 color_to_char(enum Color color)
 {
-	assert(color != COLOR_NONE);
 	return color ? 'b' : 'w';
 }
 
 Rank
 color_promoting_rank(enum Color color) {
-	assert(color != COLOR_NONE);
 	return color ? 0 : 7;
 }
 
 Rank
 color_home_rank(enum Color color) {
-	assert(color != COLOR_NONE);
 	return color ? 7 : 0;
 }
 
 Rank
 color_pawn_rank(enum Color color) {
-	assert(color != COLOR_NONE);
 	return color ? 6 : 1;
 }
 
 Rank
 color_en_passant_target_rank(enum Color color) {
-	assert(color != COLOR_NONE);
 	return color ? 2 : 5;
 }
 
 enum Color
 color_other(enum Color color)
 {
-	assert(color != COLOR_NONE);
 	return !color;
 }

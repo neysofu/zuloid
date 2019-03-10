@@ -26,23 +26,6 @@ engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 		case 0x63f596aaf1c3bed7: /* FEN */
 			value = cJSON_CreateString(fen_new_from_position(&engine->position));
 			break;
-		case 0x919aee5c3985d5bc: /* "result" */
-			if (engine->termination == TERMINATION_NONE) {
-				value = cJSON_CreateNull();
-			} else {
-				switch (engine->winner) {
-					case COLOR_WHITE:
-						value = cJSON_CreateNumber(2);
-						break;
-					case COLOR_BLACK:
-						value = cJSON_CreateNumber(0);
-						break;
-					default:
-						value = cJSON_CreateNull();
-						break;
-				}
-			}
-			break;
 		case 0x46f9bde5468e310a: /* "move_selection_noise" */
 			value = cJSON_CreateNumber(engine->settings.move_selection_noise);
 			break;

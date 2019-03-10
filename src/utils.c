@@ -5,7 +5,7 @@
 #include "utils.h"
 #include "globals.h"
 #include "jsonrpc_errors.h"
-#include "switches.h"
+#include <assert.h>
 #include <ctype.h>
 #include <limits.h>
 #include <stdarg.h>
@@ -41,6 +41,7 @@ malloc_or_exit(size_t size)
 bool
 string_is_whitespace(const char *string)
 {
+	assert(string);
 	while (isspace(*string)) {
 		string++;
 	}
@@ -50,6 +51,7 @@ string_is_whitespace(const char *string)
 char *
 read_line_from_stream(FILE *stream)
 {
+	assert(stream);
 	size_t str_length = 0;
 	size_t str_max_length = 64;
 	char *str = malloc_or_exit(str_max_length);
@@ -75,11 +77,11 @@ get_pid(void)
 	return (struct PID)
 	{
 #if defined(__unix__) || defined(_POSIX_VERSION)
-		getpid(), true,
+		true, getpid(),
 #elif defined(_WIN32)
-		GetCurrentProcessId(), true,
+		true, GetCurrentProcessId(),
 #else
-		0, false,
+		false, 0,
 #endif
 	};
 }

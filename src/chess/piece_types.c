@@ -45,7 +45,7 @@ char_to_piece(char c)
 	return (struct Piece){ .piece_type = piece_type, .color = islower(c) };
 }
 
-const struct Piece PIECE_NONE = { .piece_type = PIECE_TYPE_NONE, .color = COLOR_NONE };
+const struct Piece PIECE_NONE = { .piece_type = PIECE_TYPE_NONE, .color = COLOR_WHITE };
 
 // Bitboard
 // rook_threats(Square sq)

@@ -12,6 +12,7 @@
 #include "settings.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -21,8 +22,6 @@ engine_new(void)
 	struct Engine *engine = malloc_or_exit(sizeof(struct Engine));
 	*engine = (struct Engine){
 		.position = POSITION_DEFAULT,
-		.winner = COLOR_NONE,
-		.termination = TERMINATION_NONE,
 		.time_controls = { NULL, NULL },
 		.game_clocks = { NULL, NULL },
 		.settings = SETTINGS_DEFAULT,
@@ -54,6 +53,8 @@ engine_dispatch_call(struct Engine *engine,
                      cJSON *response,
                      const char *method)
 {
+	assert(engine);
+	assert(method);
 	switch (XXH64(method, strlen(method), 0)) {
 		case 0x284938c798d362a8: /* "config" */
 			engine_call_config(engine, params, response);
@@ -87,6 +88,8 @@ engine_dispatch_call(struct Engine *engine,
 char *
 engine_call(struct Engine *engine, const char *str)
 {
+	assert(engine);
+	assert(str);
 	cJSON *request = cJSON_Parse(str);
 	cJSON *method = cJSON_GetObjectItem(request, "method");
 	cJSON *params = cJSON_GetObjectItem(request, "params");

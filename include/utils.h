@@ -36,8 +36,8 @@ read_line_from_stream(FILE *stream);
 
 struct PID
 {
-	int value;
 	bool success;
+	int value;
 };
 
 struct PID

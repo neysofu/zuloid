@@ -32,7 +32,7 @@ jsonrpc_error_default_message(enum JsonRpcError error)
 	}
 }
 
-CJSON_PUBLIC(cJSON *)
+cJSON *
 cJSON_AddJsonRpcErrorToObject(cJSON *object, enum JsonRpcError error)
 {
 	if (!object) {
