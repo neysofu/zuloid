@@ -34,25 +34,25 @@ char_to_rank(char c)
 }
 
 File
-square_file(Square sq)
+square_file(Square square)
 {
-	return sq >> 3;
+	return square >> 3;
 }
 
 Rank
-square_rank(Square sq)
+square_rank(Square square)
 {
-	return sq & 0x7;
+	return square & 0x7;
 }
 
 Bitboard
-square_to_bitboard(Square sq)
+square_to_bitboard(Square square)
 {
-	return 1ULL << sq;
+	return 1ULL << square;
 }
 
 Square
-square_new(File f, Rank r)
+square_new(File file, Rank rank)
 {
-	return f << 3 | r;
+	return file << 3 | rank;
 }
