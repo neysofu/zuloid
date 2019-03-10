@@ -9,7 +9,7 @@
 #include <stdlib.h>
 
 struct GameClock *
-game_clock_new(struct TimeControl *tc)
+game_clock_new(const struct TimeControl *tc)
 {
 	struct GameClock *gc = malloc_or_exit(sizeof(struct GameClock));
 	gc->time_left_in_seconds = tc->time_limit_in_seconds;

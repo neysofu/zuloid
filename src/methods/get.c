@@ -38,7 +38,7 @@ engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 						value = cJSON_CreateNumber(0);
 						break;
 					default:
-						value = cJSON_CreateNumber(1);
+						value = cJSON_CreateNull();
 						break;
 				}
 			}

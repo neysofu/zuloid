@@ -29,6 +29,7 @@ struct Engine
 	enum Color winner;
 	enum Termination termination;
 	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
+	struct TimeControl *time_controls[2];
 	struct GameClock *game_clocks[2];
 	struct Settings settings;
 	struct Cache *cache;

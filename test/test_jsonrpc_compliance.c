@@ -15,9 +15,11 @@ test_jsonrpc_compliance(void)
 	TEST_ASSERT(response && strstr(response, "error"));
 	free(response);
 	response = engine_call(engine, "{}");
+	TEST_ASSERT(response && strstr(response, "error"));
 	free(response);
 	response = engine_call(engine, "{\"id\":42}");
 	TEST_ASSERT(response && strstr(response, "42"));
+	TEST_ASSERT(response && strstr(response, "error"));
 	free(response);
 	TEST_ASSERT_NULL(engine_call(engine, "{\"method\":\"abcxyz\",\"params\":[]}"));
 	TEST_ASSERT_NULL(engine_call(engine, ""));

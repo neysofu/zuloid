@@ -4,16 +4,20 @@
 
 #include "cJSON/cJSON.h"
 #include "engine.h"
+#include "utils.h"
 
 void
 engine_call_status(struct Engine *engine, const cJSON *params, cJSON *response)
 {
+	UNUSED(params);
 	char *mode;
 	switch (engine->mode) {
 		case MODE_IDLE:
 			mode = "idle";
 		case MODE_SEARCH:
 			mode = "searching";
+		case MODE_EXIT:
+			mode = "exiting";
 		default:
 			mode = "?";
 	}

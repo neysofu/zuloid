@@ -10,41 +10,21 @@
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 struct Evaluator
 {
-	FILE *import;
-	size_t tensors_count;
-	struct Tensor **tensors;
+	FILE *source;
+	size_t layer_0_weights_count;
+	int_least64_t *layer_0_weights;
 };
-
-struct Tensor
-{
-	size_t weights_count;
-	int_least32_t *weights;
-};
-
-struct Tensor *
-tensor_new_from_json(cJSON *value)
-{
-	cJSON *weights = cJSON_GetObjectItem(value, "weights");
-	struct Tensor *tensor = malloc_or_exit(sizeof(struct Tensor));
-	tensor->weights_count = cJSON_GetArraySize(weights);
-	tensor->weights = malloc_or_exit(sizeof(int_least32_t) * tensor->weights_count);
-	weights = weights->child;
-	for (size_t i = 0; i < tensor->weights_count; i++) {
-		tensor->weights[i] = weights->valuedouble;
-		weights = weights->next;
-	}
-	return tensor;
-}
 
 struct Evaluator *
 evaluator_new(void)
 {
 	struct Evaluator *evaluator = malloc_or_exit(sizeof(struct Evaluator));
-	evaluator->tensors_count = 0;
-	evaluator->tensors = NULL;
+	evaluator->layer_0_weights_count = 0;
+	evaluator->layer_0_weights = NULL;
 	return evaluator;
 }
 
@@ -54,7 +34,7 @@ evaluator_delete(struct Evaluator *evaluator)
 	if (!evaluator) {
 		return;
 	}
-	free(evaluator->tensors);
+	free(evaluator->layer_0_weights);
 	free(evaluator);
 }
 
@@ -71,9 +51,27 @@ evaluator_import(struct Evaluator *evaluator, const char *path)
 	fread(buffer, 1, file_length, stream);
 	fclose(stream);
 	cJSON *json = cJSON_Parse(buffer);
-	cJSON *tensor_0 = cJSON_GetObjectItem(json, "tensor_0");
-	evaluator->tensors_count = 1;
-	evaluator->tensors = malloc_or_exit(sizeof(struct Tensor *) * evaluator->tensors_count);
-	evaluator->tensors[0] = tensor_new_from_json(tensor_0);
+	cJSON *layer_0 = cJSON_GetObjectItem(json, "layer_0");
+	evaluator->layer_0_weights_count = cJSON_GetArraySize(layer_0);
+	evaluator->layer_0_weights =
+	  malloc_or_exit(sizeof(int_least64_t) * evaluator->layer_0_weights_count);
+	size_t i = 0;
+	cJSON *weight;
+	cJSON_ArrayForEach(weight, layer_0)
+	{
+		evaluator->layer_0_weights[i] = strtoull(weight->valuestring, NULL, 10);
+		i++;
+	}
+	return 0;
+}
+
+int
+evaluator_export(struct Evaluator *evaluator, const char *path)
+{
+	FILE *stream = fopen(path, "wb");
+	if (!stream) {
+		return -1;
+	}
+	fclose(stream);
 	return 0;
 }

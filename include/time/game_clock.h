@@ -18,7 +18,7 @@ struct GameClock
 };
 
 struct GameClock *
-game_clock_new(struct TimeControl *tc);
+game_clock_new(const struct TimeControl *tc);
 
 void
 game_clock_delete(struct GameClock *gc);

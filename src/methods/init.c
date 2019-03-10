@@ -6,14 +6,17 @@
 #include "engine.h"
 #include "globals.h"
 #include "jsonrpc_errors.h"
+#include "utils.h"
 #include <assert.h>
 
 void
 engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
+	UNUSED(params);
 	engine->evaluator = evaluator_new();
-	engine->game_clocks[COLOR_WHITE] = game_clock_new(time_control_new_bullet());
-	engine->game_clocks[COLOR_BLACK] = game_clock_new(time_control_new_bullet());
+	engine->time_controls[COLOR_WHITE] = time_control_new_bullet();
+	engine->game_clocks[COLOR_WHITE] = game_clock_new(engine->time_controls[COLOR_WHITE]);
+	engine->game_clocks[COLOR_BLACK] = game_clock_new(engine->time_controls[COLOR_WHITE]);
 	// if (engine->evaluator->error) {
 	//	/** FIXME */
 	//	cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);

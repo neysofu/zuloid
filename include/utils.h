@@ -9,16 +9,18 @@
 #include <stdbool.h>
 #include <stdio.h>
 
-#ifdef SWITCH_LOGGING
+#ifdef NDEBUG
+#define LOGF(...)
+#else
 #define LOGF(...)                                                                          \
 	do {                                                                                   \
 		printf("# %s:%s:%d -- ", &__FILE__[PROJECT_DIR_LENGTH], __func__, __LINE__);       \
 		printf(__VA_ARGS__);                                                               \
 		putchar('\n');                                                                     \
 	} while (0)
-#else
-#define LOGF(...)
 #endif
+
+#define UNUSED(...) (void)(__VA_ARGS__)
 
 void *
 exit_if_null(void *ptr);

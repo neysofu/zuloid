@@ -18,4 +18,14 @@ engine_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
 	float available_time_in_seconds = game_clock_start(gc);
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
 	cJSON *evaluation = cJSON_AddNumberToObject(result, "cp", 0);
+	int_least64_t features[] = {
+		engine->position.occupancy_by_color[COLOR_WHITE],
+		engine->position.occupancy_by_color[COLOR_BLACK],
+		engine->position.occupancy_by_color[engine->position.side_to_move],
+		engine->position.occupancy_by_piece_type[PIECE_TYPE_PAWN],
+		engine->position.occupancy_by_piece_type[PIECE_TYPE_KNIGHT],
+		engine->position.occupancy_by_piece_type[PIECE_TYPE_BISHOP],
+		engine->position.occupancy_by_piece_type[PIECE_TYPE_KING],
+		engine->position.occupancy_by_piece_type[PIECE_TYPE_ROOK],
+	};
 }

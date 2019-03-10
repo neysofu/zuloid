@@ -4,10 +4,10 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-static size_t
+size_t
 fast_range_32(uint_fast32_t x, size_t range);
 
-static size_t
+size_t
 fast_range_64(uint_fast64_t x, size_t range);
 
 #endif

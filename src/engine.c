@@ -23,6 +23,7 @@ engine_new(void)
 		.position = POSITION_DEFAULT,
 		.winner = COLOR_NONE,
 		.termination = TERMINATION_NONE,
+		.time_controls = { NULL, NULL },
 		.game_clocks = { NULL, NULL },
 		.settings = SETTINGS_DEFAULT,
 		.cache = NULL,
