@@ -3,11 +3,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/fen.h"
-#include "chess/castling.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
-#include "chess/piece_types.h"
+#include "chess/pieces.h"
 #include "chess/position.h"
 #include "utils.h"
 #include <assert.h>
@@ -19,21 +18,51 @@
 
 /*  64 + | pieces
  *   7 + | slashes
+ *   1 + | space
  *   1 + | active color
+ *   1 + | space
  *   4 + | castling rights
+ *   1 + | space
  *   2 + | en-passant target square
- *   4 + | half-moves clock
- *   5 + | full-moves
- *   5 = | spaces
+ *   1 + | space
+ *   6 + | half-moves clock
+ *   1 + | space
+ *   6 + | full-moves
  * -----
- *  92 plus some extra safety space. */
+ *  95 plus some extra safety space. */
 
 enum
 {
-	FEN_SIZE = 127
+	FEN_SIZE = 128
 };
 
 const char *const FEN_SEPARATORS = " _";
+
+char *
+fen_write_position_pieces(char *fen, const struct Position *position)
+{
+	Rank rank = RANK_MAX;
+	do {
+		bool last_piece_type_was_none = false;
+		for (File file = 0; file <= FILE_MAX; file++) {
+			Square square = square_new(file, rank);
+			struct Piece piece = position_piece_at_square(position, square);
+			if (piece.type) {
+				*fen++ = piece_to_char(piece);
+				last_piece_type_was_none = false;
+			} else if (last_piece_type_was_none) {
+				*(fen - 1) += 1;
+			} else {
+				*fen++ = '1';
+				last_piece_type_was_none = true;
+			}
+		}
+		if (rank) {
+			*fen++ = '/';
+		}
+	} while (rank--);
+	return fen;
+}
 
 char *
 fen_new_from_position(const struct Position *position)
@@ -41,28 +70,8 @@ fen_new_from_position(const struct Position *position)
 	assert(position);
 	char *fen = malloc_or_exit(FEN_SIZE);
 	char *fen_copy = fen;
-	struct Piece pieces_by_square[64];
-	position_list_pieces_by_square(position, pieces_by_square);
-	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
-		size_t free_files_count = 0;
-		for (File file = 0; file <= FILE_MAX; file++) {
-			Square square = square_new(file, rank);
-			struct Piece piece = pieces_by_square[square];
-			if (piece.piece_type == PIECE_TYPE_NONE) {
-				if (free_files_count++) {
-					*(fen - 1) += 1;
-				} else {
-					*fen++ = '1';
-				}
-			} else {
-				*fen++ = piece_to_char(piece);
-				free_files_count = 0;
-			}
-		}
-		*fen++ = '/';
-	}
-	/* The last character was set to '/' in the loop but it must be a space. */
-	*(fen - 1) = ' ';
+	fen = fen_write_position_pieces(fen, position);
+	*fen++ = ' ';
 	*fen++ = color_to_char(position->side_to_move);
 	*fen++ = ' ';
 	if (position->castling_rights) {
@@ -89,24 +98,23 @@ fen_new_from_position(const struct Position *position)
 		*fen++ = '-';
 	}
 	*fen++ = ' ';
-	snprintf(fen, 12, "%zu %zu", position->reversible_moves_count, position->moves_count);
+	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
 	return fen_copy;
 }
 
-bool
+void
 fen_go_to_next_token(const char **fen)
 {
+	assert(fen);
 	*fen += strcspn(*fen, FEN_SEPARATORS);
 	*fen += strspn(*fen, FEN_SEPARATORS);
-	return **fen;
 }
 
 int
 position_set_from_fen(struct Position *position, const char *fen)
 {
-	if (!fen) {
-		return 0;
-	}
+	assert(position);
+	assert(fen);
 	*position = POSITION_EMPTY;
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {

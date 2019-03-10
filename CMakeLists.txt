@@ -20,7 +20,6 @@ set (CMAKE_C_FLAGS " \
 	-Wno-missing-braces \
 	-Wno-missing-field-initializers \
 	-Wswitch-default \
-	-Wswitch-enum \
 	-Wcast-align \
 	-Wpointer-arith \
 	-Wundef \

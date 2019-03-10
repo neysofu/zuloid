@@ -5,7 +5,7 @@
 #include "chess/move.h"
 #include "chess/position.h"
 #include "chess/coordinates.h"
-#include "chess/piece_types.h"
+#include "chess/pieces.h"
 #include "utils.h"
 #include <assert.h>
 #include <ctype.h>

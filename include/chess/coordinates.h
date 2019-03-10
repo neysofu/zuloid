@@ -33,6 +33,10 @@ static const File FILE_MAX = 7;
 static const Rank RANK_MAX = 7;
 static const Square SQUARE_MAX = 63;
 
+static const int FILES_COUNT = 8;
+static const int RANKS_COUNT = 8;
+static const int SQUARES_COUNT = 64;
+
 static const File FILE_NONE = -1;
 static const Rank RANK_NONE = -1;
 static const Square SQUARE_NONE = -1;
@@ -56,8 +60,8 @@ square_rank(Square sq);
 Bitboard
 square_to_bitboard(Square sq);
 Bitboard
-file_to_bitboard(File f);
+file_to_bitboard(File file);
 Bitboard
-rank_to_bitboard(Rank r);
+rank_to_bitboard(Rank rank);
 
 #endif

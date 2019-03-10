@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "chess/piece_types.h"
+#include "chess/pieces.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include <assert.h>
@@ -12,7 +12,7 @@
 char
 piece_to_char(struct Piece piece)
 {
-	return "pPnNbBkKrR\0\0qQ\0\0"[piece.piece_type + piece.color];
+	return "....PpNnBbRrKk....Qq"[piece.type * 2 + piece.color];
 }
 
 struct Piece
@@ -29,23 +29,24 @@ char_to_piece(char c)
 		case 'b':
 			piece_type = PIECE_TYPE_BISHOP;
 			break;
-		case 'k':
-			piece_type = PIECE_TYPE_KING;
-			break;
 		case 'r':
 			piece_type = PIECE_TYPE_ROOK;
 			break;
-		case 'Q':
+		case 'k':
+			piece_type = PIECE_TYPE_KING;
+			break;
+		case 'q':
 			piece_type = PIECE_TYPE_QUEEN;
 			break;
 		default:
 			piece_type = PIECE_TYPE_NONE;
 			break;
 	}
-	return (struct Piece){ .piece_type = piece_type, .color = islower(c) };
+	return (struct Piece){ .type = piece_type,
+		                   .color = isupper(c) ? COLOR_WHITE : COLOR_BLACK };
 }
 
-const struct Piece PIECE_NONE = { .piece_type = PIECE_TYPE_NONE, .color = COLOR_WHITE };
+const struct Piece PIECE_NONE = { .type = PIECE_TYPE_NONE, .color = COLOR_WHITE };
 
 // Bitboard
 // rook_threats(Square sq)

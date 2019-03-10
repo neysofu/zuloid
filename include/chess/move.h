@@ -6,7 +6,7 @@
 #define Z64C_CHESS_MOVE_H
 
 #include "chess/coordinates.h"
-#include "chess/piece_types.h"
+#include "chess/pieces.h"
 #include <stdbool.h>
 #include <stdint.h>
 
