@@ -40,6 +40,8 @@ engine_delete(struct Engine *engine)
 	if (!engine) {
 		return;
 	}
+	time_control_delete(engine->time_controls[COLOR_WHITE]);
+	time_control_delete(engine->time_controls[COLOR_BLACK]);
 	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
 	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
 	cache_delete(engine->cache);
