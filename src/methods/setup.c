@@ -24,8 +24,7 @@ engine_call_setup(struct Engine *engine, const cJSON *params, cJSON *response)
 		return;
 	}
 	position_set_from_fen(&engine->position, fen->valuestring);
-	/* FIXME */
-	struct TimeControl *time_control = time_control_new_from_json(time_control_json);
-	engine->game_clocks[COLOR_WHITE] = game_clock_new(time_control);
-	engine->game_clocks[COLOR_BLACK] = game_clock_new(time_control);
+	engine->time_controls[COLOR_WHITE] = time_control_new_from_json(time_control_json);
+	engine->game_clocks[COLOR_WHITE] = game_clock_new(engine->time_controls[COLOR_WHITE]);
+	engine->game_clocks[COLOR_BLACK] = game_clock_new(engine->time_controls[COLOR_WHITE]);
 }
