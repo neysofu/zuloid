@@ -25,4 +25,7 @@ struct Evaluation
 	bool en_passant;
 };
 
+int
+agent_eval(struct Agent *agent, struct Position *position, struct Evaluation *evaluation);
+
 #endif

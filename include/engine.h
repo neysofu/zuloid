@@ -10,7 +10,7 @@
 
 #include "chess/position.h"
 #include "chess/termination.h"
-#include "core/evaluator.h"
+#include "core/agent.h"
 #include "cache/cache.h"
 #include "settings.h"
 #include "time/game_clock.h"
@@ -31,7 +31,7 @@ struct Engine
 	struct GameClock *game_clocks[2];
 	struct Settings settings;
 	struct Cache *cache;
-	struct Evaluator *evaluator;
+	struct Agent *agent;
 	FILE *notifications_stream;
 	enum Mode mode;
 	int exit_status;

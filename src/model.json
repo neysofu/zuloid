@@ -1,3 +1,12 @@
 {
-	"layer_0": []
+	"tensors": [
+		{
+			"format": "Base64",
+			"data": "karsntkiILUBATRSTKBINEARSBT"
+		},
+		{
+			"format": "Base64",
+			"data": "karsntkiILUBATRSTKBINEARSBT"
+		}
+	]
 }

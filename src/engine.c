@@ -6,7 +6,7 @@
 #include "cJSON/cJSON.h"
 #include "cache/cache.h"
 #include "chess/position.h"
-#include "core/evaluator.h"
+#include "core/agent.h"
 #include "jsonrpc_errors.h"
 #include "methods.h"
 #include "settings.h"
@@ -26,7 +26,7 @@ engine_new(void)
 		.game_clocks = { NULL, NULL },
 		.settings = SETTINGS_DEFAULT,
 		.cache = NULL,
-		.evaluator = NULL,
+		.agent = NULL,
 		.notifications_stream = stdout,
 		.mode = MODE_IDLE,
 		.exit_status = EXIT_SUCCESS,
@@ -45,7 +45,7 @@ engine_delete(struct Engine *engine)
 	game_clock_delete(engine->game_clocks[COLOR_WHITE]);
 	game_clock_delete(engine->game_clocks[COLOR_BLACK]);
 	cache_delete(engine->cache);
-	evaluator_delete(engine->evaluator);
+	agent_delete(engine->agent);
 	free(engine);
 }
 
@@ -81,6 +81,9 @@ engine_dispatch_call(struct Engine *engine,
 			break;
 		case 0xd8d95334d91f61fc: /* "stop" */
 			engine_call_stop(engine, params, response);
+			break;
+		case 0xd18f9b6611eb8e16: /* "train" */
+			engine_call_train(engine, params, response);
 			break;
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_METHOD);

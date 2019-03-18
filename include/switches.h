@@ -5,13 +5,7 @@
 #ifndef Z64C_SWITCHES_H
 #define Z64C_SWITCHES_H
 
-enum
-{
-	BACKEND_CPU,
-	BACKEND_OPENCL,
-};
-
-#define SWITCH_BACKEND BACKEND_CPU
 #define SWITCH_OPENMP
+#define SWITCH_LARGE_CACHE
 
 #endif

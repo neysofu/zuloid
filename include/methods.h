@@ -22,5 +22,7 @@ void
 engine_call_status(struct Engine *engine, const cJSON *params, cJSON *response);
 void
 engine_call_stop(struct Engine *engine, const cJSON *params, cJSON *response);
+void
+engine_call_train(struct Engine *engine, const cJSON *params, cJSON *response);
 
 #endif

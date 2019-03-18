@@ -10,3 +10,6 @@
 [submodule "lib/tictoc"]
 	path = lib/tictoc
 	url = https://github.com/neysofu/tictoc
+[submodule "lib/base64.c"]
+	path = lib/base64.c
+	url = https://github.com/joedf/base64.c.git
