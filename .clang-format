@@ -6,3 +6,4 @@ IndentWidth: 4
 PointerAlignment: Right
 TabWidth: 4
 UseTab: ForIndentation
+ForEachMacros: ['cJSON_ArrayForEach']
