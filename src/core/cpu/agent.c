@@ -58,6 +58,7 @@ agent_import(struct Agent *agent, FILE *file)
 int
 agent_export(struct Agent *agent, FILE *file)
 {
+	UNUSED(agent);
 	fclose(file);
 	return 0;
 }
@@ -70,13 +71,16 @@ enum
 int
 agent_eval_position(struct Agent *agent, struct Position *position)
 {
+	UNUSED(agent);
+	UNUSED(position);
 	/* N and M dimension tensors, I need to convert one into the other. Great.
 	 * Every neuron bit has M XNOR connections. I need to use POPCNT, so I need
 	 * to focus on output neurons one at a time.
 	 * 1. Count all firing connections to neuron. If it's enough, then keep it.
 	 * */
-	struct Tensor tensor = {
-		128 * 64, malloc(128 * 64),
-	};
-	size_t counts[BATCH_SIZE] = { 0 };
+	//struct Tensor tensor = {
+	//	128 * 64, malloc(128 * 64),
+	//};
+	//size_t counts[BATCH_SIZE] = { 0 };
+	return 0;
 }
