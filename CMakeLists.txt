@@ -39,6 +39,9 @@ string (TIMESTAMP BUILD_DATE_ISO_8601 "%Y-%m-%d")
 
 find_package (OpenCL REQUIRED)
 
+# base64.c
+add_library (BASE64C "${LIB_DIR}/base64.c/base64.c")
+set_property (TARGET BASE64C PROPERTY C_STANDARD 99)
 # cJSON
 set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
@@ -57,7 +60,7 @@ file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
-target_link_libraries (Z64C_LIB cjson XXHASH TICTOC)
+target_link_libraries (Z64C_LIB BASE64C cjson XXHASH TICTOC)
 target_compile_definitions (Z64C_LIB PUBLIC
 	PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
 	BUILD_DATE_ISO_8601=\"${BUILD_DATE_ISO_8601}\"
