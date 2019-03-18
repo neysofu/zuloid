@@ -16,8 +16,8 @@ struct Cache;
 
 struct CacheEntry
 {
-	uint_least8_t evaluation;
-	uint_least8_t dispersion;
+	uint8_t evaluation;
+	uint8_t dispersion;
 };
 
 struct Cache *

@@ -51,7 +51,7 @@ agent_import(struct Agent *agent, FILE *file)
 	cJSON *json = cJSON_Parse(buffer);
 	cJSON *layer_0 = cJSON_GetObjectItem(json, "layer_0");
 	agent->tensors_count = cJSON_GetArraySize(layer_0);
-	agent->tensors = malloc_or_exit(sizeof(int_least64_t) * agent->tensors_count);
+	agent->tensors = malloc_or_exit(sizeof(int64_t) * agent->tensors_count);
 	return 0;
 }
 

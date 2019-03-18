@@ -20,15 +20,15 @@ const size_t CACHE_CELL_SIZE = 32;
 
 struct CacheSlot
 {
-	int_least32_t signature;
-	uint_least8_t offset;
-	uint_least8_t temperature;
+	int32_t signature;
+	uint8_t offset;
+	uint8_t temperature;
 	struct CacheEntry entry;
 };
 
 struct Cache
 {
-	uint_fast8_t temperature_indicator;
+	uint8_t temperature_indicator;
 	double load_factor;
 	size_t size;
 	struct CacheSlot slots[];
@@ -70,7 +70,7 @@ cache_get(struct Cache *cache, const struct Position *position)
 			i = fast_range_32(XXH32(position, sizeof(struct Position), 0), cache->size);
 			break;
 	}
-	uint_fast32_t signature = XXH32(position, sizeof(struct Position), 0);
+	uint32_t signature = XXH32(position, sizeof(struct Position), 0);
 	struct CacheSlot *slot = &cache->slots[i];
 	for (size_t offset = 0; offset < CACHE_CELL_SIZE; offset++, slot++) {
 		if (slot->signature == 0) {

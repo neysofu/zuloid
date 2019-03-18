@@ -6,6 +6,5 @@
 #define Z64C_SWITCHES_H
 
 #define SWITCH_OPENMP
-#define SWITCH_LARGE_CACHE
 
 #endif

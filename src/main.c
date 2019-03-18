@@ -17,14 +17,10 @@ print_welcome_message(void);
 int
 main(void)
 {
-	/* Most systems do use line buffering on I/O, but it's not standard. */
-	setvbuf(stdin, NULL, _IOLBF, 0);
-	setvbuf(stdout, NULL, _IOLBF, 0);
 	cJSON_InitHooks(&(cJSON_Hooks){ malloc_or_exit, free });
 	struct Engine *engine = engine_new();
 	print_welcome_message();
-	printf("# Copy and paste to init:\n");
-	printf("# {\"method\":\"init\",\"id\":0}\n");
+	printf("# Copy and paste to init: {\"method\":\"init\",\"id\":0}\n");
 	while (engine->mode != MODE_EXIT) {
 		char *line = read_line_from_stream(stdin);
 		if (!line) {
@@ -54,7 +50,6 @@ static void
 print_welcome_message(void)
 {
 	printf("# Welcome to Z64C %s (%s)\n", Z64C_VERSION, Z64C_RELEASE_DATE_ISO_8601);
-	printf("# backend = CPU\n");
 	printf("# word size = %d\n", WORD_SIZE);
 	struct PID pid = get_pid();
 	if (pid.success) {

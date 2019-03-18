@@ -5,9 +5,17 @@
 #include "chess/coordinates.h"
 #include "chess/color.h"
 
-#define FILE_TO_BITBOARD(file) (0xffULL << ((file) << 3))
-#define RANK_TO_BITBOARD(rank) (0x0101010101010101 << (rank))
-#define SQUARE_TO_BITBOARD(square) (0x1ULL << (square))
+const File FILE_MAX = 7;
+const Rank RANK_MAX = 7;
+const Square SQUARE_MAX = 63;
+
+const int FILES_COUNT = 8;
+const int RANKS_COUNT = 8;
+const int SQUARES_COUNT = 64;
+
+const File FILE_NONE = -1;
+const Rank RANK_NONE = -1;
+const Square SQUARE_NONE = -1;
 
 char
 rank_to_char(Rank r)

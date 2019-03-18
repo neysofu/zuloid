@@ -18,32 +18,32 @@ piece_to_char(struct Piece piece)
 struct Piece
 char_to_piece(char c)
 {
-	enum PieceType piece_type;
+	struct Piece piece;
 	switch (tolower(c)) {
 		case 'p':
-			piece_type = PIECE_TYPE_PAWN;
+			piece.type = PIECE_TYPE_PAWN;
 			break;
 		case 'n':
-			piece_type = PIECE_TYPE_KNIGHT;
+			piece.type = PIECE_TYPE_KNIGHT;
 			break;
 		case 'b':
-			piece_type = PIECE_TYPE_BISHOP;
+			piece.type = PIECE_TYPE_BISHOP;
 			break;
 		case 'r':
-			piece_type = PIECE_TYPE_ROOK;
+			piece.type = PIECE_TYPE_ROOK;
 			break;
 		case 'k':
-			piece_type = PIECE_TYPE_KING;
+			piece.type = PIECE_TYPE_KING;
 			break;
 		case 'q':
-			piece_type = PIECE_TYPE_QUEEN;
+			piece.type = PIECE_TYPE_QUEEN;
 			break;
 		default:
-			piece_type = PIECE_TYPE_NONE;
+			piece.type = PIECE_TYPE_NONE;
 			break;
 	}
-	return (struct Piece){ .type = piece_type,
-		                   .color = isupper(c) ? COLOR_WHITE : COLOR_BLACK };
+	piece.color = isupper(c) ? COLOR_WHITE : COLOR_BLACK;
+	return piece;
 }
 
 const struct Piece PIECE_NONE = { .type = PIECE_TYPE_NONE, .color = COLOR_WHITE };
