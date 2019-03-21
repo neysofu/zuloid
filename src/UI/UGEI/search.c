@@ -4,17 +4,17 @@
 
 #include "cJSON/cJSON.h"
 #include "engine.h"
-#include "jsonrpc_errors.h"
+#include "UI/jsonrpc_errors.h"
 #include "utils.h"
 
 void
-engine_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_search(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	if (engine->mode != MODE_IDLE) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_MODE_ERROR);
 		return;
 	}
-	struct GameClock *gc = engine->game_clocks[engine->position.side_to_move];
+	struct GameClock *gc = &engine->game_clocks[engine->position.side_to_move];
 	float available_time_in_seconds = game_clock_start(gc);
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
 	cJSON *evaluation = cJSON_AddNumberToObject(result, "cp", 0);

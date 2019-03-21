@@ -5,18 +5,17 @@
 #include "cJSON/cJSON.h"
 #include "engine.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
 #include "utils.h"
 #include <assert.h>
 
 void
-engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	UNUSED(params);
 	engine->agent = agent_new();
 	engine->time_controls[COLOR_WHITE] = time_control_new_bullet();
-	engine->game_clocks[COLOR_WHITE] = game_clock_new(engine->time_controls[COLOR_WHITE]);
-	engine->game_clocks[COLOR_BLACK] = game_clock_new(engine->time_controls[COLOR_WHITE]);
+	game_clock_init(&engine->game_clocks[COLOR_WHITE], engine->time_controls[COLOR_WHITE]);
+	game_clock_init(&engine->game_clocks[COLOR_BLACK], engine->time_controls[COLOR_WHITE]);
 	// if (!agent) {
 	//	/** FIXME */
 	//	cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
@@ -27,7 +26,7 @@ engine_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 	cJSON_AddStringToObject(meta, "copyright", Z64C_COPYRIGHT);
 	cJSON_AddStringToObject(meta, "license", Z64C_LICENSE);
 	cJSON_AddStringToObject(meta, "name", "Z64C");
-	cJSON_AddStringToObject(meta, "release_date", Z64C_RELEASE_DATE_ISO_8601);
+	cJSON_AddStringToObject(meta, "release_date", Z64C_BUILD_DATE);
 	cJSON_AddStringToObject(meta, "url", Z64C_URL);
 	cJSON_AddStringToObject(meta, "version", Z64C_VERSION);
 	cJSON *rulesets = cJSON_AddArrayToObject(result, "rulesets");

@@ -3,8 +3,8 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "utils.h"
+#include "UI/jsonrpc_errors.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
 #include <assert.h>
 #include <ctype.h>
 #include <limits.h>
@@ -20,23 +20,7 @@
 #include <processthreadsapi.h>
 #endif
 
-void *
-exit_if_null(void *ptr)
-{
-	if (ptr) {
-		return ptr;
-	}
-	printf("\t{\"error\":{\"code\":%d,\"message\":\"%s\"},\"id\":null,\"jsonrpc\":2.0}\n",
-	       JSONRPC_OOM,
-	       jsonrpc_error_default_message(JSONRPC_OOM));
-	exit(EXIT_FAILURE);
-}
-
-void *
-malloc_or_exit(size_t size)
-{
-	return exit_if_null(malloc(size));
-}
+const char *const WHITESPACE_CHARS = "\t\n\r \v";
 
 bool
 string_is_whitespace(const char *string)
@@ -48,27 +32,49 @@ string_is_whitespace(const char *string)
 	return *string == '\0';
 }
 
-char *
-read_line_from_stream(FILE *stream)
+int
+line_buffer_resize(struct LineBuffer *lb, size_t capacity)
+{
+	assert(lb);
+	assert(capacity);
+	char *new_string = realloc(lb->string, capacity);
+	if (new_string) {
+		memcpy(new_string, lb->string, lb->capacity);
+		lb->capacity = capacity;
+		lb->string = new_string;
+		return 0;
+	} else {
+		free(lb->string);
+		lb->string = NULL;
+		return -1;
+	}
+}
+
+int
+read_line_from_stream(FILE *stream, struct LineBuffer *lb)
 {
 	assert(stream);
-	size_t str_length = 0;
-	size_t str_max_length = 64;
-	char *str = malloc_or_exit(str_max_length);
-	char c;
+	assert(lb);
+	if (lb->capacity > LINE_BUFFER_DEFAULT_CAPACITY * 2) {
+		if (line_buffer_resize(lb, LINE_BUFFER_DEFAULT_CAPACITY)) {
+			return -1;
+		}
+	}
+	size_t length = 0;
+	char c = '\0';
 	do {
 		c = fgetc(stream);
 		if (c == EOF) {
-			free(str);
-			return NULL;
+			return -2;
 		}
-		str[str_length++] = c;
-		if (str_length == str_max_length) {
-			str = exit_if_null(realloc(str, (str_max_length *= 2)));
+		lb->string[length++] = c;
+		if (length == lb->capacity) {
+			if (line_buffer_resize(lb, lb->capacity * 2) == -1) {
+				return -1;
+			}
 		}
 	} while (c != '\n');
-	str[str_length] = '\0';
-	return str;
+	lb->string[length] = '\0';
 }
 
 struct PID

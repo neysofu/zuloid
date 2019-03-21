@@ -22,17 +22,27 @@
 
 #define UNUSED(...) (void)(__VA_ARGS__)
 
-void *
-exit_if_null(void *ptr);
-
-void *
-malloc_or_exit(size_t size);
+extern const char *const WHITESPACE_CHARS;
 
 bool
 string_is_whitespace(const char *string);
 
-char *
-read_line_from_stream(FILE *stream);
+enum
+{
+	LINE_BUFFER_DEFAULT_CAPACITY = 64,
+};
+
+struct LineBuffer
+{
+	size_t capacity;
+	char *string;
+};
+
+int
+line_buffer_resize(struct LineBuffer *lb, size_t capacity);
+
+int
+read_line_from_stream(FILE *stream, struct LineBuffer *lb);
 
 struct PID
 {

@@ -17,11 +17,8 @@ struct GameClock
 	struct TimeControl *time_control;
 };
 
-struct GameClock *
-game_clock_new(const struct TimeControl *tc);
-
 void
-game_clock_delete(struct GameClock *gc);
+game_clock_init(struct GameClock *gc, const struct TimeControl *tc);
 
 float
 game_clock_start(struct GameClock *gc);

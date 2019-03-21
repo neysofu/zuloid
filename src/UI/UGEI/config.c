@@ -10,8 +10,7 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
-#include "settings.h"
+#include "UI/jsonrpc_errors.h"
 #include "time.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
@@ -20,7 +19,7 @@
 #include <string.h>
 
 void
-engine_call_config(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_config(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *key = cJSON_GetObjectItem(params, "key");
 	cJSON *value = cJSON_GetObjectItem(params, "value");
@@ -33,16 +32,16 @@ engine_call_config(struct Engine *engine, const cJSON *params, cJSON *response)
 	}
 	switch (XXH64(key->valuestring, strlen(key->valuestring), 0)) {
 		case 0x6e87002190572330: /* "seed" */
-			engine->settings.seed = rand();
+			engine->seed = rand();
 			break;
 		case 0x46f9bde5468e310a: /* "move_selection_noise" */
-			engine->settings.move_selection_noise = value->valuedouble;
+			engine->move_selection_noise = value->valuedouble;
 			break;
 		case 0x597a99f05012dd35: /* "contempt" */
-			engine->settings.contempt = value->valuedouble;
+			engine->contempt = value->valuedouble;
 			break;
 		case 0x92cfb5ce943dee0d: /* "selectivity" */
-			engine->settings.selectivity = value->valuedouble;
+			engine->selectivity = value->valuedouble;
 			break;
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_UNDEFINED_KEY);

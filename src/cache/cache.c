@@ -37,12 +37,13 @@ struct Cache
 struct Cache *
 cache_new(size_t size_in_bytes)
 {
-	struct Cache *cache =
-	  malloc_or_exit(sizeof(struct Cache) + size_in_bytes + CACHE_CELL_SIZE);
-	*cache = (struct Cache){
-		.size = size_in_bytes / sizeof(struct CacheSlot),
-	};
-	memset(cache->slots, 0, size_in_bytes + CACHE_CELL_SIZE);
+	struct Cache *cache = malloc(sizeof(struct Cache) + size_in_bytes + CACHE_CELL_SIZE);
+	if (cache) {
+		*cache = (struct Cache){
+			.size = size_in_bytes / sizeof(struct CacheSlot),
+		};
+		memset(cache->slots, 0, size_in_bytes + CACHE_CELL_SIZE);
+	}
 	return cache;
 }
 
@@ -62,7 +63,7 @@ cache_get(struct Cache *cache, const struct Position *position)
 	 * 5. Since it wasn't found, we need to find some space for it.
 	 * */
 	size_t i;
-	switch (WORD_SIZE) {
+	switch (ADDRESS_SIZE) {
 		case 64:
 			i = fast_range_64(XXH64(position, sizeof(struct Position), 0), cache->size);
 			break;

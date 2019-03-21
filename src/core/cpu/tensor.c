@@ -3,9 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "base64.c/base64.h"
+#include "chess/position.h"
 #include "cJSON/cJSON.h"
 #include "utils.h"
 #include <assert.h>
+#include <string.h>
 
 struct Tensor
 {
@@ -16,28 +18,27 @@ struct Tensor
 int
 tensor_read_from_json(struct Tensor *tensor, cJSON *json)
 {
+	assert(tensor);
 	cJSON *data = cJSON_GetObjectItem(json, "data");
-	assert(cJSON_IsString(data));
+	if (!cJSON_IsString(data)) {
+		return -1;
+	}
 	tensor->size = b64d_size(strlen(data->valuestring));
-	tensor->data = malloc(tensor->size);
+	tensor->data = malloc_or_exit(tensor->size);
 	b64_decode(data->valuestring, strlen(data->valuestring), tensor->data);
 	return 0;
 }
 
-int
-tensors_popcnt(struct Tensor *tensor, struct Tensor *weights, size_t *popcnts, size_t n)
+void
+tensor_from_position(struct Tensor *tensor, struct Position *position)
 {
 	assert(tensor);
-	//for (int j = 0; j < n; i++) {
-	//	for (int i = 0; i < tensor->size; i++) {
-	//		popcnts[i] += tensor ^ weights[j][i];
-	//	}
-	//}
-	return 0;
+	assert(position);
 }
 
-tensor_from_popcnt(struct Tensor *tensor, size_t *popcnts)
+int
+tensor_multiply(struct Tensor *tensor, struct Tensor weights[], struct Tensor *buffer)
 {
 	assert(tensor);
-	assert(popcnts);
+	return 0;
 }

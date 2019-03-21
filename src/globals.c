@@ -6,11 +6,11 @@
 #include <limits.h>
 #include <stdlib.h>
 
-const int WORD_SIZE = sizeof(void *) * CHAR_BIT;
+const int ADDRESS_SIZE = sizeof(void *) * CHAR_BIT;
 
-const char *const Z64C_COPYRIGHT = "Copyright (c) 2018-2019 Filippo Costa et al.";
+const char *const Z64C_COPYRIGHT = "Copyright (c) 2018-2019 Filippo Costa";
 const char *const Z64C_LICENSE = "MPL-2.0";
-const char *const Z64C_RELEASE_DATE_ISO_8601 = BUILD_DATE_ISO_8601;
+const char *const Z64C_BUILD_DATE = BUILD_DATE;
 const char *const Z64C_URL = "https://github.com/neysofu/Z64C";
 const char *const Z64C_VERSION =
   Z64C_VERSION_MAJOR "." Z64C_VERSION_MINOR "." Z64C_VERSION_PATCH;

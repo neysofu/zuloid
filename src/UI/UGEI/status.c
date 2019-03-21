@@ -7,7 +7,7 @@
 #include "utils.h"
 
 void
-engine_call_status(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_status(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	UNUSED(params);
 	char *mode;

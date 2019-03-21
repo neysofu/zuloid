@@ -8,11 +8,11 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
+#include "UI/jsonrpc_errors.h"
 #include "time.h"
 
 void
-engine_call_setup(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_setup(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *fen = cJSON_GetObjectItem(params, "FEN");
 	cJSON *time_control_json = cJSON_GetObjectItem(params, "time_control");
@@ -25,6 +25,6 @@ engine_call_setup(struct Engine *engine, const cJSON *params, cJSON *response)
 	}
 	position_set_from_fen(&engine->position, fen->valuestring);
 	engine->time_controls[COLOR_WHITE] = time_control_new_from_json(time_control_json);
-	engine->game_clocks[COLOR_WHITE] = game_clock_new(engine->time_controls[COLOR_WHITE]);
-	engine->game_clocks[COLOR_BLACK] = game_clock_new(engine->time_controls[COLOR_WHITE]);
+	game_clock_init(&engine->game_clocks[COLOR_WHITE], engine->time_controls[COLOR_WHITE]);
+	game_clock_init(&engine->game_clocks[COLOR_BLACK], engine->time_controls[COLOR_WHITE]);
 }

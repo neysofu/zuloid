@@ -23,10 +23,12 @@ struct Agent
 struct Agent *
 agent_new(void)
 {
-	struct Agent *agent = malloc_or_exit(sizeof(struct Agent));
-	*agent = (struct Agent){
-		.source = NULL, .tensors_count = 0, .tensors = NULL,
-	};
+	struct Agent *agent = malloc(sizeof(struct Agent));
+	if (agent) {
+		*agent = (struct Agent){
+			.source = NULL, .tensors_count = 0, .tensors = NULL,
+		};
+	}
 	return agent;
 }
 
@@ -45,13 +47,15 @@ agent_import(struct Agent *agent, FILE *file)
 {
 	fseek(file, 0, SEEK_END);
 	size_t file_length = ftell(file);
-	char *buffer = malloc_or_exit(file_length);
+	char *buffer = malloc(file_length);
+	// FIXME: malloc check
 	fread(buffer, 1, file_length, file);
 	fclose(file);
 	cJSON *json = cJSON_Parse(buffer);
 	cJSON *layer_0 = cJSON_GetObjectItem(json, "layer_0");
 	agent->tensors_count = cJSON_GetArraySize(layer_0);
-	agent->tensors = malloc_or_exit(sizeof(int64_t) * agent->tensors_count);
+	agent->tensors = malloc(sizeof(int64_t) * agent->tensors_count);
+	// FIXME: malloc check
 	return 0;
 }
 
@@ -78,9 +82,9 @@ agent_eval_position(struct Agent *agent, struct Position *position)
 	 * to focus on output neurons one at a time.
 	 * 1. Count all firing connections to neuron. If it's enough, then keep it.
 	 * */
-	//struct Tensor tensor = {
+	// struct Tensor tensor = {
 	//	128 * 64, malloc(128 * 64),
 	//};
-	//size_t counts[BATCH_SIZE] = { 0 };
+	// size_t counts[BATCH_SIZE] = { 0 };
 	return 0;
 }

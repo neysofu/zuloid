@@ -2,12 +2,22 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "settings.h"
+#ifndef Z64C_CMD_H
+#define Z64C_CMD_H
 
-const struct Settings SETTINGS_DEFAULT = {
-	.port = 34290,
-	.seed = 0xcfca130bUL,
-	.move_selection_noise = 0.005,
-	.contempt = 0.5,
-	.selectivity = 0.5,
+struct Cmd
+{
+	char *string;
+	size_t i;
 };
+
+struct Cmd
+cmd_new(char *string);
+
+char *
+cmd_next(struct Cmd *cmd);
+
+char *
+cmd_at(struct Cmd *cmd, size_t i);
+
+#endif

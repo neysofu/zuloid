@@ -8,11 +8,11 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
+#include "UI/jsonrpc_errors.h"
 #include "time.h"
 
 void
-engine_call_stop(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_stop(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	if (engine->mode == MODE_SEARCH) {
 		cJSON_AddObjectToObject(response, "result");

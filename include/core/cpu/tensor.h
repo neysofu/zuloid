@@ -18,4 +18,7 @@ int
 tensor_from_position(struct Tensor *tensor, const struct Position *position);
 
 int
-tensors_popcnt(struct Tensor *tensor, struct Tensor *weights, size_t *popcnts, size_t n);
+tensor_multiply(struct Tensor *tensor,
+                struct Tensor *weights,
+                struct Tensor *buffer,
+                size_t n);

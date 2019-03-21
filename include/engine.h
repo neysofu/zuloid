@@ -8,11 +8,10 @@
 #ifndef Z64C_ENGINE_H
 #define Z64C_ENGINE_H
 
+#include "cache/cache.h"
 #include "chess/position.h"
 #include "chess/termination.h"
 #include "core/agent.h"
-#include "cache/cache.h"
-#include "settings.h"
 #include "time/game_clock.h"
 #include <stdio.h>
 
@@ -28,12 +27,17 @@ struct Engine
 	struct Position position;
 	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
 	struct TimeControl *time_controls[2];
-	struct GameClock *game_clocks[2];
-	struct Settings settings;
+	struct GameClock game_clocks[2];
 	struct Cache *cache;
 	struct Agent *agent;
-	FILE *notifications_stream;
 	enum Mode mode;
+	void (*caller)(struct Engine *engine, char *string);
+	int port;
+	int seed;
+	float move_selection_noise;
+	float contempt;
+	float selectivity;
+	struct Tablebase *tablebase;
 	int exit_status;
 };
 
@@ -53,7 +57,7 @@ engine_delete(struct Engine *engine);
  *
  * Result
  *   A JSON-RPC response string without line breaks. */
-char *
-engine_call(struct Engine *engine, const char *request);
+void
+engine_call(struct Engine *engine, char *string);
 
 #endif

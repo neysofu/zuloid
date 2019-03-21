@@ -8,21 +8,13 @@
 #include "utils.h"
 #include <stdlib.h>
 
-struct GameClock *
-game_clock_new(const struct TimeControl *tc)
+void
+game_clock_init(struct GameClock *gc, const struct TimeControl *tc)
 {
-	struct GameClock *gc = malloc_or_exit(sizeof(struct GameClock));
 	gc->time_left_in_seconds = tc->time_limit_in_seconds;
 	gc->timer = tic();
 	gc->moves_count = 0;
 	gc->time_control = tc;
-	return gc;
-}
-
-void
-game_clock_delete(struct GameClock *gc)
-{
-	free(gc);
 }
 
 float

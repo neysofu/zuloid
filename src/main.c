@@ -11,28 +11,24 @@
 #include <stdlib.h>
 #include <time.h>
 
-static void
+void
 print_welcome_message(void);
 
 int
 main(void)
 {
-	cJSON_InitHooks(&(cJSON_Hooks){ malloc_or_exit, free });
+	setvbuf(stdin, NULL, _IOLBF, 0);
+	setvbuf(stdout, NULL, _IOLBF, 0);
 	struct Engine *engine = engine_new();
 	print_welcome_message();
-	printf("# Copy and paste to init: {\"method\":\"init\",\"id\":0}\n");
+	struct LineBuffer *line_buffer = NULL;
+	line_buffer_resize(line_buffer, LINE_BUFFER_DEFAULT_CAPACITY);
 	while (engine->mode != MODE_EXIT) {
-		char *line = read_line_from_stream(stdin);
-		if (!line) {
+		if (read_line_from_stream(stdin, line_buffer)) {
+			engine_call(engine, line_buffer->string);
+		} else {
 			engine_delete(engine);
 			return EXIT_SUCCESS;
-		}
-		char *response = engine_call(engine, line);
-		if (response) {
-			/* A tab character before the response string visually separates requests from
-			 * responses in the terminal. */
-			printf("\t%s\n", response);
-			free(response);
 		}
 	}
 	int exit_status = engine->exit_status;
@@ -41,18 +37,14 @@ main(void)
 }
 
 void
-print_jsonrpc_response(const char *response)
-{
-	printf("\t%s\n", response);
-}
-
-static void
 print_welcome_message(void)
 {
-	printf("# Welcome to Z64C %s (%s)\n", Z64C_VERSION, Z64C_RELEASE_DATE_ISO_8601);
-	printf("# word size = %d\n", WORD_SIZE);
+	printf("# Z64C/CPU %s (%s)\n", Z64C_VERSION, Z64C_BUILD_DATE);
+	printf("# %s\n", Z64C_COPYRIGHT);
+	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
+	printf("# There is NO warranty of any kind.\n");
 	struct PID pid = get_pid();
 	if (pid.success) {
-		printf("# PID = %d\n", pid.value);
+		printf("# Process ID: %d\n", pid.value);
 	}
 }

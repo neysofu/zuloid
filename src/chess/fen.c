@@ -68,7 +68,10 @@ char *
 fen_new_from_position(const struct Position *position)
 {
 	assert(position);
-	char *fen = malloc_or_exit(FEN_SIZE);
+	char *fen = malloc(FEN_SIZE);
+	if (!fen) {
+		return NULL;
+	}
 	char *fen_copy = fen;
 	fen = fen_write_position_pieces(fen, position);
 	*fen++ = ' ';

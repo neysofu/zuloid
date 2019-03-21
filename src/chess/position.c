@@ -18,6 +18,47 @@
 #include <string.h>
 
 void
+position_setup_960(struct Position *position) {
+	const Bitboard BB_A1_OR_A8 = 0x0100000000000001;
+	*position = POSITION_EMPTY;
+	File available_files[FILES_COUNT] = {0, 1, 2, 3, 4, 5, 6, 7};
+	int i = (rand() % 4) * 2;
+	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
+	available_files[i] = available_files[7];
+	i = (rand() % 4) * 2 + 1;
+	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
+	available_files[i] = available_files[6];
+	i = rand() % 6;
+	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
+	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[i];
+	available_files[i] = available_files[5];
+	i = rand() % 5;
+	position->bb[PIECE_TYPE_KNIGHT] |= BB_A1_OR_A8 << available_files[i];
+	available_files[i] = available_files[4];
+	i = rand() % 4;
+	position->bb[PIECE_TYPE_KNIGHT] |= BB_A1_OR_A8 << available_files[i];
+	available_files[i] = available_files[3];
+	if (available_files[0] > available_files[1]) {
+		available_files[7] = available_files[0];
+		available_files[0] = available_files[1];
+		available_files[1] = available_files[7];
+	}
+	if (available_files[1] > available_files[2]) {
+		available_files[7] = available_files[1];
+		available_files[1] = available_files[2];
+		available_files[2] = available_files[7];
+	}
+	if (available_files[0] > available_files[1]) {
+		available_files[7] = available_files[0];
+		available_files[0] = available_files[1];
+		available_files[1] = available_files[7];
+	}
+	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[0];
+	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[1];
+	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[2];
+}
+
+void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
 {
 	Bitboard bb = square_to_bitboard(square);

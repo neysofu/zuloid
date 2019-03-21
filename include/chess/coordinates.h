@@ -33,13 +33,16 @@ extern const File FILE_MAX;
 extern const Rank RANK_MAX;
 extern const Square SQUARE_MAX;
 
-extern const int FILES_COUNT;
-extern const int RANKS_COUNT;
-extern const int SQUARES_COUNT;
-
 extern const File FILE_NONE;
 extern const Rank RANK_NONE;
 extern const Square SQUARE_NONE;
+
+enum
+{
+	FILES_COUNT = 8,
+	RANKS_COUNT = 8,
+	SQUARES_COUNT = 64,
+};
 
 char
 file_to_char(File f);

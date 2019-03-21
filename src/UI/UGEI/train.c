@@ -8,12 +8,11 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
-#include "jsonrpc_errors.h"
 #include "switches.h"
 #include "time.h"
 
 void
-engine_call_train(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_train(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	return;
 }

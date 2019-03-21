@@ -2,19 +2,18 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "jsonrpc_errors.h"
+#include "UI/jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 #include "chess/fen.h"
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
-#include "settings.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <string.h>
 
 void
-engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_call_ugea_get(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *value;
 	cJSON *key = cJSON_GetObjectItem(params, "key");
@@ -27,13 +26,13 @@ engine_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 			value = cJSON_CreateString(fen_new_from_position(&engine->position));
 			break;
 		case 0x46f9bde5468e310a: /* "move_selection_noise" */
-			value = cJSON_CreateNumber(engine->settings.move_selection_noise);
+			value = cJSON_CreateNumber(engine->move_selection_noise);
 			break;
 		case 0x597a99f05012dd35: /* "contempt" */
-			value = cJSON_CreateNumber(engine->settings.contempt);
+			value = cJSON_CreateNumber(engine->contempt);
 			break;
 		case 0x92cfb5ce943dee0d: /* "selectivity" */
-			value = cJSON_CreateNumber(engine->settings.selectivity);
+			value = cJSON_CreateNumber(engine->selectivity);
 			break;
 		default:
 			cJSON_AddJsonRpcErrorToObject(response, JSONRPC_UNDEFINED_KEY);
