@@ -32,6 +32,11 @@ string_is_whitespace(const char *string)
 	return *string == '\0';
 }
 
+const struct LineBuffer LINE_BUFFER_EMPTY = {
+	.string = NULL,
+	.capacity = 0,
+};
+
 int
 line_buffer_resize(struct LineBuffer *lb, size_t capacity)
 {
@@ -51,13 +56,13 @@ line_buffer_resize(struct LineBuffer *lb, size_t capacity)
 }
 
 int
-read_line_from_stream(FILE *stream, struct LineBuffer *lb)
+read_line(FILE *stream, struct LineBuffer *lb)
 {
 	assert(stream);
 	assert(lb);
 	if (lb->capacity > LINE_BUFFER_DEFAULT_CAPACITY * 2) {
-		if (line_buffer_resize(lb, LINE_BUFFER_DEFAULT_CAPACITY)) {
-			return -1;
+		if (line_buffer_resize(lb, LINE_BUFFER_DEFAULT_CAPACITY) == EXIT_FAILURE) {
+			return EXIT_FAILURE;
 		}
 	}
 	size_t length = 0;
@@ -65,29 +70,30 @@ read_line_from_stream(FILE *stream, struct LineBuffer *lb)
 	do {
 		c = fgetc(stream);
 		if (c == EOF) {
-			return -2;
+			return EXIT_FAILURE;
 		}
 		lb->string[length++] = c;
 		if (length == lb->capacity) {
-			if (line_buffer_resize(lb, lb->capacity * 2) == -1) {
-				return -1;
+			if (line_buffer_resize(lb, lb->capacity * 2) == EXIT_FAILURE) {
+				return EXIT_FAILURE;
 			}
 		}
 	} while (c != '\n');
 	lb->string[length] = '\0';
+	return EXIT_SUCCESS;
 }
 
-struct PID
-get_pid(void)
+int
+get_pid(int *pid)
 {
-	return (struct PID)
-	{
+	assert(pid);
 #if defined(__unix__) || defined(_POSIX_VERSION)
-		true, getpid(),
+	*pid = getpid();
+	return EXIT_SUCCESS;
 #elif defined(_WIN32)
-		true, GetCurrentProcessId(),
+	*pid = GetCurrentProcessId();
+	return EXIT_SUCCESS;
 #else
-		false, 0,
+	return EXIT_FAILURE;
 #endif
-	};
 }

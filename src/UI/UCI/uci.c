@@ -5,7 +5,7 @@
 #include "engine.h"
 
 void
-engine_call_uci_uci(struct Engine *engine)
+engine_uci_call_uci(struct Engine *engine, struct Cmd *cmd)
 {
 	printf("id name Z64C\n");
 	printf("id author Filippo Costa\n");

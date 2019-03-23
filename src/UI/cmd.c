@@ -5,6 +5,7 @@
 #include "utils.h"
 #include <assert.h>
 #include <stdlib.h>
+#include <string.h>
 
 struct Cmd
 {
@@ -20,7 +21,12 @@ cmd_init(struct Cmd *cmd, char *string)
 	assert(string);
 	cmd->string = string;
 	cmd->length = strlen(string);
-	cmd->i = 0;
+	cmd->i = strspn(cmd->string, WHITESPACE_CHARS);
+	for (size_t i = cmd->i; i < cmd->length; i++) {
+		if (strchr(WHITESPACE_CHARS, string[i])) {
+			string[i] = '\0';
+		}
+	}
 }
 
 char *
@@ -28,10 +34,16 @@ cmd_next(struct Cmd *cmd)
 {
 	assert(cmd);
 	assert(cmd->string);
-	cmd->i += strcspn(cmd->string[cmd->i], WHITESPACE_CHARS);
-	cmd->i += strspn(cmd->string[cmd->i], WHITESPACE_CHARS);
-	cmd->string[cmd->i - 1] = '\0';
-	return cmd->string[cmd->i];
+	cmd->i += strlen(cmd->string + cmd->i);
+	while (cmd->i < cmd->length && cmd->string == '\0') {
+		cmd->i++;
+	}
+	if (cmd->i == cmd->length) {
+		cmd->i = 0;
+		return NULL;
+	} else {
+		return cmd->string + cmd->i;
+	}
 }
 
 char *
@@ -39,5 +51,8 @@ cmd_at(struct Cmd *cmd, size_t i)
 {
 	assert(cmd);
 	assert(cmd->string);
-	return cmd->string;
+	while (i-- > 0) {
+		cmd_next(cmd);
+	}
+	return cmd->string + cmd->i;
 }

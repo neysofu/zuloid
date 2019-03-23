@@ -26,6 +26,9 @@ void
 engine_call_ugea_train(struct Engine *engine, const cJSON *params, cJSON *response);
 
 void
-engine_call_uci_uci(struct Engine *engine);
+engine_uci_call_uci(struct Engine *engine, struct Cmd *cmd);
+
+void
+engine_cecp_call_xboard(struct Engine *engine, struct Cmd *cmd);
 
 #endif

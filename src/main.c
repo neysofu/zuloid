@@ -11,21 +11,27 @@
 #include <stdlib.h>
 #include <time.h>
 
-void
-print_welcome_message(void);
-
 int
 main(void)
 {
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
+	printf("# Z64C/CPU %s (%s)\n", Z64C_VERSION, Z64C_BUILD_DATE);
+	printf("# %s\n", Z64C_COPYRIGHT);
+	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
+	printf("# There is NO warranty of any kind.\n");
+	int pid;
+	if (get_pid(&pid) == EXIT_SUCCESS) {
+		printf("# Process ID: %d\n", pid);
+	}
 	struct Engine *engine = engine_new();
-	print_welcome_message();
-	struct LineBuffer *line_buffer = NULL;
-	line_buffer_resize(line_buffer, LINE_BUFFER_DEFAULT_CAPACITY);
+	struct LineBuffer line_buffer = LINE_BUFFER_EMPTY;
+	if (line_buffer_resize(&line_buffer, LINE_BUFFER_DEFAULT_CAPACITY)) {
+		return EXIT_FAILURE;
+	}
 	while (engine->mode != MODE_EXIT) {
-		if (read_line_from_stream(stdin, line_buffer)) {
-			engine_call(engine, line_buffer->string);
+		if (read_line(stdin, &line_buffer) == EXIT_SUCCESS) {
+			engine_call(engine, line_buffer.string);
 		} else {
 			engine_delete(engine);
 			return EXIT_SUCCESS;
@@ -34,17 +40,4 @@ main(void)
 	int exit_status = engine->exit_status;
 	engine_delete(engine);
 	return exit_status;
-}
-
-void
-print_welcome_message(void)
-{
-	printf("# Z64C/CPU %s (%s)\n", Z64C_VERSION, Z64C_BUILD_DATE);
-	printf("# %s\n", Z64C_COPYRIGHT);
-	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
-	printf("# There is NO warranty of any kind.\n");
-	struct PID pid = get_pid();
-	if (pid.success) {
-		printf("# Process ID: %d\n", pid.value);
-	}
 }

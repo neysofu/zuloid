@@ -31,7 +31,7 @@ struct Engine
 	struct Cache *cache;
 	struct Agent *agent;
 	enum Mode mode;
-	void (*caller)(struct Engine *engine, char *string);
+	void (*protocol)(struct Engine *, char *);
 	int port;
 	int seed;
 	float move_selection_noise;

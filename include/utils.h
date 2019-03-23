@@ -34,23 +34,19 @@ enum
 
 struct LineBuffer
 {
-	size_t capacity;
 	char *string;
+	size_t capacity;
 };
 
 int
 line_buffer_resize(struct LineBuffer *lb, size_t capacity);
 
+extern const struct LineBuffer LINE_BUFFER_EMPTY;
+
 int
-read_line_from_stream(FILE *stream, struct LineBuffer *lb);
+read_line(FILE *stream, struct LineBuffer *lb);
 
-struct PID
-{
-	bool success;
-	int value;
-};
-
-struct PID
-get_pid(void);
+int
+get_pid(int *pid);
 
 #endif

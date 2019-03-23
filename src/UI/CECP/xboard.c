@@ -2,22 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef Z64C_CMD_H
-#define Z64C_CMD_H
-
-struct Cmd
-{
-	char *string;
-	size_t i;
-};
+#include "engine.h"
 
 void
-cmd_init(struct Cmd *cmd, char *string);
-
-char *
-cmd_next(struct Cmd *cmd);
-
-char *
-cmd_at(struct Cmd *cmd, size_t i);
-
-#endif
+engine_cecp_call_xboard(struct Engine *engine, struct Cmd *cmd)
+{
+	return;
+}
