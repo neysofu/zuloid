@@ -9,12 +9,17 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+/* Logs are always prefixed by '#', regardless of the protocol in use. This is
+ * in line with both UGEI and CECP guidelines. UCI doesn't have a specific
+ * syntax for debug statements, but simply ignores any unknown command (as # is). */
 #ifdef NDEBUG
 #define LOGF(...)
 #else
 #define LOGF(...)                                                                          \
 	do {                                                                                   \
-		printf("# %s:%s:%d -- ", &__FILE__[PROJECT_DIR_LENGTH], __func__, __LINE__);       \
+		/* Makes the path relative to the project root.                                    \
+		 *                                ~~~~~~~~~~~~~~~~~~~~ */                          \
+		printf("# %s:%s:%d -- ", __FILE__ + PROJECT_DIR_LENGTH, __func__, __LINE__);       \
 		printf(__VA_ARGS__);                                                               \
 		putchar('\n');                                                                     \
 	} while (0)
@@ -43,9 +48,15 @@ line_buffer_resize(struct LineBuffer *lb, size_t capacity);
 
 extern const struct LineBuffer LINE_BUFFER_EMPTY;
 
+/* Stores stream input in `lb` and waits for a line feed (ASCII 0xA). */
 int
 read_line(FILE *stream, struct LineBuffer *lb);
 
+/* Writes the current process ID to `pid`.
+ * @param pid a non-NULL target pointer.
+ * @return 0 on success, -1 on failure.
+ *
+ * @see https://en.wikipedia.org/wiki/Process_identifier */
 int
 get_pid(int *pid);
 

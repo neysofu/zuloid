@@ -98,8 +98,7 @@ engine_uci_or_cecp(struct Engine *engine, char *string)
 			engine->mode = MODE_EXIT;
 			break;
 		case 0xad33154ea7fdbbc4: /* "xboard" */
-			printf("feature myname=\"Z64C\"\n"
-			       "feature ping=1\n");
+			engine_cecp_call_xboard(engine, &cmd);
 			break;
 		case 0x534feaec6d273bed: /* "ping" */
 			printf("ping %s\n", cmd_next(&cmd));

@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "UI/jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 #include "engine.h"
 #include "globals.h"
@@ -16,11 +17,10 @@ engine_call_ugea_init(struct Engine *engine, const cJSON *params, cJSON *respons
 	engine->time_controls[COLOR_WHITE] = time_control_new_bullet();
 	game_clock_init(&engine->game_clocks[COLOR_WHITE], engine->time_controls[COLOR_WHITE]);
 	game_clock_init(&engine->game_clocks[COLOR_BLACK], engine->time_controls[COLOR_WHITE]);
-	// if (!agent) {
-	//	/** FIXME */
-	//	cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
-	//	return;
-	//}
+	if (!engine->agent) {
+		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_GENERIC_ERROR);
+		return;
+	}
 	cJSON *result = cJSON_AddObjectToObject(response, "result");
 	cJSON *meta = cJSON_AddObjectToObject(result, "meta");
 	cJSON_AddStringToObject(meta, "copyright", Z64C_COPYRIGHT);

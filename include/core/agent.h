@@ -7,6 +7,9 @@
 
 #include <stdio.h>
 
+/* Our AI agent. Its responsabilities are:
+ * - position evaluation
+ * - searching algorith*/
 struct Agent;
 
 struct Agent *

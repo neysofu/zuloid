@@ -6,11 +6,14 @@
 #include "tictoc/tictoc.h"
 #include "time/time_control.h"
 #include "utils.h"
+#include <assert.h>
 #include <stdlib.h>
 
 void
 game_clock_init(struct GameClock *gc, const struct TimeControl *tc)
 {
+	assert(gc);
+	assert(tc);
 	gc->time_left_in_seconds = tc->time_limit_in_seconds;
 	gc->timer = tic();
 	gc->moves_count = 0;
