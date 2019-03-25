@@ -10,7 +10,7 @@
 #include <assert.h>
 
 void
-engine_call_ugea_init(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	UNUSED(params);
 	engine->agent = agent_new();

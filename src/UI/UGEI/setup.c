@@ -12,7 +12,7 @@
 #include "time.h"
 
 void
-engine_call_ugea_setup(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_setup(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *fen = cJSON_GetObjectItem(params, "FEN");
 	cJSON *time_control_json = cJSON_GetObjectItem(params, "time_control");

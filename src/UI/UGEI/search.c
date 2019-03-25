@@ -8,7 +8,7 @@
 #include "utils.h"
 
 void
-engine_call_ugea_search(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_search(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	if (engine->mode != MODE_IDLE) {
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_MODE_ERROR);

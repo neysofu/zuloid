@@ -35,31 +35,31 @@ engine_ugei(struct Engine *engine, char *string)
 		response = id ? cJSON_CreateObject() : NULL;
 		switch (XXH64(method->valuestring, strlen(method->valuestring), 0)) {
 			case 0x284938c798d362a8: /* "config" */
-				engine_call_ugea_config(engine, params, response);
+				engine_ugei_call_config(engine, params, response);
 				break;
 			case 0x3e6da0adb9a81aa0: /* "exit" */
 				engine->mode = MODE_EXIT;
 				break;
 			case 0x2682377a1193c238: /* "get" */
-				engine_call_ugea_get(engine, params, response);
+				engine_ugei_call_get(engine, params, response);
 				break;
 			case 0xbbb05418c88423aa: /* "init" */
-				engine_call_ugea_init(engine, params, response);
+				engine_ugei_call_init(engine, params, response);
 				break;
 			case 0x71e6f6d1e157dbfe: /* "search" */
-				engine_call_ugea_search(engine, params, response);
+				engine_ugei_call_search(engine, params, response);
 				break;
 			case 0xde2128284d8fdb3c: /* "setup" */
-				engine_call_ugea_setup(engine, params, response);
+				engine_ugei_call_setup(engine, params, response);
 				break;
 			case 0xc641b2419f8a3ce1: /* "status" */
-				engine_call_ugea_status(engine, params, response);
+				engine_ugei_call_status(engine, params, response);
 				break;
 			case 0xd8d95334d91f61fc: /* "stop" */
-				engine_call_ugea_stop(engine, params, response);
+				engine_ugei_call_stop(engine, params, response);
 				break;
 			case 0xd18f9b6611eb8e16: /* "train" */
-				engine_call_ugea_train(engine, params, response);
+				engine_ugei_call_train(engine, params, response);
 				break;
 			default:
 				cJSON_AddJsonRpcErrorToObject(response, JSONRPC_INVALID_METHOD);
@@ -88,8 +88,7 @@ engine_uci(struct Engine *engine, char *string)
 	assert(string);
 	struct Cmd cmd;
 	cmd_init(&cmd, string);
-	char *token = cmd_at(&cmd, 0);
-	switch (XXH64(token, strlen(token), 0)) {
+	switch (XXH64(cmd_current(&cmd), strlen(cmd_current(&cmd)), 0)) {
 		case 0xf80028c1113b2c9c: /* "uci" */
 			printf("id name Z64C\n"
 			       "id author Filippo Costa\n"
@@ -111,8 +110,7 @@ engine_cecp(struct Engine *engine, char *string)
 	assert(string);
 	struct Cmd cmd;
 	cmd_init(&cmd, string);
-	char *token = cmd_at(&cmd, 0);
-	switch (XXH64(token, strlen(token), 0)) {
+	switch (XXH64(cmd_current(&cmd), strlen(cmd_current(&cmd)), 0)) {
 		case 0x707db5f765aed6d8: /* "quit" */
 			engine->mode = MODE_EXIT;
 			break;
@@ -120,7 +118,11 @@ engine_cecp(struct Engine *engine, char *string)
 			engine_cecp_call_xboard(engine, &cmd);
 			break;
 		case 0x534feaec6d273bed: /* "ping" */
-			printf("ping %s\n", cmd_next(&cmd));
+			if (cmd_next(&cmd)) {
+				printf("ping %s\n", cmd_current(&cmd));
+			} else {
+				printf("ping\n");
+			}
 			break;
 	}
 }
@@ -130,23 +132,16 @@ engine_unknown_protocol(struct Engine *engine, char *string)
 {
 	assert(engine);
 	assert(string);
-	size_t i = strspn(string, WHITESPACE_CHARS);
-	size_t j = i + strcspn(string + i, WHITESPACE_CHARS);
-	char terminating_character = string[j];
-	string[j] = '\0';
-	if (strcmp(string + i, "uci") == 0) {
+	/* Easy and fast. We first check for "method" in JSON-RPC messages because
+	 * the JSON might contain the other strings. */
+	if (strstr(string, "method")) {
+		engine->protocol = engine_ugei;
+	} else if (strstr(string, "uci")) {
 		engine->protocol = engine_uci;
-	} else if (strcmp(string + i, "xboard") == 0) {
+	} else if (strstr(string, "xboard")) {
 		engine->protocol = engine_cecp;
 	} else {
-		string[j] = terminating_character;
-		cJSON *json = cJSON_Parse(string);
-		cJSON_Delete(json);
-		if (json) {
-			engine->protocol = engine_ugei;
-		} else {
-			return;
-		}
+		return;
 	}
 	engine_call(engine, string);
 }

@@ -13,7 +13,7 @@
 #include "utils.h"
 
 void
-engine_call_ugea_stop(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_stop(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	UNUSED(params);
 	if (engine->mode == MODE_SEARCH) {

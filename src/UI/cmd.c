@@ -47,6 +47,15 @@ cmd_next(struct Cmd *cmd)
 }
 
 char *
+cmd_current(struct Cmd *cmd)
+{
+	assert(cmd);
+	assert(cmd->string);
+	assert(cmd->string[cmd->i]);
+	return cmd->string + cmd->i;
+}
+
+char *
 cmd_at(struct Cmd *cmd, size_t i)
 {
 	assert(cmd);

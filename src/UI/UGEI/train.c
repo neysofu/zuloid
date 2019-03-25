@@ -12,7 +12,7 @@
 #include "time.h"
 
 void
-engine_call_ugea_train(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_train(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	return;
 }

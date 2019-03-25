@@ -13,7 +13,7 @@
 #include <string.h>
 
 void
-engine_call_ugea_get(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_get(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *value;
 	cJSON *key = cJSON_GetObjectItem(params, "key");

@@ -9,21 +9,21 @@
 #define Z64C_METHODS_H
 
 void
-engine_call_ugea_config(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_config(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_get(const struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_get(const struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_init(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_init(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_search(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_search(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_setup(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_setup(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_status(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_status(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_stop(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_stop(struct Engine *engine, const cJSON *params, cJSON *response);
 void
-engine_call_ugea_train(struct Engine *engine, const cJSON *params, cJSON *response);
+engine_ugei_call_train(struct Engine *engine, const cJSON *params, cJSON *response);
 
 void
 engine_uci_call_uci(struct Engine *engine, struct Cmd *cmd);

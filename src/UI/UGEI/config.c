@@ -19,7 +19,7 @@
 #include <string.h>
 
 void
-engine_call_ugea_config(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_config(struct Engine *engine, const cJSON *params, cJSON *response)
 {
 	cJSON *key = cJSON_GetObjectItem(params, "key");
 	cJSON *value = cJSON_GetObjectItem(params, "value");
