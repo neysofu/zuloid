@@ -17,6 +17,10 @@
 #include <stdio.h>
 #include <string.h>
 
+/* A note on comparing strings with hashes: it makes the code more readable and
+ * it's easy to add new cases. The risk of collisions is basically
+ * non-existant, being it 64 bits hashes. */
+
 void
 engine_ugei(struct Engine *engine, char *string)
 {
@@ -78,7 +82,7 @@ engine_ugei(struct Engine *engine, char *string)
 }
 
 void
-engine_uci_or_cecp(struct Engine *engine, char *string)
+engine_uci(struct Engine *engine, char *string)
 {
 	assert(engine);
 	assert(string);
@@ -94,6 +98,21 @@ engine_uci_or_cecp(struct Engine *engine, char *string)
 		case 0x33e37def10e5d195: /* "isready" */
 			printf("readyok\n");
 			break;
+		case 0x707db5f765aed6d8: /* "quit" */
+			engine->mode = MODE_EXIT;
+			break;
+	}
+}
+
+void
+engine_cecp(struct Engine *engine, char *string)
+{
+	assert(engine);
+	assert(string);
+	struct Cmd cmd;
+	cmd_init(&cmd, string);
+	char *token = cmd_at(&cmd, 0);
+	switch (XXH64(token, strlen(token), 0)) {
 		case 0x707db5f765aed6d8: /* "quit" */
 			engine->mode = MODE_EXIT;
 			break;
@@ -115,16 +134,19 @@ engine_unknown_protocol(struct Engine *engine, char *string)
 	size_t j = i + strcspn(string + i, WHITESPACE_CHARS);
 	char terminating_character = string[j];
 	string[j] = '\0';
-	if (strcmp(string + i, "uci") == 0 || strcmp(string + i, "xboard") == 0) {
-		engine->protocol = engine_uci_or_cecp;
-		engine_call(engine, string);
+	if (strcmp(string + i, "uci") == 0) {
+		engine->protocol = engine_uci;
+	} else if (strcmp(string + i, "xboard") == 0) {
+		engine->protocol = engine_cecp;
 	} else {
 		string[j] = terminating_character;
 		cJSON *json = cJSON_Parse(string);
+		cJSON_Delete(json);
 		if (json) {
 			engine->protocol = engine_ugei;
-			engine_call(engine, string);
+		} else {
+			return;
 		}
-		cJSON_Delete(json);
 	}
+	engine_call(engine, string);
 }

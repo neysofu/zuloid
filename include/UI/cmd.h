@@ -15,7 +15,7 @@ struct Cmd
 
 /* There is no memory allocation under the hood, so no need for 'engine_delete'. */
 void
-cmd_new(struct Cmd *cmd, char *string);
+cmd_init(struct Cmd *cmd, char *string);
 
 /* Parses the command string and returns a pointer to the next token,
  * null-terminated.

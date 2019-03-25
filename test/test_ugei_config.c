@@ -15,5 +15,5 @@ test_ugei_config(void)
 	engine_call(
 	  engine, "{\"method\":\"config\",\"params\":{\"key\":\"contempt\",\"value\":0.1337}}");
 	TEST_ASSERT_EQUAL_FLOAT(engine->settings.contempt, 0.1337);
-	free(engine);
+	engine_delete(engine);
 }

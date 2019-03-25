@@ -78,7 +78,11 @@ agent_eval_position(struct Agent *agent, struct Position *position)
 	UNUSED(agent);
 	UNUSED(position);
 	/* N and M dimension tensors, I need to convert one into the other. Great.
-	 * Every neuron bit has M XNOR connections. I need to use POPCNT, so I need
+	 * I want a SUPER simple interface... I could use bitshifts for changing
+	 * places. So I would need N bitshifts to also influence other bits. How
+	 * the hell do I do that? Basically, if there are more than N signals, it's
+	 * ok. N is chosen to keep the number of activated neurons stable through
+	 * the layers.
 	 * to focus on output neurons one at a time.
 	 * 1. Count all firing connections to neuron. If it's enough, then keep it.
 	 * */

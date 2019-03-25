@@ -17,5 +17,5 @@ test_ugei_init_metadata(void)
 	TEST_ASSERT(strstr(response, Z64C_COPYRIGHT));
 	TEST_ASSERT(strstr(response, Z64C_VERSION));
 	free(response);
-	free(engine);
+	engine_delete(engine);
 }

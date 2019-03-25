@@ -31,16 +31,17 @@ struct Cache
 	uint8_t temperature_indicator;
 	double load_factor;
 	size_t size;
-	struct CacheSlot slots[];
+	struct CacheSlot *slots;
 };
 
 struct Cache *
 cache_new(size_t size_in_bytes)
 {
-	struct Cache *cache = malloc(sizeof(struct Cache) + size_in_bytes + CACHE_CELL_SIZE);
+	struct Cache *cache = malloc(sizeof(struct Cache));
 	if (cache) {
 		*cache = (struct Cache){
 			.size = size_in_bytes / sizeof(struct CacheSlot),
+			.slots = malloc(size_in_bytes + CACHE_CELL_SIZE),
 		};
 		memset(cache->slots, 0, size_in_bytes + CACHE_CELL_SIZE);
 	}
@@ -50,6 +51,10 @@ cache_new(size_t size_in_bytes)
 void
 cache_delete(struct Cache *cache)
 {
+	if (!cache) {
+		return;
+	}
+	free(cache->slots);
 	free(cache);
 }
 
