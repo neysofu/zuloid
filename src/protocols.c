@@ -111,18 +111,18 @@ engine_cecp(struct Engine *engine, char *string)
 	struct Cmd cmd;
 	cmd_init(&cmd, string);
 	switch (XXH64(cmd_current(&cmd), strlen(cmd_current(&cmd)), 0)) {
-		case 0x707db5f765aed6d8: /* "quit" */
-			engine->mode = MODE_EXIT;
-			break;
-		case 0xad33154ea7fdbbc4: /* "xboard" */
-			engine_cecp_call_xboard(engine, &cmd);
-			break;
 		case 0x534feaec6d273bed: /* "ping" */
 			if (cmd_next(&cmd)) {
 				printf("ping %s\n", cmd_current(&cmd));
 			} else {
 				printf("ping\n");
 			}
+			break;
+		case 0x707db5f765aed6d8: /* "quit" */
+			engine->mode = MODE_EXIT;
+			break;
+		case 0xad33154ea7fdbbc4: /* "xboard" */
+			engine_cecp_call_xboard(engine, &cmd);
 			break;
 	}
 }

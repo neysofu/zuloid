@@ -35,11 +35,10 @@ cmd_next(struct Cmd *cmd)
 	assert(cmd);
 	assert(cmd->string);
 	cmd->i += strlen(cmd->string + cmd->i);
-	while (cmd->i < cmd->length && cmd->string == '\0') {
+	while (cmd->i < cmd->length && cmd->string[cmd->i] == '\0') {
 		cmd->i++;
 	}
 	if (cmd->i == cmd->length) {
-		cmd->i = 0;
 		return NULL;
 	} else {
 		return cmd->string + cmd->i;
@@ -51,7 +50,6 @@ cmd_current(struct Cmd *cmd)
 {
 	assert(cmd);
 	assert(cmd->string);
-	assert(cmd->string[cmd->i]);
 	return cmd->string + cmd->i;
 }
 
