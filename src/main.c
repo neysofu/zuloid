@@ -23,14 +23,16 @@ main(void)
 	if (get_pid(&pid) == EXIT_SUCCESS) {
 		printf("# Process ID: %d\n", pid);
 	}
-	struct Engine engine;
-	engine_new(&engine);
+	struct Engine *engine = engine_new();
+	if (!engine) {
+		return EXIT_FAILURE;
+	}
 	/* Saves us from countless malloc/free calls. */
 	struct LineBuffer line_buffer = LINE_BUFFER_EMPTY;
 	if (line_buffer_resize(&line_buffer, LINE_BUFFER_DEFAULT_CAPACITY)) {
 		return EXIT_FAILURE;
 	}
-	while (engine.mode != MODE_EXIT) {
+	while (engine->mode != MODE_EXIT) {
 		if (read_line(stdin, &line_buffer) == EXIT_SUCCESS) {
 			engine_call(&engine, line_buffer.string);
 		} else {
@@ -38,6 +40,5 @@ main(void)
 			return EXIT_SUCCESS;
 		}
 	}
-	engine_delete(&engine);
-	return engine.exit_status;
+	return engine_delete(&engine);
 }

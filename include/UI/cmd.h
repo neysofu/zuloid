@@ -17,10 +17,6 @@ struct Cmd
 void
 cmd_init(struct Cmd *cmd, char *string);
 
-/* Brings the iterator to the nth token and returns it. */
-char *
-cmd_at(struct Cmd *cmd, size_t i);
-
 /* Parses the command string and returns a pointer to the next token,
  * null-terminated.
  *

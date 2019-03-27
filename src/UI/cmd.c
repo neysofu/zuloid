@@ -52,14 +52,3 @@ cmd_current(struct Cmd *cmd)
 	assert(cmd->string);
 	return cmd->string + cmd->i;
 }
-
-char *
-cmd_at(struct Cmd *cmd, size_t i)
-{
-	assert(cmd);
-	assert(cmd->string);
-	while (i-- > 0) {
-		cmd_next(cmd);
-	}
-	return cmd->string + cmd->i;
-}

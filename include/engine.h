@@ -66,8 +66,8 @@ struct Engine
  * @param engine the non-NULL memory location to initialize.
  *
  * RETURN VALUE: NULL on failure; a valid pointer on success. */
-void
-engine_new(struct Engine *engine);
+struct Engine *
+engine_new(void);
 
 /* Gracefully kills `engine` and all its subsystems. Despite what methods such
  * as UCI's "quit" can induce into thinking, they are completely optional. No
@@ -76,7 +76,7 @@ engine_new(struct Engine *engine);
  * @param engine the non-NULL memory location to clean up.
  * @sideeffect All pointers stored inside `engine` are set to NULL and
  * their memory locations become unaccessible. */
-void
+int
 engine_delete(struct Engine *engine);
 
 /* A protocol-agnostic entry point for engine scripting.

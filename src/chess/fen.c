@@ -114,6 +114,22 @@ fen_go_to_next_token(const char **fen)
 }
 
 int
+position_set_active_color(struct Position *position, const char *fen)
+{
+	if (*fen) {
+		switch (tolower(*fen)) {
+			case 'w':
+				break;
+			case 'b':
+				position->side_to_move = COLOR_BLACK;
+				break;
+			default:
+				return -1;
+		}
+	}
+}
+
+int
 position_set_from_fen(struct Position *position, const char *fen)
 {
 	assert(position);

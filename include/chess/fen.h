@@ -13,4 +13,13 @@ fen_new_from_position(const struct Position *position);
 int
 position_set_from_fen(struct Position *position, const char *fen);
 
+int
+position_set_from_fen_fields(struct Position *position,
+                             const char *pieces,
+                             const char *active_color,
+                             const char *castling,
+                             const char *en_passant,
+                             const char *half_clock,
+                             const char *clock);
+
 #endif

@@ -18,10 +18,33 @@
 #include <string.h>
 
 void
-position_setup_960(struct Position *position) {
+position_print(struct Position *position)
+{
+	printf("    A B C D E F G H\n"
+	       "  +-----------------+\n");
+	Rank rank = RANK_MAX;
+	do {
+		printf("%c | ", rank_to_char(rank));
+		for (File file = 0; file <= FILE_MAX; file++) {
+			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
+			printf("%c ", piece_to_char(piece));
+		}
+		printf("| %c\n", rank_to_char(rank));
+	} while (rank-- > 0);
+	printf("  +-----------------+\n"
+	       "    A B C D E F G H\n");
+	// FIXME
+	//char *fen = fen_new_from_position(position);
+	//printf("FEN: %s\n", fen);
+	//free(fen);
+}
+
+void
+position_setup_960(struct Position *position)
+{
 	const Bitboard BB_A1_OR_A8 = 0x0100000000000001;
 	*position = POSITION_EMPTY;
-	File available_files[FILES_COUNT] = {0, 1, 2, 3, 4, 5, 6, 7};
+	File available_files[FILES_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	int i = (rand() % 4) * 2;
 	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
 	available_files[i] = available_files[7];

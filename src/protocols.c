@@ -11,6 +11,7 @@
 #include "chess/position.h"
 #include "core/agent.h"
 #include "engine.h"
+#include "globals.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <assert.h>
@@ -89,13 +90,33 @@ engine_uci(struct Engine *engine, char *string)
 	struct Cmd cmd;
 	cmd_init(&cmd, string);
 	switch (XXH64(cmd_current(&cmd), strlen(cmd_current(&cmd)), 0)) {
+		case 0x5000d8f2907d14e4: /* "d" */
+			position_print(&engine->position);
+			break;
 		case 0xf80028c1113b2c9c: /* "uci" */
 			printf("id name Z64C\n"
 			       "id author Filippo Costa\n"
-			       "uciok\n");
+				   "option name Threads type spin default 1 min 1 max 512\n"
+			       "option name Clear Hash type button\n"
+			       "option name Hash type spin default 8 min 0 max 65536\n"
+			       "option name Ponder type check default true\n"
+				   "option name Skill Level type spin default 100 min 0 max 100\n"
+				   "option name Move Overhead type spin default 30 min 0 max 5000\n"
+			       "option name OwnBook\n"
+			       "option name UCI_Opponent\n"
+				   "option name UCI_Chess960 type check default false\n"
+				   "option name UCI_AnalyseMode type check default false\n"
+			       "option name UCI_EngineAbout type string default %s\n"
+				   "option name SyzygyPath type string default <empty>\n"
+			       "option name Style type combo default normal\n"
+			       "uciok\n",
+			       Z64C_COPYRIGHT);
 			break;
 		case 0x33e37def10e5d195: /* "isready" */
 			printf("readyok\n");
+			break;
+		case 0x8a7ecc4137c6f2b0: /* "position" */
+			engine_uci_call_position(engine, &cmd);
 			break;
 		case 0x707db5f765aed6d8: /* "quit" */
 			engine->mode = MODE_EXIT;
@@ -111,6 +132,9 @@ engine_cecp(struct Engine *engine, char *string)
 	struct Cmd cmd;
 	cmd_init(&cmd, string);
 	switch (XXH64(cmd_current(&cmd), strlen(cmd_current(&cmd)), 0)) {
+		case 0x5000d8f2907d14e4: /* "d" */
+			position_print(&engine->position);
+			break;
 		case 0x534feaec6d273bed: /* "ping" */
 			if (cmd_next(&cmd)) {
 				printf("ping %s\n", cmd_current(&cmd));

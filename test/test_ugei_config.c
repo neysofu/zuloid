@@ -14,6 +14,6 @@ test_ugei_config(void)
 	struct Engine *engine = engine_new();
 	engine_call(
 	  engine, "{\"method\":\"config\",\"params\":{\"key\":\"contempt\",\"value\":0.1337}}");
-	TEST_ASSERT_EQUAL_FLOAT(engine->settings.contempt, 0.1337);
+	TEST_ASSERT_EQUAL_FLOAT(engine->contempt, 0.1337);
 	engine_delete(engine);
 }
