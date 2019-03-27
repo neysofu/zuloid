@@ -14,8 +14,4 @@ engine_ugei_call_search(struct Engine *engine, const cJSON *params, cJSON *respo
 		cJSON_AddJsonRpcErrorToObject(response, JSONRPC_MODE_ERROR);
 		return;
 	}
-	struct GameClock *gc = &engine->game_clocks[engine->position.side_to_move];
-	float available_time_in_seconds = game_clock_start(gc);
-	cJSON *result = cJSON_AddObjectToObject(response, "result");
-	cJSON *evaluation = cJSON_AddNumberToObject(result, "cp", 0);
 }

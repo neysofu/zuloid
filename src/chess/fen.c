@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/fen.h"
+#include "UI/cmd.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
@@ -105,36 +106,13 @@ fen_new_from_position(const struct Position *position)
 	return fen_copy;
 }
 
-void
-fen_go_to_next_token(const char **fen)
-{
-	assert(fen);
-	*fen += strcspn(*fen, FEN_SEPARATORS);
-	*fen += strspn(*fen, FEN_SEPARATORS);
-}
-
 int
-position_set_active_color(struct Position *position, const char *fen)
-{
-	if (*fen) {
-		switch (tolower(*fen)) {
-			case 'w':
-				break;
-			case 'b':
-				position->side_to_move = COLOR_BLACK;
-				break;
-			default:
-				return -1;
-		}
-	}
-}
-
-int
-position_set_from_fen(struct Position *position, const char *fen)
+position_init_from_fen_as_cmd(struct Position *position, struct Cmd *cmd)
 {
 	assert(position);
-	assert(fen);
+	assert(cmd);
 	*position = POSITION_EMPTY;
+	char *fen = cmd_current(cmd);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *fen && file <= FILE_MAX; fen++, file++) {
@@ -149,7 +127,7 @@ position_set_from_fen(struct Position *position, const char *fen)
 			fen++;
 		}
 	}
-	fen_go_to_next_token(&fen);
+	fen = cmd_current(cmd);
 	if (*fen) {
 		switch (tolower(*fen)) {
 			case 'w':
@@ -161,7 +139,7 @@ position_set_from_fen(struct Position *position, const char *fen)
 				return -1;
 		}
 	}
-	fen_go_to_next_token(&fen);
+	fen = cmd_current(cmd);
 	while (isalpha(*fen)) {
 		switch (*fen) {
 			case 'K':
@@ -179,16 +157,16 @@ position_set_from_fen(struct Position *position, const char *fen)
 		}
 		fen++;
 	}
-	fen_go_to_next_token(&fen);
+	fen = cmd_current(cmd);
 	if (*fen && *(fen + 1)) {
 		File file = char_to_file(*fen);
 		Rank rank = char_to_rank(*(fen + 1));
 		position->is_en_passant_available = file != FILE_NONE && rank != RANK_NONE;
 		position->en_passant_target = square_new(file, rank);
 	}
-	fen_go_to_next_token(&fen);
+	fen = cmd_current(cmd);
 	position->reversible_moves_count = strtol(fen, NULL, 10);
-	fen_go_to_next_token(&fen);
+	fen = cmd_current(cmd);
 	position->moves_count = strtol(fen, NULL, 10);
 	return 0;
 }

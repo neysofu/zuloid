@@ -22,6 +22,12 @@
 
 const char *const WHITESPACE_CHARS = "\t\n\r \v";
 
+void
+log_unknown_command(const char *command)
+{
+	printf("# Unknown command: '%s'.\n", command);
+}
+
 bool
 string_is_whitespace(const char *string)
 {

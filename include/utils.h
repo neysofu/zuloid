@@ -25,6 +25,9 @@
 	} while (0)
 #endif
 
+void
+log_unknown_command(const char *command);
+
 #define UNUSED(...) (void)(__VA_ARGS__)
 
 extern const char *const WHITESPACE_CHARS;

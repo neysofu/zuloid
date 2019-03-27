@@ -121,6 +121,8 @@ engine_uci(struct Engine *engine, char *string)
 		case 0x707db5f765aed6d8: /* "quit" */
 			engine->mode = MODE_EXIT;
 			break;
+		default:
+			log_unknown_command(cmd_current(&cmd));
 	}
 }
 

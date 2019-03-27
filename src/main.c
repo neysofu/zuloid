@@ -34,11 +34,11 @@ main(void)
 	}
 	while (engine->mode != MODE_EXIT) {
 		if (read_line(stdin, &line_buffer) == EXIT_SUCCESS) {
-			engine_call(&engine, line_buffer.string);
+			engine_call(engine, line_buffer.string);
 		} else {
-			engine_delete(&engine);
+			engine_delete(engine);
 			return EXIT_SUCCESS;
 		}
 	}
-	return engine_delete(&engine);
+	return engine_delete(engine);
 }

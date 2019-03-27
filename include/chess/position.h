@@ -36,7 +36,7 @@ struct Position
 };
 
 void
-position_setup_960(struct Position *position);
+position_init_960(struct Position *position);
 
 void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);

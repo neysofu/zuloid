@@ -40,7 +40,7 @@ position_print(struct Position *position)
 }
 
 void
-position_setup_960(struct Position *position)
+position_init_960(struct Position *position)
 {
 	const Bitboard BB_A1_OR_A8 = 0x0100000000000001;
 	*position = POSITION_EMPTY;
