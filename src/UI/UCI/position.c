@@ -12,7 +12,7 @@ void
 engine_uci_call_position(struct Engine *engine, struct Cmd *cmd)
 {
 	if (strcmp(cmd_next(cmd), "startpos") == 0) {
-		engine->position = POSITION_DEFAULT;
+		engine->position = POSITION_INIT;
 	} else if (strcmp(cmd_current(cmd), "fen") == 0) {
 		position_init_from_fen_as_cmd(&engine->position, cmd);
 	}

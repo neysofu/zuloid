@@ -33,10 +33,10 @@ position_print(struct Position *position)
 	} while (rank-- > 0);
 	printf("  +-----------------+\n"
 	       "    A B C D E F G H\n");
-	// FIXME
-	//char *fen = fen_new_from_position(position);
-	//printf("FEN: %s\n", fen);
-	//free(fen);
+	char *fen = fen_new_from_position(position);
+	printf("FEN: %s\n", fen);
+	printf("Lichess URL: %s\n", "https://lichess.org/analysis/%s", fen);
+	free(fen);
 }
 
 void
@@ -120,7 +120,7 @@ position_flip_side_to_move(struct Position *position)
 	position->side_to_move ^= 1;
 }
 
-const struct Position POSITION_DEFAULT = {
+const struct Position POSITION_INIT = {
 	.bb =
 	  {
 	    [COLOR_WHITE] = 0x0303030303030303,

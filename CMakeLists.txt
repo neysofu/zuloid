@@ -47,7 +47,7 @@ set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
 # xxHash
 add_library (XXHASH "${LIB_DIR}/xxHash/xxhash.c")
-set_property (TARGET XXHASH PROPERTY C_STANDARD 90)
+set_property (TARGET XXHASH PROPERTY C_STANDARD 99)
 # Unity
 add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property (TARGET UNITY PROPERTY C_STANDARD 90)

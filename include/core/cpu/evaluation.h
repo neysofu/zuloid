@@ -6,6 +6,8 @@
 #define Z64C_CORE_CPU_EVALUATION_H
 
 #include "chess/move.h"
+#include "chess/position.h"
+#include "core/agent.h"
 #include <stdint.h>
 #include <stdlib.h>
 

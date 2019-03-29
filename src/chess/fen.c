@@ -112,7 +112,7 @@ position_init_from_fen_as_cmd(struct Position *position, struct Cmd *cmd)
 	assert(position);
 	assert(cmd);
 	*position = POSITION_EMPTY;
-	char *fen = cmd_current(cmd);
+	char *fen = cmd_next(cmd);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *fen && file <= FILE_MAX; fen++, file++) {

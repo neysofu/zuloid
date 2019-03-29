@@ -36,6 +36,9 @@ struct Position
 };
 
 void
+position_print(struct Position *position);
+
+void
 position_init_960(struct Position *position);
 
 void
@@ -44,7 +47,7 @@ position_set_piece_at_square(struct Position *position, Square square, struct Pi
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);
 
-extern const struct Position POSITION_DEFAULT;
+extern const struct Position POSITION_INIT;
 extern const struct Position POSITION_EMPTY;
 
 #endif

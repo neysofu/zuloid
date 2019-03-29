@@ -13,7 +13,7 @@
 void
 test_fen_init(void)
 {
-	char *fen = fen_new_from_position(&POSITION_DEFAULT);
+	char *fen = fen_new_from_position(&POSITION_INIT);
 	TEST_ASSERT_EQUAL_STRING("rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1", fen);
 	free(fen);
 }
