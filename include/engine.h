@@ -37,10 +37,11 @@ struct Engine
 	struct Cache *cache;
 	struct Agent *agent;
 	/* It points to `engine_call`'s correct implementation after protocol setting. */
-	void (*protocol)(struct Engine *, char *);
+	void (*protocol)(struct Engine *, struct DynStr *);
 	/* All network activity (if any) will be on this port. */
 	int port;
 	int seed;
+	bool debug;
 	float move_selection_noise;
 	/* Must be in the range [0,1]. It measures the engine's sense of
 	 * superiority and thus reluctancy to draw. When set to 0, draws are

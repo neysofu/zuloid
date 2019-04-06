@@ -10,6 +10,16 @@
 #define Z64C_API_METHODS_H
 
 void
+engine_cecp_call_xboard(struct Engine *engine, struct DynStr *dyn_str);
+
+void
+engine_uci_call_go(struct Engine *engine, struct DynStr *dyn_str);
+void
+engine_uci_call_position(struct Engine *engine, struct DynStr *dyn_str);
+void
+engine_uci_call_setoption(struct Engine *engine, struct DynStr *dyn_str);
+
+void
 engine_ugei_call_config(struct Engine *engine, const cJSON *params, cJSON *response);
 void
 engine_ugei_call_get(const struct Engine *engine, const cJSON *params, cJSON *response);
@@ -25,8 +35,5 @@ void
 engine_ugei_call_stop(struct Engine *engine, cJSON *response);
 void
 engine_ugei_call_train(struct Engine *engine, const cJSON *params, cJSON *response);
-
-void
-engine_cecp_call_xboard(struct Engine *engine, struct DynStr *dyn_str);
 
 #endif

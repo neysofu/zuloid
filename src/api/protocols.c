@@ -113,7 +113,15 @@ engine_uci(struct Engine *engine, struct DynStr *dyn_str)
 			       Z64C_COPYRIGHT);
 			break;
 		case 0x01fd51a2a6f9cc2f: /* "debug" */
-			// TODO
+			token = dyn_str_next_token(dyn_str);
+			if (strcmp(token, "on") == 0) {
+				engine->debug = true;
+			} else if (strcmp(token, "off") == 0) {
+				engine->debug = false;
+			}
+			break;
+		case 0xd682e29388e0f4a3: /* "go" */
+			engine_uci_call_go(engine, dyn_str);
 			break;
 		case 0x33e37def10e5d195: /* "isready" */
 			printf("readyok\n");

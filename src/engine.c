@@ -26,6 +26,7 @@ engine_new(void)
 			.protocol = engine_unknown_protocol,
 			.port = 34290,
 			.seed = 0xcfca130bUL,
+			.debug = false,
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
