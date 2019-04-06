@@ -5,7 +5,6 @@
 #include "chess/fen.h"
 #include "Unity/src/unity.h"
 #include "chess/position.h"
-#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

@@ -16,19 +16,21 @@
 
 enum CastlingRights
 {
-	CASTLING_RIGHT_W_OO = 1,
-	CASTLING_RIGHT_B_OO = 2,
-	CASTLING_RIGHT_W_OOO = 4,
-	CASTLING_RIGHT_B_OOO = 8,
-	CASTLING_RIGHTS_ALL = CASTLING_RIGHT_W_OO | CASTLING_RIGHT_B_OO | CASTLING_RIGHT_W_OOO |
-	                      CASTLING_RIGHT_B_OOO,
+	CASTLING_RIGHT_NONE = 0,
+	CASTLING_RIGHT_WK = 1,
+	CASTLING_RIGHT_BK = 2,
+	CASTLING_RIGHT_WQ = 4,
+	CASTLING_RIGHT_BQ = 8,
+	CASTLING_RIGHTS_ALL = 0xf,
 };
+
+enum CastlingRights
+char_to_castling_right(char c);
 
 struct Position
 {
 	Bitboard bb[COLORS_COUNT + PRIMITIVE_PIECE_TYPES_COUNT];
 	enum Color side_to_move;
-	bool is_en_passant_available;
 	Square en_passant_target;
 	enum CastlingRights castling_rights;
 	size_t reversible_moves_count;

@@ -2,10 +2,11 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#ifndef Z64C_PROTOCOLS_H
-#define Z64C_PROTOCOLS_H
+#ifndef Z64C_API_PROTOCOLS_H
+#define Z64C_API_PROTOCOLS_H
 
 #include "engine.h"
+#include "utils/dyn_str.h"
 
 /* Z64C is multi-protocol and supports
  * - CECP (also known as XBoard)
@@ -16,9 +17,13 @@
  * that all alternatives lacked something.
  *
  * @see https://xkcd.com/927/ */
-void engine_cecp(struct Engine *engine, char *string);
-void engine_uci(struct Engine *engine, char *string);
-void engine_ugei(struct Engine *engine, char *string);
-void engine_unknown_protocol(struct Engine *engine, char *string);
+void
+engine_cecp(struct Engine *engine, struct DynStr *dyn_str);
+void
+engine_uci(struct Engine *engine, struct DynStr *dyn_str);
+void
+engine_ugei(struct Engine *engine, struct DynStr *dyn_str);
+void
+engine_unknown_protocol(struct Engine *engine, struct DynStr *dyn_str);
 
 #endif

@@ -2,15 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "UI/cmd.h"
 #include "engine.h"
-#include "utils.h"
+#include "utils/dyn_str.h"
+#include <assert.h>
 
 void
-engine_cecp_call_xboard(struct Engine *engine, struct Cmd *cmd)
+engine_cecp_call_xboard(struct Engine *engine, struct DynStr *dyn_str)
 {
-	UNUSED(engine);
-	UNUSED(cmd);
+	assert(engine);
+	assert(dyn_str);
 	printf("feature myname=\"Z64C\"\n"
 	       "feature ping=1\n"
 	       "feature playother=1\n"

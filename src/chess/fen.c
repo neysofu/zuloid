@@ -3,41 +3,19 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "chess/fen.h"
-#include "UI/cmd.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/pieces.h"
 #include "chess/position.h"
-#include "utils.h"
+#include "utils/utils.h"
+#include "utils/dyn_str.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-/*  64 + | pieces
- *   7 + | slashes
- *   1 + | space
- *   1 + | active color
- *   1 + | space
- *   4 + | castling rights
- *   1 + | space
- *   2 + | en-passant target square
- *   1 + | space
- *   6 + | half-moves clock
- *   1 + | space
- *   6 + | full-moves
- * -----
- *  95 plus some extra safety space. */
-
-enum
-{
-	FEN_SIZE = 128
-};
-
-const char *const FEN_SEPARATORS = " _";
 
 char *
 fen_write_position_pieces(char *fen, const struct Position *position)
@@ -79,27 +57,27 @@ fen_new_from_position(const struct Position *position)
 	*fen++ = color_to_char(position->side_to_move);
 	*fen++ = ' ';
 	if (position->castling_rights) {
-		if (position->castling_rights & CASTLING_RIGHT_W_OO) {
+		if (position->castling_rights & CASTLING_RIGHT_WK) {
 			*fen++ = 'K';
 		}
-		if (position->castling_rights & CASTLING_RIGHT_W_OOO) {
+		if (position->castling_rights & CASTLING_RIGHT_WQ) {
 			*fen++ = 'Q';
 		}
-		if (position->castling_rights & CASTLING_RIGHT_B_OO) {
+		if (position->castling_rights & CASTLING_RIGHT_BK) {
 			*fen++ = 'k';
 		}
-		if (position->castling_rights & CASTLING_RIGHT_B_OOO) {
+		if (position->castling_rights & CASTLING_RIGHT_BQ) {
 			*fen++ = 'q';
 		}
 	} else {
 		*fen++ = '-';
 	}
 	*fen++ = ' ';
-	if (position->is_en_passant_available) {
+	if (position->en_passant_target == SQUARE_NONE) {
+		*fen++ = '-';
+	} else {
 		*fen++ = file_to_char(square_file(position->en_passant_target));
 		*fen++ = rank_to_char(square_rank(position->en_passant_target));
-	} else {
-		*fen++ = '-';
 	}
 	*fen++ = ' ';
 	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
@@ -107,66 +85,50 @@ fen_new_from_position(const struct Position *position)
 }
 
 int
-position_init_from_fen_as_cmd(struct Position *position, struct Cmd *cmd)
+position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str)
 {
 	assert(position);
-	assert(cmd);
+	assert(dyn_str);
 	*position = POSITION_EMPTY;
-	char *fen = cmd_next(cmd);
+	char *token = dyn_str_next_token(dyn_str);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
-		for (File file = 0; *fen && file <= FILE_MAX; fen++, file++) {
+		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
 			Square square = square_new(file, rank);
-			if (isdigit(*fen)) {
-				file += *fen - '1';
+			if (isdigit(*token)) {
+				file += *token - '1';
 			} else {
-				position_set_piece_at_square(position, square, char_to_piece(*fen));
+				position_set_piece_at_square(position, square, char_to_piece(*token));
 			}
 		}
-		if ('/' == *fen) {
-			fen++;
+		if ('/' == *token) {
+			token++;
 		}
 	}
-	fen = cmd_current(cmd);
-	if (*fen) {
-		switch (tolower(*fen)) {
-			case 'w':
-				break;
-			case 'b':
-				position->side_to_move = COLOR_BLACK;
-				break;
-			default:
-				return -1;
-		}
+	token = dyn_str_next_token(dyn_str);
+	switch (tolower(*token)) {
+		case 'w':
+			position->side_to_move = COLOR_WHITE;
+			break;
+		case 'b':
+			position->side_to_move = COLOR_BLACK;
+			break;
+		default:
+			return ERR_CODE_INVALID_FEN;
 	}
-	fen = cmd_current(cmd);
-	while (isalpha(*fen)) {
-		switch (*fen) {
-			case 'K':
-				position->castling_rights |= CASTLING_RIGHT_W_OO;
-				break;
-			case 'Q':
-				position->castling_rights |= CASTLING_RIGHT_W_OOO;
-				break;
-			case 'k':
-				position->castling_rights |= CASTLING_RIGHT_B_OO;
-				break;
-			case 'q':
-				position->castling_rights |= CASTLING_RIGHT_B_OOO;
-				break;
-		}
-		fen++;
+	token = dyn_str_next_token(dyn_str);
+	while (*token) {
+		position->castling_rights |= char_to_castling_right(*token++);
 	}
-	fen = cmd_current(cmd);
-	if (*fen && *(fen + 1)) {
-		File file = char_to_file(*fen);
-		Rank rank = char_to_rank(*(fen + 1));
-		position->is_en_passant_available = file != FILE_NONE && rank != RANK_NONE;
+	token = dyn_str_next_token(dyn_str);
+	if (strlen(token) >= 2) {
+		File file = char_to_file(token[0]);
+		Rank rank = char_to_rank(token[1]);
 		position->en_passant_target = square_new(file, rank);
 	}
-	fen = cmd_current(cmd);
-	position->reversible_moves_count = strtol(fen, NULL, 10);
-	fen = cmd_current(cmd);
-	position->moves_count = strtol(fen, NULL, 10);
-	return 0;
+	token = dyn_str_next_token(dyn_str);
+	position->reversible_moves_count = strtol(token, NULL, 10);
+	token = dyn_str_next_token(dyn_str);
+	position->moves_count = strtol(token, NULL, 10);
+	return ERR_CODE_NONE;
 }

@@ -5,7 +5,6 @@
 #include "time/game_clock.h"
 #include "tictoc/tictoc.h"
 #include "time/time_control.h"
-#include "utils.h"
 #include <assert.h>
 #include <stdlib.h>
 

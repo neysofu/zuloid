@@ -4,7 +4,8 @@
 
 #include "engine.h"
 #include "globals.h"
-#include "utils.h"
+#include "utils/utils.h"
+#include "utils/dyn_str.h"
 #include <stdio.h>
 #include <stdlib.h>
 
@@ -20,7 +21,7 @@ main(void)
 	printf("# There is NO warranty of any kind.\n");
 	int pid;
 	/* There's no point in displaying the PID if it is unavailable. */
-	if (get_pid(&pid) == EXIT_SUCCESS) {
+	if (get_pid(&pid) == ERR_CODE_NONE) {
 		printf("# Process ID: %d\n", pid);
 	}
 	struct Engine *engine = engine_new();
@@ -28,16 +29,13 @@ main(void)
 		return EXIT_FAILURE;
 	}
 	/* Saves us from countless malloc/free calls. */
-	struct LineBuffer line_buffer = LINE_BUFFER_EMPTY;
-	if (line_buffer_resize(&line_buffer, LINE_BUFFER_DEFAULT_CAPACITY)) {
-		return EXIT_FAILURE;
-	}
 	while (engine->mode != MODE_EXIT) {
-		if (read_line(stdin, &line_buffer) == EXIT_SUCCESS) {
-			engine_call(engine, line_buffer.string);
-		} else {
+		struct DynStr dyn_str = DYN_STR_EMPTY;
+		if (dyn_str_read_line_from_stream(&dyn_str, stdin)) {
 			engine_delete(engine);
 			return EXIT_SUCCESS;
+		} else {
+			engine_call(engine, &dyn_str);
 		}
 	}
 	return engine_delete(engine);

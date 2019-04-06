@@ -7,7 +7,7 @@
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/pieces.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -17,22 +17,39 @@
 #include <stdlib.h>
 #include <string.h>
 
+enum CastlingRights
+char_to_castling_right(char c)
+{
+	switch (c) {
+		case 'K':
+			return CASTLING_RIGHT_WK;
+		case 'Q':
+			return CASTLING_RIGHT_WQ;
+		case 'k':
+			return CASTLING_RIGHT_BK;
+		case 'q':
+			return CASTLING_RIGHT_BQ;
+		default:
+			return CASTLING_RIGHT_NONE;
+	}
+}
+
 void
 position_print(struct Position *position)
 {
-	printf("    A B C D E F G H\n"
-	       "  +-----------------+\n");
+	printf("#     A B C D E F G H\n"
+	       "#   +-----------------+\n");
 	Rank rank = RANK_MAX;
 	do {
-		printf("%c | ", rank_to_char(rank));
+		printf("# %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
 			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
 			printf("%c ", piece_to_char(piece));
 		}
 		printf("| %c\n", rank_to_char(rank));
 	} while (rank-- > 0);
-	printf("  +-----------------+\n"
-	       "    A B C D E F G H\n");
+	printf("#   +-----------------+\n"
+	       "#     A B C D E F G H\n");
 	char *fen = fen_new_from_position(position);
 	printf("FEN: %s\n", fen);
 	printf("Lichess URL: %s\n", "https://lichess.org/analysis/%s", fen);

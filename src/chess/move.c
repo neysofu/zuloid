@@ -6,7 +6,6 @@
 #include "chess/position.h"
 #include "chess/coordinates.h"
 #include "chess/pieces.h"
-#include "utils.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>

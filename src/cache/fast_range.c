@@ -7,7 +7,6 @@
  * Modifications by Filippo Costa. Original file at
  * https://github.com/lemire/fastrange/blob/master/fastrange.h. */
 
-#include "utils.h"
 #include <iso646.h>
 #include <limits.h>
 #include <stddef.h>

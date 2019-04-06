@@ -5,13 +5,33 @@
 #ifndef Z64C_CHESS_FEN_H
 #define Z64C_CHESS_FEN_H
 
-#include "UI/cmd.h"
 #include "chess/position.h"
+#include "utils/dyn_str.h"
+
+/*  64 + | pieces
+ *   7 + | slashes
+ *   1 + | space
+ *   1 + | active color
+ *   1 + | space
+ *   4 + | castling rights
+ *   1 + | space
+ *   2 + | en-passant target square
+ *   1 + | space
+ *   6 + | half-moves clock
+ *   1 + | space
+ *   6 + | full-moves
+ * -----
+ *  95 plus some extra safety space. */
+
+enum
+{
+	FEN_SIZE = 128
+};
 
 char *
 fen_new_from_position(const struct Position *position);
 
 int
-position_init_from_fen_as_cmd(struct Position *position, struct Cmd *cmd);
+position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str);
 
 #endif

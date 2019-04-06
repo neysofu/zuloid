@@ -6,7 +6,7 @@
 #include "cache/fast_range.h"
 #include "globals.h"
 #include "switches.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <assert.h>
 #include <math.h>
 #include <stdio.h>

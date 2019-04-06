@@ -3,11 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
+#include "api/protocols.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "core/agent.h"
-#include "protocols.h"
-#include "utils.h"
+#include "utils/dyn_str.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,10 +51,10 @@ engine_delete(struct Engine *engine)
 }
 
 void
-engine_call(struct Engine *engine, char *string)
+engine_call(struct Engine *engine, struct DynStr *dyn_str)
 {
 	assert(engine);
-	assert(string);
+	assert(dyn_str->buffer);
 	assert(engine->mode != MODE_EXIT);
-	(*engine->protocol)(engine, string);
+	(*engine->protocol)(engine, dyn_str);
 }

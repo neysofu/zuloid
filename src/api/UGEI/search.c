@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "api/jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 #include "engine.h"
-#include "UI/jsonrpc_errors.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 void
 engine_ugei_call_search(struct Engine *engine, const cJSON *params, cJSON *response)

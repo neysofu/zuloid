@@ -13,6 +13,8 @@ test_char_to_piece(void);
 extern void
 test_color(void);
 extern void
+test_dyn_str(void);
+extern void
 test_fen_conversion(void);
 extern void
 test_fen_init(void);
@@ -41,6 +43,7 @@ main(void)
 	RUN_TEST(test_char_to_file);
 	RUN_TEST(test_char_to_piece);
 	RUN_TEST(test_color);
+	RUN_TEST(test_dyn_str);
 	RUN_TEST(test_fen_conversion);
 	RUN_TEST(test_fen_init);
 	RUN_TEST(test_file_to_char);

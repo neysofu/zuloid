@@ -4,7 +4,6 @@
 
 #include "time/time_control.h"
 #include "cJSON/cJSON.h"
-#include "utils.h"
 #include <assert.h>
 #include <stdlib.h>
 #include <sys/time.h>

@@ -13,6 +13,7 @@
 #include "chess/termination.h"
 #include "core/agent.h"
 #include "time/game_clock.h"
+#include "utils/dyn_str.h"
 #include <stdio.h>
 
 enum Mode
@@ -89,6 +90,6 @@ engine_delete(struct Engine *engine);
  * Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
  * All communication must be in valid JSON-RPC 2.0. */
 void
-engine_call(struct Engine *engine, char *string);
+engine_call(struct Engine *engine, struct DynStr *dyn_str);
 
 #endif

@@ -2,17 +2,15 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "UI/jsonrpc_errors.h"
+#include "api/jsonrpc_errors.h"
 #include "cJSON/cJSON.h"
 #include "engine.h"
 #include "globals.h"
-#include "utils.h"
-#include <assert.h>
+#include "utils/utils.h"
 
 void
-engine_ugei_call_init(struct Engine *engine, const cJSON *params, cJSON *response)
+engine_ugei_call_init(struct Engine *engine, cJSON *response)
 {
-	UNUSED(params);
 	engine->agent = agent_new();
 	engine->time_controls[COLOR_WHITE] = time_control_new_bullet();
 	game_clock_init(&engine->game_clocks[COLOR_WHITE], engine->time_controls[COLOR_WHITE]);

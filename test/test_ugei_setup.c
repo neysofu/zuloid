@@ -5,7 +5,6 @@
 #include "Unity/src/unity.h"
 #include "engine.h"
 #include "globals.h"
-#include "utils.h"
 #include <string.h>
 
 #define FEN "R2K1B1R/PPP2QPP/5N1N/1n2q3/8/1p3n2/pbpp3p/1kr4r w KQkq - 0 1"

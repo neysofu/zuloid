@@ -7,7 +7,7 @@
 #include "chess/position.h"
 #include "core/cpu/evaluation.h"
 #include "core/cpu/tensor.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>
@@ -62,7 +62,6 @@ agent_import(struct Agent *agent, FILE *file)
 int
 agent_export(struct Agent *agent, FILE *file)
 {
-	UNUSED(agent);
 	fclose(file);
 	return 0;
 }
@@ -75,8 +74,6 @@ enum
 int
 agent_eval_position(struct Agent *agent, struct Position *position)
 {
-	UNUSED(agent);
-	UNUSED(position);
 	/* N and M dimension tensors, I need to convert one into the other. Great.
 	 * I want a SUPER simple interface... I could use bitshifts for changing
 	 * places. So I would need N bitshifts to also influence other bits. How

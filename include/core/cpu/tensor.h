@@ -3,7 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "cJSON/cJSON.h"
-#include "utils.h"
+#include "utils/utils.h"
 
 struct Tensor
 {

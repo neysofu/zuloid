@@ -9,6 +9,15 @@
 #include <stdbool.h>
 #include <stdio.h>
 
+enum ErrorCode
+{
+	ERR_CODE_NONE,
+	ERR_CODE_EOF,
+	ERR_CODE_ALLOC,
+	ERR_CODE_UNSUPPORTED,
+	ERR_CODE_INVALID_FEN,
+};
+
 /* Logs are always prefixed by '#', regardless of the protocol in use. This is
  * in line with both UGEI and CECP guidelines. UCI doesn't have a specific
  * syntax for debug statements, but simply ignores any unknown command (as # is). */
@@ -28,32 +37,8 @@
 void
 log_unknown_command(const char *command);
 
-#define UNUSED(...) (void)(__VA_ARGS__)
-
-extern const char *const WHITESPACE_CHARS;
-
 bool
 string_is_whitespace(const char *string);
-
-enum
-{
-	LINE_BUFFER_DEFAULT_CAPACITY = 64,
-};
-
-struct LineBuffer
-{
-	char *string;
-	size_t capacity;
-};
-
-int
-line_buffer_resize(struct LineBuffer *lb, size_t capacity);
-
-extern const struct LineBuffer LINE_BUFFER_EMPTY;
-
-/* Stores stream input in `lb` and waits for a line feed (ASCII 0xA). */
-int
-read_line(FILE *stream, struct LineBuffer *lb);
 
 /* Writes the current process ID to `pid`.
  * @param pid a non-NULL target pointer.

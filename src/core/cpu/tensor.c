@@ -5,7 +5,7 @@
 #include "base64.c/base64.h"
 #include "chess/position.h"
 #include "cJSON/cJSON.h"
-#include "utils.h"
+#include "utils/utils.h"
 #include <assert.h>
 #include <string.h>
 

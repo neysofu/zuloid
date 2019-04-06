@@ -5,7 +5,6 @@
 #include "Unity/src/unity.h"
 #include "engine.h"
 #include "globals.h"
-#include "utils.h"
 #include <string.h>
 
 void
