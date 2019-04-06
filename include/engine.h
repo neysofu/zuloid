@@ -12,6 +12,7 @@
 #include "chess/position.h"
 #include "chess/termination.h"
 #include "core/agent.h"
+#include "core/eval.h"
 #include "time/game_clock.h"
 #include "utils/dyn_str.h"
 #include <stdio.h>
@@ -36,8 +37,10 @@ struct Engine
 	struct GameClock game_clocks[2];
 	struct Cache *cache;
 	struct Agent *agent;
+	struct Eval eval;
 	/* It points to `engine_call`'s correct implementation after protocol setting. */
 	void (*protocol)(struct Engine *, struct DynStr *);
+	struct Tablebase *tablebase;
 	/* All network activity (if any) will be on this port. */
 	int port;
 	int seed;
@@ -53,7 +56,6 @@ struct Engine
 	 * adjustments can have extensive influence over the gameplay. 0.5 is the
 	 * most performant option. */
 	float selectivity;
-	struct Tablebase *tablebase;
 	/* A straightforward activity indicator. Both `main` and engine commands
 	 * might want to know if the engine is doing background computation or
 	 * what. */

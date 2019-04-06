@@ -11,7 +11,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-struct Evaluation
+struct Eval
 {
 	float game_phase_indicator;
 	float dispersion;
@@ -26,8 +26,5 @@ struct Evaluation
 	bool castling_ooo;
 	bool en_passant;
 };
-
-int
-agent_eval(struct Agent *agent, struct Position *position, struct Evaluation *evaluation);
 
 #endif

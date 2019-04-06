@@ -141,34 +141,6 @@ engine_uci(struct Engine *engine, struct DynStr *dyn_str)
 }
 
 void
-engine_cecp(struct Engine *engine, struct DynStr *dyn_str)
-{
-	assert(engine);
-	assert(dyn_str->buffer);
-	dyn_str_tokenize(dyn_str);
-	char *token = dyn_str_current_token(dyn_str);
-	switch (XXH64(token, strlen(token), 0)) {
-		case 0x5000d8f2907d14e4: /* "d" */
-			position_print(&engine->position);
-			break;
-		case 0x534feaec6d273bed: /* "ping" */
-			token = dyn_str_next_token(dyn_str);
-			if (token) {
-				printf("ping %s\n", token);
-			} else {
-				printf("ping\n");
-			}
-			break;
-		case 0x707db5f765aed6d8: /* "quit" */
-			engine->mode = MODE_EXIT;
-			break;
-		case 0xad33154ea7fdbbc4: /* "xboard" */
-			engine_cecp_call_xboard(engine, dyn_str);
-			break;
-	}
-}
-
-void
 engine_unknown_protocol(struct Engine *engine, struct DynStr *dyn_str)
 {
 	assert(engine);
@@ -179,8 +151,6 @@ engine_unknown_protocol(struct Engine *engine, struct DynStr *dyn_str)
 		engine->protocol = engine_ugei;
 	} else if (strstr(dyn_str->buffer, "uci")) {
 		engine->protocol = engine_uci;
-	} else if (strstr(dyn_str->buffer, "xboard")) {
-		engine->protocol = engine_cecp;
 	} else {
 		return;
 	}

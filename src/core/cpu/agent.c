@@ -5,8 +5,7 @@
 #include "core/agent.h"
 #include "cJSON/cJSON.h"
 #include "chess/position.h"
-#include "core/cpu/evaluation.h"
-#include "core/cpu/tensor.h"
+#include "core/eval.h"
 #include "utils/utils.h"
 #include <assert.h>
 #include <stdint.h>
@@ -16,8 +15,9 @@
 struct Agent
 {
 	FILE *source;
-	size_t tensors_count;
-	struct Tensor *tensors;
+	uint64_t l0_or[128];
+	uint64_t l0_and[128];
+	uint64_t layer[128];
 };
 
 struct Agent *
@@ -26,7 +26,7 @@ agent_new(void)
 	struct Agent *agent = malloc(sizeof(struct Agent));
 	if (agent) {
 		*agent = (struct Agent){
-			.source = NULL, .tensors_count = 0, .tensors = NULL,
+			.source = NULL,
 		};
 	}
 	return agent;
@@ -35,10 +35,6 @@ agent_new(void)
 void
 agent_delete(struct Agent *agent)
 {
-	if (!agent) {
-		return;
-	}
-	free(agent->tensors);
 	free(agent);
 }
 
@@ -53,8 +49,6 @@ agent_import(struct Agent *agent, FILE *file)
 	fclose(file);
 	cJSON *json = cJSON_Parse(buffer);
 	cJSON *layer_0 = cJSON_GetObjectItem(json, "layer_0");
-	agent->tensors_count = cJSON_GetArraySize(layer_0);
-	agent->tensors = malloc(sizeof(int64_t) * agent->tensors_count);
 	// FIXME: malloc check
 	return 0;
 }
@@ -81,11 +75,6 @@ agent_eval_position(struct Agent *agent, struct Position *position)
 	 * ok. N is chosen to keep the number of activated neurons stable through
 	 * the layers.
 	 * to focus on output neurons one at a time.
-	 * 1. Count all firing connections to neuron. If it's enough, then keep it.
-	 * */
-	// struct Tensor tensor = {
-	//	128 * 64, malloc(128 * 64),
-	//};
-	// size_t counts[BATCH_SIZE] = { 0 };
+	 * 1. Count all firing connections to neuron. If it's enough, then keep it. */
 	return 0;
 }
