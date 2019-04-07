@@ -4,10 +4,12 @@
 
 #include "chess/fen.h"
 #include "chess/position.h"
+#include "core/search.h"
 #include "engine.h"
 #include "utils/dyn_str.h"
 #include "xxHash/xxhash.h"
 #include <assert.h>
+#include <plibsys.h>
 #include <string.h>
 
 void
@@ -38,5 +40,6 @@ engine_uci_call_go(struct Engine *engine, struct DynStr *dyn_str)
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 			break;
 	}
+	PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search), &engine, false);
 	printf("bestmove e2e4 ponder c7c5\n");
 }

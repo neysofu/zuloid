@@ -45,22 +45,22 @@ set_property (TARGET BASE64C PROPERTY C_STANDARD 99)
 # cJSON
 set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
+# plibsys
+set (PLIBSYS_BUILD_DOC OFF)
+add_subdirectory ("${LIB_DIR}/plibsys/")
 # xxHash
 add_library (XXHASH "${LIB_DIR}/xxHash/xxhash.c")
 set_property (TARGET XXHASH PROPERTY C_STANDARD 99)
 # Unity
 add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property (TARGET UNITY PROPERTY C_STANDARD 90)
-# TicToc
-add_library (TICTOC "${LIB_DIR}/tictoc/src/tictoc.c")
-set_property (TARGET TICTOC PROPERTY C_STANDARD 99)
 
 # Z64C_LIB
 file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
-target_link_libraries (Z64C_LIB BASE64C cjson XXHASH TICTOC)
+target_link_libraries (Z64C_LIB BASE64C cjson XXHASH plibsys)
 target_compile_definitions (Z64C_LIB PUBLIC
 	PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
 	BUILD_DATE=\"${BUILD_DATE}\"

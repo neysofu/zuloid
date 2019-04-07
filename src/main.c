@@ -4,14 +4,16 @@
 
 #include "engine.h"
 #include "globals.h"
-#include "utils/utils.h"
 #include "utils/dyn_str.h"
+#include "utils/utils.h"
+#include <plibsys.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 int
 main(void)
 {
+	p_libsys_init();
 	/* We just want to make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
@@ -38,5 +40,6 @@ main(void)
 			engine_call(engine, &dyn_str);
 		}
 	}
+	p_libsys_shutdown();
 	return engine_delete(engine);
 }

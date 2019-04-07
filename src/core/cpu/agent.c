@@ -15,9 +15,11 @@
 struct Agent
 {
 	FILE *source;
-	uint64_t l0_or[128];
-	uint64_t l0_and[128];
-	uint64_t layer[128];
+	int64_t layer_0[8];
+	int64_t layer_1[24][8][2];
+	int64_t layer_2[64][24][2];
+	int64_t layer_3[128][64][2];
+	int64_t buffer[128];
 };
 
 struct Agent *

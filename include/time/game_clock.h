@@ -5,14 +5,14 @@
 #ifndef Z64C_TIME_GAME_CLOCK_H
 #define Z64C_TIME_GAME_CLOCK_H
 
-#include "tictoc/tictoc.h"
 #include "time/time_control.h"
+#include <plibsys.h>
 #include <stdint.h>
 
 struct GameClock
 {
 	float time_left_in_seconds;
-	TicTocTimer timer;
+	PTimeProfiler *timer;
 	int moves_count;
 	struct TimeControl *time_control;
 };

@@ -9,7 +9,6 @@
 #include "utils/dyn_str.h"
 
 /* Z64C is multi-protocol and supports
- * - CECP (also known as XBoard)
  * - UCI (Tarrasch, Arena)
  * - UGEI
  *
@@ -17,8 +16,6 @@
  * that all alternatives lacked something.
  *
  * @see https://xkcd.com/927/ */
-void
-engine_cecp(struct Engine *engine, struct DynStr *dyn_str);
 void
 engine_uci(struct Engine *engine, struct DynStr *dyn_str);
 void
