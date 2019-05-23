@@ -30,6 +30,6 @@ long
 getline(char **buf, size_t *bufsiz, FILE *fp);
 
 char *
-strsep_whitespace(char **stringp);
+strtok_whitespace(char *str);
 
 #endif

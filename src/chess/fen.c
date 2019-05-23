@@ -89,7 +89,7 @@ position_init_from_fen(struct Position *position, char *fen)
 	assert(position);
 	assert(fen);
 	*position = POSITION_EMPTY;
-	char *token = strsep_whitespace(fen);
+	char *token = strtok_whitespace(fen);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
@@ -104,7 +104,7 @@ position_init_from_fen(struct Position *position, char *fen)
 			token++;
 		}
 	}
-	token = strsep_whitespace(fen);
+	token = strtok_whitespace(fen);
 	switch (tolower(*token)) {
 		case 'w':
 			position->side_to_move = COLOR_WHITE;
@@ -115,19 +115,19 @@ position_init_from_fen(struct Position *position, char *fen)
 		default:
 			return ERR_CODE_INVALID_FEN;
 	}
-	token = strsep_whitespace(fen);
+	token = strtok_whitespace(fen);
 	while (*token) {
 		position->castling_rights |= char_to_castling_right(*token++);
 	}
-	token = strsep_whitespace(fen);
+	token = strtok_whitespace(fen);
 	if (strlen(token) >= 2) {
 		File file = char_to_file(token[0]);
 		Rank rank = char_to_rank(token[1]);
 		position->en_passant_target = square_new(file, rank);
 	}
-	token = strsep_whitespace(fen);
+	token = strtok_whitespace(fen);
 	position->reversible_moves_count = strtol(token, NULL, 10);
-	token = strsep_whitespace(fen);
+	token = strtok_whitespace(fen);
 	position->moves_count = strtol(token, NULL, 10);
 	return ERR_CODE_NONE;
 }

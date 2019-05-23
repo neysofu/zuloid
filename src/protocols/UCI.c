@@ -18,22 +18,22 @@ void
 engine_uci_call_go(struct Engine *engine, char *cmd)
 {
 	assert(engine);
-	char *token = strsep_whitespace(cmd);
+	char *token = strtok_whitespace(cmd);
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x2a8ef3657cf9a920: /* "wtime" */
-			token = strsep_whitespace(cmd);
+			token = strtok_whitespace(cmd);
 			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds = atoi(token) * 1000;
 			break;
 		case 0xd3f6a6885c7c93a0: /* "btime" */
-			token = strsep_whitespace(cmd);
+			token = strtok_whitespace(cmd);
 			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds = atoi(token) * 1000;
 			break;
 		case 0x71c2388517319e0c: /* "winc" */
-			token = strsep_whitespace(cmd);
+			token = strtok_whitespace(cmd);
 			engine->time_controls[COLOR_WHITE]->increment_in_seconds = atoi(token) * 1000;
 			break;
 		case 0xad513987341315ae: /* "binc" */
-			token = strsep_whitespace(cmd);
+			token = strtok_whitespace(cmd);
 			engine->time_controls[COLOR_BLACK]->increment_in_seconds = atoi(token) * 1000;
 			break;
 		case 0x18ebef875e97de86: /* "infinite" */
@@ -50,14 +50,14 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	assert(engine);
 	assert(cmd);
-	if (strcmp(strsep_whitespace(cmd), "startpos") == 0) {
+	if (strcmp(strtok_whitespace(cmd), "startpos") == 0) {
 		engine->position = POSITION_INIT;
-	} else if (strcmp(strsep_whitespace(cmd), "fen") == 0) {
+	} else if (strcmp(strtok_whitespace(cmd), "fen") == 0) {
 		position_init_from_fen(&engine->position, cmd);
 	}
-	while (strsep_whitespace(cmd)) {
+	while (strtok_whitespace(cmd)) {
 		// TODO
-		//	position_push(string_to_move(cmd_current(&cmd)));
+		//	position_push(string_to_move(cmd_current(cmd)));
 	}
 }
 
@@ -66,16 +66,16 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 {
 	assert(engine);
 	assert(cmd);
-	strsep_whitespace(cmd);
+	strtok_whitespace(cmd);
 	uint64_t hash = 0;
-	char *token = strsep_whitespace(cmd);
+	char *token = strtok_whitespace(cmd);
 	while (strcmp(token, "value") != 0) {
 		for (size_t i = 0; token[i]; i++) {
 			token[i] = tolower(token[i]);
 		}
 		hash ^= XXH64(token, strlen(token), 0);
 	}
-	strsep_whitespace(cmd);
+	strtok_whitespace(cmd);
 	switch (hash) {
 		case 0xd8cdd8e8314c4147: /* "hash" */
 			break;
@@ -101,8 +101,8 @@ engine_uci(struct Engine *engine, char *cmd)
 {
 	assert(engine);
 	assert(cmd);
-	char *token = strsep_whitespace(&cmd);
-	if (!*token) {
+	char *token = strtok_whitespace(cmd);
+	if (!token) {
 		return;
 	}
 	switch (XXH64(token, strlen(token), 0)) {
@@ -129,7 +129,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			       Z64C_COPYRIGHT);
 			break;
 		case 0x01fd51a2a6f9cc2f: /* "debug" */
-			token = strsep_whitespace(&cmd);
+			token = strtok_whitespace(cmd);
 			if (!token) {
 				break;
 			} else if (strcmp(token, "on") == 0) {
