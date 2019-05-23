@@ -13,9 +13,9 @@ engine_unknown_protocol(struct Engine *engine, char *cmd)
 	assert(cmd);
 	if (strstr(cmd, "method")) {
 		engine->protocol = PROTOCOL_UGEI;
-	} else if (strstr(cmd, "uci") == 0) {
+	} else if (strstr(cmd, "uci")) {
 		engine->protocol = PROTOCOL_UCI;
-	} else if (strcmp(cmd, "xboard") == 0) {
+	} else if (strcmp(cmd, "xboard")) {
 		engine->protocol = PROTOCOL_CECP;
 	}
 	engine_call(engine, cmd);

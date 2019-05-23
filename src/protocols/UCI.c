@@ -102,6 +102,9 @@ engine_uci(struct Engine *engine, char *cmd)
 	assert(engine);
 	assert(cmd);
 	char *token = strsep_whitespace(&cmd);
+	if (!*token) {
+		return;
+	}
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x5000d8f2907d14e4: /* "d" */
 			position_print(&engine->position);
@@ -151,6 +154,6 @@ engine_uci(struct Engine *engine, char *cmd)
 			engine_uci_call_setoption(engine, cmd);
 			break;
 		default:
-			printf("Unknown command: ", token);
+			printf("Unknown command: %s\n", token);
 	}
 }
