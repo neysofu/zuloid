@@ -21,9 +21,10 @@ main(void)
 	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
 	printf("# There is NO warranty of any kind.\n");
 	int pid;
-	/* There's no point in displaying the PID if it is unavailable. */
 	if (get_pid(&pid) == ERR_CODE_NONE) {
 		printf("# Process ID: %d\n", pid);
+	} else {
+		printf("# Process ID: <unavailable>\n");
 	}
 	struct Engine *engine = engine_new();
 	if (!engine) {
