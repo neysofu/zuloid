@@ -7,7 +7,7 @@
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/pieces.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>

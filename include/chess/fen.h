@@ -6,7 +6,6 @@
 #define Z64C_CHESS_FEN_H
 
 #include "chess/position.h"
-#include "utils/dyn_str.h"
 
 /*  64 + | pieces
  *   7 + | slashes
@@ -32,6 +31,6 @@ char *
 fen_new_from_position(const struct Position *position);
 
 int
-position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str);
+position_init_from_fen(struct Position *position, char *fen);
 
 #endif

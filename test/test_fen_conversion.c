@@ -41,12 +41,9 @@ test_fen_conversion(void)
 {
 	for (size_t i = 0; *VALID_FEN[i]; i++) {
 		struct Position position;
-		struct DynStr dyn_str;
 		char fen[FEN_SIZE];
 		strcpy(&fen, VALID_FEN[i]);
-		dyn_str_init(&dyn_str, &fen);
-		dyn_str_tokenize(&dyn_str);
-		position_init_from_dyn_str(&position, &dyn_str);
+		position_init_from_fen(&position, fen);
 		char *f = fen_new_from_position(&position);
 		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], f);
 		free(fen);

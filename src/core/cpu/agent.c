@@ -6,7 +6,7 @@
 #include "cJSON/cJSON.h"
 #include "chess/position.h"
 #include "core/eval.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <assert.h>
 #include <stdint.h>
 #include <stdio.h>

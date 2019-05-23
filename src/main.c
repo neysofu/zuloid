@@ -4,8 +4,7 @@
 
 #include "engine.h"
 #include "globals.h"
-#include "utils/dyn_str.h"
-#include "utils/utils.h"
+#include "utils.h"
 #include <plibsys.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -30,16 +29,17 @@ main(void)
 	if (!engine) {
 		return EXIT_FAILURE;
 	}
-	/* Saves us from countless malloc/free calls. */
-	while (engine->mode != MODE_EXIT) {
-		struct DynStr dyn_str = DYN_STR_EMPTY;
-		if (dyn_str_read_line_from_stream(&dyn_str, stdin)) {
+	do {
+		char *line = NULL;
+		size_t foo = 0;
+		if (getline(&line, &foo, stdin) == -1) {
+			free(line);
 			engine_delete(engine);
-			return EXIT_SUCCESS;
+			return EXIT_FAILURE;
 		} else {
-			engine_call(engine, &dyn_str);
+			engine_call(engine, line);
 		}
-	}
+	} while (engine->mode != MODE_EXIT);
 	p_libsys_shutdown();
 	return engine_delete(engine);
 }

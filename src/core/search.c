@@ -3,12 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "utils/logging.h"
 #include <stdio.h>
 
 int
 engine_search(struct Engine *engine)
 {
-	LOGF("Started searching on a new thread.");
+	ENGINE_LOGF(engine, "Started searching on a new thread.");
 	return 0;
 }

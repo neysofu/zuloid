@@ -8,8 +8,7 @@
 #include "chess/move.h"
 #include "chess/pieces.h"
 #include "chess/position.h"
-#include "utils/utils.h"
-#include "utils/dyn_str.h"
+#include "utils.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -85,12 +84,12 @@ fen_new_from_position(const struct Position *position)
 }
 
 int
-position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str)
+position_init_from_fen(struct Position *position, char *fen)
 {
 	assert(position);
-	assert(dyn_str);
+	assert(fen);
 	*position = POSITION_EMPTY;
-	char *token = dyn_str_next_token(dyn_str);
+	char *token = strsep_whitespace(fen);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
@@ -105,7 +104,7 @@ position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str)
 			token++;
 		}
 	}
-	token = dyn_str_next_token(dyn_str);
+	token = strsep_whitespace(fen);
 	switch (tolower(*token)) {
 		case 'w':
 			position->side_to_move = COLOR_WHITE;
@@ -116,19 +115,19 @@ position_init_from_dyn_str(struct Position *position, struct DynStr *dyn_str)
 		default:
 			return ERR_CODE_INVALID_FEN;
 	}
-	token = dyn_str_next_token(dyn_str);
+	token = strsep_whitespace(fen);
 	while (*token) {
 		position->castling_rights |= char_to_castling_right(*token++);
 	}
-	token = dyn_str_next_token(dyn_str);
+	token = strsep_whitespace(fen);
 	if (strlen(token) >= 2) {
 		File file = char_to_file(token[0]);
 		Rank rank = char_to_rank(token[1]);
 		position->en_passant_target = square_new(file, rank);
 	}
-	token = dyn_str_next_token(dyn_str);
+	token = strsep_whitespace(fen);
 	position->reversible_moves_count = strtol(token, NULL, 10);
-	token = dyn_str_next_token(dyn_str);
+	token = strsep_whitespace(fen);
 	position->moves_count = strtol(token, NULL, 10);
 	return ERR_CODE_NONE;
 }

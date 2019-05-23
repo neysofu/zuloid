@@ -6,8 +6,6 @@
 #define Z64C_CORE_SEARCH_H
 
 #include "engine.h"
-#include "utils/logging.h"
-#include <stdio.h>
 
 int
 engine_search(struct Engine *engine);

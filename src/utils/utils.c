@@ -2,7 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
-#include "utils/utils.h"
+#include "utils.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdbool.h>
@@ -15,20 +15,12 @@
 #include <processthreadsapi.h>
 #endif
 
+#define BUFSIZE 32
+
 void
 log_unknown_command(const char *command)
 {
 	printf("# Unknown command: '%s'\n", command);
-}
-
-bool
-string_is_whitespace(const char *string)
-{
-	assert(string);
-	while (isspace(*string)) {
-		string++;
-	}
-	return *string == '\0';
 }
 
 int

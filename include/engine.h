@@ -1,9 +1,6 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
- * The `Engine` structure holds a reference to all engine components and wires
- * them together. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #ifndef Z64C_ENGINE_H
 #define Z64C_ENGINE_H
@@ -14,8 +11,18 @@
 #include "core/agent.h"
 #include "core/eval.h"
 #include "time/game_clock.h"
-#include "utils/dyn_str.h"
 #include <stdio.h>
+
+#define ENGINE_LOGF(engine, ...)                                                           \
+	engine_logf(engine, __FILE__, __func__, __LINE__, __VA_ARGS__)
+
+enum Protocol
+{
+	PROTOCOL_CECP,
+	PROTOCOL_UCI,
+	PROTOCOL_UGEI,
+	PROTOCOL_UNKNOWN,
+};
 
 enum Mode
 {
@@ -38,8 +45,6 @@ struct Engine
 	struct Cache *cache;
 	struct Agent *agent;
 	struct Eval eval;
-	/* It points to `engine_call`'s correct implementation after protocol setting. */
-	void (*protocol)(struct Engine *, struct DynStr *);
 	struct Tablebase *tablebase;
 	/* All network activity (if any) will be on this port. */
 	int port;
@@ -56,6 +61,8 @@ struct Engine
 	 * adjustments can have extensive influence over the gameplay. 0.5 is the
 	 * most performant option. */
 	float selectivity;
+	/* Communication protocol used to talk to the chess GUI. */
+	enum Protocol protocol;
 	/* A straightforward activity indicator. Both `main` and engine commands
 	 * might want to know if the engine is doing background computation or
 	 * what. */
@@ -88,11 +95,15 @@ engine_delete(struct Engine *engine);
  * @param engine The engine instance that must process the command string.
  * @param string The command string.
  * @sideeffect Possibly, a response will be printed to stdout. `engine`'s
- * internal data also can change.
- *
- * Runs a "Remote Procedure Call" (RPC) and returns the engine's response.
- * All communication must be in valid JSON-RPC 2.0. */
+ * internal data also can change. */
 void
-engine_call(struct Engine *engine, struct DynStr *dyn_str);
+engine_call(struct Engine *engine, char *cmd);
+
+void
+engine_logf(struct Engine *engine,
+            const char *filename,
+            const char *function_name,
+            const char *line_num,
+            ...);
 
 #endif

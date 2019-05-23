@@ -3,12 +3,11 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "api/protocols.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "core/agent.h"
-#include "utils/dyn_str.h"
 #include <assert.h>
+#include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -22,14 +21,14 @@ engine_new(void)
 			.time_controls = { NULL, NULL },
 			.cache = NULL,
 			.agent = NULL,
-			.mode = MODE_IDLE,
-			.protocol = engine_unknown_protocol,
 			.port = 34290,
 			.seed = 0xcfca130bUL,
 			.debug = false,
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
+			.protocol = PROTOCOL_UNKNOWN,
+			.mode = MODE_IDLE,
 			.exit_status = EXIT_SUCCESS,
 		};
 	}
@@ -52,10 +51,37 @@ engine_delete(struct Engine *engine)
 }
 
 void
-engine_call(struct Engine *engine, struct DynStr *dyn_str)
+engine_call(struct Engine *engine, char *cmd)
 {
 	assert(engine);
-	assert(dyn_str->buffer);
-	assert(engine->mode != MODE_EXIT);
-	(*engine->protocol)(engine, dyn_str);
+	assert(cmd);
+	switch (engine->protocol) {
+		case PROTOCOL_UCI:
+			engine_uci(engine, cmd);
+			break;
+		case PROTOCOL_CECP:
+		case PROTOCOL_UGEI:
+			printf("This protocol is not (yet?) supported. Aborting.");
+			engine->mode = MODE_EXIT;
+			break;
+		case PROTOCOL_UNKNOWN:
+			engine_unknown_protocol(engine, cmd);
+			break;
+	}
+}
+
+void
+engine_logf(struct Engine *engine,
+            const char *filename,
+            const char *function_name,
+            const char *line_num,
+            ...)
+{
+#ifndef NDEBUG
+	va_list args;
+	va_start(args, line_num);
+	printf("# %s:%s:%d -- ", filename, function_name, line_num);
+	vprintf(va_arg(args, const char *), args);
+	va_end(args);
+#endif
 }

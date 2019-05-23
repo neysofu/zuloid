@@ -13,8 +13,6 @@ test_char_to_piece(void);
 extern void
 test_color(void);
 extern void
-test_dyn_str(void);
-extern void
 test_fen_conversion(void);
 extern void
 test_fen_init(void);
@@ -32,8 +30,6 @@ extern void
 test_ugei_init_reentrant(void);
 extern void
 test_ugei_setup(void);
-extern void
-test_whitespace_detection(void);
 
 int
 main(void)
@@ -43,7 +39,6 @@ main(void)
 	RUN_TEST(test_char_to_file);
 	RUN_TEST(test_char_to_piece);
 	RUN_TEST(test_color);
-	RUN_TEST(test_dyn_str);
 	RUN_TEST(test_fen_conversion);
 	RUN_TEST(test_fen_init);
 	RUN_TEST(test_file_to_char);
@@ -53,6 +48,5 @@ main(void)
 	RUN_TEST(test_ugei_init_metadata);
 	RUN_TEST(test_ugei_init_reentrant);
 	RUN_TEST(test_ugei_setup);
-	RUN_TEST(test_whitespace_detection);
 	return UNITY_END();
 }
