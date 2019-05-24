@@ -50,14 +50,17 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	assert(engine);
 	assert(cmd);
-	if (strcmp(strtok_whitespace(cmd), "startpos") == 0) {
+	char *token = strtok_whitespace(cmd);
+	if (!token) {
+		return;
+	} else if (strcmp(token, "startpos") == 0) {
 		engine->position = POSITION_INIT;
-	} else if (strcmp(strtok_whitespace(cmd), "fen") == 0) {
+	} else if (strcmp(token, "fen") == 0) {
 		position_init_from_fen(&engine->position, cmd);
 	}
-	while (strtok_whitespace(cmd)) {
+	while ((token = strtok_whitespace(cmd))) {
 		// TODO
-		//	position_push(string_to_move(cmd_current(cmd)));
+		//position_push(string_to_move(cmd_current(cmd)));
 	}
 }
 
@@ -65,17 +68,17 @@ void
 engine_uci_call_setoption(struct Engine *engine, char *cmd)
 {
 	assert(engine);
+	assert(engine->mode == MODE_IDLE); /* By specification. */
 	assert(cmd);
-	strtok_whitespace(cmd);
 	uint64_t hash = 0;
-	char *token = strtok_whitespace(cmd);
-	while (strcmp(token, "value") != 0) {
+	char *token = NULL;
+	while (strcmp((token = strtok_whitespace(cmd)), "value") != 0) {
 		for (size_t i = 0; token[i]; i++) {
 			token[i] = tolower(token[i]);
 		}
+		/* XOR combine the hashes. Simple yet effective. */
 		hash ^= XXH64(token, strlen(token), 0);
 	}
-	strtok_whitespace(cmd);
 	switch (hash) {
 		case 0xd8cdd8e8314c4147: /* "hash" */
 			break;
@@ -109,25 +112,6 @@ engine_uci(struct Engine *engine, char *cmd)
 		case 0x5000d8f2907d14e4: /* "d" */
 			position_print(&engine->position);
 			break;
-		case 0xf80028c1113b2c9c: /* "uci" */
-			printf("id name Z64C\n"
-			       "id author Filippo Costa\n"
-			       "option name Threads type spin default 1 min 1 max 512\n"
-			       "option name Clear Hash type button\n"
-			       "option name Hash type spin default 8 min 0 max 65536\n"
-			       "option name Ponder type check default true\n"
-			       "option name Skill Level type spin default 100 min 0 max 100\n"
-			       "option name Move Overhead type spin default 30 min 0 max 5000\n"
-			       "option name OwnBook\n"
-			       "option name UCI_Opponent\n"
-			       "option name UCI_Chess960 type check default false\n"
-			       "option name UCI_AnalyseMode type check default false\n"
-			       "option name UCI_EngineAbout type string default %s\n"
-			       "option name SyzygyPath type string default <empty>\n"
-			       "option name Style type combo default normal\n"
-			       "uciok\n",
-			       Z64C_COPYRIGHT);
-			break;
 		case 0x01fd51a2a6f9cc2f: /* "debug" */
 			token = strtok_whitespace(cmd);
 			if (!token) {
@@ -152,6 +136,25 @@ engine_uci(struct Engine *engine, char *cmd)
 			break;
 		case 0x26cc87cdbb3247ba: /* "setoption" */
 			engine_uci_call_setoption(engine, cmd);
+			break;
+		case 0xf80028c1113b2c9c: /* "uci" */
+			printf("id name Z64C\n"
+			       "id author Filippo Costa\n"
+			       "option name Threads type spin default 1 min 1 max 512\n"
+			       "option name Clear Hash type button\n"
+			       "option name Hash type spin default 8 min 0 max 65536\n"
+			       "option name Ponder type check default true\n"
+			       "option name Skill Level type spin default 100 min 0 max 100\n"
+			       "option name Move Overhead type spin default 30 min 0 max 5000\n"
+			       "option name OwnBook\n"
+			       "option name UCI_Opponent\n"
+			       "option name UCI_Chess960 type check default false\n"
+			       "option name UCI_AnalyseMode type check default false\n"
+			       "option name UCI_EngineAbout type string default %s\n"
+			       "option name SyzygyPath type string default <empty>\n"
+			       "option name Style type combo default normal\n"
+			       "uciok\n",
+			       Z64C_COPYRIGHT);
 			break;
 		default:
 			printf("Unknown command: %s\n", token);
