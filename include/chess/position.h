@@ -49,7 +49,9 @@ position_set_piece_at_square(struct Position *position, Square square, struct Pi
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);
 
+void
+position_empty(struct Position *position);
+
 extern const struct Position POSITION_INIT;
-extern const struct Position POSITION_EMPTY;
 
 #endif

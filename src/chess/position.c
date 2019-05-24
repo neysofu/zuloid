@@ -60,7 +60,7 @@ void
 position_init_960(struct Position *position)
 {
 	const Bitboard BB_A1_OR_A8 = 0x0100000000000001;
-	*position = POSITION_EMPTY;
+	position_empty(position);
 	File available_files[FILES_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	int i = (rand() % 4) * 2;
 	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
@@ -137,6 +137,19 @@ position_flip_side_to_move(struct Position *position)
 	position->side_to_move ^= 1;
 }
 
+void
+position_empty(struct Position *position)
+{
+	assert(position);
+	*position = (struct Position){
+		.side_to_move = COLOR_WHITE,
+		.en_passant_target = SQUARE_NONE,
+		.castling_rights = CASTLING_RIGHTS_ALL,
+		.reversible_moves_count = 0,
+		.moves_count = 1,
+	};
+}
+
 const struct Position POSITION_INIT = {
 	.bb =
 	  {
@@ -149,11 +162,8 @@ const struct Position POSITION_INIT = {
 	    [PIECE_TYPE_KING] = 0x0000008100000000,
 	  },
 	.side_to_move = COLOR_WHITE,
+	.en_passant_target = SQUARE_NONE,
 	.castling_rights = CASTLING_RIGHTS_ALL,
 	.reversible_moves_count = 0,
-	.moves_count = 1,
-};
-
-const struct Position POSITION_EMPTY = {
 	.moves_count = 1,
 };

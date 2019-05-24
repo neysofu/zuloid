@@ -29,19 +29,24 @@ typedef int8_t Rank;
 typedef int8_t Square;
 typedef uint64_t Bitboard;
 
-extern const File FILE_MAX;
-extern const Rank RANK_MAX;
-extern const Square SQUARE_MAX;
+enum
+{
+	FILE_MAX = 7,
+	RANK_MAX = 7,
+	SQUARE_MAX = 63,
+};
 
-extern const File FILE_NONE;
-extern const Rank RANK_NONE;
-extern const Square SQUARE_NONE;
+enum
+{
+	FILE_NONE = -1,
+	RANK_NONE = -1,
+	SQUARE_NONE = -1,
+};
 
 enum
 {
 	FILES_COUNT = 8,
 	RANKS_COUNT = 8,
-	SQUARES_COUNT = 64,
 };
 
 char

@@ -42,10 +42,9 @@ test_fen_conversion(void)
 	for (size_t i = 0; *VALID_FEN[i]; i++) {
 		struct Position position;
 		char fen[FEN_SIZE];
-		strcpy(&fen, VALID_FEN[i]);
+		strcpy(fen, VALID_FEN[i]);
 		position_init_from_fen(&position, fen);
 		char *f = fen_new_from_position(&position);
 		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], f);
-		free(fen);
 	}
 }

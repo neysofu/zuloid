@@ -88,7 +88,7 @@ position_init_from_fen(struct Position *position, char *fen)
 {
 	assert(position);
 	assert(fen);
-	*position = POSITION_EMPTY;
+	position_empty(position);
 	char *token = strtok_whitespace(fen);
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {

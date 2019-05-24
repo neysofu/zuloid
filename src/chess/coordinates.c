@@ -5,14 +5,6 @@
 #include "chess/coordinates.h"
 #include "chess/color.h"
 
-const File FILE_MAX = 7;
-const Rank RANK_MAX = 7;
-const Square SQUARE_MAX = 63;
-
-const File FILE_NONE = -1;
-const Rank RANK_NONE = -1;
-const Square SQUARE_NONE = -1;
-
 char
 rank_to_char(Rank r)
 {
