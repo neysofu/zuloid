@@ -7,9 +7,9 @@
 [submodule "lib/Unity"]
 	path = lib/Unity
 	url = https://github.com/ThrowTheSwitch/Unity
-[submodule "lib/base64.c"]
-	path = lib/base64.c
-	url = https://github.com/joedf/base64.c.git
+[submodule "lib/b64.c"]
+	path = lib/b64.c
+	url = https://github.com/littlstar/b64.c
 [submodule "lib/plibsys"]
 	path = lib/plibsys
 	url = https://github.com/saprykin/plibsys.git
