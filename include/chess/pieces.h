@@ -28,7 +28,7 @@ enum PieceType
 struct Piece
 {
 	enum PieceType type : 4;
-	enum Color color : 1;
+	enum Color color : 2;
 };
 
 extern const struct Piece PIECE_NONE;
