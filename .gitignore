@@ -8,6 +8,9 @@ build/
 [._]sw[a-p]
 .netrwhist
 
+# Visual Studio Code
+.vscode/
+
 # Prerequisites
 *.d
 
