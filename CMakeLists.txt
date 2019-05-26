@@ -9,25 +9,26 @@ set (CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
 project (Z64C VERSION 1.3.0 LANGUAGES C)
 
+set (default_build_type "Debug")
 set (CMAKE_C_FLAGS_DEBUG "-g -ftrapv")
 set (CMAKE_C_FLAGS_RELEASE "-O3")
 set (CMAKE_C_FLAGS " \
-	-fverbose-asm \
-	-Wall \
-	-Wpedantic \
-	-Wextra \
-	-Wshadow \
-	-Wno-missing-braces \
-	-Wno-missing-field-initializers \
-	-Wswitch-default \
-	-Wcast-align \
-	-Wpointer-arith \
-	-Wundef \
-	-Wuninitialized \
-	-Wredundant-decls \
-	-Wold-style-definition \
-	-Wunreachable-code \
-	-Wunused-macros")
+    -fverbose-asm \
+    -Wall \
+    -Wpedantic \
+    -Wextra \
+    -Wshadow \
+    -Wno-missing-braces \
+    -Wno-missing-field-initializers \
+    -Wswitch-default \
+    -Wcast-align \
+    -Wpointer-arith \
+    -Wundef \
+    -Wuninitialized \
+    -Wredundant-decls \
+    -Wold-style-definition \
+    -Wunreachable-code \
+    -Wunused-macros")
 
 set (INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
@@ -37,11 +38,6 @@ set (TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/")
 string (LENGTH "${CMAKE_CURRENT_SOURCE_DIR}/" PROJECT_DIR_LENGTH)
 string (TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
-find_package (OpenCL REQUIRED)
-
-# base64.c
-#add_library (BASE64C) #"${LIB_DIR}/base64.c/base64.c")
-#set_property (TARGET BASE64C PROPERTY C_STANDARD 99)
 # cJSON
 set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
@@ -55,6 +51,13 @@ set_property (TARGET XXHASH PROPERTY C_STANDARD 99)
 add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property (TARGET UNITY PROPERTY C_STANDARD 90)
 
+# Remove warnings for external libraries
+target_compile_options (
+    cjson PUBLIC "-w"
+    XXHASH PUBLIC "-w"
+    plibsys PUBLIC "-w"
+    UNITY PUBLIC "-w")
+
 # Z64C_LIB
 file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
@@ -62,11 +65,11 @@ add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_LIB cjson XXHASH plibsys)
 target_compile_definitions (Z64C_LIB PUBLIC
-	PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
-	BUILD_DATE=\"${BUILD_DATE}\"
-	Z64C_VERSION_MAJOR=\"${PROJECT_VERSION_MAJOR}\"
-	Z64C_VERSION_MINOR=\"${PROJECT_VERSION_MINOR}\"
-	Z64C_VERSION_PATCH=\"${PROJECT_VERSION_PATCH}\")
+    PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
+    BUILD_DATE=\"${BUILD_DATE}\"
+    Z64C_VERSION_MAJOR=\"${PROJECT_VERSION_MAJOR}\"
+    Z64C_VERSION_MINOR=\"${PROJECT_VERSION_MINOR}\"
+    Z64C_VERSION_PATCH=\"${PROJECT_VERSION_PATCH}\")
 
 # Z64C
 add_executable (Z64C "${SRC_DIR}/main.c")
@@ -75,6 +78,6 @@ target_link_libraries (Z64C Z64C_LIB)
 # Z64C_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable (Z64C_TEST "${TEST_FILES}")
-target_include_directories (Z64C_TEST PRIVATE "${INCLUDE_DIR}")
+target_include_directories (Z64C_TEST INTERFACE "${INCLUDE_DIR}")
 target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
 add_test (NAME Z64C COMMAND Z64C_TEST)
