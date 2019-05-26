@@ -1,4 +1,4 @@
-bin/
+build/
 
 # Vim
 [._]*.s[a-v][a-z]
