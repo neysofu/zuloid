@@ -1,4 +1,4 @@
-target/
+bin/
 
 # Vim
 [._]*.s[a-v][a-z]
