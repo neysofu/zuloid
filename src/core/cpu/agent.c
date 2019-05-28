@@ -12,14 +12,54 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+//struct Layer
+//{
+//	size_t con_weights_count;
+//	size_t dis_weights_count;
+//	int64_t *con_weights;
+//	int64_t *dis_weights;
+//};
+//
+//enum ErrorCode
+//layer_init_from_json(struct Layer *layer, cJSON *json)
+//{
+//	assert(layer);
+//	cJSON *cwc_item = cJSON_GetObjectItem(json, "con_weights_count");
+//	cJSON *dwc_item = cJSON_GetObjectItem(json, "dis_weights_count");
+//	assert(cJSON_IsNumber(cwc_item));
+//	assert(cJSON_IsNumber(dwc_item));
+//	layer->con_weights_count = cwc_item->valuedouble;
+//	layer->dis_weights_count = dwc_item->valuedouble;
+//	assert(layer->con_weights_count % 64 == 0);
+//	assert(layer->dis_weights_count % 64 == 0);
+//	layer->con_weights = malloc(layer->con_weights_count / 64);
+//	layer->dis_weights = malloc(layer->dis_weights_count / 64);
+//	if (!layer->con_weights || !layer->dis_weights) {
+//		return ERR_CODE_ALLOC;
+//	}
+//	cJSON_ArrayForEach(element)
+//}
+//
+//struct Network
+//{
+//	struct Layer lin;
+//	struct Layer l0;
+//	struct Layer l1;
+//	struct Layer l2;
+//	struct Layer l3;
+//	struct Layer l4;
+//	struct Layer lout;
+//};
+//
+//int
+//network_new_from_json(cJSON *json)
+//{
+//	cJSON *l0 = cJSON_GetObjectItem(json, "l0");
+//}
+
 struct Agent
 {
 	FILE *source;
-	int64_t layer_0[8];
-	int64_t layer_1[24][8][2];
-	int64_t layer_2[64][24][2];
-	int64_t layer_3[128][64][2];
-	int64_t buffer[128];
 };
 
 struct Agent *
@@ -50,7 +90,6 @@ agent_import(struct Agent *agent, FILE *file)
 	fread(buffer, 1, file_length, file);
 	fclose(file);
 	cJSON *json = cJSON_Parse(buffer);
-	cJSON *layer_0 = cJSON_GetObjectItem(json, "layer_0");
 	// FIXME: malloc check
 	return 0;
 }
