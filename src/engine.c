@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
+#include "protocols.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "core/agent.h"
@@ -56,19 +57,15 @@ engine_call(struct Engine *engine, char *cmd)
 	assert(engine);
 	assert(cmd);
 	switch (engine->protocol) {
-		case PROTOCOL_UCI:
-			engine_uci(engine, cmd);
-			break;
-		case PROTOCOL_CECP:
-		case PROTOCOL_UGEI:
-			printf("This protocol is not (yet?) supported. Aborting.");
-			engine->mode = MODE_EXIT;
-			break;
 		case PROTOCOL_UNKNOWN:
 			engine_unknown_protocol(engine, cmd);
 			break;
+		case PROTOCOL_UCI:
+			engine_uci(engine, cmd);
+			break;
 		default:
-			assert(false);
+			printf("This protocol is not (yet?) supported. Aborting.");
+			engine->mode = MODE_EXIT;
 	}
 }
 

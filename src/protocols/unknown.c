@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
+#include "protocols.h"
 #include <assert.h>
 #include <string.h>
 
@@ -11,9 +12,7 @@ engine_unknown_protocol(struct Engine *engine, char *cmd)
 {
 	assert(engine);
 	assert(cmd);
-	if (strstr(cmd, "method")) {
-		engine->protocol = PROTOCOL_UGEI;
-	} else if (strstr(cmd, "uci")) {
+	if (strstr(cmd, "uci")) {
 		engine->protocol = PROTOCOL_UCI;
 	} else if (strstr(cmd, "xboard")) {
 		engine->protocol = PROTOCOL_CECP;
