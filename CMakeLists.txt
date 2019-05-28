@@ -51,19 +51,13 @@ set_property (TARGET XXHASH PROPERTY C_STANDARD 99)
 add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property (TARGET UNITY PROPERTY C_STANDARD 90)
 
-# Remove warnings for external libraries
-target_compile_options (
-    cjson PUBLIC "-w"
-    XXHASH PUBLIC "-w"
-    plibsys PUBLIC "-w"
-    UNITY PUBLIC "-w")
-
 # Z64C_LIB
 file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
-target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}" PUBLIC "${LIB_DIR}")
-target_link_libraries (Z64C_LIB cjson XXHASH plibsys)
+target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}")
+target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
+target_link_libraries (Z64C_LIB cjson plibsys XXHASH)
 target_compile_definitions (Z64C_LIB PUBLIC
     PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
     BUILD_DATE=\"${BUILD_DATE}\"
@@ -78,6 +72,6 @@ target_link_libraries (Z64C Z64C_LIB)
 # Z64C_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable (Z64C_TEST "${TEST_FILES}")
-target_include_directories (Z64C_TEST INTERFACE "${INCLUDE_DIR}")
+target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
 add_test (NAME Z64C COMMAND Z64C_TEST)
