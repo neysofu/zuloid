@@ -79,10 +79,14 @@ engine_logf(struct Engine *engine,
             const char *line_num,
             ...)
 {
+	assert(engine);
+	assert(filename);
+	assert(function_name);
+	assert(line_num);
 #ifndef NDEBUG
 	va_list args;
 	va_start(args, line_num);
-	printf("# %s:%s:%d -- ", filename, function_name, line_num);
+	printf("# %s:%s:%s -- ", filename, function_name, line_num);
 	vprintf(va_arg(args, const char *), args);
 	va_end(args);
 #endif
