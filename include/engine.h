@@ -48,7 +48,7 @@ struct Engine
 	struct Tablebase *tablebase;
 	/* All network activity (if any) will be on this port. */
 	int port;
-	int seed;
+	int32_t seed;
 	bool debug;
 	float move_selection_noise;
 	/* Must be in the range [0,1]. It measures the engine's sense of

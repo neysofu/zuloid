@@ -22,7 +22,7 @@ engine_new(void)
 			.cache = NULL,
 			.agent = NULL,
 			.port = 34290,
-			.seed = 0xcfca130bUL,
+			.seed = 0xcfca130b,
 			.debug = false,
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
@@ -67,6 +67,8 @@ engine_call(struct Engine *engine, char *cmd)
 		case PROTOCOL_UNKNOWN:
 			engine_unknown_protocol(engine, cmd);
 			break;
+		default:
+			assert(false);
 	}
 }
 

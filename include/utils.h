@@ -5,8 +5,6 @@
 #ifndef Z64C_UTILS_H
 #define Z64C_UTILS_H
 
-#include "switches.h"
-#include <stdbool.h>
 #include <stdio.h>
 
 enum ErrorCode
@@ -27,7 +25,7 @@ int
 get_pid(int *pid);
 
 long
-getline(char **buf, size_t *bufsiz, FILE *fp);
+read_line(char **lineptr, size_t *n, FILE *stream);
 
 char *
 strtok_whitespace(char *str);

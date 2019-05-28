@@ -36,13 +36,17 @@
 #include <string.h>
 
 long
-getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
+read_line(char **lineptr, size_t *n, FILE *stream)
 {
 	assert(lineptr);
 	assert(n);
+#ifdef __unix__
+	return getline(lineptr, n, stream);
+#else
+#define BUFSIZE 32
 	char *ptr, *eptr;
 	if (*lineptr == NULL || *n == 0) {
-		*n = BUFSIZ;
+		*n = BUFSIZE;
 		if ((*lineptr = malloc(*n)) == NULL)
 			return -1;
 	}
@@ -59,7 +63,7 @@ getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 			return -1;
 		}
 		*ptr++ = c;
-		if (c == delim) {
+		if (c == '\n') {
 			*ptr = '\0';
 			return ptr - *lineptr;
 		}
@@ -75,10 +79,5 @@ getdelim(char **lineptr, size_t *n, int delim, FILE *stream)
 			ptr = nbuf + d;
 		}
 	}
-}
-
-long
-getline(char **lineptr, size_t *n, FILE *stream)
-{
-	return getdelim(lineptr, n, '\n', stream);
+#endif
 }

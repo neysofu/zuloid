@@ -33,7 +33,7 @@ main(void)
 	do {
 		char *line = NULL;
 		size_t foo = 0;
-		if (getline(&line, &foo, stdin) == -1) {
+		if (read_line(&line, &foo, stdin) == -1) {
 			free(line);
 			engine_delete(engine);
 			return EXIT_FAILURE;
