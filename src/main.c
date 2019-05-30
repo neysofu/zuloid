@@ -20,12 +20,7 @@ main(void)
 	printf("# %s\n", Z64C_COPYRIGHT);
 	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
 	printf("# There is NO warranty of any kind.\n");
-	int pid;
-	if (get_pid(&pid) == ERR_CODE_NONE) {
-		printf("# Process ID: %d\n", pid);
-	} else {
-		printf("# Process ID: <unavailable>\n");
-	}
+	printf("# Process ID: %d\n", p_process_get_current_pid());
 	struct Engine *engine = engine_new();
 	if (!engine) {
 		return EXIT_FAILURE;
