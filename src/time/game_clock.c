@@ -16,7 +16,7 @@ game_clock_init(struct GameClock *gc, const struct TimeControl *tc)
 	gc->time_left_in_seconds = tc->time_limit_in_seconds;
 	gc->timer = p_time_profiler_new();
 	gc->moves_count = 0;
-	gc->time_control = tc;
+	gc->time_control = (struct TimeControl *)(tc);
 }
 
 float
