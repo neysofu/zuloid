@@ -16,14 +16,6 @@ enum ErrorCode
 	ERR_CODE_INVALID_FEN,
 };
 
-/* Writes the current process ID to `pid`.
- * @param pid a non-NULL target pointer.
- * @return 0 on success, -1 on failure.
- *
- * @see https://en.wikipedia.org/wiki/Process_identifier */
-int
-get_pid(int *pid);
-
 long
 read_line(char **lineptr, size_t *n, FILE *stream);
 
