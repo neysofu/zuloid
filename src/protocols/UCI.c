@@ -40,6 +40,8 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 			break;
+		default:
+			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'", token);
 	}
 	PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search), &engine, false);
 	printf("bestmove e2e4 ponder c7c5\n");

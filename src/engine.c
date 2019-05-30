@@ -3,10 +3,10 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
-#include "protocols.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "core/agent.h"
+#include "protocols.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -73,17 +73,16 @@ void
 engine_logf(struct Engine *engine,
             const char *filename,
             const char *function_name,
-            const char *line_num,
+            size_t line_num,
             ...)
 {
 	assert(engine);
 	assert(filename);
 	assert(function_name);
-	assert(line_num);
 #ifndef NDEBUG
 	va_list args;
 	va_start(args, line_num);
-	printf("# %s:%s:%s -- ", filename, function_name, line_num);
+	printf("# %s:%s:%zu -- ", filename + PROJECT_DIR_LENGTH, function_name, line_num);
 	vprintf(va_arg(args, const char *), args);
 	va_end(args);
 #endif

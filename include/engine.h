@@ -14,7 +14,7 @@
 #include <stdio.h>
 
 #define ENGINE_LOGF(engine, ...)                                                           \
-	engine_logf(engine, __FILE__ + PROJECT_DIR_LENGTH, __func__, __LINE__, __VA_ARGS__)
+	engine_logf(engine, __FILE__, __func__, __LINE__, __VA_ARGS__)
 
 enum Protocol
 {
@@ -102,7 +102,7 @@ void
 engine_logf(struct Engine *engine,
             const char *filename,
             const char *function_name,
-            const char *line_num,
+            size_t line_num,
             ...);
 
 #endif
