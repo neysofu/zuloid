@@ -3,6 +3,7 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "cache/cache.h"
+#include "chess/fen.h"
 #include "chess/position.h"
 #include "core/agent.h"
 #include "core/search.h"
@@ -11,6 +12,7 @@
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <assert.h>
+#include <ctype.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -41,9 +43,9 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 			break;
 		default:
-			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'", token);
+			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
 	}
-	PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search), &engine, false);
+	// PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search), &engine, false);
 	printf("bestmove e2e4 ponder c7c5\n");
 }
 
@@ -62,7 +64,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 	}
 	while ((token = strtok_whitespace(cmd))) {
 		// TODO
-		//position_push(string_to_move(cmd_current(cmd)));
+		// position_push(string_to_move(cmd_current(cmd)));
 	}
 }
 
@@ -98,6 +100,8 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 			break;
 		case 0xf6253b92eb36d560: /* "uci_limitstrength" */
 			break;
+		default:
+			ENGINE_LOGF(engine, "Unknown UCI setting.\n");
 	}
 }
 
