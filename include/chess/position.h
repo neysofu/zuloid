@@ -38,9 +38,6 @@ struct Position
 };
 
 void
-position_print(struct Position *position);
-
-void
 position_init_960(struct Position *position);
 
 void

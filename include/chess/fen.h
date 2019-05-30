@@ -33,4 +33,7 @@ fen_new_from_position(const struct Position *position);
 int
 position_init_from_fen(struct Position *position, char *fen);
 
+void
+position_print(struct Position *position);
+
 #endif
