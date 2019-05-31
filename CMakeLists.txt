@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 3.4)
 set (CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 set (CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
-project (Z64C VERSION 1.3.0 LANGUAGES C)
+project (Z64C VERSION 1.4.0 LANGUAGES C)
 
 set (default_build_type "Debug")
 set (CMAKE_C_FLAGS_DEBUG "-g -ftrapv")
