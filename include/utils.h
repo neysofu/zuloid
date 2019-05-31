@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 
+/* Error codes to be used all around the codebase when necessary. */
 enum ErrorCode
 {
 	ERR_CODE_NONE,
@@ -16,9 +17,11 @@ enum ErrorCode
 	ERR_CODE_INVALID_FEN,
 };
 
+/* It reads an entire line from `stream`, similarly from POSIX's getline. */
 long
 read_line(char **lineptr, size_t *n, FILE *stream);
 
+/* TODO: make it thread-safe. */
 char *
 strtok_whitespace(char *str);
 

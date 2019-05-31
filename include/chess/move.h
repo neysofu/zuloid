@@ -7,14 +7,17 @@
 
 #include "chess/coordinates.h"
 #include "chess/pieces.h"
+#include "chess/position.h"
 #include <stdbool.h>
 #include <stdint.h>
 
+/* A reversible chess move. */
 struct Move
 {
 	Square source;
 	Square target;
 	enum PieceType promotion;
+	enum PieceType capture;
 };
 
 char *
@@ -22,5 +25,11 @@ move_to_string(struct Move move);
 
 struct Move
 string_to_move(const char *string);
+
+void
+position_do_move(struct Position *position, struct Move *move);
+
+void
+position_undo_move(struct Position *position, const struct Move *move);
 
 #endif

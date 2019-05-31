@@ -79,7 +79,11 @@ fen_new_from_position(const struct Position *position)
 		*fen++ = rank_to_char(square_rank(position->en_passant_target));
 	}
 	*fen++ = ' ';
-	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
+	snprintf(fen,
+	         13,
+	         "%zu %zu",
+	         position->reversible_moves_count,
+	         position->moves_count);
 	return fen_copy;
 }
 
@@ -97,7 +101,8 @@ position_init_from_fen(struct Position *position, char *fen)
 			if (isdigit(*token)) {
 				file += *token - '1';
 			} else {
-				position_set_piece_at_square(position, square, char_to_piece(*token));
+				position_set_piece_at_square(
+				  position, square, char_to_piece(*token));
 			}
 		}
 		if ('/' == *token) {
@@ -116,9 +121,7 @@ position_init_from_fen(struct Position *position, char *fen)
 			return ERR_CODE_INVALID_FEN;
 	}
 	token = strtok_whitespace(fen);
-	while (*token) {
-		position->castling_rights |= char_to_castling_right(*token++);
-	}
+	position->castling_rights = string_to_castling_rights(token);
 	token = strtok_whitespace(fen);
 	if (strlen(token) >= 2) {
 		File file = char_to_file(token[0]);
@@ -141,7 +144,8 @@ position_print(struct Position *position)
 	do {
 		printf("# %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
-			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
+			struct Piece piece =
+			  position_piece_at_square(position, square_new(file, rank));
 			printf("%c ", piece_to_char(piece));
 		}
 		printf("| %c\n", rank_to_char(rank));

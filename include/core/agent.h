@@ -5,6 +5,7 @@
 #ifndef Z64C_CORE_AGENT_H
 #define Z64C_CORE_AGENT_H
 
+#include "utils.h"
 #include <stdio.h>
 
 /* Our AI agent. Its responsabilities are:
@@ -14,6 +15,9 @@ struct Agent;
 
 struct Agent *
 agent_new(void);
+
+enum ErrorCode
+agent_stop(struct Agent *agent);
 
 void
 agent_delete(struct Agent *agent);

@@ -34,6 +34,17 @@ char_to_castling_right(char c)
 	}
 }
 
+enum CastlingRights
+string_to_castling_rights(const char *str)
+{
+	assert(str);
+	enum CastlingRights crights = CASTLING_RIGHT_NONE;
+	for (; *str; str++) {
+		crights |= char_to_castling_right(*str);
+	}
+	return crights;
+}
+
 void
 position_init_960(struct Position *position)
 {
@@ -77,7 +88,9 @@ position_init_960(struct Position *position)
 }
 
 void
-position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
+position_set_piece_at_square(struct Position *position,
+                             Square square,
+                             struct Piece piece)
 {
 	Bitboard bb = square_to_bitboard(square);
 	switch (piece.type) {

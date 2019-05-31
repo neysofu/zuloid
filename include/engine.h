@@ -13,7 +13,7 @@
 #include "time/game_clock.h"
 #include <stdio.h>
 
-#define ENGINE_LOGF(engine, ...)                                                           \
+#define ENGINE_LOGF(engine, ...)                                              \
 	engine_logf(engine, __FILE__, __func__, __LINE__, __VA_ARGS__)
 
 enum Protocol
@@ -30,7 +30,8 @@ enum Mode
 	/* While still accepting user input, the engine is searching the game tree
 	 * in the background. */
 	MODE_SEARCH,
-	/* The engine will not accept other user input. This mode is not recoverable. */
+	/* The engine will not accept other user input. This mode is not
+	   recoverable. */
 	MODE_EXIT,
 };
 
@@ -38,7 +39,8 @@ struct Engine
 {
 	/* Only one position at the time. */
 	struct Position position;
-	/* Indexed by `enum Color`. By default both sides have infinite time to think. */
+	/* Indexed by `enum Color`. By default both sides have infinite time to
+	 * think. */
 	struct TimeControl *time_controls[2];
 	struct GameClock game_clocks[2];
 	struct Cache *cache;
@@ -78,6 +80,12 @@ struct Engine
  * RETURN VALUE: NULL on failure; a valid pointer on success. */
 struct Engine *
 engine_new(void);
+
+int
+engine_start_search(struct Engine *engine);
+
+int
+engine_stop_search(struct Engine *engine);
 
 /* Gracefully kills `engine` and all its subsystems. Despite what methods such
  * as UCI's "quit" can induce into thinking, they are completely optional. No

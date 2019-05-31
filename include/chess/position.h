@@ -24,8 +24,9 @@ enum CastlingRights
 	CASTLING_RIGHTS_ALL = 0xf,
 };
 
+/* Parses a FEN field into castling rights. */
 enum CastlingRights
-char_to_castling_right(char c);
+string_to_castling_rights(const char *str);
 
 struct Position
 {
@@ -41,7 +42,9 @@ void
 position_init_960(struct Position *position);
 
 void
-position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
+position_set_piece_at_square(struct Position *position,
+                             Square square,
+                             struct Piece piece);
 
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);

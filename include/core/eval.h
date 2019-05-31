@@ -11,17 +11,14 @@
 #include <stdint.h>
 #include <stdlib.h>
 
+/* The evaluation report that Z64C generates after it's done searching. */
 struct Eval
 {
 	float game_phase_indicator;
 	float dispersion;
 	float centipawns;
 	size_t moves_count;
-	struct
-	{
-		Square source;
-		Square target;
-	} * sliding_moves;
+	struct Move *moves;
 	bool castling_oo;
 	bool castling_ooo;
 	bool en_passant;
