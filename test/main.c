@@ -22,14 +22,6 @@ extern void
 test_jsonrpc_compliance(void);
 extern void
 test_piece_to_char(void);
-extern void
-test_ugei_config(void);
-extern void
-test_ugei_init_metadata(void);
-extern void
-test_ugei_init_reentrant(void);
-extern void
-test_ugei_setup(void);
 
 int
 main(void)
@@ -44,9 +36,5 @@ main(void)
 	RUN_TEST(test_file_to_char);
 	RUN_TEST(test_jsonrpc_compliance);
 	RUN_TEST(test_piece_to_char);
-	RUN_TEST(test_ugei_config);
-	RUN_TEST(test_ugei_init_metadata);
-	RUN_TEST(test_ugei_init_reentrant);
-	RUN_TEST(test_ugei_setup);
 	return UNITY_END();
 }
