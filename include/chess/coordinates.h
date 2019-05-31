@@ -34,17 +34,11 @@ enum
 	FILE_MAX = 7,
 	RANK_MAX = 7,
 	SQUARE_MAX = 63,
-};
 
-enum
-{
 	FILE_NONE = -1,
 	RANK_NONE = -1,
 	SQUARE_NONE = -1,
-};
 
-enum
-{
 	FILES_COUNT = 8,
 	RANKS_COUNT = 8,
 };
@@ -66,10 +60,10 @@ Rank
 square_rank(Square sq);
 
 Bitboard
-square_to_bitboard(Square sq);
+square_to_bb(Square sq);
 Bitboard
-file_to_bitboard(File file);
+file_to_bb(File file);
 Bitboard
-rank_to_bitboard(Rank rank);
+rank_to_bb(Rank rank);
 
 #endif
