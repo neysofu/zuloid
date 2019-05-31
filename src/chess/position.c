@@ -88,11 +88,9 @@ position_init_960(struct Position *position)
 }
 
 void
-position_set_piece_at_square(struct Position *position,
-                             Square square,
-                             struct Piece piece)
+position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
 {
-	Bitboard bb = square_to_bitboard(square);
+	Bitboard bb = square_to_bb(square);
 	switch (piece.type) {
 		case PIECE_TYPE_QUEEN:
 			position->bb[PIECE_TYPE_BISHOP] |= bb;
@@ -108,7 +106,7 @@ struct Piece
 position_piece_at_square(const struct Position *position, Square square)
 {
 	assert(position);
-	Bitboard bb = square_to_bitboard(square);
+	Bitboard bb = square_to_bb(square);
 	struct Piece piece = PIECE_NONE;
 	enum PieceType i = PIECE_TYPE_FIRST_PRIMITIVE;
 	do {

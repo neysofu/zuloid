@@ -42,7 +42,7 @@ square_rank(Square square)
 }
 
 Bitboard
-square_to_bitboard(Square square)
+square_to_bb(Square square)
 {
 	return 1ULL << square;
 }

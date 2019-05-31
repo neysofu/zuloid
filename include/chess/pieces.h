@@ -13,12 +13,15 @@
 enum PieceType
 {
 	PIECE_TYPE_NONE = 0,
+	/* Enum variants starting at 2 make the code a bit more readable in Position: arrays of
+	 * bitboads can then be indexed by PieceType and Color without hassles. */
 	PIECE_TYPE_PAWN = 2,
 	PIECE_TYPE_KNIGHT = 3,
 	PIECE_TYPE_BISHOP = 4,
 	PIECE_TYPE_ROOK = 5,
 	PIECE_TYPE_KING = 6,
 	PIECE_TYPE_QUEEN = PIECE_TYPE_ROOK + PIECE_TYPE_BISHOP,
+	/* Primitive piece types simply don't include the queen. */
 	PIECE_TYPE_FIRST_PRIMITIVE = PIECE_TYPE_PAWN,
 	PIECE_TYPE_LAST_PRIMITIVE = PIECE_TYPE_KING,
 	PRIMITIVE_PIECE_TYPES_COUNT =
@@ -27,19 +30,18 @@ enum PieceType
 
 struct Piece
 {
-	enum PieceType type : 4;
-	enum Color color : 2;
+	enum PieceType type;
+	enum Color color;
 };
 
 extern const struct Piece PIECE_NONE;
 
 char
 piece_to_char(struct Piece piece);
-
 struct Piece
 char_to_piece(char c);
 
 enum PieceType
-direction_between_two_squares(Square sq0, Square sq1);
+movement_between_two_squares(Square sq0, Square sq1);
 
 #endif

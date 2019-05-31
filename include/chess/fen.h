@@ -1,6 +1,9 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * See also:
+ *  -  https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation */
 
 #ifndef Z64C_CHESS_FEN_H
 #define Z64C_CHESS_FEN_H
@@ -20,11 +23,11 @@
  *   1 + | space
  *   6 + | full-moves
  * -----
- *  95 plus some extra safety space. */
+ *  95 (max) plus some extra safety space. */
 
 enum
 {
-	FEN_SIZE = 128
+	FEN_SIZE = 128,
 };
 
 char *
