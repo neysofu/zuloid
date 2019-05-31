@@ -6,11 +6,10 @@
 #define Z64C_CORE_AGENT_H
 
 #include <stdio.h>
-#include <signal.h>
 
 /* Our AI agent. Its responsabilities are:
  * - position evaluation
- * - searching algorith*/
+ * - searching algorith */
 struct Agent;
 
 struct Agent *

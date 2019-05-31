@@ -12,54 +12,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-//struct Layer
-//{
-//	size_t con_weights_count;
-//	size_t dis_weights_count;
-//	int64_t *con_weights;
-//	int64_t *dis_weights;
-//};
-//
-//enum ErrorCode
-//layer_init_from_json(struct Layer *layer, cJSON *json)
-//{
-//	assert(layer);
-//	cJSON *cwc_item = cJSON_GetObjectItem(json, "con_weights_count");
-//	cJSON *dwc_item = cJSON_GetObjectItem(json, "dis_weights_count");
-//	assert(cJSON_IsNumber(cwc_item));
-//	assert(cJSON_IsNumber(dwc_item));
-//	layer->con_weights_count = cwc_item->valuedouble;
-//	layer->dis_weights_count = dwc_item->valuedouble;
-//	assert(layer->con_weights_count % 64 == 0);
-//	assert(layer->dis_weights_count % 64 == 0);
-//	layer->con_weights = malloc(layer->con_weights_count / 64);
-//	layer->dis_weights = malloc(layer->dis_weights_count / 64);
-//	if (!layer->con_weights || !layer->dis_weights) {
-//		return ERR_CODE_ALLOC;
-//	}
-//	cJSON_ArrayForEach(element)
-//}
-//
-//struct Network
-//{
-//	struct Layer lin;
-//	struct Layer l0;
-//	struct Layer l1;
-//	struct Layer l2;
-//	struct Layer l3;
-//	struct Layer l4;
-//	struct Layer lout;
-//};
-//
-//int
-//network_new_from_json(cJSON *json)
-//{
-//	cJSON *l0 = cJSON_GetObjectItem(json, "l0");
-//}
+typedef int64_t Cell;
+
+struct Layer
+{
+	size_t count_in;
+	size_t count_out;
+	Cell *cells;
+};
+
+enum ErrorCode
+layer_init_cells(struct Layer *layer, Cell cells[])
+{
+	assert(layer);
+	assert(layer->count_in > 0);
+	assert(layer->count_out > 0);
+	assert(cells);
+	return ERR_CODE_NONE;
+}
+
+struct Network
+{
+	struct Layer lin;
+	struct Layer l0;
+	struct Layer l1;
+	struct Layer l2;
+	struct Layer l3;
+	struct Layer l4;
+	struct Layer lout;
+};
+
+struct Network *
+network_new_from_blob(const char *blob)
+{
+	assert(blob);
+	struct Network *network = malloc(sizeof(struct Network));
+	layer_init_cells(&network->lin, blob);
+}
 
 struct Agent
 {
 	FILE *source;
+	int64_t *weights;
 };
 
 struct Agent *
