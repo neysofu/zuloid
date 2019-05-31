@@ -11,7 +11,7 @@ project (Z64C VERSION 1.3.0 LANGUAGES C)
 
 set (default_build_type "Debug")
 set (CMAKE_C_FLAGS_DEBUG "-g -ftrapv")
-set (CMAKE_C_FLAGS_RELEASE "-O3")
+set (CMAKE_C_FLAGS_RELEASE "-O3 -fdata-sections -ffunction-sections -Wl,--gc-sections")
 set (CMAKE_C_FLAGS " \
     -fverbose-asm \
     -Wall \
