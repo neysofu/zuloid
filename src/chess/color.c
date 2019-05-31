@@ -11,22 +11,26 @@ color_to_char(enum Color color)
 }
 
 Rank
-color_promoting_rank(enum Color color) {
+color_promoting_rank(enum Color color)
+{
 	return color ? 0 : 7;
 }
 
 Rank
-color_home_rank(enum Color color) {
+color_home_rank(enum Color color)
+{
 	return color ? 7 : 0;
 }
 
 Rank
-color_pawn_rank(enum Color color) {
+color_pawn_rank(enum Color color)
+{
 	return color ? 6 : 1;
 }
 
 Rank
-color_en_passant_target_rank(enum Color color) {
+color_en_passant_target_rank(enum Color color)
+{
 	return color ? 2 : 5;
 }
 
