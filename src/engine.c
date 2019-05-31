@@ -24,7 +24,7 @@ engine_new(void)
 			.agent = NULL,
 			.port = 34290,
 			.seed = 0xcfca130b,
-			.debug = false,
+			.verbose = false,
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,

@@ -13,7 +13,7 @@
 #include "time/game_clock.h"
 #include <stdio.h>
 
-#define ENGINE_LOGF(engine, ...)                                              \
+#define ENGINE_LOGF(engine, ...)                                                           \
 	engine_logf(engine, __FILE__, __func__, __LINE__, __VA_ARGS__)
 
 enum Protocol
@@ -50,7 +50,7 @@ struct Engine
 	/* All network activity (if any) will be on this port. */
 	int port;
 	int32_t seed;
-	bool debug;
+	bool verbose;
 	float move_selection_noise;
 	/* Must be in the range [0,1]. It measures the engine's sense of
 	 * superiority and thus reluctancy to draw. When set to 0, draws are

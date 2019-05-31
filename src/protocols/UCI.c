@@ -23,31 +23,26 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x2a8ef3657cf9a920: /* "wtime" */
 			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
-			  atoi(token) * 1000;
+			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds = atoi(token) * 1000;
 			break;
 		case 0xd3f6a6885c7c93a0: /* "btime" */
 			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
-			  atoi(token) * 1000;
+			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds = atoi(token) * 1000;
 			break;
 		case 0x71c2388517319e0c: /* "winc" */
 			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_WHITE]->increment_in_seconds =
-			  atoi(token) * 1000;
+			engine->time_controls[COLOR_WHITE]->increment_in_seconds = atoi(token) * 1000;
 			break;
 		case 0xad513987341315ae: /* "binc" */
 			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_BLACK]->increment_in_seconds =
-			  atoi(token) * 1000;
+			engine->time_controls[COLOR_BLACK]->increment_in_seconds = atoi(token) * 1000;
 			break;
 		case 0x18ebef875e97de86: /* "infinite" */
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 			break;
 		default:
-			ENGINE_LOGF(
-			  engine, "Unknown argument to the GO command: '%s'\n", token);
+			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
 	}
 	// PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search),
 	// &engine, false);
@@ -128,9 +123,9 @@ engine_uci(struct Engine *engine, char *cmd)
 			if (!token) {
 				break;
 			} else if (strcmp(token, "on") == 0) {
-				engine->debug = true;
+				engine->verbose = true;
 			} else if (strcmp(token, "off") == 0) {
-				engine->debug = false;
+				engine->verbose = false;
 			}
 			break;
 		case 0xd682e29388e0f4a3: /* "go" */
@@ -149,24 +144,23 @@ engine_uci(struct Engine *engine, char *cmd)
 			engine_uci_call_setoption(engine, cmd);
 			break;
 		case 0xf80028c1113b2c9c: /* "uci" */
-			printf(
-			  "id name Z64C\n"
-			  "id author Filippo Costa\n"
-			  "option name Threads type spin default 1 min 1 max 512\n"
-			  "option name Clear Hash type button\n"
-			  "option name Hash type spin default 8 min 0 max 65536\n"
-			  "option name Ponder type check default true\n"
-			  "option name Skill Level type spin default 100 min 0 max 100\n"
-			  "option name Move Overhead type spin default 30 min 0 max 5000\n"
-			  "option name OwnBook\n"
-			  "option name UCI_Opponent\n"
-			  "option name UCI_Chess960 type check default false\n"
-			  "option name UCI_AnalyseMode type check default false\n"
-			  "option name UCI_EngineAbout type string default %s\n"
-			  "option name SyzygyPath type string default <empty>\n"
-			  "option name Style type combo default normal\n"
-			  "uciok\n",
-			  Z64C_COPYRIGHT);
+			printf("id name Z64C\n"
+			       "id author Filippo Costa\n"
+			       "option name Threads type spin default 1 min 1 max 512\n"
+			       "option name Clear Hash type button\n"
+			       "option name Hash type spin default 8 min 0 max 65536\n"
+			       "option name Ponder type check default true\n"
+			       "option name Skill Level type spin default 100 min 0 max 100\n"
+			       "option name Move Overhead type spin default 30 min 0 max 5000\n"
+			       "option name OwnBook\n"
+			       "option name UCI_Opponent\n"
+			       "option name UCI_Chess960 type check default false\n"
+			       "option name UCI_AnalyseMode type check default false\n"
+			       "option name UCI_EngineAbout type string default %s\n"
+			       "option name SyzygyPath type string default <empty>\n"
+			       "option name Style type combo default normal\n"
+			       "uciok\n",
+			       Z64C_COPYRIGHT);
 			break;
 		default:
 			printf("Unknown command: %s\n", token);
