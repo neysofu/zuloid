@@ -87,7 +87,7 @@ layer_transform(struct Layer *layer, Cell in[], Cell out[])
 	Cell *or_cells = layer_or_cells(layer);
 	Cell *and_cells = layer_and_cells(layer);
 	for (size_t i = 0; i < layer->count_in; i++) {
-		for (size_t j = 0; j < layer->count_out; i++) {
+		for (size_t j = 0; j < layer->count_out; j++) {
 			/* FIXME */
 			// out[j] = in[i] & and_cells[i * j];
 			// out[j] = in[i] & or_cells[i * j];
