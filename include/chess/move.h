@@ -20,11 +20,11 @@ struct Move
 	enum PieceType capture;
 };
 
-char *
-move_to_string(struct Move move);
+size_t
+move_to_string(struct Move mv, char *buf);
 
-struct Move
-string_to_move(const char *string);
+size_t
+string_to_move(const char *str, struct Move *mv);
 
 void
 position_do_move(struct Position *position, struct Move *move);

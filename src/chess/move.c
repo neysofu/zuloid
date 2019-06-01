@@ -12,70 +12,52 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-//
-// bool
-// move_is_capture(Move move, struct Board *board)
-//{
-//	return board->bb_occupancy & bb_coord(move_target(move));
-//}
-//
-// bool
-// move_is_en_passant(Move move, struct Board *board)
-//{
-//	return false; // TODO
-//}
-//
-// char *
-// move_to_str(Move move)
-//{
-//	char *str = malloc(5);
-//	buffer[0] = FILE_TO_CHAR(COORD_FILE(MOVE_SOURCE(move)));
-//	buffer[1] = RANK_TO_CHAR(COORD_RANK(MOVE_SOURCE(move)));
-//	buffer[2] = FILE_TO_CHAR(COORD_FILE(MOVE_TARGET(move)));
-//	buffer[3] = RANK_TO_CHAR(COORD_RANK(MOVE_TARGET(move)));
-//	if (MOVE_PROMOTION(move) == PIECE_NONE) {
-//		buffer[4] = '\0';
-//	} else {
-//		buffer[4] = piece_to_char(MOVE_PROMOTION(move));
-//		buffer[5] = '\0';
-//	}
-//	return buffer;
-//}
-//
-// Move
-// str_to_move(const char *str)
-//{
-//	assert(str);
-//	if (strlen(str) < 4) {
-//		return MOVE_NONE;
-//	}
-//	Coord source = COORD(CHAR_TO_FILE(str[0]), CHAR_TO_RANK(str[1]));
-//	Coord target = COORD(CHAR_TO_FILE(str[2]), CHAR_TO_RANK(str[3]));
-//	enum Piece promotion = isalpha(str[4]) ? toupper(str[4]) : PIECE_QUEEN;
-//	return MOVE(source, target, promotion);
-//}
-//
-// bitboard
-// move_ray(Move move)
-//{
-//	Coord source = move_source(move);
-//	Coord target = move_target(move);
-//	enum Dir dir = MOVE_DIR(move);
-//	assert(coord <= COORD_MAX);
-//	assert(coord <= COORD_MAX);
-//	assert(dir == DIR_HORIZONTAL || dir == DIR_VERTICAL || dir ==
-// DIR_DIAGONAL); 	bitboard ray = (COORD_TO_BITBOARD(source) - 1) ^
-//(COORD_TO_BITBOARD(target) - 1);
-//	// void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
-//	return ray & (ray - 1); // & filters[dir](source);
-//}
+
+size_t
+move_to_string(struct Move mv, char *buf)
+{
+	assert(buf);
+	size_t i = 0;
+	buf[i++] = file_to_char(square_file(mv.source));
+	buf[i++] = rank_to_char(square_rank(mv.source));
+	buf[i++] = file_to_char(square_file(mv.target));
+	buf[i++] = rank_to_char(square_rank(mv.target));
+	if (mv.promotion) {
+		buf[i++] = piece_to_char((struct Piece){ .type = mv.promotion });
+	}
+	return i;
+}
+
+size_t
+string_to_move(const char *str, struct Move *mv)
+{
+	assert(str);
+	assert(mv);
+	if (strlen(str) < 4) {
+		return 0;
+	}
+	mv->source = square_new(char_to_file(str[0]), char_to_rank(str[1]));
+	mv->target = square_new(char_to_file(str[2]), char_to_rank(str[3]));
+	mv->promotion = char_to_piece(str[4]).type;
+	return 4;
+}
+
+Bitboard
+move_ray(struct Move mv)
+{
+	enum PieceType dir = movement_between_two_squares(mv.source, mv.target);
+	assert(dir == PIECE_TYPE_BISHOP || dir == PIECE_TYPE_ROOK);
+	Bitboard ray = (square_to_bb(mv.source) - 1) ^ (square_to_bb(mv.target) - 1);
+	// void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
+	return ray & (ray - 1); // & filters[dir](source);
+}
 
 void
-position_do_move(struct Position *position, struct Move *move)
+position_do_move(struct Position *pos, struct Move *mv)
 {
-	assert(position);
-	assert(move);
-	move->capture = position_piece_at_square(position, move->target).type;
+	assert(pos);
+	assert(mv);
+	mv->capture = position_piece_at_square(pos, mv->target).type;
 }
 
 void
