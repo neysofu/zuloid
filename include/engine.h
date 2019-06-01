@@ -39,17 +39,21 @@ struct Engine
 {
 	/* Only one position at the time. */
 	struct Position position;
-	/* Indexed by `enum Color`. By default both sides have infinite time to
-	 * think. */
-	struct TimeControl *time_controls[2];
-	struct GameClock game_clocks[2];
 	struct Cache *cache;
 	struct Agent *agent;
 	struct Eval eval;
 	struct Tablebase *tablebase;
 	int32_t seed;
+	/* Communication protocol used to talk to the chess GUI. */
+	enum Protocol protocol;
 	bool verbose;
-	bool ponder;
+	/* A straightforward activity indicator. Both `main` and engine commands
+	 * might want to know if the engine is doing background computation or
+	 * what. */
+	enum Mode mode;
+	/* Can be set together with `mode = MODE_EXIT` to exit the program. */
+	int exit_status;
+	/* -- Playing settings. */
 	float move_selection_noise;
 	/* Must be in the range [0,1]. It measures the engine's sense of
 	 * superiority and thus reluctancy to draw. When set to 0, draws are
@@ -61,14 +65,12 @@ struct Engine
 	 * adjustments can have extensive influence over the gameplay. 0.5 is the
 	 * most performant option. */
 	float selectivity;
-	/* Communication protocol used to talk to the chess GUI. */
-	enum Protocol protocol;
-	/* A straightforward activity indicator. Both `main` and engine commands
-	 * might want to know if the engine is doing background computation or
-	 * what. */
-	enum Mode mode;
-	/* Can be set together with `mode = MODE_EXIT` to exit the program. */
-	int exit_status;
+	/* -- Search limits. */
+	struct TimeControl *time_controls[2];
+	struct GameClock game_clocks[2];
+	bool ponder;
+	size_t max_nodes_count;
+	size_t max_depth;
 };
 
 /* Initializes a self-contained engine instance at the address 'engine'.

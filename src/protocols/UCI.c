@@ -18,7 +18,6 @@
 void
 engine_uci_call_go(struct Engine *engine, char *cmd)
 {
-	assert(engine);
 	if (engine->mode == MODE_SEARCH) {
 		ENGINE_LOGF(engine, "The engine is already searching.");
 		return;
@@ -45,6 +44,28 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 			break;
+		case 0x0a6f394a3987568a: /* "ponder" */
+			engine->ponder = true;
+			break;
+		case 0xf95e9c242b5d7a1a: /* "movestogo" */
+			token = strtok_whitespace(cmd);
+			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
+			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
+			break;
+		case 0xe142606f37a3b175: /* "depth" */
+		case 0x3323f763484dfbd4: /* "mate" */
+			token = strtok_whitespace(cmd);
+			engine->max_depth = atoi(token);
+			break;
+		case 0xd6accb2d47332ac7: /* "nodes" */
+			token = strtok_whitespace(cmd);
+			engine->max_nodes_count = atoi(token);
+			break;
+		case 0x653009b7ced43713: /* "movetime" */
+			token = strtok_whitespace(cmd);
+			engine->game_clocks[engine->position.side_to_move].time_left_in_seconds =
+			  atoi(token) * 1000;
+			break;
 		default:
 			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
 	}
@@ -54,8 +75,6 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 void
 engine_uci_call_position(struct Engine *engine, char *cmd)
 {
-	assert(engine);
-	assert(cmd);
 	char *token = strtok_whitespace(cmd);
 	if (!token) {
 		return;
@@ -73,8 +92,6 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 void
 engine_uci_call_setoption(struct Engine *engine, char *cmd)
 {
-	assert(engine);
-	assert(cmd);
 	if (engine->mode != MODE_IDLE) {
 		ENGINE_LOGF(engine, "Options can only be set when idle.\n");
 		return;
@@ -172,6 +189,9 @@ engine_uci(struct Engine *engine, char *cmd)
 			       "option name Style type combo default normal\n"
 			       "uciok\n",
 			       Z64C_COPYRIGHT);
+			break;
+		case 0xdfd89a3bb7b15ce5: /* "ucinewgame" */
+			cache_clear(engine->cache);
 			break;
 		default:
 			printf("Unknown command: %s\n", token);

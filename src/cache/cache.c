@@ -62,6 +62,12 @@ cache_delete(struct Cache *cache)
 	free(cache);
 }
 
+size_t
+cache_clear(struct Cache *cache)
+{
+	return 0;
+}
+
 struct CacheEntry *
 cache_get(struct Cache *cache, const struct Position *position)
 {

@@ -29,6 +29,10 @@ cache_get(struct Cache *cache, const struct Position *position);
 bool
 cache_entry_is_empty(struct CacheEntry *entry);
 
+/* Removes all stored positions from the cache and returns the number of deleted entries. */
+size_t
+cache_clear(struct Cache *cache);
+
 void
 cache_delete(struct Cache *cache);
 
