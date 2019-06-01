@@ -23,13 +23,13 @@ struct CacheEntry
 struct Cache *
 cache_new(size_t size_in_bytes);
 
-void
-cache_delete(struct Cache *cache);
-
 struct CacheEntry *
 cache_get(struct Cache *cache, const struct Position *position);
 
 bool
 cache_entry_is_empty(struct CacheEntry *entry);
+
+void
+cache_delete(struct Cache *cache);
 
 #endif

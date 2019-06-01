@@ -3,9 +3,9 @@
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
 #include "engine.h"
+#include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
-#include "core/agent.h"
 #include "protocols.h"
 #include <assert.h>
 #include <stdarg.h>
@@ -22,7 +22,6 @@ engine_new(void)
 			.time_controls = { NULL, NULL },
 			.cache = NULL,
 			.agent = NULL,
-			.port = 34290,
 			.seed = 0xcfca130b,
 			.verbose = false,
 			.move_selection_noise = 0.005,

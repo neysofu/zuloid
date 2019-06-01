@@ -16,7 +16,7 @@ main(void)
 	/* We just want to make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
-	printf("# Z64C/CPU %s (%s)\n", Z64C_VERSION, Z64C_BUILD_DATE);
+	printf("# Z64C/%s %s (%s)\n", Z64C_BACKEND_NAME, Z64C_VERSION, Z64C_BUILD_DATE);
 	printf("# %s\n", Z64C_COPYRIGHT);
 	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
 	printf("# There is NO warranty of any kind.\n");

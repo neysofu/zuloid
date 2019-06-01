@@ -16,6 +16,7 @@ extern const char *const Z64C_LICENSE;
 /* Compiler build timestamp in YYYY-MM-DD format. */
 extern const char *const Z64C_BUILD_DATE;
 extern const char *const Z64C_URL;
+extern const char *const Z64C_BACKEND_NAME;
 /* Software versioning as in MAJOR.MINOR.PATCH. */
 extern const char *const Z64C_VERSION;
 

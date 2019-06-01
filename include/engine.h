@@ -5,11 +5,11 @@
 #ifndef Z64C_ENGINE_H
 #define Z64C_ENGINE_H
 
+#include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "chess/termination.h"
-#include "core/agent.h"
-#include "core/eval.h"
+#include "eval.h"
 #include "time/game_clock.h"
 #include <stdio.h>
 
@@ -47,8 +47,6 @@ struct Engine
 	struct Agent *agent;
 	struct Eval eval;
 	struct Tablebase *tablebase;
-	/* All network activity (if any) will be on this port. */
-	int port;
 	int32_t seed;
 	bool verbose;
 	bool ponder;

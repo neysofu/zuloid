@@ -2,10 +2,10 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "agent.h"
 #include "cache/cache.h"
 #include "chess/fen.h"
 #include "chess/position.h"
-#include "core/agent.h"
 #include "engine.h"
 #include "globals.h"
 #include "utils.h"
