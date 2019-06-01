@@ -15,6 +15,11 @@
 
 typedef int64_t Cell;
 
+enum
+{
+	CELLS_BUF_CAPACITY = 128,
+};
+
 Cell
 cell_from_reversible_moves_count(size_t reversible_moves_count)
 {
@@ -84,30 +89,19 @@ layer_transform(struct Layer *layer, Cell in[], Cell out[])
 	for (size_t i = 0; i < layer->count_in; i++) {
 		for (size_t j = 0; j < layer->count_out; i++) {
 			/* FIXME */
-			out[j] = in[i] & and_cells[i * j];
-			out[j] = in[i] & or_cells[i * j];
-			out[j] = in[i] & xor_cells[i * j];
+			// out[j] = in[i] & and_cells[i * j];
+			// out[j] = in[i] & or_cells[i * j];
+			// out[j] = in[i] & xor_cells[i * j];
 		}
 	}
-}
-
-struct Network
-{
-	struct Layer l0;
-};
-
-void
-network_run(struct Network *network, struct Position *position, Cell buffer[])
-{
-	Cell in[128] = { 0 };
-	cells_init_from_position(in, position);
-	layer_transform(&network->l0, in, buffer);
 }
 
 struct Agent
 {
 	FILE *source;
-	struct Network network;
+	Cell in_buf[CELLS_BUF_CAPACITY];
+	Cell out_buf[CELLS_BUF_CAPACITY];
+	struct Layer l0;
 	struct Eval eval;
 };
 
@@ -115,9 +109,18 @@ struct Agent *
 agent_new(void)
 {
 	struct Agent *agent = malloc(sizeof(struct Agent));
+	Cell *l0_cells = malloc(sizeof(Cell) * 8 * 6 * 3);
 	if (agent) {
 		*agent = (struct Agent){
 			.source = NULL,
+			.in_buf = { 0 },
+			.out_buf = { 0 },
+			.l0 =
+			  {
+			    .count_in = 8,
+			    .count_out = 6,
+			    .cells = l0_cells,
+			  },
 		};
 	}
 	return agent;
@@ -143,31 +146,12 @@ agent_import(struct Agent *agent, FILE *file)
 	return 0;
 }
 
-int
-agent_export(struct Agent *agent, FILE *file)
-{
-	fclose(file);
-	return 0;
-}
-
-int
-agent_eval_position(struct Agent *agent, struct Position *position)
-{
-	/* N and M dimension tensors, I need to convert one into the other. Great.
-	 * I want a SUPER simple interface... I could use bitshifts for changing
-	 * places. So I would need N bitshifts to also influence other bits. How
-	 * the hell do I do that? Basically, if there are more than N signals, it's
-	 * ok. N is chosen to keep the number of activated neurons stable through
-	 * the layers.
-	 * to focus on output neurons one at a time.
-	 * 1. Count all firing connections to neuron. If it's enough, then keep it. */
-	return 0;
-}
-
 void
 engine_start_search(struct Engine *engine)
 {
 	assert(engine);
+	cells_init_from_position(engine->agent->in_buf, &engine->position);
+	layer_transform(&engine->agent->l0, engine->agent->in_buf, engine->agent->out_buf);
 }
 
 void

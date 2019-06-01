@@ -21,7 +21,7 @@ engine_new(void)
 			.position = POSITION_INIT,
 			.time_controls = { NULL, NULL },
 			.cache = NULL,
-			.agent = NULL,
+			.agent = agent_new(),
 			.seed = 0xcfca130b,
 			.verbose = false,
 			.move_selection_noise = 0.005,
