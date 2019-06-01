@@ -16,5 +16,4 @@ void
 engine_stop_search(struct Engine *engine)
 {
 	ENGINE_LOGF(engine, "Exiting search thread...\n");
-	p_uthread_exit(EXIT_SUCCESS);
 }
