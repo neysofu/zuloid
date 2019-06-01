@@ -19,6 +19,10 @@ void
 engine_uci_call_go(struct Engine *engine, char *cmd)
 {
 	assert(engine);
+	if (engine->mode == MODE_SEARCH) {
+		ENGINE_LOGF(engine, "The engine is already searching.");
+		return;
+	}
 	char *token = strtok_whitespace(cmd);
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x2a8ef3657cf9a920: /* "wtime" */
@@ -44,9 +48,7 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 		default:
 			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
 	}
-	// PUThread *thread = p_uthread_create((PUThreadFunc)(engine_search),
-	// &engine, false);
-	printf("bestmove e2e4 ponder c7c5\n");
+	engine_start_search(engine);
 }
 
 void
@@ -72,11 +74,17 @@ void
 engine_uci_call_setoption(struct Engine *engine, char *cmd)
 {
 	assert(engine);
-	assert(engine->mode == MODE_IDLE); /* By specification. */
 	assert(cmd);
+	if (engine->mode != MODE_IDLE) {
+		ENGINE_LOGF(engine, "Options can only be set when idle.\n");
+		return;
+	}
 	uint64_t hash = 0;
 	char *token = NULL;
-	while (strcmp((token = strtok_whitespace(cmd)), "value") != 0) {
+	while ((token = strtok_whitespace(cmd))) {
+		if (strcmp(token, "value") == 0) {
+			return;
+		}
 		for (size_t i = 0; token[i]; i++) {
 			token[i] = tolower(token[i]);
 		}
@@ -91,7 +99,7 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 		case 0xcfaf77aca1f8feaa: /* "nalimovcache" */
 			break;
 		case 0x0a6f394a3987568a: /* "ponder" */
-			break;
+			engine->ponder = true;
 		case 0x487e0e93e2c2bb18: /* "ownbook" */
 			break;
 		case 0xc8922f8e470ffaee: /* "uci_showcurrline" */
@@ -142,6 +150,9 @@ engine_uci(struct Engine *engine, char *cmd)
 			break;
 		case 0x26cc87cdbb3247ba: /* "setoption" */
 			engine_uci_call_setoption(engine, cmd);
+			break;
+		case 0xd8d95334d91f61fc: /* "stop" */
+			engine_stop_search(engine);
 			break;
 		case 0xf80028c1113b2c9c: /* "uci" */
 			printf("id name Z64C\n"

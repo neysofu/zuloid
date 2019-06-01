@@ -51,6 +51,7 @@ struct Engine
 	int port;
 	int32_t seed;
 	bool verbose;
+	bool ponder;
 	float move_selection_noise;
 	/* Must be in the range [0,1]. It measures the engine's sense of
 	 * superiority and thus reluctancy to draw. When set to 0, draws are
@@ -81,11 +82,28 @@ struct Engine
 struct Engine *
 engine_new(void);
 
-int
-engine_start_search(struct Engine *engine);
+/* A protocol-agnostic entry point for engine scripting.
+ *
+ * @param engine The engine instance that must process the command string.
+ * @param string The command string.
+ * @sideeffect Possibly, a response will be printed to stdout. `engine`'s
+ * internal data also can change. */
+void
+engine_call(struct Engine *engine, char *cmd);
 
-int
+/* Spawns a new thread and searches the current position. That thread will be killed when
+ * (if ever) the search yields a result. */
+void
+engine_start_search(struct Engine *engine);
+void
 engine_stop_search(struct Engine *engine);
+
+void
+engine_logf(struct Engine *engine,
+            const char *filename,
+            const char *function_name,
+            size_t line_num,
+            ...);
 
 /* Gracefully kills `engine` and all its subsystems. Despite what methods such
  * as UCI's "quit" can induce into thinking, they are completely optional. No
@@ -96,21 +114,5 @@ engine_stop_search(struct Engine *engine);
  * their memory locations become unaccessible. */
 int
 engine_delete(struct Engine *engine);
-
-/* A protocol-agnostic entry point for engine scripting.
- *
- * @param engine The engine instance that must process the command string.
- * @param string The command string.
- * @sideeffect Possibly, a response will be printed to stdout. `engine`'s
- * internal data also can change. */
-void
-engine_call(struct Engine *engine, char *cmd);
-
-void
-engine_logf(struct Engine *engine,
-            const char *filename,
-            const char *function_name,
-            size_t line_num,
-            ...);
 
 #endif

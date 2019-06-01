@@ -6,10 +6,15 @@
 #include <plibsys.h>
 #include <stdio.h>
 
-int
-engine_search(struct Engine *engine)
+void
+engine_start_search(struct Engine *engine)
 {
-	ENGINE_LOGF(engine, "Started searching on a new thread.");
+	ENGINE_LOGF(engine, "Started searching on a new thread.\n");
+}
+
+void
+engine_stop_search(struct Engine *engine)
+{
+	ENGINE_LOGF(engine, "Exiting search thread...\n");
 	p_uthread_exit(EXIT_SUCCESS);
-	return 0;
 }

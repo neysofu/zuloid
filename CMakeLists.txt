@@ -58,12 +58,10 @@ add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_LIB cjson plibsys XXHASH)
-target_compile_definitions (Z64C_LIB PUBLIC
+target_compile_definitions (Z64C_LIB PRIVATE
     PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
-    BUILD_DATE=\"${BUILD_DATE}\"
-    Z64C_VERSION_MAJOR=\"${PROJECT_VERSION_MAJOR}\"
-    Z64C_VERSION_MINOR=\"${PROJECT_VERSION_MINOR}\"
-    Z64C_VERSION_PATCH=\"${PROJECT_VERSION_PATCH}\")
+    PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
+    PROJECT_VERSION=\"${PROJECT_VERSION}\")
 
 # Z64C
 add_executable (Z64C "${SRC_DIR}/main.c")
@@ -72,6 +70,6 @@ target_link_libraries (Z64C Z64C_LIB)
 # Z64C_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable (Z64C_TEST "${TEST_FILES}")
-target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
+target_include_directories (Z64C_LIB SYSTEM PRIVATE "${LIB_DIR}")
 target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
 add_test (NAME Z64C COMMAND Z64C_TEST)

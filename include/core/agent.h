@@ -16,9 +16,6 @@ struct Agent;
 struct Agent *
 agent_new(void);
 
-enum ErrorCode
-agent_stop(struct Agent *agent);
-
 void
 agent_delete(struct Agent *agent);
 
