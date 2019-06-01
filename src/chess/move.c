@@ -42,16 +42,6 @@ string_to_move(const char *str, struct Move *mv)
 	return 4;
 }
 
-Bitboard
-move_ray(struct Move mv)
-{
-	enum PieceType dir = movement_between_two_squares(mv.source, mv.target);
-	assert(dir == PIECE_TYPE_BISHOP || dir == PIECE_TYPE_ROOK);
-	Bitboard ray = (square_to_bb(mv.source) - 1) ^ (square_to_bb(mv.target) - 1);
-	// void *(filters) = { bb_rank, bb_file, bb_bishop_threats };
-	return ray & (ray - 1); // & filters[dir](source);
-}
-
 void
 position_do_move(struct Position *pos, struct Move *mv)
 {

@@ -22,52 +22,59 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 		ENGINE_LOGF(engine, "The engine is already searching.");
 		return;
 	}
-	char *token = strtok_whitespace(cmd);
-	switch (XXH64(token, strlen(token), 0)) {
-		case 0x2a8ef3657cf9a920: /* "wtime" */
-			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds = atoi(token) * 1000;
-			break;
-		case 0xd3f6a6885c7c93a0: /* "btime" */
-			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds = atoi(token) * 1000;
-			break;
-		case 0x71c2388517319e0c: /* "winc" */
-			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_WHITE]->increment_in_seconds = atoi(token) * 1000;
-			break;
-		case 0xad513987341315ae: /* "binc" */
-			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_BLACK]->increment_in_seconds = atoi(token) * 1000;
-			break;
-		case 0x18ebef875e97de86: /* "infinite" */
-			time_control_delete(engine->time_controls[COLOR_WHITE]);
-			time_control_delete(engine->time_controls[COLOR_BLACK]);
-			break;
-		case 0x0a6f394a3987568a: /* "ponder" */
-			engine->ponder = true;
-			break;
-		case 0xf95e9c242b5d7a1a: /* "movestogo" */
-			token = strtok_whitespace(cmd);
-			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
-			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
-			break;
-		case 0xe142606f37a3b175: /* "depth" */
-		case 0x3323f763484dfbd4: /* "mate" */
-			token = strtok_whitespace(cmd);
-			engine->max_depth = atoi(token);
-			break;
-		case 0xd6accb2d47332ac7: /* "nodes" */
-			token = strtok_whitespace(cmd);
-			engine->max_nodes_count = atoi(token);
-			break;
-		case 0x653009b7ced43713: /* "movetime" */
-			token = strtok_whitespace(cmd);
-			engine->game_clocks[engine->position.side_to_move].time_left_in_seconds =
-			  atoi(token) * 1000;
-			break;
-		default:
-			ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
+	char *token = NULL;
+	while ((token = strtok_whitespace(NULL))) {
+		ENGINE_LOGF(engine, "Next token is %s\n", token);
+		switch (XXH64(token, strlen(token), 0)) {
+			case 0x2a8ef3657cf9a920: /* "wtime" */
+				token = strtok_whitespace(NULL);
+				engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
+				  atoi(token) * 1000;
+				break;
+			case 0xd3f6a6885c7c93a0: /* "btime" */
+				token = strtok_whitespace(NULL);
+				engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
+				  atoi(token) * 1000;
+				break;
+			case 0x71c2388517319e0c: /* "winc" */
+				token = strtok_whitespace(NULL);
+				engine->time_controls[COLOR_WHITE]->increment_in_seconds =
+				  atoi(token) * 1000;
+				break;
+			case 0xad513987341315ae: /* "binc" */
+				token = strtok_whitespace(NULL);
+				engine->time_controls[COLOR_BLACK]->increment_in_seconds =
+				  atoi(token) * 1000;
+				break;
+			case 0x18ebef875e97de86: /* "infinite" */
+				time_control_delete(engine->time_controls[COLOR_WHITE]);
+				time_control_delete(engine->time_controls[COLOR_BLACK]);
+				break;
+			case 0x0a6f394a3987568a: /* "ponder" */
+				engine->ponder = true;
+				break;
+			case 0xf95e9c242b5d7a1a: /* "movestogo" */
+				token = strtok_whitespace(NULL);
+				engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
+				engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
+				break;
+			case 0xe142606f37a3b175: /* "depth" */
+			case 0x3323f763484dfbd4: /* "mate" */
+				token = strtok_whitespace(NULL);
+				engine->max_depth = atoi(token);
+				break;
+			case 0xd6accb2d47332ac7: /* "nodes" */
+				token = strtok_whitespace(NULL);
+				engine->max_nodes_count = atoi(token);
+				break;
+			case 0x653009b7ced43713: /* "movetime" */
+				token = strtok_whitespace(NULL);
+				engine->game_clocks[engine->position.side_to_move].time_left_in_seconds =
+				  atoi(token) * 1000;
+				break;
+			default:
+				ENGINE_LOGF(engine, "Unknown argument to the GO command: '%s'\n", token);
+		}
 	}
 	engine_start_search(engine);
 }
@@ -75,7 +82,7 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 void
 engine_uci_call_position(struct Engine *engine, char *cmd)
 {
-	char *token = strtok_whitespace(cmd);
+	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
@@ -83,9 +90,10 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 	} else if (strcmp(token, "fen") == 0) {
 		position_init_from_fen(&engine->position, cmd);
 	}
-	while ((token = strtok_whitespace(cmd))) {
+	while ((token = strtok_whitespace(NULL))) {
+		struct Move mv;
+		string_to_move(token, &mv);
 		// TODO
-		// position_push(string_to_move(cmd_current(cmd)));
 	}
 }
 
@@ -98,7 +106,7 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 	}
 	uint64_t hash = 0;
 	char *token = NULL;
-	while ((token = strtok_whitespace(cmd))) {
+	while ((token = strtok_whitespace(NULL))) {
 		if (strcmp(token, "value") == 0) {
 			return;
 		}
@@ -144,7 +152,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			position_print(&engine->position);
 			break;
 		case 0x01fd51a2a6f9cc2f: /* "debug" */
-			token = strtok_whitespace(cmd);
+			token = strtok_whitespace(NULL);
 			if (!token) {
 				break;
 			} else if (strcmp(token, "on") == 0) {
