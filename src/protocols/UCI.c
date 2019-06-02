@@ -95,7 +95,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 			if (!token) {
 				return;
 			}
-			fen_fields[i] = strtok_whitespace(NULL);
+			fen_fields[i] = token;
 		}
 		position_init_from_fen_fields(&engine->position, fen_fields);
 	}
