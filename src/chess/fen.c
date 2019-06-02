@@ -158,6 +158,6 @@ position_print(struct Position *position)
 	       "#     A B C D E F G H\n");
 	char *fen = fen_new_from_position(position);
 	printf("FEN: %s\n", fen);
-	printf("Lichess URL: https://lichess.org/analysis/%s", fen);
+	printf("Lichess URL: https://lichess.org/analysis/%s\n", fen);
 	free(fen);
 }
