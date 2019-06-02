@@ -31,12 +31,15 @@ enum
 };
 
 char *
-fen_new_from_position(const struct Position *position);
+fen_new_from_position(const struct Position *pos);
 
 int
-position_init_from_fen(struct Position *position, char *fen);
+position_init_from_fen(struct Position *pos, char *fen);
+
+int
+position_init_from_fen_fields(struct Position *pos, char **fieldsptr);
 
 void
-position_print(struct Position *position);
+position_print(struct Position *pos);
 
 #endif

@@ -79,21 +79,15 @@ fen_new_from_position(const struct Position *position)
 		*fen++ = rank_to_char(square_rank(position->en_passant_target));
 	}
 	*fen++ = ' ';
-	snprintf(fen,
-	         13,
-	         "%zu %zu",
-	         position->reversible_moves_count,
-	         position->moves_count);
+	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
 	return fen_copy;
 }
 
 int
-position_init_from_fen(struct Position *position, char *fen)
+position_init_from_fen_fields(struct Position *pos, char *fieldsptr[])
 {
-	assert(position);
-	assert(fen);
-	position_empty(position);
-	char *token = strtok_whitespace(fen);
+	position_empty(pos);
+	char *token = fieldsptr[0];
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
@@ -101,38 +95,49 @@ position_init_from_fen(struct Position *position, char *fen)
 			if (isdigit(*token)) {
 				file += *token - '1';
 			} else {
-				position_set_piece_at_square(
-				  position, square, char_to_piece(*token));
+				position_set_piece_at_square(pos, square, char_to_piece(*token));
 			}
 		}
 		if ('/' == *token) {
 			token++;
 		}
 	}
-	token = strtok_whitespace(fen);
+	token = fieldsptr[1];
 	switch (tolower(*token)) {
 		case 'w':
-			position->side_to_move = COLOR_WHITE;
+			pos->side_to_move = COLOR_WHITE;
 			break;
 		case 'b':
-			position->side_to_move = COLOR_BLACK;
+			pos->side_to_move = COLOR_BLACK;
 			break;
 		default:
 			return ERR_CODE_INVALID_FEN;
 	}
-	token = strtok_whitespace(fen);
-	position->castling_rights = string_to_castling_rights(token);
-	token = strtok_whitespace(fen);
+	token = fieldsptr[2];
+	pos->castling_rights = string_to_castling_rights(token);
+	token = fieldsptr[3];
 	if (strlen(token) >= 2) {
 		File file = char_to_file(token[0]);
 		Rank rank = char_to_rank(token[1]);
-		position->en_passant_target = square_new(file, rank);
+		pos->en_passant_target = square_new(file, rank);
 	}
-	token = strtok_whitespace(fen);
-	position->reversible_moves_count = strtol(token, NULL, 10);
-	token = strtok_whitespace(fen);
-	position->moves_count = strtol(token, NULL, 10);
+	token = fieldsptr[4];
+	pos->reversible_moves_count = strtol(token, NULL, 10);
+	token = fieldsptr[5];
+	pos->moves_count = strtol(token, NULL, 10);
 	return ERR_CODE_NONE;
+}
+
+int
+position_init_from_fen(struct Position *pos, char *fen)
+{
+	assert(pos);
+	assert(fen);
+	char *fieldsptr[6] = { NULL };
+	for (size_t i = 0; i < 6; i++) {
+		fieldsptr[i] = strsep(&fen, " _");
+	}
+	return position_init_from_fen_fields(pos, fieldsptr);
 }
 
 void
@@ -144,8 +149,7 @@ position_print(struct Position *position)
 	do {
 		printf("# %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
-			struct Piece piece =
-			  position_piece_at_square(position, square_new(file, rank));
+			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
 			printf("%c ", piece_to_char(piece));
 		}
 		printf("| %c\n", rank_to_char(rank));
