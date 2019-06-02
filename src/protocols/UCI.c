@@ -84,6 +84,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
+		ENGINE_LOGF("[ERROR] Expected either 'startpos' or 'fen'.\n")
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->position = POSITION_INIT;
