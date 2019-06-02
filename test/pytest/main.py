@@ -1,5 +1,5 @@
 def test_id_name(uci_engine):
-    assert uci_engine.id["name"] == "Z64C"
+    assert "Z64C" in uci_engine.id["name"]
     uci_engine.quit()
 
 
