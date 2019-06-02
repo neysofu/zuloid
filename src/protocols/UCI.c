@@ -180,22 +180,23 @@ engine_uci(struct Engine *engine, char *cmd)
 			engine_stop_search(engine);
 			break;
 		case 0xf80028c1113b2c9c: /* "uci" */
-			printf("id name Z64C\n"
+			printf("id name Z64C/%s %s\n"
 			       "id author Filippo Costa\n"
-			       //"option name Threads type spin default 1 min 1 max 512\n"
-			       //"option name Clear Hash type button\n"
-			       //"option name Hash type spin default 8 min 0 max 65536\n"
-			       //"option name Ponder type check default true\n"
-			       //"option name Skill Level type spin default 100 min 0 max 100\n"
-			       //"option name Move Overhead type spin default 30 min 0 max 5000\n"
-			       //"option name OwnBook\n"
-			       //"option name UCI_Opponent\n"
-			       //"option name UCI_Chess960 type check default false\n"
-			       //"option name UCI_AnalyseMode type check default false\n"
-			       //"option name UCI_EngineAbout type string default %s\n"
-			       //"option name SyzygyPath type string default <empty>\n"
-			       //"option name Style type combo default normal\n"
+			       "option name Clear Hash type button\n"
+			       /* TODO: also implement Komodo's Drawscore option. */
+			       "option name Contempt type spin default 20 min -100 max 100\n"
+			       "option name Hash type spin default 64 min 0 max 131072\n"
+			       "option name Minimum Thinking Time type spin default 20 min 0 max 5000\n"
+			       "option name nodestime type spin default 0 min 0 max 10000\n"
+			       "option name Ponder type check default true\n"
+			       "option name Skill Level type spin default 20 min 0 max 20\n"
+			       /* See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308 */
+			       "option name Slow Mover type spin default 84 min 10 max 1000\n"
+			       "option name Threads type spin default 1 min 1 max 512\n"
+			       "option name Move Overhead type spin default 30 min 0 max 60000\n"
 			       "uciok\n",
+			       Z64C_BACKEND_NAME,
+			       Z64C_VERSION,
 			       Z64C_COPYRIGHT);
 			break;
 		case 0xdfd89a3bb7b15ce5: /* "ucinewgame" */
