@@ -1,14 +1,12 @@
 build/
 
-# Vim
+# Editors
 [._]*.s[a-v][a-z]
 [._]*.sw[a-p]
 [._]s[a-rt-v][a-z]
 [._]ss[a-gi-z]
 [._]sw[a-p]
 .netrwhist
-
-# Visual Studio Code
 .vscode/
 
 # Prerequisites
@@ -63,3 +61,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+# PyTest stuff
+__pycache__/
+*.py[cod]
+.cache/
