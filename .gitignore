@@ -1,5 +1,10 @@
 build/
 
+# PyTest stuff
+__pycache__/
+*.py[cod]
+.cache/
+
 # Editors
 [._]*.s[a-v][a-z]
 [._]*.sw[a-p]
@@ -61,8 +66,3 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
-
-# PyTest stuff
-__pycache__/
-*.py[cod]
-.cache/
