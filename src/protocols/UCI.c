@@ -84,12 +84,20 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		ENGINE_LOGF("[ERROR] Expected either 'startpos' or 'fen'.\n")
+		ENGINE_LOGF(engine, "[ERROR] Expected either 'startpos' or 'fen'.\n");
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->position = POSITION_INIT;
 	} else if (strcmp(token, "fen") == 0) {
-		position_init_from_fen(&engine->position, cmd);
+		char *fen_fields[6] = { NULL };
+		for (size_t i = 0; i < 6; i++) {
+			token = strtok_whitespace(NULL);
+			if (!token) {
+				return;
+			}
+			fen_fields[i] = strtok_whitespace(NULL);
+		}
+		position_init_from_fen_fields(&engine->position, fen_fields);
 	}
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
