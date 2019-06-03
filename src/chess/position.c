@@ -91,13 +91,19 @@ void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
 {
 	Bitboard bb = square_to_bb(square);
+	for (size_t i = 0; i < POSITION_BB_COUNT; i++) {
+		position->bb[i] &= ~bb;
+	}
 	switch (piece.type) {
 		case PIECE_TYPE_QUEEN:
 			position->bb[PIECE_TYPE_BISHOP] |= bb;
 			position->bb[PIECE_TYPE_ROOK] |= bb;
 			break;
+		case PIECE_TYPE_NONE:
+			return;
 		default:
 			position->bb[piece.type] |= bb;
+			break;
 	}
 	position->bb[piece.color] |= bb;
 }

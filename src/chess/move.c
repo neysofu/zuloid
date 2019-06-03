@@ -47,7 +47,11 @@ position_do_move(struct Position *pos, struct Move *mv)
 {
 	assert(pos);
 	assert(mv);
+	/* TODO: Check move legality. */
 	mv->capture = position_piece_at_square(pos, mv->target).type;
+	position_set_piece_at_square(
+	  pos, mv->target, position_piece_at_square(pos, mv->source));
+	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
 }
 
 void

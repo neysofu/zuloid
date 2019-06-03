@@ -102,7 +102,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
 		string_to_move(token, &mv);
-		// TODO
+		position_do_move(&engine->position, &mv);
 	}
 }
 
@@ -205,8 +205,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			       "option name Move Overhead type spin default 30 min 0 max 60000\n"
 			       "uciok\n",
 			       Z64C_BACKEND_NAME,
-			       Z64C_VERSION,
-			       Z64C_COPYRIGHT);
+			       Z64C_VERSION);
 			break;
 		case 0xdfd89a3bb7b15ce5: /* "ucinewgame" */
 			cache_clear(engine->cache);

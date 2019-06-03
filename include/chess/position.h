@@ -24,13 +24,18 @@ enum CastlingRights
 	CASTLING_RIGHTS_ALL = 0xf,
 };
 
+enum
+{
+	POSITION_BB_COUNT = COLORS_COUNT + PRIMITIVE_PIECE_TYPES_COUNT,
+};
+
 /* Parses a FEN field into castling rights. */
 enum CastlingRights
 string_to_castling_rights(const char *str);
 
 struct Position
 {
-	Bitboard bb[COLORS_COUNT + PRIMITIVE_PIECE_TYPES_COUNT];
+	Bitboard bb[POSITION_BB_COUNT];
 	enum Color side_to_move;
 	Square en_passant_target;
 	enum CastlingRights castling_rights;
@@ -42,9 +47,7 @@ void
 position_init_960(struct Position *position);
 
 void
-position_set_piece_at_square(struct Position *position,
-                             Square square,
-                             struct Piece piece);
+position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
 
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);
