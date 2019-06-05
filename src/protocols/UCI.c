@@ -80,6 +80,23 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 }
 
 void
+engine_uci_call_openlichessanalysis(struct Engine *engine, char *cmd)
+{
+	char *command = malloc(64 + FEN_SIZE);
+	char *fen = fen_from_position(NULL, &engine->position, '_');
+#ifdef __APPLE__
+	sprintf(command, "open https://lichess.org/analysis/standard/%s\n", fen);
+#elif __linux__
+	sprintf(command, "xdg-open https://lichess.org/analysis/standard/%s\n", fen);
+#elif _WIN32
+	sprintf(command, "start https://lichess.org/analysis/standard/%s\n", fen);
+#endif
+	system(command);
+	free(command);
+	free(fen);
+}
+
+void
 engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
@@ -98,6 +115,8 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 			fen_fields[i] = token;
 		}
 		position_init_from_fen_fields(&engine->position, fen_fields);
+	} else {
+		position_init_960(&engine->position);
 	}
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
@@ -175,6 +194,9 @@ engine_uci(struct Engine *engine, char *cmd)
 			break;
 		case 0x33e37def10e5d195: /* "isready" */
 			printf("readyok\n");
+			break;
+		case 0x9acc2558707a5edd: /* "olia" */
+			engine_uci_call_openlichessanalysis(engine, cmd);
 			break;
 		case 0x8a7ecc4137c6f2b0: /* "position" */
 			engine_uci_call_position(engine, cmd);
