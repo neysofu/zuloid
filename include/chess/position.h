@@ -43,9 +43,11 @@ struct Position
 	size_t moves_count;
 };
 
+/* Randomly sets up the chess position from Chess 960. */
 void
 position_init_960(struct Position *position);
 
+/* Removes a piece from the board and replaces it with another one. */
 void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
 

@@ -34,11 +34,12 @@ char *
 fen_new_from_position(const struct Position *pos);
 
 int
-position_init_from_fen(struct Position *pos, char *fen);
-
-int
 position_init_from_fen_fields(struct Position *pos, char **fieldsptr);
 
+int
+position_init_from_fen(struct Position *pos, char *fen);
+
+/* Pretty printing to stdout for debug purposes. */
 void
 position_print(struct Position *pos);
 
