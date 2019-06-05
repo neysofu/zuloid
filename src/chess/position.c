@@ -48,24 +48,57 @@ string_to_castling_rights(const char *str)
 void
 position_init_960(struct Position *position)
 {
-	const Bitboard BB_A1_OR_A8 = 0x0100000000000001;
-	position_empty(position);
+	*position = POSITION_INIT;
 	File available_files[FILES_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7 };
 	int i = (rand() % 4) * 2;
-	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_BISHOP, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_BISHOP, .color = COLOR_BLACK });
 	available_files[i] = available_files[7];
 	i = (rand() % 4) * 2 + 1;
-	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_BISHOP, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_BISHOP, .color = COLOR_BLACK });
 	available_files[i] = available_files[6];
 	i = rand() % 6;
-	position->bb[PIECE_TYPE_BISHOP] |= BB_A1_OR_A8 << available_files[i];
-	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[i];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_QUEEN, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_QUEEN, .color = COLOR_BLACK });
 	available_files[i] = available_files[5];
 	i = rand() % 5;
-	position->bb[PIECE_TYPE_KNIGHT] |= BB_A1_OR_A8 << available_files[i];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_KNIGHT, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_KNIGHT, .color = COLOR_BLACK });
 	available_files[i] = available_files[4];
 	i = rand() % 4;
-	position->bb[PIECE_TYPE_KNIGHT] |= BB_A1_OR_A8 << available_files[i];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_KNIGHT, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[i], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_KNIGHT, .color = COLOR_BLACK });
 	available_files[i] = available_files[3];
 	if (available_files[0] > available_files[1]) {
 		available_files[7] = available_files[0];
@@ -82,9 +115,30 @@ position_init_960(struct Position *position)
 		available_files[0] = available_files[1];
 		available_files[1] = available_files[7];
 	}
-	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[0];
-	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[1];
-	position->bb[PIECE_TYPE_ROOK] |= BB_A1_OR_A8 << available_files[2];
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[0], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_ROOK, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[0], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_ROOK, .color = COLOR_BLACK });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[1], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_KING, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[1], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_KING, .color = COLOR_BLACK });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[2], color_home_rank(COLOR_WHITE)),
+	  (struct Piece){ .type = PIECE_TYPE_ROOK, .color = COLOR_WHITE });
+	position_set_piece_at_square(
+	  position,
+	  square_new(available_files[2], color_home_rank(COLOR_BLACK)),
+	  (struct Piece){ .type = PIECE_TYPE_ROOK, .color = COLOR_BLACK });
 }
 
 void
