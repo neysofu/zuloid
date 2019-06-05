@@ -31,7 +31,7 @@ enum
 };
 
 char *
-fen_new_from_position(const struct Position *pos);
+fen_from_position(char *buf, const struct Position *pos, char sep);
 
 int
 position_init_from_fen_fields(struct Position *pos, char **fieldsptr);

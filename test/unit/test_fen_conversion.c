@@ -44,7 +44,7 @@ test_fen_conversion(void)
 		char fen[FEN_SIZE];
 		strcpy(fen, VALID_FEN[i]);
 		position_init_from_fen(&position, fen);
-		char *f = fen_new_from_position(&position);
+		char *f = fen_from_position(fen, &position, ' ');
 		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], f);
 	}
 }

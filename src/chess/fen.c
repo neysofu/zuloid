@@ -43,18 +43,17 @@ fen_write_position_pieces(char *fen, const struct Position *position)
 }
 
 char *
-fen_new_from_position(const struct Position *position)
+fen_from_position(char *fen, const struct Position *position, char sep)
 {
 	assert(position);
-	char *fen = malloc(FEN_SIZE);
-	if (!fen) {
-		return NULL;
+	if (!fen && !(fen = malloc(FEN_SIZE))) {
+		return ERR_CODE_ALLOC;
 	}
 	char *fen_copy = fen;
 	fen = fen_write_position_pieces(fen, position);
-	*fen++ = ' ';
+	*fen++ = sep;
 	*fen++ = color_to_char(position->side_to_move);
-	*fen++ = ' ';
+	*fen++ = sep;
 	if (position->castling_rights) {
 		if (position->castling_rights & CASTLING_RIGHT_WK) {
 			*fen++ = 'K';
@@ -71,14 +70,14 @@ fen_new_from_position(const struct Position *position)
 	} else {
 		*fen++ = '-';
 	}
-	*fen++ = ' ';
+	*fen++ = sep;
 	if (position->en_passant_target == SQUARE_NONE) {
 		*fen++ = '-';
 	} else {
 		*fen++ = file_to_char(square_file(position->en_passant_target));
 		*fen++ = rank_to_char(square_rank(position->en_passant_target));
 	}
-	*fen++ = ' ';
+	*fen++ = sep;
 	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
 	return fen_copy;
 }
@@ -156,9 +155,7 @@ position_print(struct Position *position)
 	} while (rank-- > 0);
 	printf("#   +-----------------+\n"
 	       "#     A B C D E F G H\n");
-	char *fen = fen_new_from_position(position);
+	const char *fen = fen_from_position(NULL, position, ' ');
 	printf("FEN: %s\n", fen);
-	/* FIXME */
-	printf("Lichess URL: https://lichess.org/analysis/%s\n", fen);
 	free(fen);
 }
