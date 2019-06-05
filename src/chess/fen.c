@@ -47,7 +47,7 @@ fen_from_position(char *fen, const struct Position *position, char sep)
 {
 	assert(position);
 	if (!fen && !(fen = malloc(FEN_SIZE))) {
-		return ERR_CODE_ALLOC;
+		return NULL;
 	}
 	char *fen_copy = fen;
 	fen = fen_write_position_pieces(fen, position);
@@ -78,7 +78,8 @@ fen_from_position(char *fen, const struct Position *position, char sep)
 		*fen++ = rank_to_char(square_rank(position->en_passant_target));
 	}
 	*fen++ = sep;
-	snprintf(fen, 13, "%zu %zu", position->reversible_moves_count, position->moves_count);
+	snprintf(
+	  fen, 13, "%zu%c%zu", position->reversible_moves_count, sep, position->moves_count);
 	return fen_copy;
 }
 
