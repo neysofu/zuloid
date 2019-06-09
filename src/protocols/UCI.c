@@ -24,12 +24,12 @@ void
 engine_uci_call_go(struct Engine *engine, char *cmd)
 {
 	if (engine->mode == MODE_SEARCH) {
-		ENGINE_LOGF(engine, "[WARN] The engine is already searching.\n");
+		printf("# [ERROR] The engine is already searching.\n");
 		return;
 	}
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
-		ENGINE_LOGF(engine, "[INFO] The next token is '%s'.\n", token);
+		printf("# [INFO] The next token is '%s'.\n", token);
 		switch (XXH64(token, strlen(token), 0)) {
 			case 0x2a8ef3657cf9a920: /* "wtime" */
 				token = strtok_whitespace(NULL);
@@ -78,7 +78,7 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 				  atoi(token) * 1000;
 				break;
 			default:
-				ENGINE_LOGF(engine, "[WARN] Ignoring unknown token: '%s'\n", token);
+				ENGINE_DEBUGF(engine, "[WARN] Ignoring unknown token: '%s'\n", token);
 		}
 	}
 	engine_start_search(engine);
@@ -99,8 +99,8 @@ engine_uci_call_openlichessanalysis(struct Engine *engine, char *cmd)
 	sprintf(command, "start https://lichess.org/analysis/standard/%s\n", fen);
 	system(command);
 #else
-	ENGINE_LOGF(engine,
-	            "[ERROR] This platform is not supported. Please file a bug report.");
+	ENGINE_DEBUGF(engine,
+	              "[ERROR] This platform is not supported. Please file a bug report.");
 	engine->mode = MODE_EXIT;
 #endif
 	free(command);
@@ -112,7 +112,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		ENGINE_LOGF(engine, "[ERROR] \"startpos\" | \"fen\" | \"960\" token expected.\n");
+		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->position = POSITION_INIT;
@@ -131,7 +131,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 		 * for training. */
 		position_init_960(&engine->position);
 	} else {
-		ENGINE_LOGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
+		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
 	}
 	/* Now feed moves into the position. */
 	while ((token = strtok_whitespace(NULL))) {
@@ -145,7 +145,7 @@ void
 engine_uci_call_setoption(struct Engine *engine, char *cmd)
 {
 	if (engine->mode != MODE_IDLE) {
-		ENGINE_LOGF(engine, "[ERROR] UCI options can only be set during idle state.\n");
+		ENGINE_DEBUGF(engine, "[ERROR] UCI options can only be set during idle state.\n");
 		return;
 	}
 	uint64_t hash = 0;
@@ -193,7 +193,7 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 			break;
 		/* TODO: Many, many more. */
 		default:
-			ENGINE_LOGF(engine, "[ERROR] No such option.\n");
+			ENGINE_DEBUGF(engine, "[ERROR] No such option.\n");
 	}
 }
 
@@ -215,7 +215,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			 * gets compiled out with the NDEBUG macro. */
 			token = strtok_whitespace(NULL);
 			if (!token) {
-				ENGINE_LOGF(engine, "[ERROR] 'on' | 'off' token expected.\n");
+				ENGINE_DEBUGF(engine, "[ERROR] 'on' | 'off' token expected.\n");
 			} else if (strcmp(token, "on") == 0) {
 				engine->verbose = true;
 			} else if (strcmp(token, "off") == 0) {
@@ -274,6 +274,6 @@ engine_uci(struct Engine *engine, char *cmd)
 			engine_uci_call_openlichessanalysis(engine, cmd);
 			break;
 		default:
-			ENGINE_LOGF(engine, "[ERROR] Unknown command: '%s'\n", token);
+			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'\n", token);
 	}
 }

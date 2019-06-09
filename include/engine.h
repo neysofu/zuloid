@@ -13,8 +13,8 @@
 #include "time/game_clock.h"
 #include <stdio.h>
 
-#define ENGINE_LOGF(engine, ...)                                                           \
-	engine_logf(engine, __FILE__, __func__, __LINE__, __VA_ARGS__)
+#define ENGINE_DEBUGF(engine, ...)                                                         \
+	engine_debugf(engine, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 enum Protocol
 {
@@ -98,13 +98,13 @@ engine_start_search(struct Engine *engine);
 void
 engine_stop_search(struct Engine *engine);
 
-/* Prints a debug message to stdout with associated metadata. */
+/* Displays a debug message in accordance to the rules of the current protocol. */
 void
-engine_logf(struct Engine *engine,
-            const char *filename,
-            const char *function_name,
-            size_t line_num,
-            ...);
+engine_debugf(struct Engine *engine,
+              const char *filename,
+              size_t line_num,
+              const char *function_name,
+              ...);
 
 /* Gracefully kills `engine` and all its subsystems. Despite what methods such
  * as UCI's "quit" can induce into thinking, they are completely optional. No

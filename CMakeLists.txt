@@ -35,7 +35,6 @@ set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
 set (SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
 set (TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/")
 
-string (LENGTH "${CMAKE_CURRENT_SOURCE_DIR}/" PROJECT_DIR_LENGTH)
 string (TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
 # cJSON
@@ -59,7 +58,6 @@ target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
 target_link_libraries (Z64C_LIB cjson plibsys XXHASH)
 target_compile_definitions (Z64C_LIB PRIVATE
-    PROJECT_DIR_LENGTH=${PROJECT_DIR_LENGTH}
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 

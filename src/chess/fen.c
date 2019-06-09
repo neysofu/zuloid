@@ -142,20 +142,20 @@ position_init_from_fen(struct Position *pos, char *fen)
 void
 position_print(struct Position *position)
 {
-	printf("#     A B C D E F G H\n"
-	       "#   +-----------------+\n");
+	printf("     A B C D E F G H\n"
+	       "   +-----------------+\n");
 	Rank rank = RANK_MAX;
 	do {
-		printf("# %c | ", rank_to_char(rank));
+		printf(" %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
 			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
 			printf("%c ", piece_to_char(piece));
 		}
 		printf("| %c\n", rank_to_char(rank));
 	} while (rank-- > 0);
-	printf("#   +-----------------+\n"
-	       "#     A B C D E F G H\n");
-	const char *fen = fen_from_position(NULL, position, ' ');
+	printf("   +-----------------+\n"
+	       "     A B C D E F G H\n");
+	char *fen = fen_from_position(NULL, position, ' ');
 	printf("FEN: %s\n", fen);
 	free(fen);
 }

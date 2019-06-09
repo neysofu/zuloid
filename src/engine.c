@@ -69,28 +69,33 @@ engine_call(struct Engine *engine, char *cmd)
 }
 
 void
-engine_logf(struct Engine *engine,
-            const char *filename,
-            const char *function_name,
-            size_t line_num,
-            ...)
+engine_debugf(struct Engine *engine,
+              const char *filename,
+              size_t line_num,
+              const char *function_name,
+              ...)
 {
 	assert(engine);
 	assert(filename);
 	assert(function_name);
+	if (!engine->verbose) {
+		return;
+	}
+	switch (engine->protocol) {
+		case PROTOCOL_UCI:
+			printf("info string ");
+			break;
+		case PROTOCOL_CECP:
+			printf("# ");
+			break;
+		default:
+			return;
+	}
 #ifndef NDEBUG
-	time_t now = time(0);
-	struct tm *now_info = localtime(&now);
-	char now_iso8601[80];
-	strftime(now_iso8601, 80, "%FT%T", now_info);
+	printf("%s:%zu @ %s -- ", filename, line_num, function_name);
+#endif
 	va_list args;
-	va_start(args, line_num);
-	printf("# (%s) %s:%s:%zu -- ",
-	       now_iso8601,
-	       filename + PROJECT_DIR_LENGTH,
-	       function_name,
-	       line_num);
+	va_start(args, function_name);
 	vprintf(va_arg(args, const char *), args);
 	va_end(args);
-#endif
 }
