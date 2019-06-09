@@ -54,20 +54,19 @@ fen_from_position(char *fen, const struct Position *position, char sep)
 	*fen++ = sep;
 	*fen++ = color_to_char(position->side_to_move);
 	*fen++ = sep;
-	if (position->castling_rights) {
-		if (position->castling_rights & CASTLING_RIGHT_WK) {
-			*fen++ = 'K';
-		}
-		if (position->castling_rights & CASTLING_RIGHT_WQ) {
-			*fen++ = 'Q';
-		}
-		if (position->castling_rights & CASTLING_RIGHT_BK) {
-			*fen++ = 'k';
-		}
-		if (position->castling_rights & CASTLING_RIGHT_BQ) {
-			*fen++ = 'q';
-		}
-	} else {
+	if (position->castling_rights & (CASTLING_RIGHT_KINGSIDE << COLOR_WHITE)) {
+		*fen++ = 'K';
+	}
+	if (position->castling_rights & (CASTLING_RIGHT_QUEENSIDE << COLOR_WHITE)) {
+		*fen++ = 'Q';
+	}
+	if (position->castling_rights & (CASTLING_RIGHT_KINGSIDE << COLOR_BLACK)) {
+		*fen++ = 'k';
+	}
+	if (position->castling_rights & (CASTLING_RIGHT_QUEENSIDE << COLOR_BLACK)) {
+		*fen++ = 'q';
+	}
+	if (*(fen - 1) == sep) {
 		*fen++ = '-';
 	}
 	*fen++ = sep;
@@ -84,7 +83,7 @@ fen_from_position(char *fen, const struct Position *position, char sep)
 }
 
 int
-position_init_from_fen_fields(struct Position *pos, char *fieldsptr[])
+position_init_from_fen_fields(struct Position *pos, char **fieldsptr)
 {
 	position_empty(pos);
 	char *token = fieldsptr[0];

@@ -26,10 +26,19 @@ move_to_string(struct Move mv, char *buf);
 size_t
 string_to_move(const char *str, struct Move *mv);
 
-void
-position_do_move(struct Position *position, struct Move *move);
+bool
+position_check_pseudolegality(struct Position *pos, struct Move *mv);
 
 void
-position_undo_move(struct Position *position, const struct Move *move);
+position_do_move(struct Position *pos, struct Move *mv);
+
+void
+position_undo_move(struct Position *pos, const struct Move *mv);
+
+int
+move_file_diff(struct Move *mv);
+
+int
+move_rank_diff(struct Move *mv);
 
 #endif

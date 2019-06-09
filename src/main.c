@@ -13,7 +13,7 @@ int
 main(void)
 {
 	p_libsys_init();
-	/* We just want to make sure that line buffering is turned on. */
+	/* Let's make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
 	printf("# Z64C/%s %s (%s)\n", Z64C_BACKEND_NAME, Z64C_VERSION, Z64C_BUILD_DATE);

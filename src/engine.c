@@ -11,6 +11,7 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
+#include <time.h>
 
 struct Engine *
 engine_new(void)
@@ -63,7 +64,6 @@ engine_call(struct Engine *engine, char *cmd)
 			engine_uci(engine, cmd);
 			break;
 		default:
-			printf("This protocol is not (yet?) supported. Aborting.");
 			engine->mode = MODE_EXIT;
 	}
 }
@@ -79,9 +79,17 @@ engine_logf(struct Engine *engine,
 	assert(filename);
 	assert(function_name);
 #ifndef NDEBUG
+	time_t now = time(0);
+	struct tm *now_info = localtime(&now);
+	char now_iso8601[80];
+	strftime(now_iso8601, 80, "%FT%T", now_info);
 	va_list args;
 	va_start(args, line_num);
-	printf("# %s:%s:%zu -- ", filename + PROJECT_DIR_LENGTH, function_name, line_num);
+	printf("# (%s) %s:%s:%zu -- ",
+	       now_iso8601,
+	       filename + PROJECT_DIR_LENGTH,
+	       function_name,
+	       line_num);
 	vprintf(va_arg(args, const char *), args);
 	va_end(args);
 #endif

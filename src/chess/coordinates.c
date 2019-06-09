@@ -52,3 +52,10 @@ square_new(File file, Rank rank)
 {
 	return file << 3 | rank;
 }
+
+Bitboard
+square_knight_threats(Square sq)
+{
+	/* TODO */
+	return 0;
+}

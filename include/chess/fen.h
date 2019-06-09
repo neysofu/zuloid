@@ -2,8 +2,8 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/.
  *
- * See also:
- *  -  https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation */
+ * Resources:
+ *  - https://en.wikipedia.org/wiki/Forsyth%E2%80%93Edwards_Notation */
 
 #ifndef Z64C_CHESS_FEN_H
 #define Z64C_CHESS_FEN_H
@@ -27,9 +27,10 @@
 
 enum
 {
-	FEN_SIZE = 128,
+	FEN_SIZE = 128
 };
 
+/*  */
 char *
 fen_from_position(char *buf, const struct Position *pos, char sep);
 

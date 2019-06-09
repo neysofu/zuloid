@@ -17,28 +17,28 @@
 #include <stdlib.h>
 #include <string.h>
 
-enum CastlingRights
+int
 char_to_castling_right(char c)
 {
 	switch (c) {
 		case 'K':
-			return CASTLING_RIGHT_WK;
+			return CASTLING_RIGHT_KINGSIDE << COLOR_WHITE;
 		case 'Q':
-			return CASTLING_RIGHT_WQ;
+			return CASTLING_RIGHT_QUEENSIDE << COLOR_WHITE;
 		case 'k':
-			return CASTLING_RIGHT_BK;
+			return CASTLING_RIGHT_KINGSIDE << COLOR_BLACK;
 		case 'q':
-			return CASTLING_RIGHT_BQ;
+			return CASTLING_RIGHT_QUEENSIDE << COLOR_BLACK;
 		default:
 			return CASTLING_RIGHT_NONE;
 	}
 }
 
-enum CastlingRights
+int
 string_to_castling_rights(const char *str)
 {
 	assert(str);
-	enum CastlingRights crights = CASTLING_RIGHT_NONE;
+	int crights = CASTLING_RIGHT_NONE;
 	for (; *str; str++) {
 		crights |= char_to_castling_right(*str);
 	}
@@ -139,6 +139,13 @@ position_init_960(struct Position *position)
 	  position,
 	  square_new(available_files[2], color_home_rank(COLOR_BLACK)),
 	  (struct Piece){ .type = PIECE_TYPE_ROOK, .color = COLOR_BLACK });
+}
+
+enum Color
+position_toggle_side_to_move(struct Position *pos)
+{
+	pos->side_to_move = color_other(pos->side_to_move);
+	return pos->side_to_move;
 }
 
 void

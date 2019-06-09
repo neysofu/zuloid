@@ -82,7 +82,7 @@ struct Engine
 struct Engine *
 engine_new(void);
 
-/* A protocol-agnostic entry point for engine scripting.
+/* A protocol-agnostic API entry point.
  *
  * @param engine The engine instance that must process the command string.
  * @param string The command string.
@@ -98,6 +98,7 @@ engine_start_search(struct Engine *engine);
 void
 engine_stop_search(struct Engine *engine);
 
+/* Prints a debug message to stdout with associated metadata. */
 void
 engine_logf(struct Engine *engine,
             const char *filename,
@@ -109,9 +110,8 @@ engine_logf(struct Engine *engine,
  * as UCI's "quit" can induce into thinking, they are completely optional. No
  * previous action is necessary before calling this function.
  *
- * @param engine the non-NULL memory location to clean up.
- * @sideeffect All pointers stored inside `engine` are set to NULL and
- * their memory locations become unaccessible. */
+ * Params:
+ *  - 'engine' the non-NULL memory location to clean up. */
 int
 engine_delete(struct Engine *engine);
 

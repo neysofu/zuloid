@@ -14,23 +14,18 @@
 #include <stdbool.h>
 #include <stdlib.h>
 
-enum CastlingRights
-{
-	CASTLING_RIGHT_NONE = 0,
-	CASTLING_RIGHT_WK = 1,
-	CASTLING_RIGHT_BK = 2,
-	CASTLING_RIGHT_WQ = 4,
-	CASTLING_RIGHT_BQ = 8,
-	CASTLING_RIGHTS_ALL = 0xf,
-};
-
 enum
 {
+	CASTLING_RIGHT_NONE = 0,
+	CASTLING_RIGHT_KINGSIDE = 0x1,
+	CASTLING_RIGHT_QUEENSIDE = 0x2,
+	CASTLING_RIGHTS_ALL = 0xf,
+
 	POSITION_BB_COUNT = COLORS_COUNT + PRIMITIVE_PIECE_TYPES_COUNT,
 };
 
 /* Parses a FEN field into castling rights. */
-enum CastlingRights
+int
 string_to_castling_rights(const char *str);
 
 struct Position
@@ -38,7 +33,7 @@ struct Position
 	Bitboard bb[POSITION_BB_COUNT];
 	enum Color side_to_move;
 	Square en_passant_target;
-	enum CastlingRights castling_rights;
+	int castling_rights;
 	size_t reversible_moves_count;
 	size_t moves_count;
 };
@@ -50,6 +45,9 @@ position_init_960(struct Position *position);
 /* Removes a piece from the board and replaces it with another one. */
 void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
+
+enum Color
+position_toggle_side_to_move(struct Position *pos);
 
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);

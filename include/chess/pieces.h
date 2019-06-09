@@ -20,6 +20,9 @@ enum PieceType
 	PIECE_TYPE_BISHOP = 4,
 	PIECE_TYPE_ROOK = 5,
 	PIECE_TYPE_KING = 6,
+	/* I tried many approaches where 'PIECE_TYPE_QUEEN = PIECE_TYPE_ROOK |
+	 * PIECE_TYPE_BISHOP', but bit field piece capabilities didn't play well with each
+	 * other. */
 	PIECE_TYPE_QUEEN = PIECE_TYPE_ROOK + PIECE_TYPE_BISHOP,
 	/* Primitive piece types simply don't include the queen. */
 	PIECE_TYPE_FIRST_PRIMITIVE = PIECE_TYPE_PAWN,
@@ -37,7 +40,8 @@ struct Piece
 extern const struct Piece PIECE_NONE;
 
 char
-piece_to_char(struct Piece piece);
+piece_to_char(struct Piece pc);
+
 struct Piece
 char_to_piece(char c);
 

@@ -66,4 +66,7 @@ file_to_bb(File file);
 Bitboard
 rank_to_bb(Rank rank);
 
+Bitboard
+square_knight_threats(Square sq);
+
 #endif
