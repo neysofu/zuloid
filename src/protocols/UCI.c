@@ -85,6 +85,23 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 }
 
 void
+engine_uci_call_islegal(struct Engine *engine, char *cmd)
+{
+	char *token = strtok_whitespace(NULL);
+	struct Move mv;
+	string_to_move(token, &mv);
+	if (!token || string_to_move(token, &mv) == 0) {
+		ENGINE_DEBUGF(engine, "[ERROR] Expected token with a chess move.\n");
+		return;
+	}
+	if (position_check_pseudolegality(&engine->position, &mv)) {
+		printf("1\n");
+	} else {
+		printf("0\n");
+	}
+}
+
+void
 engine_uci_call_openlichessanalysis(struct Engine *engine, char *cmd)
 {
 	char *command = malloc(64 + FEN_SIZE);
@@ -214,12 +231,12 @@ engine_uci(struct Engine *engine, char *cmd)
 			 * details with it. It does *not* control debugging information, which instead
 			 * gets compiled out with the NDEBUG macro. */
 			token = strtok_whitespace(NULL);
-			if (!token) {
+			if (token && strcmp(token, "on") == 0) {
+				engine->debug = true;
+			} else if (token && strcmp(token, "off") == 0) {
+				engine->debug = false;
+			} else {
 				ENGINE_DEBUGF(engine, "[ERROR] 'on' | 'off' token expected.\n");
-			} else if (strcmp(token, "on") == 0) {
-				engine->verbose = true;
-			} else if (strcmp(token, "off") == 0) {
-				engine->verbose = false;
 			}
 			break;
 		case 0xd682e29388e0f4a3: /* "go" */
@@ -268,8 +285,11 @@ engine_uci(struct Engine *engine, char *cmd)
 			break;
 		case 0x9d2bdc9fdea163d3: /* "flip" */
 			/* TODO */
-			return;
+			break;
 		/* ... and finally some custom commands for debugging. Unstable! */
+		case 0x655c22f01920a4c9: /* "islegal" */
+			engine_uci_call_islegal(engine, cmd);
+			break;
 		case 0x9acc2558707a5edd: /* "olia" (Open LIchess Analysis) */
 			engine_uci_call_openlichessanalysis(engine, cmd);
 			break;

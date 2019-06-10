@@ -11,7 +11,6 @@
 #include <stdarg.h>
 #include <stdio.h>
 #include <string.h>
-#include <time.h>
 
 struct Engine *
 engine_new(void)
@@ -24,7 +23,7 @@ engine_new(void)
 			.cache = NULL,
 			.agent = agent_new(),
 			.seed = 0xcfca130b,
-			.verbose = false,
+			.debug = false,
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
@@ -78,7 +77,7 @@ engine_debugf(struct Engine *engine,
 	assert(engine);
 	assert(filename);
 	assert(function_name);
-	if (!engine->verbose) {
+	if (!engine->debug) {
 		return;
 	}
 	switch (engine->protocol) {

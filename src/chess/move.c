@@ -191,3 +191,10 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 //	return position_push_pseudolegal_move(position, move, piece); // TODO
 //}
 //
+
+bool
+position_check_pseudolegality(struct Position *pos, struct Move *mv)
+{
+	/* TODO */
+	return false;
+}

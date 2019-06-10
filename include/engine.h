@@ -46,7 +46,7 @@ struct Engine
 	int32_t seed;
 	/* Communication protocol used to talk to the chess GUI. */
 	enum Protocol protocol;
-	bool verbose;
+	bool debug;
 	/* A straightforward activity indicator. Both `main` and engine commands
 	 * might want to know if the engine is doing background computation or
 	 * what. */

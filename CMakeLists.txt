@@ -9,10 +9,8 @@ set (CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
 project (Z64C VERSION 1.4.0 LANGUAGES C)
 
-set (default_build_type "Debug")
-set (CMAKE_C_FLAGS_DEBUG "-g -ftrapv")
-set (CMAKE_C_FLAGS_RELEASE "-O3 -fdata-sections -ffunction-sections -Wl,--gc-sections")
 set (CMAKE_C_FLAGS " \
+    ${CMAKE_C_FLAGS} \
     -fverbose-asm \
     -Wall \
     -Wpedantic \
@@ -29,6 +27,9 @@ set (CMAKE_C_FLAGS " \
     -Wold-style-definition \
     -Wunreachable-code \
     -Wunused-macros")
+
+set (default_build_type "Debug")
+set (CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -fdata-sections -ffunction-sections -Wl,--gc-sections")
 
 set (INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
 set (LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
