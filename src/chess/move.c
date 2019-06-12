@@ -62,37 +62,25 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 	pos->side_to_move = color_other(pos->side_to_move);
 }
 
-// bool
-// position_check_pawn_pseudolegality(struct Position *pos, struct Move *mv)
-//{
-//	assert(pos);
-//	bool is_on_home_rank = square_rank(mv->source) == color_pawn_rank(pos->side_to_move);
-//	int file_diff = square_file(mv->target) - square_file(mv->source);
-//	int rank_diff = square_rank(mv->target) - square_rank(mv->source);
-//	if (file_diff == 0) {
-//		return (mv->capture != PIECE_TYPE_NONE) &&
-//		       (abs(rank_diff) <= (1 + is_on_home_rank)) &&
-//		       (pos->side_to_move ? rank_diff < 0 : rank_diff > 0);
-//	} else if (abs(file_diff) == 1 && abs(rank_diff) == 1) {
-//		return (mv->capture == PIECE_TYPE_NONE || move_is_en_passant(mv, pos)) &&
-//		       (abs(rank_diff) == 1);
-//	} else {
-//		return false;
-//	}
-//}
-//
-// int
-// move_file_diff(struct Move *mv)
-//{
-//	return square_file(mv->target) - square_file(mv->source);
-//}
-//
-// int
-// move_rank_diff(struct Move *mv)
-//{
-//	return square_rank(mv->target) - square_rank(mv->source);
-//}
-//
+int
+move_file_diff(struct Move *mv)
+{
+	return square_file(mv->target) - square_file(mv->source);
+}
+
+int
+move_rank_diff(struct Move *mv)
+{
+	return square_rank(mv->target) - square_rank(mv->source);
+}
+
+Bitboard
+move_ray(struct Move *mv)
+{
+	Bitboard ret = mv->target & (mv->source - 1);
+	// switch (movement_between_two_squares(mv->source, mv->target)) {}
+}
+
 // bool
 // position_check_castling_legality(struct Position *pos, struct Move *mv)
 //{
@@ -105,30 +93,6 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 //	/* TODO: Check for threats and checks. */
 //}
 //
-// bool
-// position_check_pseudolegality(struct Position *pos, struct Move *mv)
-//{
-//	Bitboard color_bb = pos->bb[pos->side_to_move];
-//	bool source_color_is_ok = color_bb & square_to_bb(mv->source);
-//	bool target_color_is_ok = !(color_bb & square_to_bb(mv->target));
-//	if (source_color_is_ok) {
-//		return false;
-//	}
-//	enum PieceType pctype = position_piece_at_square(pos, mv->source).type;
-//	switch (pctype) {
-//		case PIECE_TYPE_PAWN:
-//			return position_check_pawn_pseudolegality(pos, mv);
-//		case PIECE_TYPE_KNIGHT:
-//			return square_knight_threats(mv->source) & square_to_bb(mv->target);
-//		case PIECE_TYPE_KING:
-//			return (square_king_threats(mv->source) & square_to_bb(mv->target)) ||
-//			       (position_check_castling_legality(position, move));
-//		default:
-//			assert(pctype != PIECE_TYPE_NONE);
-//			return !(bb_ray(move) & pos->bb_occupancy;
-//	}
-//}
-//
 // void
 // position_do_move(struct Position *pos, struct Move *mv)
 //{
@@ -138,11 +102,9 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 //	} else {
 //		position->reversible_moves_count = 0;
 //	}
-//	bool is_king_capture = position->bb_pieces[PIECE_KING] & bb_coord(move_target(move));
-//	if (is_king_capture) {
-//		return (struct Result){
-//			.winner = active_color,
-//			.termination = TERMINATION_CHECKMATE,
+//	bool is_king_capture = position->bb_pieces[PIECE_KING] &
+// bb_coord(move_target(move)); 	if (is_king_capture) { 		return (struct Result){
+// .winner = active_color, 			.termination = TERMINATION_CHECKMATE,
 //		};
 //	}
 //	if (false) {
@@ -193,8 +155,60 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 //
 
 bool
+position_check_pawn_pseudolegality(struct Position *pos, struct Move *mv)
+{
+	assert(pos);
+	bool is_on_home_rank = square_rank(mv->source) == color_pawn_rank(pos->side_to_move);
+	int file_diff = move_file_diff(mv);
+	int rank_diff = move_rank_diff(mv);
+	if (file_diff == 0) {
+		return (mv->capture != PIECE_TYPE_NONE) &&
+		       (abs(rank_diff) <= 1 + is_on_home_rank) &&
+		       (pos->side_to_move ? rank_diff < 0 : rank_diff > 0);
+	} else if (abs(file_diff) == 1 && abs(rank_diff) == 1) {
+		/* TODO: en passant */
+		return (mv->capture == PIECE_TYPE_NONE) && (abs(rank_diff) == 1);
+	} else {
+		return false;
+	}
+}
+
+bool
+position_check_knights_pseudolegality(struct Position *pos, struct Move *mv)
+{}
+
+bool
+position_check_rook_pseudolegality(struct Position *pos, struct Move *mv)
+{
+	if (mv->source == mv->target) {
+		return false;
+	} else {
+		// return (move_file_diff(mv) == 0 || move_rank_diff(mv) == 0) &&
+		//       !(ray & pos->bb[COLOR_WHITE] & pos->bb[COLOR_BLACK]);
+	}
+}
+
+bool
 position_check_pseudolegality(struct Position *pos, struct Move *mv)
 {
-	/* TODO */
-	return false;
+	Bitboard color_bb = pos->bb[pos->side_to_move];
+	if (!(color_bb & square_to_bb(mv->source))) {
+		return false;
+	}
+	enum PieceType pctype = position_piece_at_square(pos, mv->source).type;
+	switch (pctype) {
+		case PIECE_TYPE_PAWN:
+			return position_check_pawn_pseudolegality(pos, mv);
+		case PIECE_TYPE_KNIGHT:
+			return position_check_knights_pseudolegality(pos, mv);
+		case PIECE_TYPE_ROOK:
+			return position_check_rook_pseudolegality(pos, mv);
+		case PIECE_TYPE_KING:
+			return false;
+			//(square_king_threats(mv->source) & square_to_bb(mv->target)) ||
+			//       (position_check_castling_legality(pos, mv));
+			//       (position_check_castling_legality(pos, mv));
+		default:
+			return false; // TODO !(bb_ray(mv) & pos->bb_occupancy);
+	}
 }

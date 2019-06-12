@@ -1,6 +1,8 @@
 /* This Source Code Form is subject to the terms of the Mozilla Public
  * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+ * file, You can obtain one at https://mozilla.org/MPL/2.0/.
+ *
+ * A neural network that operates on bitboards. */
 
 #include "agent.h"
 #include "cJSON/cJSON.h"
@@ -17,119 +19,27 @@ typedef int64_t Cell;
 
 enum
 {
-	CELLS_BUF_CAPACITY = 128,
+	AGENT_BUF_IN_WIDTH = 16,
+	AGENT_BUF_OUT_WIDTH = 48,
 };
-
-Cell
-cell_from_reversible_moves_count(size_t reversible_moves_count)
-{
-	return (1 << reversible_moves_count) - 1;
-}
-
-Cell
-cell_from_active_color(enum Color color)
-{
-	Cell cell = color;
-	cell |= color_other(color) << 1;
-	return cell;
-}
-
-/* A layer is a trainable transformation from one cell cluster to another. */
-struct Layer
-{
-	size_t count_in;
-	size_t count_out;
-	Cell *cells;
-};
-
-Cell *
-layer_or_cells(struct Layer *layer)
-{
-	return layer->cells;
-}
-
-Cell *
-layer_and_cells(struct Layer *layer)
-{
-	return layer->cells + layer->count_in * layer->count_out;
-}
-
-Cell *
-layer_xor_cells(struct Layer *layer)
-{
-	return layer->cells + layer->count_in * layer->count_out * 2;
-}
-
-void
-cells_init_from_position(Cell cells[], struct Position *position)
-{
-	assert(cells);
-	assert(position);
-	cells[0] = position->bb[COLOR_WHITE];
-	cells[1] = position->bb[COLOR_BLACK];
-	cells[2] = position->bb[PIECE_TYPE_PAWN];
-	cells[3] = position->bb[PIECE_TYPE_KNIGHT];
-	cells[4] = position->bb[PIECE_TYPE_KING];
-	cells[5] = position->bb[PIECE_TYPE_ROOK];
-	cells[6] = position->bb[PIECE_TYPE_BISHOP];
-	cells[9] = cell_from_active_color(position->side_to_move);
-	cells[10] = cell_from_reversible_moves_count(position->reversible_moves_count);
-	cells[11] = position->castling_rights;
-}
-
-void
-layer_transform(struct Layer *layer, Cell in[], Cell out[])
-{
-	assert(layer);
-	assert(in);
-	assert(out);
-	Cell *xor_cells = layer_xor_cells(layer);
-	Cell *or_cells = layer_or_cells(layer);
-	Cell *and_cells = layer_and_cells(layer);
-	for (size_t i = 0; i < layer->count_in; i++) {
-		for (size_t j = 0; j < layer->count_out; j++) {
-			/* FIXME */
-			// out[j] = in[i] & and_cells[i * j];
-			// out[j] = in[i] & or_cells[i * j];
-			// out[j] = in[i] & xor_cells[i * j];
-		}
-	}
-}
 
 struct Agent
 {
-	FILE *source;
-	Cell in_buf[CELLS_BUF_CAPACITY];
-	Cell out_buf[CELLS_BUF_CAPACITY];
-	struct Layer l0;
-	struct Eval eval;
+	Cell buf_in[AGENT_BUF_IN_WIDTH];
+	Cell l0[AGENT_BUF_IN_WIDTH * AGENT_BUF_OUT_WIDTH][3];
+	Cell buf_out[AGENT_BUF_OUT_WIDTH];
+	/* Output information. */
+	Bitboard piece_maps[16][COLORS_COUNT];
+	Cell scores[COLORS_COUNT];
+	Cell game_phase_indicator;
 };
 
 struct Agent *
 agent_new(void)
 {
 	struct Agent *agent = malloc(sizeof(struct Agent));
-	Cell *l0_cells = malloc(sizeof(Cell) * 8 * 6 * 3);
-	if (agent) {
-		*agent = (struct Agent){
-			.source = NULL,
-			.in_buf = { 0 },
-			.out_buf = { 0 },
-			.l0 =
-			  {
-			    .count_in = 8,
-			    .count_out = 6,
-			    .cells = l0_cells,
-			  },
-		};
-	}
+	/* TODO */
 	return agent;
-}
-
-void
-agent_delete(struct Agent *agent)
-{
-	free(agent);
 }
 
 int
@@ -147,15 +57,57 @@ agent_import(struct Agent *agent, FILE *file)
 }
 
 void
+agent_init_buf_in(struct Agent *agent, struct Position *pos)
+{
+	agent->buf_in[0] = pos->bb[COLOR_WHITE];
+	agent->buf_in[1] = pos->bb[COLOR_BLACK];
+	agent->buf_in[2] = pos->bb[PIECE_TYPE_PAWN];
+	agent->buf_in[3] = pos->bb[PIECE_TYPE_KNIGHT];
+	agent->buf_in[4] = pos->bb[PIECE_TYPE_KING];
+	agent->buf_in[5] = pos->bb[PIECE_TYPE_ROOK];
+	agent->buf_in[6] = pos->bb[PIECE_TYPE_BISHOP];
+	agent->buf_in[7] = BB_LIGHT_SQUARES;
+	agent->buf_in[8] = BB_DARK_SQUARES;
+	agent->buf_in[9] = BB_CENTER_SQUARES;
+	if (pos->reversible_moves_count < 50) {
+		agent->buf_in[10] = (1 << pos->reversible_moves_count) - 1;
+	} else {
+		agent->buf_in[10] = -1;
+	}
+	agent->buf_in[11] = pos->side_to_move | (pos->castling_rights << 1);
+}
+
+void
+agent_eval(struct Agent *restrict agent)
+{
+	for (size_t i = 0; i < AGENT_BUF_IN_WIDTH; i++) {
+		for (size_t j = 0; j < AGENT_BUF_OUT_WIDTH; j++) {
+			agent->buf_out[j] |= agent->buf_in[i] & agent->l0[i * j][0];
+			agent->buf_out[j] |= agent->buf_in[i] ^ agent->l0[i * j][1];
+			agent->buf_out[j] ^= agent->buf_in[i] & agent->l0[i * j][2];
+		}
+	}
+}
+
+void
 engine_start_search(struct Engine *engine)
 {
 	assert(engine);
-	cells_init_from_position(engine->agent->in_buf, &engine->position);
-	layer_transform(&engine->agent->l0, engine->agent->in_buf, engine->agent->out_buf);
+	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
+	agent_init_buf_in(engine->agent, &engine->position);
+	agent_eval(engine->agent);
 }
 
 void
 engine_stop_search(struct Engine *engine)
 {
 	assert(engine);
+	ENGINE_DEBUGF(engine, "[INFO] Interrupting search.\n");
 }
+
+void
+agent_delete(struct Agent *agent)
+{
+	free(agent);
+}
+	

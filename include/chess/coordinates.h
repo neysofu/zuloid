@@ -69,4 +69,8 @@ rank_to_bb(Rank rank);
 Bitboard
 square_knight_threats(Square sq);
 
+static const Bitboard BB_LIGHT_SQUARES = 0xaaaaaaaaaaaaaaaa;
+static const Bitboard BB_DARK_SQUARES = 0x5555555555555555;
+static const Bitboard BB_CENTER_SQUARES = 0x183c3c180000;
+
 #endif

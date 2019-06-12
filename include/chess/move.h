@@ -41,4 +41,7 @@ move_file_diff(struct Move *mv);
 int
 move_rank_diff(struct Move *mv);
 
+Bitboard
+move_ray(struct Move *mv);
+
 #endif

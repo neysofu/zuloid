@@ -294,6 +294,6 @@ engine_uci(struct Engine *engine, char *cmd)
 			engine_uci_call_openlichessanalysis(engine, cmd);
 			break;
 		default:
-			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'\n", token);
+			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'.\n", token);
 	}
 }
