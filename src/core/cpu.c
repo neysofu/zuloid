@@ -21,17 +21,20 @@ enum
 {
 	AGENT_BUF_IN_WIDTH = 16,
 	AGENT_BUF_OUT_WIDTH = 48,
+
+	AGENT_MAX_BUF_WIDTH = 48,
 };
 
 struct Agent
 {
-	Cell buf_in[AGENT_BUF_IN_WIDTH];
-	Cell l0[AGENT_BUF_IN_WIDTH * AGENT_BUF_OUT_WIDTH][3];
-	Cell buf_out[AGENT_BUF_OUT_WIDTH];
+	int64_t buf[AGENT_MAX_BUF_WIDTH];
+	int64_t l_in[AGENT_BUF_IN_WIDTH];
+	int64_t l_0[AGENT_BUF_IN_WIDTH][AGENT_BUF_OUT_WIDTH];
+	int64_t l_out[AGENT_BUF_OUT_WIDTH];
 	/* Output information. */
 	Bitboard piece_maps[16][COLORS_COUNT];
-	Cell scores[COLORS_COUNT];
-	Cell game_phase_indicator;
+	int64_t scores[COLORS_COUNT];
+	int64_t game_phase_indicator;
 };
 
 struct Agent *
@@ -57,36 +60,36 @@ agent_import(struct Agent *agent, FILE *file)
 }
 
 void
-agent_init_buf_in(struct Agent *agent, struct Position *pos)
+agent_init_position(struct Agent *agent, struct Position *pos)
 {
-	agent->buf_in[0] = pos->bb[COLOR_WHITE];
-	agent->buf_in[1] = pos->bb[COLOR_BLACK];
-	agent->buf_in[2] = pos->bb[PIECE_TYPE_PAWN];
-	agent->buf_in[3] = pos->bb[PIECE_TYPE_KNIGHT];
-	agent->buf_in[4] = pos->bb[PIECE_TYPE_KING];
-	agent->buf_in[5] = pos->bb[PIECE_TYPE_ROOK];
-	agent->buf_in[6] = pos->bb[PIECE_TYPE_BISHOP];
-	agent->buf_in[7] = BB_LIGHT_SQUARES;
-	agent->buf_in[8] = BB_DARK_SQUARES;
-	agent->buf_in[9] = BB_CENTER_SQUARES;
+	agent->buf[0] = pos->bb[COLOR_WHITE];
+	agent->buf[1] = pos->bb[COLOR_BLACK];
+	agent->buf[2] = pos->bb[PIECE_TYPE_PAWN];
+	agent->buf[3] = pos->bb[PIECE_TYPE_KNIGHT];
+	agent->buf[4] = pos->bb[PIECE_TYPE_KING];
+	agent->buf[5] = pos->bb[PIECE_TYPE_ROOK];
+	agent->buf[6] = pos->bb[PIECE_TYPE_BISHOP];
+	agent->buf[7] = BB_LIGHT_SQUARES;
+	agent->buf[8] = BB_DARK_SQUARES;
+	agent->buf[9] = BB_CENTER_SQUARES;
 	if (pos->reversible_moves_count < 50) {
-		agent->buf_in[10] = (1 << pos->reversible_moves_count) - 1;
+		agent->buf[10] = (1 << pos->reversible_moves_count) - 1;
 	} else {
-		agent->buf_in[10] = -1;
+		agent->buf[10] = -1;
 	}
-	agent->buf_in[11] = pos->side_to_move | (pos->castling_rights << 1);
+	agent->buf[11] = pos->side_to_move | (pos->castling_rights << 1);
 }
 
 void
 agent_eval(struct Agent *restrict agent)
 {
-	for (size_t i = 0; i < AGENT_BUF_IN_WIDTH; i++) {
-		for (size_t j = 0; j < AGENT_BUF_OUT_WIDTH; j++) {
-			agent->buf_out[j] |= agent->buf_in[i] & agent->l0[i * j][0];
-			agent->buf_out[j] |= agent->buf_in[i] ^ agent->l0[i * j][1];
-			agent->buf_out[j] ^= agent->buf_in[i] & agent->l0[i * j][2];
-		}
-	}
+	// for (size_t i = 0; i < AGENT_BUF_IN_WIDTH; i++) {
+	//	for (size_t j = 0; j < AGENT_BUF_OUT_WIDTH; j++) {
+	//		agent->buf_out[j] |= agent->buf_in[i] & agent->l0[i * j][0];
+	//		agent->buf_out[j] |= agent->buf_in[i] ^ agent->l0[i * j][1];
+	//		agent->buf_out[j] ^= agent->buf_in[i] & agent->l0[i * j][2];
+	//	}
+	//}
 }
 
 void
@@ -94,7 +97,7 @@ engine_start_search(struct Engine *engine)
 {
 	assert(engine);
 	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
-	agent_init_buf_in(engine->agent, &engine->position);
+	agent_init_position(engine->agent, &engine->position);
 	agent_eval(engine->agent);
 }
 
@@ -110,4 +113,3 @@ agent_delete(struct Agent *agent)
 {
 	free(agent);
 }
-	
