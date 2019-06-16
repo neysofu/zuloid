@@ -24,12 +24,12 @@ void
 engine_uci_call_go(struct Engine *engine, char *cmd)
 {
 	if (engine->mode == MODE_SEARCH) {
-		printf("# [ERROR] The engine is already searching.\n");
+		ENGINE_DEBUGF(engine, "[ERROR] The engine is already searching.\n");
 		return;
 	}
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
-		printf("# [INFO] The next token is '%s'.\n", token);
+		ENGINE_DEBUGF(engine, "[INFO] The next token is '%s'.\n", token);
 		switch (XXH64(token, strlen(token), 0)) {
 			case 0x2a8ef3657cf9a920: /* "wtime" */
 				token = strtok_whitespace(NULL);

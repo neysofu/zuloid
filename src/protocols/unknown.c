@@ -15,7 +15,7 @@ engine_unknown_protocol(struct Engine *engine, char *cmd)
 	} else if (strstr(cmd, "xboard")) {
 		engine->protocol = PROTOCOL_CECP;
 	} else {
-		ENGINE_DEBUGF(engine, "[FATAL] Unsupported engine protocol. Abort.\n");
+		printf("# Unsupported engine protocol. Abort.\n");
 		engine->mode = MODE_EXIT;
 		engine->exit_status = EXIT_FAILURE;
 		return;
