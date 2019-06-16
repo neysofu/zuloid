@@ -266,7 +266,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			       "option name Hash type spin default 64 min 0 max 131072\n"
 			       "option name Minimum Thinking Time type spin default 20 min 0 max 5000\n"
 			       "option name nodestime type spin default 0 min 0 max 10000\n"
-			       "option name Ponder type check default true\n"
+			       "option name Ponder type check default false\n"
 			       "option name Skill Level type spin default 20 min 0 max 20\n"
 			       /* See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308 */
 			       "option name Slow Mover type spin default 84 min 10 max 1000\n"
