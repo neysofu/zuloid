@@ -9,6 +9,7 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "eval.h"
+#include "libpopcnt/libpopcnt.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdint.h>
