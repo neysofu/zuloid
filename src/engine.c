@@ -23,7 +23,11 @@ engine_new(void)
 			.cache = NULL,
 			.agent = agent_new(),
 			.seed = 0xcfca130b,
+#ifdef NDEBUG
 			.debug = false,
+#else
+			.debug = true,
+#endif
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
