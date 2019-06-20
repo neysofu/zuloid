@@ -11,6 +11,7 @@
 #include "mt-64/mt-64.h"
 #include "utils.h"
 #include <assert.h>
+#include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -85,24 +86,23 @@ agent_eval(struct Agent *agent, struct Engine *engine)
 {
 	uint64_t mask = 1;
 	for (size_t i = 0; i < AGENT_W1_WIDTH; i++) {
-		ENGINE_DEBUGF(engine, "[DEBUG] Now feeding neuron (%zu).\n", i);
+		ENGINE_DEBUGF(engine, "[TRACE] Now feeding neuron (%zu).\n", i);
 		for (size_t j = 0; j < AGENT_W0_WIDTH; j++) {
 			/* Brutally parallel solution. TODO: explore Four Russian's method and
 			 * similar optimizations? */
 			int64_t weights = agent->layer_in[j] ^ agent->weights_0_1[i][j];
-			ENGINE_DEBUGF(engine, "[DEBUG] The next 64 weights are: (0x%llx).\n", weights);
 			agent->buffer[j] = weights;
 		}
 		size_t popcount = popcnt(agent->buffer, AGENT_W1_WIDTH * sizeof(int64_t));
 		ENGINE_DEBUGF(engine,
-		              "[DEBUG] The population count for the (%zu)th neuron is (%zu).\n",
+		              "[TRACE] The population count for the (%zu)th neuron is (%zu).\n",
 		              i,
 		              popcount);
 		if (popcount > 150) {
 			agent->layer_out[i / 64] |= mask;
-			ENGINE_DEBUGF(engine, "[DEBUG] This neuron will activate.\n");
+			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
 		} else {
-			ENGINE_DEBUGF(engine, "[DEBUG] This neuron won't activate.\n");
+			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
 		}
 		if (!(mask <<= 1)) {
 			mask = 0x1ULL << 63;
@@ -117,9 +117,13 @@ engine_start_search(struct Engine *engine)
 	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
 	agent_init_position(engine->agent, &engine->position);
 	agent_eval(engine->agent, engine);
+	/* The two scores represent the available winning chances of each color. */
 	size_t w_score = popcnt(engine->agent->layer_out + COLOR_WHITE, sizeof(int64_t));
 	size_t b_score = popcnt(engine->agent->layer_out + COLOR_BLACK, sizeof(int64_t));
-	float centipawns = w_score - b_score;
+	ENGINE_DEBUGF(engine, "[DEBUG] White's raw score is (%zu/64).\n", w_score);
+	ENGINE_DEBUGF(engine, "[DEBUG] Black's raw score is (%zu/64).\n", b_score);
+	float centipawns =
+	  w_score > b_score ? powf(w_score - b_score, 1.3) : powf(b_score - w_score, 1.3);
 	printf("info score cp %f\n", centipawns);
 }
 
