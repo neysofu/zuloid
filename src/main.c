@@ -2,6 +2,7 @@
  * License, v. 2.0. If a copy of the MPL was not distributed with this
  * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
 
+#include "chess/bb.h"
 #include "engine.h"
 #include "globals.h"
 #include "utils.h"
@@ -13,6 +14,7 @@ int
 main(void)
 {
 	p_libsys_init();
+	bb_init();
 	/* Let's make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);

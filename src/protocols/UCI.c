@@ -10,6 +10,7 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/fen.h"
+#include "chess/movegen.h"
 #include "chess/position.h"
 #include "engine.h"
 #include "globals.h"
@@ -99,6 +100,20 @@ engine_uci_call_islegal(struct Engine *engine, char *cmd)
 	} else {
 		printf("0\n");
 	}
+}
+
+void
+engine_uci_call_legalmoves(struct Engine *engine, char *cmd)
+{
+	struct Move moves[255] = { 0 };
+	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	printf("%zu", count);
+	char buf[8] = { '\0' };
+	for (size_t i = 0; i < count; i++) {
+		move_to_string(moves[i], buf);
+		printf(" %s", buf);
+	}
+	printf("\n");
 }
 
 void
@@ -289,6 +304,9 @@ engine_uci(struct Engine *engine, char *cmd)
 		/* ... and finally some custom commands for debugging. Unstable! */
 		case 0x655c22f01920a4c9: /* "islegal" */
 			engine_uci_call_islegal(engine, cmd);
+			break;
+		case 0x5ea8c65539bb67eb: /* "legalmoves" */
+			engine_uci_call_legalmoves(engine, cmd);
 			break;
 		case 0x9acc2558707a5edd: /* "olia" (Open LIchess Analysis) */
 			engine_uci_call_openlichessanalysis(engine, cmd);

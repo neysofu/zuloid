@@ -82,23 +82,26 @@ agent_init_position(struct Agent *agent, struct Position *pos)
 }
 
 void
-agent_eval(struct Agent *agent, struct Engine *engine)
+agent_feedforward(struct Agent *agent,
+                  struct Engine *engine,
+                  int64_t *weights,
+                  size_t width_in,
+                  size_t width_out)
 {
 	uint64_t mask = 1;
-	for (size_t i = 0; i < AGENT_W1_WIDTH; i++) {
+	for (size_t i = 0; i < width_out; i++) {
 		ENGINE_DEBUGF(engine, "[TRACE] Now feeding neuron (%zu).\n", i);
-		for (size_t j = 0; j < AGENT_W0_WIDTH; j++) {
+		for (size_t j = 0; j < width_in; j++) {
 			/* Brutally parallel solution. TODO: explore Four Russian's method and
 			 * similar optimizations? */
-			int64_t weights = agent->layer_in[j] ^ agent->weights_0_1[i][j];
-			agent->buffer[j] = weights;
+			agent->buffer[j] = agent->layer_in[j] ^ weights[i * j];
 		}
-		size_t popcount = popcnt(agent->buffer, AGENT_W1_WIDTH * sizeof(int64_t));
+		size_t popcount = popcnt(agent->buffer, width_out * sizeof(int64_t));
 		ENGINE_DEBUGF(engine,
 		              "[TRACE] The population count for the (%zu)th neuron is (%zu).\n",
 		              i,
 		              popcount);
-		if (popcount > 150) {
+		if (popcount > width_out * (sizeof(int64_t) * CHAR_BIT / 2)) {
 			agent->layer_out[i / 64] |= mask;
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
 		} else {
@@ -116,7 +119,11 @@ engine_start_search(struct Engine *engine)
 	assert(engine);
 	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
 	agent_init_position(engine->agent, &engine->position);
-	agent_eval(engine->agent, engine);
+	agent_feedforward(engine->agent,
+	                  engine,
+	                  &engine->agent->weights_0_1[0][0],
+	                  AGENT_W0_WIDTH,
+	                  AGENT_W1_WIDTH);
 	/* The two scores represent the available winning chances of each color. */
 	size_t w_score = popcnt(engine->agent->layer_out + COLOR_WHITE, sizeof(int64_t));
 	size_t b_score = popcnt(engine->agent->layer_out + COLOR_BLACK, sizeof(int64_t));
@@ -124,6 +131,7 @@ engine_start_search(struct Engine *engine)
 	ENGINE_DEBUGF(engine, "[DEBUG] Black's raw score is (%zu/64).\n", b_score);
 	float centipawns =
 	  w_score > b_score ? powf(w_score - b_score, 1.3) : powf(b_score - w_score, 1.3);
+	/* TODO: Hide print behind protocol-specific logic. */
 	printf("info score cp %f\n", centipawns);
 }
 

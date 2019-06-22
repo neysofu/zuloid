@@ -49,6 +49,9 @@ position_set_piece_at_square(struct Position *position, Square square, struct Pi
 enum Color
 position_toggle_side_to_move(struct Position *pos);
 
+Bitboard
+position_occupancy(struct Position *pos);
+
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);
 

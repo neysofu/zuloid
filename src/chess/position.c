@@ -193,6 +193,12 @@ position_flip_side_to_move(struct Position *position)
 	position->side_to_move ^= 1;
 }
 
+Bitboard
+position_occupancy(struct Position *pos)
+{
+	return pos->bb[COLOR_WHITE] | pos->bb[COLOR_BLACK];
+}
+
 void
 position_empty(struct Position *position)
 {
