@@ -19,6 +19,7 @@
 #ifndef Z64C_CHESS_MOVEGEN_H
 #define Z64C_CHESS_MOVEGEN_H
 
+#include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/position.h"
@@ -40,10 +41,9 @@ size_t
 gen_pseudolegal_moves(struct Move moves[], struct Position *pos);
 size_t
 gen_legal_moves(struct Move moves[], struct Position *pos);
-
 size_t
-gen_attacks(struct Move moves[], struct Position *pos);
+gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims);
 size_t
-gen_checks(struct Move moves[], struct Position *pos);
+gen_checks_to(struct Move moves[], struct Position *pos, enum Color color);
 
 #endif

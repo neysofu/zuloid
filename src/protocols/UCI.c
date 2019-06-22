@@ -106,6 +106,7 @@ void
 engine_uci_call_legalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
+	/* FIXME */
 	size_t count = gen_pseudolegal_moves(moves, &engine->position);
 	printf("%zu", count);
 	char buf[8] = { '\0' };
@@ -137,6 +138,20 @@ engine_uci_call_openlichessanalysis(struct Engine *engine, char *cmd)
 #endif
 	free(command);
 	free(fen);
+}
+
+void
+engine_uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
+{
+	struct Move moves[255] = { 0 };
+	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	printf("%zu", count);
+	char buf[8] = { '\0' };
+	for (size_t i = 0; i < count; i++) {
+		move_to_string(moves[i], buf);
+		printf(" %s", buf);
+	}
+	printf("\n");
 }
 
 void
@@ -305,11 +320,14 @@ engine_uci(struct Engine *engine, char *cmd)
 		case 0x655c22f01920a4c9: /* "islegal" */
 			engine_uci_call_islegal(engine, cmd);
 			break;
-		case 0x5ea8c65539bb67eb: /* "legalmoves" */
+		case 0x96cbd35a489446bb: /* "_lm" */
 			engine_uci_call_legalmoves(engine, cmd);
 			break;
-		case 0x9acc2558707a5edd: /* "olia" (Open LIchess Analysis) */
+		case 0xf8137536e5c509a6: /* "_olia" (Open LIchess Analysis) */
 			engine_uci_call_openlichessanalysis(engine, cmd);
+			break;
+		case 0x54c29874021f8627: /* "_plm" (PseudoLegal Moves) */
+			engine_uci_call_pseudolegalmoves(engine, cmd);
 			break;
 		default:
 			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'.\n", token);

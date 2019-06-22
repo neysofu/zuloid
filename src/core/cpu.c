@@ -4,6 +4,7 @@
 
 #include "agent.h"
 #include "cJSON/cJSON.h"
+#include "chess/movegen.h"
 #include "chess/position.h"
 #include "engine.h"
 #include "eval.h"
@@ -133,6 +134,12 @@ engine_start_search(struct Engine *engine)
 	  w_score > b_score ? powf(w_score - b_score, 1.3) : powf(b_score - w_score, 1.3);
 	/* TODO: Hide print behind protocol-specific logic. */
 	printf("info score cp %f\n", centipawns);
+	struct Move moves[255] = { 0 };
+	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	char buf[6] = { '\0' };
+	assert(count > 0);
+	move_to_string(moves[genrand64_int64() % count], buf);
+	printf("bestmove %s\n", buf);
 }
 
 void
