@@ -1,8 +1,9 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Copyright (c) Filippo Costa - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * PROPRIETARY AND CONFIDENTIAL */
 
 #include "chess/position.h"
+#include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
@@ -142,7 +143,7 @@ position_init_960(struct Position *position)
 }
 
 enum Color
-position_toggle_side_to_move(struct Position *pos)
+position_flip_side_to_move(struct Position *pos)
 {
 	pos->side_to_move = color_other(pos->side_to_move);
 	return pos->side_to_move;
@@ -187,16 +188,29 @@ position_piece_at_square(const struct Position *position, Square square)
 	return piece;
 }
 
-void
-position_flip_side_to_move(struct Position *position)
-{
-	position->side_to_move ^= 1;
-}
-
 Bitboard
 position_occupancy(struct Position *pos)
 {
 	return pos->bb[COLOR_WHITE] | pos->bb[COLOR_BLACK];
+}
+
+Bitboard
+position_castle_mask(struct Position *pos, int castling_right)
+{
+	Bitboard rank = rank_to_bb(color_home_rank(pos->side_to_move));
+	Bitboard source = pos->bb[PIECE_TYPE_KING] & rank;
+	Bitboard target;
+	switch (castling_right) {
+		case CASTLING_RIGHT_KINGSIDE:
+			target = square_to_bb(square_new(6, color_home_rank(pos->side_to_move)));
+			break;
+		case CASTLING_RIGHT_QUEENSIDE:
+			target = square_to_bb(square_new(2, color_home_rank(pos->side_to_move)));
+			break;
+		default:
+			assert(false);
+	}
+	return (((target - 1) ^ (source - 1)) | (source | target)) & rank;
 }
 
 void

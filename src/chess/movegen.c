@@ -155,11 +155,27 @@ size_t
 gen_king_castles(struct Move moves[], struct Position *pos)
 {
 	struct Move *ptr = moves;
+	position_flip_side_to_move(pos);
 	/* TODO */
 	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move)) {
+		if (!(position_occupancy(pos) & 0x0000000000000060L)) {
+			struct Move dummy[255];
+			Bitboard mask = 0x0000000000000030L;
+			if (!gen_attacks_against(pos, dummy, mask)) {
+				EMIT_MOVE(moves, 4, 6);
+			}
+		}
 	}
 	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
+		if (!(position_occupancy(pos) & 0x000000000000000eL)) {
+			struct Move dummy[MAX_MOVES];
+			Bitboard mask = 0x0000000000000018L;
+			if (!gen_attacks_against(dummy, pos, mask)) {
+				EMIT_MOVE(moves, 4, 2);
+			}
+		}
 	}
+	position_flip_side_to_move(pos);
 	return moves - ptr;
 }
 

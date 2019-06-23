@@ -1,11 +1,13 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Copyright (c) Filippo Costa - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * PROPRIETARY AND CONFIDENTIAL */
 
 #include "Unity/src/unity.h"
 
 extern void
 test_cache_single_key_retrieval(void);
+extern void
+test_castling_mask(void);
 extern void
 test_char_to_file(void);
 extern void
@@ -28,6 +30,7 @@ main(void)
 {
 	UNITY_BEGIN();
 	RUN_TEST(test_cache_single_key_retrieval);
+	RUN_TEST(test_castling_mask);
 	RUN_TEST(test_char_to_file);
 	RUN_TEST(test_char_to_piece);
 	RUN_TEST(test_color);

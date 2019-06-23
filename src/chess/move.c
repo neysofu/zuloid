@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Copyright (c) Filippo Costa - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * PROPRIETARY AND CONFIDENTIAL */
 
 #include "chess/move.h"
 #include "chess/coordinates.h"
@@ -49,7 +49,8 @@ position_do_move(struct Position *pos, struct Move *mv)
 	position_set_piece_at_square(
 	  pos, mv->target, position_piece_at_square(pos, mv->source));
 	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
-	pos->side_to_move = color_other(pos->side_to_move);
+	/* TODO: Castling, en passant. */
+	position_flip_side_to_move(pos);
 }
 
 void
@@ -59,7 +60,8 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 	  pos, mv->source, position_piece_at_square(pos, mv->target));
 	position_set_piece_at_square(
 	  pos, mv->target, (struct Piece){ .type = mv->capture, .color = pos->side_to_move });
-	pos->side_to_move = color_other(pos->side_to_move);
+	/* TODO: Castling, en passant. */
+	position_flip_side_to_move(pos);
 }
 
 int

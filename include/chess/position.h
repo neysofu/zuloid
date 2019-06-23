@@ -47,10 +47,14 @@ void
 position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
 
 enum Color
-position_toggle_side_to_move(struct Position *pos);
+position_flip_side_to_move(struct Position *pos);
 
 Bitboard
 position_occupancy(struct Position *pos);
+
+/* Tracks the king movement when castling. */
+Bitboard
+position_castle_mask(struct Position *pos, int castling_right);
 
 struct Piece
 position_piece_at_square(const struct Position *position, Square square);

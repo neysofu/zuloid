@@ -1,6 +1,6 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/. */
+/* Copyright (c) Filippo Costa - All Rights Reserved
+ * Unauthorized copying of this file, via any medium is strictly prohibited
+ * PROPRIETARY AND CONFIDENTIAL */
 
 #include "chess/coordinates.h"
 #include "chess/color.h"
@@ -47,15 +47,20 @@ square_to_bb(Square square)
 	return 1ULL << square;
 }
 
+Bitboard
+file_to_bb(File f)
+{
+	return 0xff << (f << FILES_COUNT);
+}
+
+Bitboard
+rank_to_bb(Rank r)
+{
+	return 0x101010101010101ULL << r;
+}
+
 Square
 square_new(File file, Rank rank)
 {
 	return file << 3 | rank;
-}
-
-Bitboard
-square_knight_threats(Square sq)
-{
-	/* TODO */
-	return 0;
 }
