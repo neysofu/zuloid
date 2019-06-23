@@ -265,10 +265,9 @@ gen_checks_to(struct Move moves[], struct Position *pos, enum Color color)
 //	return moves - ptr;
 //}
 
-//
-// int
-// has_legal_moves(struct Position *pos)
-//{
-//	struct Move moves[MAX_MOVES];
-//	return gen_legal_moves(pos, moves);
-//}
+bool
+position_is_stalemate(struct Position *pos)
+{
+	struct Move moves[MAX_MOVES];
+	return gen_legal_moves(pos, moves) == 0;
+}
