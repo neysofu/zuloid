@@ -41,7 +41,7 @@ struct Agent
 	int64_t layer_out[AGENT_BUFFER_WIDTH];
 	/* Useful computation buffer. */
 	int64_t buffer[AGENT_BUFFER_WIDTH];
-	int64_t weights_0_1[AGENT_W0_WIDTH][AGENT_W1_WIDTH];
+	int64_t weights_0_1[AGENT_W1_WIDTH * 64][AGENT_W0_WIDTH];
 };
 
 struct Agent *
@@ -50,9 +50,8 @@ agent_new(void)
 	struct Agent *agent = malloc(sizeof(struct Agent));
 	if (agent) {
 		/* Initialize weights with random data... FIXME, of course. */
-		for (size_t i = 0; i < AGENT_W0_WIDTH; i++) {
-			for (size_t j = 0; j < AGENT_W1_WIDTH; j++) {
-				srand(0x517f);
+		for (size_t i = 0; i < AGENT_W1_WIDTH * 64; i++) {
+			for (size_t j = 0; j < AGENT_W0_WIDTH; j++) {
 				agent->weights_0_1[i][j] = genrand64_int64();
 			}
 		}
@@ -63,6 +62,11 @@ agent_new(void)
 void
 agent_init_position(struct Agent *agent, struct Position *pos)
 {
+	/* Random input data. */
+	for (size_t i = 0; i < AGENT_W0_WIDTH; i++) {
+		agent->layer_in[i] = genrand64_int64();
+	}
+	return;
 	agent->layer_in[0] = pos->bb[COLOR_WHITE];
 	agent->layer_in[1] = pos->bb[COLOR_BLACK];
 	agent->layer_in[2] = pos->bb[PIECE_TYPE_PAWN];
@@ -82,6 +86,13 @@ agent_init_position(struct Agent *agent, struct Position *pos)
 	agent->layer_in[10] = (1 << pos->reversible_moves_count);
 }
 
+/* Feedforward signal through a dense layer.
+ *
+ * Params:
+ * - weights: Array of at least width_in * width_out 64-bit integers.
+ *
+ * Input data is packed into bits and output data is as well.
+ * */
 void
 agent_feedforward(struct Agent *agent,
                   struct Engine *engine,
@@ -89,27 +100,31 @@ agent_feedforward(struct Agent *agent,
                   size_t width_in,
                   size_t width_out)
 {
-	uint64_t mask = 1;
-	for (size_t i = 0; i < width_out; i++) {
+	size_t out_i = 0;
+	uint64_t out_mask = 1;
+	for (size_t i = 0; i < width_out * 64; i++) {
 		ENGINE_DEBUGF(engine, "[TRACE] Now feeding neuron (%zu).\n", i);
+		/* We now collect all incoming signals to this neuron. */
 		for (size_t j = 0; j < width_in; j++) {
 			/* Brutally parallel solution. TODO: explore Four Russian's method and
 			 * similar optimizations? */
-			agent->buffer[j] = agent->layer_in[j] ^ weights[i * j];
+			agent->buffer[j] = agent->layer_in[j] & weights[i * j];
 		}
-		size_t popcount = popcnt(agent->buffer, width_out * sizeof(int64_t));
+		/* The activation point is fixed at half the number of incoming connections. */
+		size_t popcount = popcnt(agent->buffer, width_in * sizeof(int64_t));
 		ENGINE_DEBUGF(engine,
 		              "[TRACE] The population count for the (%zu)th neuron is (%zu).\n",
 		              i,
 		              popcount);
-		if (popcount > width_out * (sizeof(int64_t) * CHAR_BIT / 2)) {
-			agent->layer_out[i / 64] |= mask;
+		if (popcount > width_in * 32) {
+			agent->layer_out[out_i] |= out_mask;
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
 		} else {
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
 		}
-		if (!(mask <<= 1)) {
-			mask = 0x1ULL << 63;
+		if (!(out_mask <<= 1)) {
+			out_mask = 0x1ULL << 63;
+			out_i++;
 		}
 	}
 }
@@ -131,7 +146,7 @@ engine_start_search(struct Engine *engine)
 	ENGINE_DEBUGF(engine, "[DEBUG] White's raw score is (%zu/64).\n", w_score);
 	ENGINE_DEBUGF(engine, "[DEBUG] Black's raw score is (%zu/64).\n", b_score);
 	float centipawns =
-	  w_score > b_score ? powf(w_score - b_score, 1.3) : powf(b_score - w_score, 1.3);
+	  w_score > b_score ? powf(w_score - b_score, 1.3) : -powf(b_score - w_score, 1.3);
 	/* TODO: Hide print behind protocol-specific logic. */
 	printf("info score cp %f\n", centipawns);
 	struct Move moves[255] = { 0 };
