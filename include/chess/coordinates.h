@@ -61,6 +61,8 @@ square_rank(Square sq);
 
 Bitboard
 square_to_bb(Square sq);
+Square
+bb_to_square(Bitboard bb);
 Bitboard
 file_to_bb(File file);
 Bitboard

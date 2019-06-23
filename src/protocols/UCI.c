@@ -89,17 +89,21 @@ void
 engine_uci_call_islegal(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
+	struct Move moves[255] = { 0 };
 	struct Move mv;
-	string_to_move(token, &mv);
 	if (!token || string_to_move(token, &mv) == 0) {
 		ENGINE_DEBUGF(engine, "[ERROR] Expected token with a chess move.\n");
 		return;
 	}
-	if (position_check_pseudolegality(&engine->position, &mv)) {
-		printf("1\n");
-	} else {
-		printf("0\n");
+	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	ENGINE_DEBUGF(engine, "[TRACE] Examining %zu legal moves...\n", count);
+	for (size_t i = 0; i < count; i++) {
+		if (moves[i].source == mv.source && moves[i].target == mv.target) {
+			printf("1\n");
+			return;
+		}
 	}
+	printf("0\n");
 }
 
 void
@@ -317,7 +321,7 @@ engine_uci(struct Engine *engine, char *cmd)
 			/* TODO */
 			break;
 		/* ... and finally some custom commands for debugging. Unstable! */
-		case 0x655c22f01920a4c9: /* "islegal" */
+		case 0xb0582e3fa59cef0a: /* "_islegal" */
 			engine_uci_call_islegal(engine, cmd);
 			break;
 		case 0x96cbd35a489446bb: /* "_lm" */

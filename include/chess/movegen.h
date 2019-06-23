@@ -45,5 +45,7 @@ size_t
 gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims);
 size_t
 gen_checks_to(struct Move moves[], struct Position *pos, enum Color color);
+bool
+position_is_illegal(struct Position *pos);
 
 #endif

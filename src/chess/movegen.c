@@ -155,27 +155,40 @@ size_t
 gen_king_castles(struct Move moves[], struct Position *pos)
 {
 	struct Move *ptr = moves;
-	position_flip_side_to_move(pos);
+	Bitboard mask, maskk, foo;
 	/* TODO */
 	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move)) {
-		if (!(position_occupancy(pos) & 0x0000000000000060L)) {
-			struct Move dummy[255];
-			Bitboard mask = 0x0000000000000030L;
-			if (!gen_attacks_against(pos, dummy, mask)) {
-				EMIT_MOVE(moves, 4, 6);
-			}
+		mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
+		position_flip_side_to_move(pos);
+		maskk = mask;
+		POP_LSB(foo, maskk);
+		POP_MSB(foo, maskk);
+		if (!(position_occupancy(pos) & maskk)) {
+			// struct Move dummy[255];
+			// if (!gen_attacks_against(dummy, pos, mask)) {
+			EMIT_MOVE(moves,
+			          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
+			          square_new(6, color_home_rank(pos->side_to_move)));
+			//}
 		}
+		position_flip_side_to_move(pos);
 	}
 	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
-		if (!(position_occupancy(pos) & 0x000000000000000eL)) {
-			struct Move dummy[MAX_MOVES];
-			Bitboard mask = 0x0000000000000018L;
-			if (!gen_attacks_against(dummy, pos, mask)) {
-				EMIT_MOVE(moves, 4, 2);
-			}
+		position_flip_side_to_move(pos);
+		mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
+		maskk = mask;
+		POP_LSB(foo, maskk);
+		POP_MSB(foo, maskk);
+		if (!(position_occupancy(pos) & maskk)) {
+			// struct Move dummy[255];
+			// if (!gen_attacks_against(dummy, pos, mask)) {
+			EMIT_MOVE(moves,
+			          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
+			          square_new(2, color_home_rank(pos->side_to_move)));
+			//}
 		}
+		position_flip_side_to_move(pos);
 	}
-	position_flip_side_to_move(pos);
 	return moves - ptr;
 }
 
@@ -185,18 +198,27 @@ gen_pseudolegal_moves(struct Move moves[], struct Position *pos)
 	return gen_attacks_against(moves, pos, ~pos->bb[pos->side_to_move]);
 }
 
+bool
+position_is_illegal(struct Position *pos)
+{
+	struct Move moves[MAX_MOVES];
+	return gen_checks_to(moves, pos, pos->side_to_move);
+}
+
 size_t
 gen_legal_moves(struct Move moves[], struct Position *pos)
 {
 	struct Move *ptr = moves;
 	struct Move temp[MAX_MOVES];
 	size_t count = gen_pseudolegal_moves(temp, pos);
-	for (int i = 0; i < count; i++) {
+	for (size_t i = 0; i < count; i++) {
 		struct Move *move = temp + i;
 		position_do_move(pos, move);
+		position_flip_side_to_move(pos);
 		if (!position_is_illegal(pos)) {
 			memcpy(moves++, move, sizeof(struct Move));
 		}
+		position_flip_side_to_move(pos);
 		position_undo_move(pos, move);
 	}
 	return moves - ptr;
@@ -216,13 +238,6 @@ gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims)
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
 	moves += gen_king_castles(moves, pos);
 	return moves - ptr;
-}
-
-int
-position_is_illegal(struct Position *pos)
-{
-	struct Move moves[MAX_MOVES];
-	return gen_checks_to(moves, pos, pos->side_to_move);
 }
 
 size_t

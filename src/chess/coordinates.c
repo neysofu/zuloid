@@ -3,7 +3,9 @@
  * PROPRIETARY AND CONFIDENTIAL */
 
 #include "chess/coordinates.h"
+#include "chess/bb.h"
 #include "chess/color.h"
+#include <assert.h>
 
 char
 rank_to_char(Rank r)
@@ -45,6 +47,12 @@ Bitboard
 square_to_bb(Square square)
 {
 	return 1ULL << square;
+}
+Square
+bb_to_square(Bitboard bb)
+{
+	assert(bb);
+	return MSB(bb);
 }
 
 Bitboard
