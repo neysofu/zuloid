@@ -20,11 +20,13 @@ struct CacheEntry
 	uint8_t dispersion;
 };
 
+/* Creates a new empty cache with approximate capacity of 'size' bytes. */
 struct Cache *
-cache_new(size_t size_in_bytes);
+cache_new(size_t size);
 
+/* Probes an existing entry or finds a place to insert one if not found. */
 struct CacheEntry *
-cache_get(struct Cache *cache, const struct Position *position);
+cache_get(struct Cache *cache, const struct Position *pos);
 
 bool
 cache_entry_is_empty(struct CacheEntry *entry);

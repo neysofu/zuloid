@@ -24,6 +24,11 @@
 #include "chess/move.h"
 #include "chess/position.h"
 
+enum
+{
+	MAX_MOVES = 276
+};
+
 size_t
 gen_pawn_moves(struct Move moves[], struct Position *pos);
 size_t

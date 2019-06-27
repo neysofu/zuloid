@@ -19,80 +19,118 @@
 
 enum
 {
-	AGENT_BUFFER_WIDTH = 128,
-	AGENT_W0_WIDTH = 16,
-	AGENT_W1_WIDTH = 32,
-	AGENT_THRESHOLD = 512,
+	AGENT_COMPRESSED_WIDTH = 128,
+
+	AGENT_L0_WIDTH = 1024,
+	AGENT_L0_COMPRESSED_WIDTH = 16,
+
+	AGENT_L1_WIDTH = 4096,
+	AGENT_L1_COMPRESSED_WIDTH = 64,
+
+	AGENT_INDICATORS_COUNT = 5,
+	INDICATOR_COLOR_WHITE = 0,
+	INDICATOR_COLOR_BLACK = 1,
+	INDICATOR_EVALUATION = 2,
+	INDICATOR_SHARPNESS = 3,
 };
 
+/* TODO: Training via simple error backpropagation. Then I should try a very simple network
+ * that rewards capture.
+ *
+ * Neuron model: each neuron takes in inputs from the previous layer (most likely through a
+ * filter) and outputs a single bit via population count threshold.
+ *
+ * The output layer has no bitboards. That would require much more learning for no advantage
+ * at all. Also, the output layer should NOT be in bits but rather in bytes.
+ *  - One king: (10)
+ *  - Two knights: (2*8)
+ *  - Three bishops: (3*14)
+ *  - Three rooks: (3*14)
+ *  - Eight pawns: (8*4). Promotions are handled by the search and not the network.
+ *  Total: ~142 features
+ * - Floating point indicators. */
 struct Agent
 {
-	/* Holds the input layer's data. */
-	int64_t layer_in[AGENT_BUFFER_WIDTH];
-	/* Holds the output layer's data.
-	 *
-	 * [0-31] Piece movement bitboards. It shows what moves should be considered for each
-	 * piece. During the first training phase, these bitboards will simply show all the
-	 * legal moves. Eventually, I want the agent to only show plausible moves.
-	 * [31] White score.
-	 * [32] Black score.
-	 * [33] Sharpness indicator (via population count).
-	 */
-	int64_t layer_out[AGENT_BUFFER_WIDTH];
-	/* Useful computation buffer. */
-	int64_t buffer[AGENT_BUFFER_WIDTH];
-	int64_t weights_0_1[AGENT_W1_WIDTH * 64][AGENT_W0_WIDTH];
+	int64_t layer_alpha[AGENT_COMPRESSED_WIDTH];
+	int64_t layer_bravo[AGENT_COMPRESSED_WIDTH];
+	int64_t buffer[AGENT_COMPRESSED_WIDTH];
+	int64_t weights_0_1[AGENT_L1_WIDTH][AGENT_L0_COMPRESSED_WIDTH];
+	/* Real-valued outputs. */
+	bool moves_pawns[8 * 4];
+	bool moves_knights[2 * 8];
+	bool moves_bishops[3 * 14];
+	bool moves_rooks[3 * 14];
+	bool moves_king[8 + 2];
+	float indicators[AGENT_INDICATORS_COUNT];
 };
+
+void
+agent_randomly_init_weights(struct Agent *agent)
+{
+
+	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
+		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
+			agent->weights_0_1[i][j] = genrand64_int64();
+		}
+	}
+}
 
 struct Agent *
 agent_new(void)
 {
 	struct Agent *agent = malloc(sizeof(struct Agent));
 	if (agent) {
-		/* Initialize weights with random data... FIXME, of course. */
-		for (size_t i = 0; i < AGENT_W1_WIDTH * 64; i++) {
-			for (size_t j = 0; j < AGENT_W0_WIDTH; j++) {
-				agent->weights_0_1[i][j] = genrand64_int64();
-			}
-		}
+		memset(agent, 0, sizeof(struct Agent));
+		agent_randomly_init_weights(agent);
 	}
 	return agent;
 }
 
 void
-agent_init_position(struct Agent *agent, struct Position *pos)
+buffer_init_from_position(int64_t buf[], struct Position *pos)
 {
-	/* Random input data. */
-	for (size_t i = 0; i < AGENT_W0_WIDTH; i++) {
-		agent->layer_in[i] = genrand64_int64();
-	}
-	return;
-	agent->layer_in[0] = pos->bb[COLOR_WHITE];
-	agent->layer_in[1] = pos->bb[COLOR_BLACK];
-	agent->layer_in[2] = pos->bb[PIECE_TYPE_PAWN];
-	agent->layer_in[3] = pos->bb[PIECE_TYPE_KNIGHT];
-	agent->layer_in[4] = pos->bb[PIECE_TYPE_KING];
-	agent->layer_in[5] = pos->bb[PIECE_TYPE_ROOK];
-	agent->layer_in[6] = pos->bb[PIECE_TYPE_BISHOP];
-	agent->layer_in[7] = BB_LIGHT_SQUARES;
-	agent->layer_in[8] = BB_DARK_SQUARES;
-	agent->layer_in[9] = BB_CENTER_SQUARES;
+	buf[0] = pos->bb[COLOR_WHITE];
+	buf[1] = pos->bb[COLOR_BLACK];
+	buf[2] = pos->bb[PIECE_TYPE_PAWN];
+	buf[3] = pos->bb[PIECE_TYPE_KNIGHT];
+	buf[4] = pos->bb[PIECE_TYPE_KING];
+	buf[5] = pos->bb[PIECE_TYPE_ROOK];
+	buf[6] = pos->bb[PIECE_TYPE_BISHOP];
 	if (pos->reversible_moves_count < 50) {
-		agent->layer_in[10] = (1 << pos->reversible_moves_count) - 1;
+		buf[10] = (1 << pos->reversible_moves_count) - 1;
 	} else {
-		agent->layer_in[10] = ~0;
+		buf[10] = ~0;
 	}
-	agent->layer_in[11] = pos->side_to_move | (pos->castling_rights << 1);
-	agent->layer_in[10] = (1 << pos->reversible_moves_count);
+	buf[11] = pos->side_to_move | (pos->castling_rights << 1);
+	buf[12] = (1 << pos->reversible_moves_count);
 }
 
-/* Feedforward signal through a dense layer.
- *
- * Params:
- * - weights: Array of at least width_in * width_out 64-bit integers.
- *
- * Input data is packed into bits and output data is as well.
- * */
+size_t
+buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
+{
+	/* TODO */
+	cJSON *obj_buf_width = cJSON_GetObjectItem(obj, "width");
+	cJSON *obj_buf_data = cJSON_GetObjectItem(obj, "data");
+	assert(obj_buf_width);
+	assert(obj_buf_data);
+	size_t buf_width = obj_buf_width->valuedouble;
+	char *buf_data = obj_buf_data->valuestring;
+	return b64_decode(buf_data, strlen(buf_data), buf) / sizeof(int64_t);
+}
+
+cJSON *
+buffer_serialize_into_json(int64_t buf[], size_t width)
+{
+	char *buf_data = malloc(b64e_size(buf, width * sizeof(int64_t)));
+	if (!buf_data) {
+		return NULL;
+	}
+	cJSON *obj = cJSON_CreateObject();
+	cJSON_AddNumberToObject(obj, "width", width);
+	cJSON_AddStringToObject(obj, "data", buf_data);
+	return obj;
+}
+
 void
 agent_feedforward(struct Agent *agent,
                   struct Engine *engine,
@@ -108,7 +146,7 @@ agent_feedforward(struct Agent *agent,
 		for (size_t j = 0; j < width_in; j++) {
 			/* Brutally parallel solution. TODO: explore Four Russian's method and
 			 * similar optimizations? */
-			agent->buffer[j] = agent->layer_in[j] & weights[i * j];
+			agent->buffer[j] = agent->layer_alpha[j] & weights[i * j];
 		}
 		/* The activation point is fixed at half the number of incoming connections. */
 		size_t popcount = popcnt(agent->buffer, width_in * sizeof(int64_t));
@@ -117,7 +155,7 @@ agent_feedforward(struct Agent *agent,
 		              i,
 		              popcount);
 		if (popcount > width_in * 32) {
-			agent->layer_out[out_i] |= out_mask;
+			agent->layer_bravo[out_i] |= out_mask;
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
 		} else {
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
@@ -132,28 +170,24 @@ agent_feedforward(struct Agent *agent,
 void
 engine_start_search(struct Engine *engine)
 {
-	assert(engine);
 	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
-	agent_init_position(engine->agent, &engine->position);
+	/* The first step is to evaluate the position with the neural network. */
+	buffer_init_from_position(&engine->agent->layer_alpha, &engine->position);
 	agent_feedforward(engine->agent,
 	                  engine,
 	                  &engine->agent->weights_0_1[0][0],
-	                  AGENT_W0_WIDTH,
-	                  AGENT_W1_WIDTH);
-	/* The two scores represent the available winning chances of each color. */
-	size_t w_score = popcnt(engine->agent->layer_out + COLOR_WHITE, sizeof(int64_t));
-	size_t b_score = popcnt(engine->agent->layer_out + COLOR_BLACK, sizeof(int64_t));
-	ENGINE_DEBUGF(engine, "[DEBUG] White's raw score is (%zu/64).\n", w_score);
-	ENGINE_DEBUGF(engine, "[DEBUG] Black's raw score is (%zu/64).\n", b_score);
-	float centipawns =
-	  w_score > b_score ? powf(w_score - b_score, 1.3) : -powf(b_score - w_score, 1.3);
+	                  AGENT_L0_WIDTH,
+	                  AGENT_L1_WIDTH);
+	float centipawns = engine->agent->indicators[INDICATOR_COLOR_WHITE] -
+	                   engine->agent->indicators[INDICATOR_COLOR_BLACK];
+	/* Now pick any of the suggested moves. In Z64C there is no best move found in the
+	 * evaluation, only candidate moves. Moves are suggested by  square: */
+	char buf[6] = { '\0' };
+	struct Move moves[MAX_MOVES] = { 0 };
+	size_t count = gen_legal_moves(moves, &engine->position);
+	move_to_string(moves[genrand64_int64() % count], buf);
 	/* TODO: Hide print behind protocol-specific logic. */
 	printf("info score cp %f\n", centipawns);
-	struct Move moves[255] = { 0 };
-	size_t count = gen_pseudolegal_moves(moves, &engine->position);
-	char buf[6] = { '\0' };
-	assert(count > 0);
-	move_to_string(moves[genrand64_int64() % count], buf);
 	printf("bestmove %s\n", buf);
 }
 

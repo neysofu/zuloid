@@ -22,11 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 
-enum
-{
-	MAX_MOVES = 255
-};
-
 #define EMIT_MOVE(m, a, b)                                                                 \
 	(m)->source = (a);                                                                     \
 	(m)->target = (b);                                                                     \
