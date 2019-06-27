@@ -38,6 +38,9 @@ set (TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/")
 
 string (TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
+# base64
+add_library (BASE64 "${LIB_DIR}/base64/base64.c")
+set_property (TARGET BASE64 PROPERTY C_STANDARD 99)
 # cJSON
 set (ENABLE_CJSON_TEST OFF)
 add_subdirectory ("${LIB_DIR}/cJSON/")
@@ -60,7 +63,7 @@ list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library (Z64C_LIB STATIC "${SRC_FILES}")
 target_include_directories (Z64C_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories (Z64C_LIB SYSTEM PUBLIC "${LIB_DIR}")
-target_link_libraries (Z64C_LIB cjson MT64 plibsys XXHASH)
+target_link_libraries (Z64C_LIB BASE64 cjson MT64 plibsys XXHASH)
 target_compile_definitions (Z64C_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
