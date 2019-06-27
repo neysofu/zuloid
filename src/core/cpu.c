@@ -17,80 +17,24 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-enum
-{
-	AGENT_COMPRESSED_WIDTH = 128,
-
-	AGENT_L0_WIDTH = 1024,
-	AGENT_L0_COMPRESSED_WIDTH = 16,
-
-	AGENT_L1_WIDTH = 4096,
-	AGENT_L1_COMPRESSED_WIDTH = 64,
-
-	AGENT_INDICATORS_COUNT = 5,
-	INDICATOR_COLOR_WHITE = 0,
-	INDICATOR_COLOR_BLACK = 1,
-	INDICATOR_EVALUATION = 2,
-	INDICATOR_SHARPNESS = 3,
-};
-
-/* TODO: Training via simple error backpropagation. Then I should try a very simple network
- * that rewards capture.
- *
- * Neuron model: each neuron takes in inputs from the previous layer (most likely through a
- * filter) and outputs a single bit via population count threshold.
- *
- * The output layer has no bitboards. That would require much more learning for no advantage
- * at all. Also, the output layer should NOT be in bits but rather in bytes.
- *  - One king: (10)
- *  - Two knights: (2*8)
- *  - Three bishops: (3*14)
- *  - Three rooks: (3*14)
- *  - Eight pawns: (8*4). Promotions are handled by the search and not the network.
- *  Total: ~142 features
- * - Floating point indicators. */
-struct Agent
-{
-	int64_t layer_alpha[AGENT_COMPRESSED_WIDTH];
-	int64_t layer_bravo[AGENT_COMPRESSED_WIDTH];
-	int64_t buffer[AGENT_COMPRESSED_WIDTH];
-	int64_t weights_0_1[AGENT_L1_WIDTH][AGENT_L0_COMPRESSED_WIDTH];
-	/* Real-valued outputs. */
-	bool moves_pawns[8 * 4];
-	bool moves_knights[2 * 8];
-	bool moves_bishops[3 * 14];
-	bool moves_rooks[3 * 14];
-	bool moves_king[8 + 2];
-	float indicators[AGENT_INDICATORS_COUNT];
-};
-
-void
-agent_randomly_init_weights(struct Agent *agent)
-{
-
-	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
-		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
-			agent->weights_0_1[i][j] = genrand64_int64();
-		}
-	}
-}
-
-struct Agent *
-agent_new(void)
-{
-	struct Agent *agent = malloc(sizeof(struct Agent));
-	if (agent) {
-		memset(agent, 0, sizeof(struct Agent));
-		agent_randomly_init_weights(agent);
-	}
-	return agent;
-}
-
 void
 buffer_init_from_position(int64_t buf[], struct Position *pos)
 {
+	File ep_file = square_file(pos->en_passant_target);
+	int ep_feature = ep_file == FILE_NONE ? 0 : 1 << ep_file;
 	buf[0] = pos->bb[COLOR_WHITE];
 	buf[1] = pos->bb[COLOR_BLACK];
+	/* The input features must perfectly locate each piece. Maybe 8*8 features per piece,
+	 * showing where it is. I absolutely want to reduce the search space to a minimum.
+	 *
+	 * But then I also to reuse board evaluation...  How do I do that? Basically I should
+	 * engineer the network so that it always first evaluates the board, then it applies a
+	 * move. The move can also be null though.
+	 *
+	 * White king (8*2)
+	 * Black king (8*2)
+	 * Pawns? I think bitboards are fine. It should be simple
+	 * */
 	buf[2] = pos->bb[PIECE_TYPE_PAWN];
 	buf[3] = pos->bb[PIECE_TYPE_KNIGHT];
 	buf[4] = pos->bb[PIECE_TYPE_KING];
@@ -101,8 +45,8 @@ buffer_init_from_position(int64_t buf[], struct Position *pos)
 	} else {
 		buf[10] = ~0;
 	}
-	buf[11] = pos->side_to_move | (pos->castling_rights << 1);
-	buf[12] = (1 << pos->reversible_moves_count);
+	buf[11] = pos->side_to_move | (color_other(pos->side_to_move) << 1) |
+	          (pos->castling_rights << 2) | (ep_feature << 6);
 }
 
 size_t
@@ -129,6 +73,76 @@ buffer_serialize_into_json(int64_t buf[], size_t width)
 	cJSON_AddNumberToObject(obj, "width", width);
 	cJSON_AddStringToObject(obj, "data", buf_data);
 	return obj;
+}
+
+enum
+{
+	AGENT_COMPRESSED_WIDTH = 128,
+
+	AGENT_L0_WIDTH = 1024,
+	AGENT_L0_COMPRESSED_WIDTH = 16,
+
+	AGENT_L1_WIDTH = 4096,
+	AGENT_L1_COMPRESSED_WIDTH = 64,
+
+	AGENT_PAWN_MOVE_FEATURES_COUNT = 8 * 4,
+	AGENT_KNIGHT_MOVE_FEATURES_COUNT = 2 * 8,
+	AGENT_BISHOP_MOVE_FEATURES_COUNT = 3 * 14,
+	AGENT_ROOK_MOVE_FEATURES_COUNT = 3 * 14,
+	AGENT_KING_MOVE_FEATURES_COUNT = 1 * 10,
+	AGENT_MOVE_FEATURES_COUNT =
+	  AGENT_PAWN_MOVE_FEATURES_COUNT + AGENT_KNIGHT_MOVE_FEATURES_COUNT +
+	  AGENT_BISHOP_MOVE_FEATURES_COUNT + AGENT_ROOK_MOVE_FEATURES_COUNT +
+	  AGENT_KING_MOVE_FEATURES_COUNT,
+
+	AGENT_INDICATORS_COUNT = 5,
+	INDICATOR_COLOR_WHITE = 0,
+	INDICATOR_COLOR_BLACK = 1,
+	INDICATOR_EVALUATION = 2,
+	INDICATOR_SHARPNESS = 3,
+};
+
+/* TODO: Training via simple error backpropagation. Then I should try a very simple network
+ * that rewards capture.
+ *
+ * Neuron model: each neuron takes in inputs from the previous layer (most likely through a
+ * filter) and outputs a single bit via population count threshold.
+ *
+ * The output layer has no bitboards. That would require much more learning for no advantage
+ * at all. Also, the output layer should NOT be in bits but rather in bytes.
+ * - Piece placement.
+ * - Floating point indicators. */
+struct Agent
+{
+	int64_t layer_alpha[AGENT_COMPRESSED_WIDTH];
+	int64_t layer_bravo[AGENT_COMPRESSED_WIDTH];
+	int64_t buffer[AGENT_COMPRESSED_WIDTH];
+	int64_t weights_0_1[AGENT_L1_WIDTH][AGENT_L0_COMPRESSED_WIDTH];
+	/* Real-valued outputs. */
+	bool move_features[AGENT_MOVE_FEATURES_COUNT];
+	float indicators[AGENT_INDICATORS_COUNT];
+};
+
+struct Agent *
+agent_new(void)
+{
+	struct Agent *agent = malloc(sizeof(struct Agent));
+	if (agent) {
+		memset(agent, 0, sizeof(struct Agent));
+		agent_randomly_init_weights(agent);
+	}
+	return agent;
+}
+
+void
+agent_randomly_init_weights(struct Agent *agent)
+{
+
+	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
+		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
+			agent->weights_0_1[i][j] = genrand64_int64();
+		}
+	}
 }
 
 void
