@@ -68,8 +68,11 @@ file_to_bb(File file);
 Bitboard
 rank_to_bb(Rank rank);
 
-Bitboard
-square_knight_threats(Square sq);
+Square
+lsb_to_square(int lsb);
+
+Square
+msb_to_square(int msb);
 
 static const Bitboard BB_LIGHT_SQUARES = 0xaaaaaaaaaaaaaaaa;
 static const Bitboard BB_DARK_SQUARES = 0x5555555555555555;

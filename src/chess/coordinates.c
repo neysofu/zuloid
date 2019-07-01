@@ -72,3 +72,15 @@ square_new(File file, Rank rank)
 {
 	return file << 3 | rank;
 }
+
+Square
+lsb_to_square(int lsb)
+{
+	return lsb;
+}
+
+Square
+msb_to_square(int msb)
+{
+	return SQUARE_MAX - msb;
+}

@@ -30,7 +30,11 @@ enum
 };
 
 size_t
-gen_pawn_moves(struct Move moves[], struct Position *pos);
+gen_pawn_moves(struct Move moves[],
+               Bitboard srcs,
+               Bitboard mask,
+               Bitboard all,
+               enum Color side_to_move);
 size_t
 gen_knight_moves(struct Move moves[], Bitboard srcs, Bitboard mask);
 size_t

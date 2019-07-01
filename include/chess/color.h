@@ -11,6 +11,7 @@ enum Color
 {
 	COLOR_WHITE = 0,
 	COLOR_BLACK = 1,
+
 	COLORS_COUNT = 2,
 };
 

@@ -11,6 +11,11 @@
 #include <stdbool.h>
 #include <stdint.h>
 
+enum
+{
+	MOVE_STRING_MAX_LENGTH = 6
+};
+
 /* A reversible chess move. */
 struct Move
 {

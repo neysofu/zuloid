@@ -3,6 +3,7 @@
  * PROPRIETARY AND CONFIDENTIAL */
 
 #include "agent.h"
+#include "base64/base64.h"
 #include "cJSON/cJSON.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
@@ -33,8 +34,7 @@ buffer_init_from_position(int64_t buf[], struct Position *pos)
 	 *
 	 * White king (8*2)
 	 * Black king (8*2)
-	 * Pawns? I think bitboards are fine. It should be simple
-	 * */
+	 * Pawns? I think bitboards are fine. It should be simple */
 	buf[2] = pos->bb[PIECE_TYPE_PAWN];
 	buf[3] = pos->bb[PIECE_TYPE_KNIGHT];
 	buf[4] = pos->bb[PIECE_TYPE_KING];
@@ -57,7 +57,6 @@ buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
 	cJSON *obj_buf_data = cJSON_GetObjectItem(obj, "data");
 	assert(obj_buf_width);
 	assert(obj_buf_data);
-	size_t buf_width = obj_buf_width->valuedouble;
 	char *buf_data = obj_buf_data->valuestring;
 	return b64_decode(buf_data, strlen(buf_data), buf) / sizeof(int64_t);
 }
@@ -65,7 +64,7 @@ buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
 cJSON *
 buffer_serialize_into_json(int64_t buf[], size_t width)
 {
-	char *buf_data = malloc(b64e_size(buf, width * sizeof(int64_t)));
+	char *buf_data = malloc(b64e_size(width * sizeof(int64_t)));
 	if (!buf_data) {
 		return NULL;
 	}
@@ -84,6 +83,9 @@ enum
 
 	AGENT_L1_WIDTH = 4096,
 	AGENT_L1_COMPRESSED_WIDTH = 64,
+
+	AGENT_L2_WIDTH = 320,
+	AGENT_L2_COMPRESSED_WIDTH = 5,
 
 	AGENT_PAWN_MOVE_FEATURES_COUNT = 8 * 4,
 	AGENT_KNIGHT_MOVE_FEATURES_COUNT = 2 * 8,
@@ -114,14 +116,37 @@ enum
  * - Floating point indicators. */
 struct Agent
 {
+	/* Input and output layers by rotation. */
 	int64_t layer_alpha[AGENT_COMPRESSED_WIDTH];
 	int64_t layer_bravo[AGENT_COMPRESSED_WIDTH];
+	/* Used for population count. */
 	int64_t buffer[AGENT_COMPRESSED_WIDTH];
 	int64_t weights_0_1[AGENT_L1_WIDTH][AGENT_L0_COMPRESSED_WIDTH];
+	int64_t weights_1_2[AGENT_L1_WIDTH][AGENT_L2_COMPRESSED_WIDTH];
+	int16_t biases_1[AGENT_L1_WIDTH];
+	int16_t biases_2[AGENT_L2_WIDTH];
 	/* Real-valued outputs. */
 	bool move_features[AGENT_MOVE_FEATURES_COUNT];
 	float indicators[AGENT_INDICATORS_COUNT];
 };
+
+void
+agent_randomly_init_heuristics(struct Agent *agent)
+{
+
+	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
+		agent->biases_1[i] = genrand64_int64() & 0xffff;
+		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
+			agent->weights_0_1[i][j] = genrand64_int64();
+		}
+	}
+	for (size_t i = 0; i < AGENT_L2_WIDTH; i++) {
+		agent->biases_2[i] = genrand64_int64() & 0xffff;
+		for (size_t j = 0; j < AGENT_L1_COMPRESSED_WIDTH; j++) {
+			agent->weights_1_2[i][j] = genrand64_int64();
+		}
+	}
+}
 
 struct Agent *
 agent_new(void)
@@ -129,46 +154,33 @@ agent_new(void)
 	struct Agent *agent = malloc(sizeof(struct Agent));
 	if (agent) {
 		memset(agent, 0, sizeof(struct Agent));
-		agent_randomly_init_weights(agent);
+		agent_randomly_init_heuristics(agent);
 	}
 	return agent;
 }
 
 void
-agent_randomly_init_weights(struct Agent *agent)
-{
-
-	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
-		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
-			agent->weights_0_1[i][j] = genrand64_int64();
-		}
-	}
-}
-
-void
-agent_feedforward(struct Agent *agent,
-                  struct Engine *engine,
-                  int64_t *weights,
-                  size_t width_in,
-                  size_t width_out)
+agent_feedforward(struct Agent *agent, struct Engine *engine)
 {
 	size_t out_i = 0;
 	uint64_t out_mask = 1;
-	for (size_t i = 0; i < width_out * 64; i++) {
+	/* Starts at layer Alpha. */
+	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
 		ENGINE_DEBUGF(engine, "[TRACE] Now feeding neuron (%zu).\n", i);
 		/* We now collect all incoming signals to this neuron. */
-		for (size_t j = 0; j < width_in; j++) {
+		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
 			/* Brutally parallel solution. TODO: explore Four Russian's method and
 			 * similar optimizations? */
-			agent->buffer[j] = agent->layer_alpha[j] & weights[i * j];
+			agent->buffer[j] = agent->layer_alpha[j] & agent->weights_0_1[i][j];
 		}
 		/* The activation point is fixed at half the number of incoming connections. */
-		size_t popcount = popcnt(agent->buffer, width_in * sizeof(int64_t));
+		long popcount = popcnt(agent->buffer, AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t)) +
+		                agent->biases_1[i];
 		ENGINE_DEBUGF(engine,
-		              "[TRACE] The population count for the (%zu)th neuron is (%zu).\n",
+		              "[TRACE] The population count for the (%zu)th neuron is (%ld).\n",
 		              i,
 		              popcount);
-		if (popcount > width_in * 32) {
+		if (popcount > AGENT_L0_WIDTH / 4) {
 			agent->layer_bravo[out_i] |= out_mask;
 			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
 		} else {
@@ -186,19 +198,16 @@ engine_start_search(struct Engine *engine)
 {
 	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
 	/* The first step is to evaluate the position with the neural network. */
-	buffer_init_from_position(&engine->agent->layer_alpha, &engine->position);
-	agent_feedforward(engine->agent,
-	                  engine,
-	                  &engine->agent->weights_0_1[0][0],
-	                  AGENT_L0_WIDTH,
-	                  AGENT_L1_WIDTH);
+	buffer_init_from_position(engine->agent->layer_alpha, &engine->position);
+	agent_feedforward(engine->agent, engine);
 	float centipawns = engine->agent->indicators[INDICATOR_COLOR_WHITE] -
 	                   engine->agent->indicators[INDICATOR_COLOR_BLACK];
 	/* Now pick any of the suggested moves. In Z64C there is no best move found in the
 	 * evaluation, only candidate moves. Moves are suggested by  square: */
-	char buf[6] = { '\0' };
+	char buf[MOVE_STRING_MAX_LENGTH + 1] = { '\0' };
 	struct Move moves[MAX_MOVES] = { 0 };
 	size_t count = gen_legal_moves(moves, &engine->position);
+	ENGINE_DEBUGF(engine, "[TRACE] There are %zu legal moves.\n", count);
 	move_to_string(moves[genrand64_int64() % count], buf);
 	/* TODO: Hide print behind protocol-specific logic. */
 	printf("info score cp %f\n", centipawns);
