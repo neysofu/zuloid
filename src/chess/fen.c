@@ -120,10 +120,12 @@ position_init_from_fen_fields(struct Position *pos, char **fieldsptr)
 		Rank rank = char_to_rank(token[1]);
 		pos->en_passant_target = square_new(file, rank);
 	}
-	token = fieldsptr[4];
-	pos->reversible_moves_count = strtol(token, NULL, 10);
-	token = fieldsptr[5];
-	pos->moves_count = strtol(token, NULL, 10);
+	if ((token = fieldsptr[4])) {
+		pos->reversible_moves_count = strtol(token, NULL, 10);
+	}
+	if ((token = fieldsptr[5])) {
+		pos->moves_count = strtol(token, NULL, 10);
+	}
 	return ERR_CODE_NONE;
 }
 

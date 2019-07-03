@@ -172,7 +172,12 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 		for (size_t i = 0; i < 6; i++) {
 			token = strtok_whitespace(NULL);
 			if (!token) {
-				return;
+				if (i >= 4) {
+					break;
+				} else {
+					ENGINE_DEBUGF(engine, "[ERROR] Not enough tokens in the FEN string.\n");
+					return;
+				}
 			}
 			fen_fields[i] = token;
 		}
