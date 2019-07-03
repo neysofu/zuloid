@@ -39,8 +39,8 @@ gen_pawn_moves(struct Move moves[],
 	struct Move *ptr = moves;
 	Bitboard single_pushes =
 	  (side_to_move == COLOR_WHITE ? sources << 1 : sources >> 1) & ~all;
-	Bitboard double_pushes = 0;
-	//  (side_to_move ? (single_pushes &) << 1 : single_pushes >> 1) & ~all;
+	Bitboard double_pushes =
+	  (side_to_move == COLOR_WHITE ? single_pushes << 1 : single_pushes >> 1) & ~all;
 	Bitboard captures_a = sources & ~file_to_bb(0);
 	Bitboard captures_h = sources & ~file_to_bb(7);
 	Square square;
