@@ -51,9 +51,10 @@ gen_pseudolegal_moves(struct Move moves[], struct Position *pos);
 size_t
 gen_legal_moves(struct Move moves[], struct Position *pos);
 size_t
-gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims);
-size_t
-gen_checks_to(struct Move moves[], struct Position *pos, enum Color color);
+gen_attacks_against_from(struct Move moves[],
+                         struct Position *pos,
+                         Bitboard victims,
+                         enum Color attacker);
 bool
 position_is_illegal(struct Position *pos);
 bool

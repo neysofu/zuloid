@@ -24,6 +24,10 @@ extern void
 test_jsonrpc_compliance(void);
 extern void
 test_piece_to_char(void);
+extern void
+test_position_is_illegal(void);
+extern void
+test_position_is_legal(void);
 
 int
 main(void)
@@ -39,5 +43,7 @@ main(void)
 	RUN_TEST(test_file_to_char);
 	RUN_TEST(test_jsonrpc_compliance);
 	RUN_TEST(test_piece_to_char);
+	RUN_TEST(test_position_is_illegal);
+	RUN_TEST(test_position_is_legal);
 	return UNITY_END();
 }

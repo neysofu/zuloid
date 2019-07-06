@@ -300,11 +300,7 @@ bb_print(Bitboard value)
 {
 	for (int rank = 7; rank >= 0; rank--) {
 		for (int file = 0; file < 8; file++) {
-			if (value & BIT(RF(rank, file))) {
-				putchar('X');
-			} else {
-				putchar('.');
-			}
+			putchar(value & square_to_bb(square_new(file, rank)) ? 'X' : '.');
 		}
 		putchar('\n');
 	}

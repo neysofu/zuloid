@@ -29,10 +29,13 @@
 	(m)->promotion = 0;                                                                    \
 	(m)++;
 
+/* Generates all pseudolegal moves by pawns located on 'sources' to 'targets' target
+ * squares. 'all' gives information regarding piece occupancy for determining pawn pushes
+ * and captures. Finally, 'side_to_move' determines in which direction pawn moves happen. */
 size_t
 gen_pawn_moves(struct Move moves[],
                Bitboard sources,
-               Bitboard mask,
+               Bitboard targets,
                Bitboard all,
                enum Color side_to_move)
 {
@@ -40,7 +43,9 @@ gen_pawn_moves(struct Move moves[],
 	Bitboard single_pushes =
 	  (side_to_move == COLOR_WHITE ? sources << 1 : sources >> 1) & ~all;
 	Bitboard double_pushes =
-	  (side_to_move == COLOR_WHITE ? single_pushes << 1 : single_pushes >> 1) & ~all;
+	  (side_to_move == COLOR_WHITE ? single_pushes << 1 : single_pushes >> 1) & ~all &
+	  targets;
+	single_pushes &= targets;
 	Bitboard captures_a = sources & ~file_to_bb(0);
 	Bitboard captures_h = sources & ~file_to_bb(7);
 	Square square;
@@ -48,8 +53,8 @@ gen_pawn_moves(struct Move moves[],
 		case COLOR_WHITE:
 			captures_a >>= 7;
 			captures_h <<= 7;
-			captures_a &= mask;
-			captures_h &= mask;
+			captures_a &= targets & all;
+			captures_h &= targets & all;
 			while (single_pushes) {
 				POP_LSB(square, single_pushes);
 				EMIT_MOVE(moves, square - 1, square);
@@ -70,8 +75,8 @@ gen_pawn_moves(struct Move moves[],
 		case COLOR_BLACK:
 			captures_a <<= 7;
 			captures_h >>= 7;
-			captures_a &= mask;
-			captures_h &= mask;
+			captures_a &= targets & all;
+			captures_h &= targets & all;
 			while (single_pushes) {
 				POP_LSB(square, single_pushes);
 				EMIT_MOVE(moves, square + 1, square);
@@ -201,48 +206,15 @@ gen_king_castles(struct Move moves[], struct Position *pos)
 }
 
 size_t
-gen_pseudolegal_moves(struct Move moves[], struct Position *pos)
-{
-	return gen_attacks_against(moves, pos, ~pos->bb[pos->side_to_move]);
-}
-
-bool
-position_is_illegal(struct Position *pos)
-{
-	struct Move moves[MAX_MOVES];
-	return gen_checks_to(moves, pos, pos->side_to_move);
-}
-
-size_t
-gen_legal_moves(struct Move moves[], struct Position *pos)
-{
-	return gen_pseudolegal_moves(moves, pos);
-	// struct Move *ptr = moves;
-	// struct Move temp[MAX_MOVES];
-	// size_t count = gen_pseudolegal_moves(temp, pos);
-	// for (size_t i = 0; i < count; i++) {
-	//	struct Move *move = temp + i;
-	//	position_do_move(pos, move);
-	//	position_flip_side_to_move(pos);
-	//	if (!position_is_illegal(pos)) {
-	//		memcpy(moves++, move, sizeof(struct Move));
-	//	}
-	//	position_flip_side_to_move(pos);
-	//	position_undo_move(pos, move);
-	//}
-	// return moves - ptr;
-}
-
-size_t
-gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims)
+gen_attacks_against_from(struct Move moves[],
+                         struct Position *pos,
+                         Bitboard victims,
+                         enum Color attacker)
 {
 	struct Move *ptr = moves;
-	Bitboard pieces = pos->bb[pos->side_to_move];
-	moves += gen_pawn_moves(moves,
-	                        pieces & pos->bb[PIECE_TYPE_PAWN],
-	                        victims & pos->bb[color_other(pos->side_to_move)],
-	                        position_occupancy(pos),
-	                        pos->side_to_move);
+	Bitboard pieces = pos->bb[attacker];
+	moves += gen_pawn_moves(
+	  moves, pieces & pos->bb[PIECE_TYPE_PAWN], victims, position_occupancy(pos), attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(
 	  moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
@@ -254,9 +226,39 @@ gen_attacks_against(struct Move moves[], struct Position *pos, Bitboard victims)
 }
 
 size_t
-gen_checks_to(struct Move moves[], struct Position *pos, enum Color color)
+gen_pseudolegal_moves(struct Move moves[], struct Position *pos)
 {
-	return gen_attacks_against(moves, pos, pos->bb[color] & pos->bb[PIECE_TYPE_KING]);
+	return gen_attacks_against_from(
+	  moves, pos, ~pos->bb[pos->side_to_move], pos->side_to_move);
+}
+
+bool
+position_is_illegal(struct Position *pos)
+{
+	struct Move moves[MAX_MOVES];
+	return gen_attacks_against_from(moves,
+	                                pos,
+	                                pos->bb[pos->side_to_move] & pos->bb[PIECE_TYPE_KING],
+	                                color_other(pos->side_to_move));
+}
+
+size_t
+gen_legal_moves(struct Move moves[], struct Position *pos)
+{
+	int i = 0;
+	int j = gen_pseudolegal_moves(moves, pos) - 1;
+	while (i <= j) {
+		struct Move move = moves[i];
+		position_do_move(pos, &move);
+		char buf[6];
+		move_to_string(move, buf);
+		if (position_is_illegal(pos)) {
+			moves[i] = moves[j--];
+		}
+		position_undo_move(pos, &move);
+		i++;
+	}
+	return i;
 }
 
 // size_t

@@ -77,4 +77,7 @@ file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable (Z64C_TEST "${TEST_FILES}")
 target_include_directories (Z64C_LIB SYSTEM PRIVATE "${LIB_DIR}")
 target_link_libraries (Z64C_TEST Z64C_LIB UNITY)
+target_compile_definitions (Z64C_TEST PRIVATE
+    TEST_RESOURCES=\"${TEST_DIR}/resources/\"
+    PROJECT_VERSION=\"${PROJECT_VERSION}\")
 add_test (NAME Z64C COMMAND Z64C_TEST)

@@ -50,6 +50,19 @@ position_do_move(struct Position *pos, struct Move *mv)
 	  pos, mv->target, position_piece_at_square(pos, mv->source));
 	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
 	/* TODO: Castling, en passant. */
+}
+
+void
+position_do_move_and_flip(struct Position *pos, struct Move *mv)
+{
+	position_do_move(pos, mv);
+	position_flip_side_to_move(pos);
+}
+
+void
+position_undo_move_and_flip(struct Position *pos, const struct Move *mv)
+{
+	position_undo_move(pos, mv);
 	position_flip_side_to_move(pos);
 }
 
@@ -61,7 +74,6 @@ position_undo_move(struct Position *pos, const struct Move *mv)
 	position_set_piece_at_square(
 	  pos, mv->target, (struct Piece){ .type = mv->capture, .color = pos->side_to_move });
 	/* TODO: Castling, en passant. */
-	position_flip_side_to_move(pos);
 }
 
 int

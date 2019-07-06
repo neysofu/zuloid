@@ -36,9 +36,13 @@ position_check_pseudolegality(struct Position *pos, struct Move *mv);
 
 void
 position_do_move(struct Position *pos, struct Move *mv);
+void
+position_do_move_and_flip(struct Position *pos, struct Move *mv);
 
 void
 position_undo_move(struct Position *pos, const struct Move *mv);
+void
+position_undo_move_and_flip(struct Position *pos, const struct Move *mv);
 
 int
 move_file_diff(struct Move *mv);

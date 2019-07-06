@@ -111,7 +111,7 @@ engine_uci_call_legalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
 	/* FIXME */
-	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	size_t count = gen_legal_moves(moves, &engine->position);
 	printf("%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
