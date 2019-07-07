@@ -286,3 +286,23 @@ position_is_stalemate(struct Position *pos)
 	struct Move moves[MAX_MOVES];
 	return gen_legal_moves(pos, moves) == 0;
 }
+
+size_t
+position_perft(struct Position *pos, size_t depth)
+{
+	struct Move moves[MAX_MOVES];
+	if (depth == 1) {
+		return gen_legal_moves(moves, pos);
+	} else if (depth == 0) {
+		return 1;
+	} else {
+		size_t moves_count = gen_legal_moves(moves, pos);
+		size_t ret = 0;
+		for (size_t i = moves_count; i > 0; i--) {
+			position_do_move_and_flip(pos, &moves[i]);
+			ret += position_perft(pos, depth - 1);
+			position_undo_move_and_flip(pos, &moves[i]);
+		}
+		return ret;
+	}
+}
