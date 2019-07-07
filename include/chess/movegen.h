@@ -60,4 +60,7 @@ position_is_illegal(struct Position *pos);
 bool
 position_is_stalemate(struct Position *pos);
 
+size_t
+position_perft(struct Position *pos, size_t depth);
+
 #endif
