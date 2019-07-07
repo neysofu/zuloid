@@ -17,8 +17,6 @@
 	b = MSB(x);                                                                            \
 	x &= ~BIT(b);
 
-typedef unsigned long long bb;
-
 extern Bitboard BB_KNIGHT[64];
 extern Bitboard BB_KING[64];
 
@@ -61,10 +59,10 @@ Bitboard
 bb_random();
 
 Bitboard
-bb_bishop(int sq, bb obstacles);
+bb_bishop(int sq, Bitboard obstacles);
 Bitboard
-bb_rook(int sq, bb obstacles);
+bb_rook(int sq, Bitboard obstacles);
 Bitboard
-bb_queen(int sq, bb obstacles);
+bb_queen(int sq, Bitboard obstacles);
 
 #endif

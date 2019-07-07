@@ -100,7 +100,7 @@ Bitboard HASH_EP[8];
 Bitboard HASH_COLOR;
 
 int
-bb_squares(bb value, int squares[64])
+bb_squares(Bitboard value, int squares[64])
 {
 	int i = 0;
 	int sq;
@@ -112,13 +112,13 @@ bb_squares(bb value, int squares[64])
 }
 
 Bitboard
-bb_slide(int sq, int truncate, bb obstacles, int directions[4][2])
+bb_slide(int sq, int truncate, Bitboard obstacles, int directions[4][2])
 {
-	bb value = 0;
+	Bitboard value = 0;
 	int rank = sq / 8;
 	int file = sq % 8;
 	for (int i = 0; i < 4; i++) {
-		bb previous = 0;
+		Bitboard previous = 0;
 		for (int n = 1; n < 9; n++) {
 			int r = rank + directions[i][0] * n;
 			int f = file + directions[i][1] * n;
@@ -128,7 +128,7 @@ bb_slide(int sq, int truncate, bb obstacles, int directions[4][2])
 				}
 				break;
 			}
-			bb bit = BIT(RF(r, f));
+			Bitboard bit = BIT(RF(r, f));
 			value |= bit;
 			if (bit & obstacles) {
 				break;
@@ -140,14 +140,14 @@ bb_slide(int sq, int truncate, bb obstacles, int directions[4][2])
 }
 
 Bitboard
-bb_slide_rook(int sq, int truncate, bb obstacles)
+bb_slide_rook(int sq, int truncate, Bitboard obstacles)
 {
 	int directions[4][2] = { { -1, 0 }, { 1, 0 }, { 0, -1 }, { 0, 1 } };
 	return bb_slide(sq, truncate, obstacles, directions);
 }
 
 Bitboard
-bb_slide_bishop(int sq, int truncate, bb obstacles)
+bb_slide_bishop(int sq, int truncate, Bitboard obstacles)
 {
 	int directions[4][2] = { { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 } };
 	return bb_slide(sq, truncate, obstacles, directions);
@@ -186,7 +186,7 @@ bb_init(void)
 	};
 	for (int rank = 0; rank < 8; rank++) {
 		for (int file = 0; file < 8; file++) {
-			bb value = 0;
+			Bitboard value = 0;
 			for (int i = 0; i < 8; i++) {
 				int r = rank + king_offsets[i][0];
 				int f = file + king_offsets[i][1];
@@ -207,15 +207,15 @@ bb_init(void)
 		int count = bb_squares(BB_BISHOP_6[sq], squares);
 		int n = 1 << count;
 		for (int i = 0; i < n; i++) {
-			bb obstacles = 0;
+			Bitboard obstacles = 0;
 			for (int j = 0; j < count; j++) {
 				if (i & (1 << j)) {
 					obstacles |= BIT(squares[j]);
 				}
 			}
-			bb value = bb_slide_bishop(sq, 0, obstacles);
+			Bitboard value = bb_slide_bishop(sq, 0, obstacles);
 			int index = (obstacles * MAGIC_BISHOP[sq]) >> SHIFT_BISHOP[sq];
-			bb previous = ATTACK_BISHOP[offset + index];
+			Bitboard previous = ATTACK_BISHOP[offset + index];
 			if (previous && previous != value) {
 				printf("ERROR: invalid ATTACK_BISHOP table\n");
 			}
@@ -231,15 +231,15 @@ bb_init(void)
 		int count = bb_squares(BB_ROOK_6[sq], squares);
 		int n = 1 << count;
 		for (int i = 0; i < n; i++) {
-			bb obstacles = 0;
+			Bitboard obstacles = 0;
 			for (int j = 0; j < count; j++) {
 				if (i & (1 << j)) {
 					obstacles |= BIT(squares[j]);
 				}
 			}
-			bb value = bb_slide_rook(sq, 0, obstacles);
+			Bitboard value = bb_slide_rook(sq, 0, obstacles);
 			int index = (obstacles * MAGIC_ROOK[sq]) >> SHIFT_ROOK[sq];
-			bb previous = ATTACK_ROOK[offset + index];
+			Bitboard previous = ATTACK_ROOK[offset + index];
 			if (previous && previous != value) {
 				printf("ERROR: invalid ATTACK_ROOK table\n");
 			}
@@ -274,23 +274,23 @@ bb_init(void)
 }
 
 Bitboard
-bb_bishop(int sq, bb obstacles)
+bb_bishop(int sq, Bitboard obstacles)
 {
-	bb value = obstacles & BB_BISHOP_6[sq];
+	Bitboard value = obstacles & BB_BISHOP_6[sq];
 	int index = (value * MAGIC_BISHOP[sq]) >> SHIFT_BISHOP[sq];
 	return ATTACK_BISHOP[index + OFFSET_BISHOP[sq]];
 }
 
 Bitboard
-bb_rook(int sq, bb obstacles)
+bb_rook(int sq, Bitboard obstacles)
 {
-	bb value = obstacles & BB_ROOK_6[sq];
+	Bitboard value = obstacles & BB_ROOK_6[sq];
 	int index = (value * MAGIC_ROOK[sq]) >> SHIFT_ROOK[sq];
 	return ATTACK_ROOK[index + OFFSET_ROOK[sq]];
 }
 
 Bitboard
-bb_queen(int sq, bb obstacles)
+bb_queen(int sq, Bitboard obstacles)
 {
 	return bb_bishop(sq, obstacles) | bb_rook(sq, obstacles);
 }
@@ -310,9 +310,9 @@ bb_print(Bitboard value)
 Bitboard
 bb_random(void)
 {
-	bb a = genrand64_int64() % 0x10000;
-	bb b = genrand64_int64() % 0x10000;
-	bb c = genrand64_int64() % 0x10000;
-	bb d = genrand64_int64() % 0x10000;
+	Bitboard a = genrand64_int64() % 0x10000;
+	Bitboard b = genrand64_int64() % 0x10000;
+	Bitboard c = genrand64_int64() % 0x10000;
+	Bitboard d = genrand64_int64() % 0x10000;
 	return a << 48 | b << 32 | c << 16 | d;
 }
