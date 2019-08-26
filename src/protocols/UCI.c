@@ -9,9 +9,11 @@
 
 #include "agent.h"
 #include "cache/cache.h"
+#include "chess/bb.h"
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
+#include "core.h"
 #include "engine.h"
 #include "globals.h"
 #include "utils.h"
@@ -20,6 +22,14 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+
+void
+engine_uci_call_eval(struct Engine *engine, char *cmd)
+{
+	printf("wmaterial %f\n", position_eval_color(&engine->position, COLOR_WHITE));
+	printf("bmaterial %f\n", position_eval_color(&engine->position, COLOR_BLACK));
+	printf("totmaterial %f\n", position_eval(&engine->position));
+}
 
 void
 engine_uci_call_go(struct Engine *engine, char *cmd)
@@ -193,7 +203,7 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
 		string_to_move(token, &mv);
-		position_do_move(&engine->position, &mv);
+		position_do_move_and_flip(&engine->position, &mv);
 	}
 }
 
@@ -326,6 +336,22 @@ engine_uci(struct Engine *engine, char *cmd)
 			/* TODO */
 			break;
 		/* ... and finally some custom commands for debugging. Unstable! */
+		case 0xf65cfd23d46bb592: /* "_bbbishop" */
+			bb_print(bb_bishop(atoi(strtok_whitespace(NULL)), 0));
+			break;
+		case 0x696062c20564a8f1: /* "_bbking" */
+			bb_print(BB_KING[atoi(strtok_whitespace(NULL))]);
+			break;
+		case 0xf11ac84fc0597028: /* "_bbknight" */
+			bb_print(BB_KNIGHT[atoi(strtok_whitespace(NULL))]);
+			break;
+		case 0xb674b56dfdfb11fc: /* "_bbrook" */
+			token = strtok_whitespace(NULL);
+			bb_print(bb_rook(atoi(token), atoi(strtok_whitespace(NULL))));
+			break;
+		case 0xb54897ad8727b265: /* "_eval" */
+			engine_uci_call_eval(engine, cmd);
+			break;
 		case 0xb0582e3fa59cef0a: /* "_islegal" */
 			engine_uci_call_islegal(engine, cmd);
 			break;
@@ -334,6 +360,9 @@ engine_uci(struct Engine *engine, char *cmd)
 			break;
 		case 0xf8137536e5c509a6: /* "_olia" (Open LIchess Analysis) */
 			engine_uci_call_openlichessanalysis(engine, cmd);
+			break;
+		case 0x887fbcafef04824d: /* "_perft" */
+			position_perft(&engine->position, atoi(strtok_whitespace(NULL)));
 			break;
 		case 0x54c29874021f8627: /* "_plm" (PseudoLegal Moves) */
 			engine_uci_call_pseudolegalmoves(engine, cmd);

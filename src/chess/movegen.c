@@ -19,6 +19,7 @@
 #include "chess/movegen.h"
 #include "chess/bb.h"
 #include "chess/color.h"
+#include "globals.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -44,7 +45,7 @@ gen_pawn_moves(struct Move moves[],
 	  (side_to_move == COLOR_WHITE ? sources << 1 : sources >> 1) & ~all;
 	Bitboard double_pushes =
 	  (side_to_move == COLOR_WHITE ? single_pushes << 1 : single_pushes >> 1) & ~all &
-	  targets;
+	  targets & rank_to_bb(color_double_push_rank(side_to_move));
 	single_pushes &= targets;
 	Bitboard captures_a = sources & ~file_to_bb(0);
 	Bitboard captures_h = sources & ~file_to_bb(7);
@@ -284,25 +285,62 @@ bool
 position_is_stalemate(struct Position *pos)
 {
 	struct Move moves[MAX_MOVES];
-	return gen_legal_moves(pos, moves) == 0;
+	return gen_legal_moves(moves, pos) == 0;
+}
+
+size_t
+position_perft_inner(struct Position *pos, size_t depth)
+{
+	assert(depth >= 1);
+	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
+	size_t moves_count_by_move[MAX_MOVES] = { 0 };
+	size_t total_moves_count = gen_legal_moves(moves, pos);
+	size_t result = 0;
+	if (depth == 1) {
+		result = total_moves_count;
+	} else {
+		for (size_t i = 0; i < total_moves_count; i++) {
+			moves_count_by_move[i] = position_perft_inner(pos, depth - 1);
+			result += moves_count_by_move[i];
+		}
+	}
+	free(moves);
+	return result;
 }
 
 size_t
 position_perft(struct Position *pos, size_t depth)
 {
-	struct Move moves[MAX_MOVES];
-	if (depth == 1) {
-		return gen_legal_moves(moves, pos);
-	} else if (depth == 0) {
+	if (depth == 0) {
+		printf("1\n");
 		return 1;
+	} else if (depth > MAX_DEPTH) {
+		printf("<depth limit exceeded>\n");
+		return 0;
+	}
+	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
+	size_t moves_count_by_move[MAX_MOVES];
+	for (size_t i = 0; i < MAX_MOVES; moves_count_by_move[i++] = 1)
+		;
+	size_t root_moves_count = gen_legal_moves(moves, pos);
+	size_t result = 0;
+	if (depth == 1) {
+		result = root_moves_count;
 	} else {
-		size_t moves_count = gen_legal_moves(moves, pos);
-		size_t ret = 0;
-		for (size_t i = moves_count; i > 0; i--) {
+		for (size_t i = 0; i < root_moves_count; i++) {
 			position_do_move_and_flip(pos, &moves[i]);
-			ret += position_perft(pos, depth - 1);
+			moves_count_by_move[i] = position_perft_inner(pos, depth - 1);
+			result += moves_count_by_move[i];
 			position_undo_move_and_flip(pos, &moves[i]);
 		}
-		return ret;
 	}
+	/* Print user-friendly report for debugging. */
+	char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
+	printf("%zu\n", result);
+	for (size_t i = 0; i < root_moves_count; i++) {
+		move_to_string(moves[i], mv_as_str);
+		printf("%s\t%zu\n", mv_as_str, moves_count_by_move[i]);
+	}
+	free(moves);
+	return result;
 }

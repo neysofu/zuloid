@@ -20,4 +20,6 @@ extern const char *const Z64C_BACKEND_NAME;
 /* Software versioning as in MAJOR.MINOR.PATCH. */
 extern const char *const Z64C_VERSION;
 
+#define MAX_DEPTH 20
+
 #endif

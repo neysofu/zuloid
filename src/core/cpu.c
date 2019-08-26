@@ -7,6 +7,7 @@
 #include "cJSON/cJSON.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
+#include "core.h"
 #include "engine.h"
 #include "eval.h"
 #include "libpopcnt/libpopcnt.h"
@@ -17,37 +18,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-
-void
-buffer_init_from_position(int64_t buf[], struct Position *pos)
-{
-	File ep_file = square_file(pos->en_passant_target);
-	int ep_feature = ep_file == FILE_NONE ? 0 : 1 << ep_file;
-	buf[0] = pos->bb[COLOR_WHITE];
-	buf[1] = pos->bb[COLOR_BLACK];
-	/* The input features must perfectly locate each piece. Maybe 8*8 features per piece,
-	 * showing where it is. I absolutely want to reduce the search space to a minimum.
-	 *
-	 * But then I also to reuse board evaluation...  How do I do that? Basically I should
-	 * engineer the network so that it always first evaluates the board, then it applies a
-	 * move. The move can also be null though.
-	 *
-	 * White king (8*2)
-	 * Black king (8*2)
-	 * Pawns? I think bitboards are fine. It should be simple */
-	buf[2] = pos->bb[PIECE_TYPE_PAWN];
-	buf[3] = pos->bb[PIECE_TYPE_KNIGHT];
-	buf[4] = pos->bb[PIECE_TYPE_KING];
-	buf[5] = pos->bb[PIECE_TYPE_ROOK];
-	buf[6] = pos->bb[PIECE_TYPE_BISHOP];
-	if (pos->reversible_moves_count < 50) {
-		buf[10] = (1 << pos->reversible_moves_count) - 1;
-	} else {
-		buf[10] = ~0;
-	}
-	buf[11] = pos->side_to_move | (color_other(pos->side_to_move) << 1) |
-	          (pos->castling_rights << 2) | (ep_feature << 6);
-}
 
 size_t
 buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
@@ -76,7 +46,7 @@ buffer_serialize_into_json(int64_t buf[], size_t width)
 
 enum
 {
-	AGENT_COMPRESSED_WIDTH = 128,
+	AGENT_BUF_WIDTH = 128,
 
 	AGENT_L0_WIDTH = 1024,
 	AGENT_L0_COMPRESSED_WIDTH = 16,
@@ -104,114 +74,154 @@ enum
 	INDICATOR_SHARPNESS = 3,
 };
 
-/* TODO: Training via simple error backpropagation. Then I should try a very simple network
- * that rewards capture.
- *
- * Neuron model: each neuron takes in inputs from the previous layer (most likely through a
- * filter) and outputs a single bit via population count threshold.
- *
- * The output layer has no bitboards. That would require much more learning for no advantage
- * at all. Also, the output layer should NOT be in bits but rather in bytes.
- * - Piece placement.
- * - Floating point indicators. */
+///* TODO: Training via simple error backpropagation. Then I should try a very simple
+/// network
+// * that rewards capture.
+// *
+// * Neuron model: each neuron takes in inputs from the previous layer (most likely through
+// a
+// * filter) and outputs a single bit via population count threshold - then some are
+// inverted.
+// *
+// * The output layer has no bitboards. That would require much more learning for no
+// advantage
+// * at all. Also, the output layer should NOT be in bits but rather in bytes.
+// * - Piece placement.
+// * - Floating point indicators.
+// *
+// *
+// * Board2Vec:
+// * Builds a through understanding of chess rules by the network by creating a neural
+// * embedding of boards. The input layer is a bitboard-based binarized encoding of the
+// board.
+// * */
 struct Agent
 {
+	int64_t buf_popcnt[AGENT_BUF_WIDTH];
 	/* Input and output layers by rotation. */
-	int64_t layer_alpha[AGENT_COMPRESSED_WIDTH];
-	int64_t layer_bravo[AGENT_COMPRESSED_WIDTH];
-	/* Used for population count. */
-	int64_t buffer[AGENT_COMPRESSED_WIDTH];
+	int64_t buf_alpha[AGENT_BUF_WIDTH];
+	int64_t buf_bravo[AGENT_BUF_WIDTH];
+	/* Layers. */
+	int64_t filters_0[AGENT_L0_COMPRESSED_WIDTH];
 	int64_t weights_0_1[AGENT_L1_WIDTH][AGENT_L0_COMPRESSED_WIDTH];
-	int64_t weights_1_2[AGENT_L1_WIDTH][AGENT_L2_COMPRESSED_WIDTH];
-	int16_t biases_1[AGENT_L1_WIDTH];
-	int16_t biases_2[AGENT_L2_WIDTH];
-	/* Real-valued outputs. */
-	bool move_features[AGENT_MOVE_FEATURES_COUNT];
-	float indicators[AGENT_INDICATORS_COUNT];
+	int32_t thresholds_1[AGENT_L1_WIDTH];
+	int64_t inversions_1[AGENT_L1_COMPRESSED_WIDTH];
 };
-
-void
-agent_randomly_init_heuristics(struct Agent *agent)
-{
-
-	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
-		agent->biases_1[i] = genrand64_int64() & 0xffff;
-		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
-			agent->weights_0_1[i][j] = genrand64_int64();
-		}
-	}
-	for (size_t i = 0; i < AGENT_L2_WIDTH; i++) {
-		agent->biases_2[i] = genrand64_int64() & 0xffff;
-		for (size_t j = 0; j < AGENT_L1_COMPRESSED_WIDTH; j++) {
-			agent->weights_1_2[i][j] = genrand64_int64();
-		}
-	}
-}
-
+//
+// void
+// agent_randomly_init_heuristics(struct Agent *agent)
+//{
+//	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
+//		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
+//			agent->weights_0_1[i][j] = genrand64_int64();
+//		}
+//	}
+//	for (size_t i = 0; i < AGENT_L2_WIDTH; i++) {
+//		agent->biases_2[i] = genrand64_int64() & 0xffff;
+//		for (size_t j = 0; j < AGENT_L1_COMPRESSED_WIDTH; j++) {
+//			agent->weights_1_2[i][j] = genrand64_int64();
+//		}
+//	}
+//}
+//
 struct Agent *
 agent_new(void)
 {
 	struct Agent *agent = malloc(sizeof(struct Agent));
 	if (agent) {
 		memset(agent, 0, sizeof(struct Agent));
-		agent_randomly_init_heuristics(agent);
+		// agent_randomly_init_heuristics(agent);
 	}
 	return agent;
 }
+//
+// void
+// agent_predict(struct Agent *agent, struct Position *pos)
+//{
+//	/* Input layer evaluation. */
+//	agent->buf_popcnt[0] = pos->bb[0];
+//	size_t out_i = 0;
+//	uint64_t out_mask = 1;
+//	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
+//		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
+//			agent->buf_popcnt[j] = agent->layer_alpha[j] & agent->weights_0_1[i][j];
+//		}
+//		/* The activation point is fixed at half the number of incoming connections. */
+//		size_t popcount =
+//		  popcnt(agent->buffer, AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t));
+//		if (popcount > AGENT_L0_WIDTH / 4) {
+//			agent->layer_bravo[out_i] |= out_mask;
+//			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
+//		} else {
+//			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
+//		}
+//		if (!(out_mask <<= 1)) {
+//			out_mask = 0x1ULL << 63;
+//			out_i++;
+//		}
+//	}
+//}
 
-void
-agent_feedforward(struct Agent *agent, struct Engine *engine)
+float
+position_eval_color(struct Position *pos, enum Color side)
 {
-	size_t out_i = 0;
-	uint64_t out_mask = 1;
-	/* Starts at layer Alpha. */
-	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
-		ENGINE_DEBUGF(engine, "[TRACE] Now feeding neuron (%zu).\n", i);
-		/* We now collect all incoming signals to this neuron. */
-		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
-			/* Brutally parallel solution. TODO: explore Four Russian's method and
-			 * similar optimizations? */
-			agent->buffer[j] = agent->layer_alpha[j] & agent->weights_0_1[i][j];
-		}
-		/* The activation point is fixed at half the number of incoming connections. */
-		long popcount = popcnt(agent->buffer, AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t)) +
-		                agent->biases_1[i];
-		ENGINE_DEBUGF(engine,
-		              "[TRACE] The population count for the (%zu)th neuron is (%ld).\n",
-		              i,
-		              popcount);
-		if (popcount > AGENT_L0_WIDTH / 4) {
-			agent->layer_bravo[out_i] |= out_mask;
-			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
-		} else {
-			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
-		}
-		if (!(out_mask <<= 1)) {
-			out_mask = 0x1ULL << 63;
-			out_i++;
-		}
-	}
+	return popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_PAWN]) +
+	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KNIGHT]) * 3 +
+	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_BISHOP]) * 3.2 +
+	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_ROOK]) * 5;
 }
+
+float
+position_eval(struct Position *pos)
+{
+	return (position_eval_color(pos, COLOR_WHITE) - position_eval_color(pos, COLOR_BLACK)) *
+	       100;
+}
+
+struct SearchResults
+{
+	struct Move best_move;
+	struct Move ponder_move;
+	float centipawns;
+};
 
 void
 engine_start_search(struct Engine *engine)
 {
-	ENGINE_DEBUGF(engine, "[INFO] Now searching...\n");
+	ENGINE_DEBUGF(engine, "[DEBUG] Search has started.\n");
 	/* The first step is to evaluate the position with the neural network. */
-	buffer_init_from_position(engine->agent->layer_alpha, &engine->position);
-	agent_feedforward(engine->agent, engine);
-	float centipawns = engine->agent->indicators[INDICATOR_COLOR_WHITE] -
-	                   engine->agent->indicators[INDICATOR_COLOR_BLACK];
 	/* Now pick any of the suggested moves. In Z64C there is no best move found in the
 	 * evaluation, only candidate moves. Moves are suggested by  square: */
-	char buf[MOVE_STRING_MAX_LENGTH + 1] = { '\0' };
+	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	struct Move moves[MAX_MOVES] = { 0 };
 	size_t count = gen_legal_moves(moves, &engine->position);
-	ENGINE_DEBUGF(engine, "[TRACE] There are %zu legal moves.\n", count);
-	move_to_string(moves[genrand64_int64() % count], buf);
-	/* TODO: Hide print behind protocol-specific logic. */
-	printf("info score cp %f\n", centipawns);
-	printf("bestmove %s\n", buf);
+	size_t best_i = count - 1;
+	// size_t best_centipawns = 0;
+	// int multiplier = engine->position.side_to_move == COLOR_WHITE ? +1 : -1;
+	// for (size_t i = count - 1; i > 0; i--) {
+	//	if ((engine->position.side_to_move == COLOR_WHITE &&
+	//	     position_eval(&engine->position) > best_centipawns) ||
+	//	    (engine->position.side_to_move == COLOR_WHITE &&
+	//	     position_eval(&engine->position) < best_centipawns)) {
+	//		best_i = i;
+	//		best_centipawns = position_eval(&engine->position);
+	//	}
+	//}
+	move_to_string(moves[best_i], buf);
+	switch (engine->protocol) {
+		case PROTOCOL_UCI:
+			printf("info depth score cp %f\n", position_eval(&engine->position));
+			printf("bestmove %s\n", buf);
+		default:
+			break;
+	}
+}
+
+struct Move
+engine_search_with_depth(struct Engine *engine)
+{
+	struct Move moves[MAX_MOVES] = { 0 };
+	size_t count = gen_legal_moves(moves, &engine->position);
 }
 
 void

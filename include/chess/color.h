@@ -30,6 +30,9 @@ color_pawn_rank(enum Color color);
 Rank
 color_en_passant_target_rank(enum Color color);
 
+Rank
+color_double_push_rank(enum Color color);
+
 enum Color
 color_other(enum Color color);
 

@@ -5,6 +5,8 @@
 #include "Unity/src/unity.h"
 
 extern void
+test_attacks(void);
+extern void
 test_cache_single_key_retrieval(void);
 extern void
 test_castling_mask(void);
@@ -33,6 +35,7 @@ int
 main(void)
 {
 	UNITY_BEGIN();
+	RUN_TEST(test_attacks);
 	RUN_TEST(test_cache_single_key_retrieval);
 	RUN_TEST(test_castling_mask);
 	RUN_TEST(test_char_to_file);

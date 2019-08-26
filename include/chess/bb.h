@@ -1,5 +1,5 @@
-#ifndef BB_H
-#define BB_H
+#ifndef Z64C_CHESS_BB_H
+#define Z64C_CHESS_BB_H
 
 #include "chess/coordinates.h"
 
@@ -19,50 +19,22 @@
 
 extern Bitboard BB_KNIGHT[64];
 extern Bitboard BB_KING[64];
-
-extern Bitboard BB_BISHOP_6[64];
-extern Bitboard BB_ROOK_6[64];
-
 extern const Bitboard MAGIC_BISHOP[64];
 extern const Bitboard MAGIC_ROOK[64];
 
-extern const int SHIFT_BISHOP[64];
-extern const int SHIFT_ROOK[64];
-
-extern int OFFSET_BISHOP[64];
-extern int OFFSET_ROOK[64];
-
 extern Bitboard ATTACK_BISHOP[5248];
-extern Bitboard ATTACK_ROOK[102400];
-
-extern Bitboard HASH_WHITE_PAWN[64];
-extern Bitboard HASH_BLACK_PAWN[64];
-extern Bitboard HASH_WHITE_KNIGHT[64];
-extern Bitboard HASH_BLACK_KNIGHT[64];
-extern Bitboard HASH_WHITE_BISHOP[64];
-extern Bitboard HASH_BLACK_BISHOP[64];
-extern Bitboard HASH_WHITE_ROOK[64];
-extern Bitboard HASH_BLACK_ROOK[64];
-extern Bitboard HASH_WHITE_QUEEN[64];
-extern Bitboard HASH_BLACK_QUEEN[64];
-extern Bitboard HASH_WHITE_KING[64];
-extern Bitboard HASH_BLACK_KING[64];
-extern Bitboard HASH_CASTLE[16];
-extern Bitboard HASH_EP[8];
-extern Bitboard HASH_COLOR;
+extern Bitboard ATTACK_ROOK[10240];
 
 void
-bb_init();
+bb_init(void);
 void
 bb_print(Bitboard value);
 Bitboard
 bb_random();
 
 Bitboard
-bb_bishop(int sq, Bitboard obstacles);
+bb_bishop(Square sq, Bitboard obstacles);
 Bitboard
-bb_rook(int sq, Bitboard obstacles);
-Bitboard
-bb_queen(int sq, Bitboard obstacles);
+bb_rook(Square sq, Bitboard obstacles);
 
 #endif

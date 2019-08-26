@@ -34,6 +34,12 @@ color_en_passant_target_rank(enum Color color)
 	return color ? 2 : 5;
 }
 
+Rank
+color_double_push_rank(enum Color color)
+{
+	return color ? 4 : 3;
+}
+
 enum Color
 color_other(enum Color color)
 {

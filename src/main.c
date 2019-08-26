@@ -13,12 +13,13 @@
 int
 main(void)
 {
+	/* Initialize all subsystems. */
 	p_libsys_init();
 	bb_init();
 	/* Let's make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
-	/* Now printing a welcome message for CLI users...
+	/* Now printing a welcome message for terminal users...
 	 * The number sign ensures minimal possibility of accidental evaluation and it just
 	 * happens to use the same syntax as CECP's debug messages. */
 	printf("# Z64C/%s %s (%s)\n", Z64C_BACKEND_NAME, Z64C_VERSION, Z64C_BUILD_DATE);
