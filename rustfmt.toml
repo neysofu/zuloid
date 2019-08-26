@@ -1,0 +1,3 @@
+# NB: only available on Nightly:
+#   $ cargo +nightly fmt
+wrap_comments = true
