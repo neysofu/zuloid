@@ -1,4 +1,7 @@
-build/
+# Rust
+/target/
+Cargo.lock
+**/*.rs.bk
 
 # PyTest stuff
 __pycache__/
@@ -57,12 +60,3 @@ __pycache__/
 *.su
 *.idb
 *.pdb
-
-# Kernel Module Compile Results
-*.mod*
-*.cmd
-.tmp_versions/
-modules.order
-Module.symvers
-Mkfile.old
-dkms.conf
