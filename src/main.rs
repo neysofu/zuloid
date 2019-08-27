@@ -1,8 +1,8 @@
+mod cache;
 mod chess;
 mod core;
 mod fen;
 mod globals;
-mod cache;
 mod time;
 
 use crate::core::Zorro;

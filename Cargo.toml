@@ -2,6 +2,7 @@
 name = "zorro"
 version = "2.0.0"
 authors = ["Filippo Costa <filippocosta.italy@gmail.com>"]
+build = "build.rs"
 edition = "2018"
 repository = "https://github.com/neysofu/Z64C"
 readme = "README.md"
@@ -11,3 +12,9 @@ publish = false
 [dependencies]
 enum-map = "0.6"
 enum-map-derive = "0.4"
+
+[dev-dependencies]
+semver = "0.9"
+
+[build-dependencies]
+chrono = "0.4.7"

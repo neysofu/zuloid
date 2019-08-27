@@ -20,6 +20,7 @@ impl Zorro {
             let line = line.unwrap();
             let mut tokens = line.split_whitespace();
             match tokens.next() {
+                Some("go") => self.search(),
                 Some("isready") => println!("readyok"),
                 Some("quit") => {
                     break;
@@ -33,6 +34,8 @@ impl Zorro {
             }
         }
     }
+
+    fn search(&mut self) {}
 }
 
 pub struct Config {
