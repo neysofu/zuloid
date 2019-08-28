@@ -10,8 +10,11 @@ license = "PROPRIETARY"
 publish = false
 
 [dependencies]
+bytesize = "1"
 enum-map = "0.6"
 enum-map-derive = "0.4"
+strum = "0.15.0"
+strum_macros = "0.15.0"
 
 [dev-dependencies]
 semver = "0.9"
