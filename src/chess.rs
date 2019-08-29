@@ -208,6 +208,7 @@ impl FromStr for Square {
 pub struct Board {
     bb_colors: EnumMap<Color, Bitboard>,
     bb_roles: EnumMap<Role, Bitboard>,
+    castling_rights: EnumMap<Color, EnumMap<CastlingSide, bool>>,
     color_to_move: Color,
     reversible_moves_count: usize,
 }
@@ -217,6 +218,7 @@ impl Board {
         Board {
             bb_colors: EnumMap::default(),
             bb_roles: EnumMap::default(),
+            castling_rights: EnumMap::default(),
             ..Default::default()
         }
     }
@@ -244,7 +246,7 @@ impl Board {
         }
     }
 
-    pub fn from_fen<S: AsRef<str>>(mut fields: impl Iterator<Item = S>) -> Self {
+    pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Self {
         let mut board = Board::empty();
         let piece_map_str = fields.next().unwrap();
         let piece_map_by_rank = piece_map_str.as_ref().split('/');
@@ -264,6 +266,25 @@ impl Board {
         }
         unimplemented!()
     }
+
+    pub fn set_at_square(&mut self, square: Square, piece: Option<Piece>) {
+        let bb = square.to_bb();
+        for color in Color::iter() {
+            self.bb_colors[color] &= !bb;
+        }
+        for role in Role::iter() {
+            self.bb_roles[role] &= !bb;
+        }
+        if let Some(piece) = piece {
+            self.bb_colors[piece.color] |= bb;
+            self.bb_roles[piece.role] |= bb;
+        }
+    }
+
+    pub fn do_move(&mut self, mv: &Move) {
+        self.set_at_square(mv.to, self.at(mv.from));
+        self.set_at_square(mv.from, None);
+    }
 }
 
 impl Default for Board {
@@ -278,21 +299,29 @@ impl Default for Board {
             | Square::from("b8").to_bb()
             | Square::from("g8").to_bb();
         bb_roles[Role::Bishop] = Square::from("c1").to_bb()
-            | Square::from("d1").to_bb()
             | Square::from("f1").to_bb()
             | Square::from("c8").to_bb()
-            | Square::from("d8").to_bb()
             | Square::from("f8").to_bb();
         bb_roles[Role::Rook] = Square::from("a1").to_bb()
-            | Square::from("d1").to_bb()
             | Square::from("h1").to_bb()
             | Square::from("a8").to_bb()
-            | Square::from("d8").to_bb()
             | Square::from("h8").to_bb();
+        bb_roles[Role::Queen] = Square::from("d1").to_bb() | Square::from("d8").to_bb();
         bb_roles[Role::King] = Square::from("e1").to_bb() | Square::from("e8").to_bb();
+        let castling_rights = enum_map! {
+            Color::White => enum_map! {
+                CastlingSide::King => true,
+                CastlingSide::Queen => true,
+            },
+            Color::Black => enum_map! {
+                CastlingSide::King => true,
+                CastlingSide::Queen => true,
+            },
+        };
         Board {
             bb_colors,
             bb_roles,
+            castling_rights,
             color_to_move: Color::White,
             reversible_moves_count: 0,
         }
@@ -342,12 +371,29 @@ impl fmt::Display for Board {
     }
 }
 
-pub struct Castling {
-    side: CastlingSide,
-    color: Color,
-}
-
+#[derive(Copy, Clone, Debug, Enum, EnumIter, PartialEq)]
 pub enum CastlingSide {
     King,
     Queen,
+}
+
+pub struct Move {
+    from: Square,
+    to: Square,
+    promotion: Option<Role>,
+}
+
+impl FromStr for Move {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        assert!(s.len() >= 4);
+        let from = Square::from_str(&s[0..2])?;
+        let to = Square::from_str(&s[2..4])?;
+        Ok(Move {
+            from,
+            to,
+            promotion: None,
+        })
+    }
 }

@@ -5,6 +5,7 @@ use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
 use std::io::{self, BufRead};
+use std::str::FromStr;
 
 #[derive(Default)]
 pub struct Zorro {
@@ -53,10 +54,16 @@ impl Zorro {
         match tokens.next() {
             Some("960") => unimplemented!(),
             Some("current") => (),
-            Some("fen") => self.board = Board::from_fen(tokens),
+            Some("fen") => self.board = Board::from_fen(&mut tokens),
             Some("startpos") => self.board = Board::default(),
             Some(token) => self.warn_unexpected_token(token),
             None => self.warn_expected_token(),
+        }
+        for token in tokens {
+            match Move::from_str(token) {
+                Ok(mv) => self.board.do_move(&mv),
+                Err(_) => (),
+            }
         }
     }
 
