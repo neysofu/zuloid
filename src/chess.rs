@@ -150,6 +150,9 @@ impl Rank {
     fn max() -> Self {
         Rank::from('8')
     }
+    fn min() -> Self {
+        Rank::from('1')
+    }
 }
 
 impl Coordinate for Rank {
@@ -181,6 +184,8 @@ impl From<Rank> for char {
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Square(File, Rank);
+
+pub const SQUARE_COUNT: usize = 64;
 
 impl Square {
     pub fn new(file: File, rank: Rank) -> Self {
@@ -262,7 +267,6 @@ impl Board {
         let piece_map_by_rank = piece_map_str.as_ref().split('/');
         let mut rank = Rank::max();
         for rank_piece_map in piece_map_by_rank {
-            rank.0 -= 1;
             let mut file = File::min();
             for c in rank_piece_map.chars() {
                 if let Some(digit) = c.to_digit(9) {
@@ -278,11 +282,16 @@ impl Board {
                     file.0 += 1;
                 }
             }
+            if rank == Rank::min() {
+                break;
+            } else {
+                rank.0 -= 1;
+            }
         }
         let color_to_move_str = fields.next().unwrap();
         board.color_to_move = Color::from(color_to_move_str.as_ref().chars().next().unwrap());
         board.castling_rights = CastlingRights::from_str(fields.next().unwrap().as_ref()).unwrap();
-        unimplemented!()
+        board
     }
 
     pub fn set_at_square(&mut self, square: Square, piece: Option<Piece>) {

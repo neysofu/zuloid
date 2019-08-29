@@ -1,18 +1,18 @@
 use std::boxed::Box;
-use std::time::Duration;
+use std::time::{Duration, Instant};
 
 pub struct TimeControl {
-    pub time_limit: Duration,
-    pub increment: Duration,
-    pub delay: Duration,
-    pub length: Option<usize>,
-    pub next: Option<Box<TimeControl>>,
-    /// After main time is expired, this optional time control will kick in. It
-    /// will kick in as soon as the current time is finished.
+    time_limit: Duration,
+    increment: Duration,
+    delay: Duration,
+    length: Option<usize>,
+    next: Option<Box<TimeControl>>,
+    /// After main time has expired, this optional time control will kick in
+    /// immediately.
     ///
-    /// I'm aware of many unorthodox time controls and this overtime method
-    /// supports quite a few of them, including byo-yomi and Canadian overtime.
-    pub overtime: Option<Box<TimeControl>>,
+    /// This overtime hack supports many unorthodox time controls, such as
+    /// byo-yomi and Canadian overtime.
+    overtime: Option<Box<TimeControl>>,
 }
 
 impl TimeControl {
@@ -22,6 +22,10 @@ impl TimeControl {
             increment: Duration::from_secs(increment as u64),
             ..Default::default()
         }
+    }
+
+    fn cumulative_time_limit(&self) -> Duration {
+        self.time_limit // TODO
     }
 }
 
@@ -34,6 +38,39 @@ impl Default for TimeControl {
             length: None,
             next: None,
             overtime: None,
+        }
+    }
+}
+
+pub struct Clock {
+    time_left: Duration,
+    ticking_since: Option<Instant>,
+    length_left: Option<usize>,
+    time_control: TimeControl,
+}
+
+impl Clock {
+    pub fn tick(&mut self) -> Duration {
+        assert!(self.ticking_since.is_none());
+        self.ticking_since = Some(Instant::now());
+        self.time_control.cumulative_time_limit()
+    }
+
+    pub fn tock(&mut self) {
+        let ticking_since = self.ticking_since.unwrap();
+        let now = Instant::now();
+        self.time_left -= now.duration_since(ticking_since);
+        self.time_left += self.time_control.increment;
+    }
+}
+
+impl From<TimeControl> for Clock {
+    fn from(tc: TimeControl) -> Self {
+        Clock {
+            time_left: tc.time_limit,
+            ticking_since: None,
+            length_left: tc.length,
+            time_control: tc,
         }
     }
 }
