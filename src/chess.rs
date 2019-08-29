@@ -13,6 +13,16 @@ pub enum Color {
     Black,
 }
 
+impl From<char> for Color {
+    fn from(c: char) -> Self {
+        match c.to_ascii_lowercase() {
+            'w' => Color::White,
+            'b' => Color::Black,
+            _ => panic!(),
+        }
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Piece {
     role: Role,
@@ -208,7 +218,7 @@ impl FromStr for Square {
 pub struct Board {
     bb_colors: EnumMap<Color, Bitboard>,
     bb_roles: EnumMap<Role, Bitboard>,
-    castling_rights: EnumMap<Color, EnumMap<CastlingSide, bool>>,
+    castling_rights: CastlingRights,
     color_to_move: Color,
     reversible_moves_count: usize,
 }
@@ -218,7 +228,7 @@ impl Board {
         Board {
             bb_colors: EnumMap::default(),
             bb_roles: EnumMap::default(),
-            castling_rights: EnumMap::default(),
+            castling_rights: CastlingRights::empty(),
             ..Default::default()
         }
     }
@@ -257,13 +267,21 @@ impl Board {
             for c in rank_piece_map.chars() {
                 if let Some(digit) = c.to_digit(9) {
                     for _ in 0..digit {
+                        let square = Square::new(file, rank);
+                        board.set_at_square(square, None);
                         file.0 += 1;
                     }
                 } else {
+                    let square = Square::new(file, rank);
+                    let piece = Piece::from(c);
+                    board.set_at_square(square, Some(piece));
                     file.0 += 1;
                 }
             }
         }
+        let color_to_move_str = fields.next().unwrap();
+        board.color_to_move = Color::from(color_to_move_str.as_ref().chars().next().unwrap());
+        board.castling_rights = CastlingRights::from_str(fields.next().unwrap().as_ref()).unwrap();
         unimplemented!()
     }
 
@@ -308,20 +326,10 @@ impl Default for Board {
             | Square::from("h8").to_bb();
         bb_roles[Role::Queen] = Square::from("d1").to_bb() | Square::from("d8").to_bb();
         bb_roles[Role::King] = Square::from("e1").to_bb() | Square::from("e8").to_bb();
-        let castling_rights = enum_map! {
-            Color::White => enum_map! {
-                CastlingSide::King => true,
-                CastlingSide::Queen => true,
-            },
-            Color::Black => enum_map! {
-                CastlingSide::King => true,
-                CastlingSide::Queen => true,
-            },
-        };
         Board {
             bb_colors,
             bb_roles,
-            castling_rights,
+            castling_rights: CastlingRights::default(),
             color_to_move: Color::White,
             reversible_moves_count: 0,
         }
@@ -395,5 +403,46 @@ impl FromStr for Move {
             to,
             promotion: None,
         })
+    }
+}
+
+pub struct CastlingRights(EnumMap<Color, EnumMap<CastlingSide, bool>>);
+
+impl CastlingRights {
+    pub fn empty() -> Self {
+        CastlingRights(EnumMap::default())
+    }
+}
+
+impl Default for CastlingRights {
+    fn default() -> Self {
+        CastlingRights(enum_map! {
+            Color::White => enum_map! {
+                CastlingSide::King => true,
+                CastlingSide::Queen => true,
+            },
+            Color::Black => enum_map! {
+                CastlingSide::King => true,
+                CastlingSide::Queen => true,
+            },
+        })
+    }
+}
+
+impl FromStr for CastlingRights {
+    type Err = ();
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        let mut castling_rights = CastlingRights::empty();
+        for c in s.chars() {
+            match c {
+                'K' => castling_rights.0[Color::White][CastlingSide::King] = true,
+                'k' => castling_rights.0[Color::Black][CastlingSide::King] = true,
+                'Q' => castling_rights.0[Color::White][CastlingSide::Queen] = true,
+                'q' => castling_rights.0[Color::Black][CastlingSide::Queen] = true,
+                _ => (),
+            }
+        }
+        Ok(castling_rights)
     }
 }

@@ -12,7 +12,6 @@ pub struct Zorro {
     config: Config,
     cache: Cache,
     board: Board,
-    history: Vec<Board>,
     time_controls: EnumMap<Color, TimeControl>,
 }
 
@@ -84,16 +83,16 @@ impl Zorro {
             // > like also the value.
             option_value.push_str(token.to_ascii_lowercase().as_str());
         }
-        // Option support is quite hairy and messy. I don't want to break pre-existing scripts
-        // and configs originally written for other engines.
+        // Option support is quite hairy and messy. I don't want to break pre-existing
+        // scripts and configs originally written for other engines.
         //
         // Please see:
         //  - https://komodochess.com/Komodo-11-README.html
         //  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
         //
-        // No worries in case the links above die, just search for a list of UCI settings for
-        // popular chess engines. I don't commit to 100% feature parity with any engine; I just
-        // try and use my better judgement.
+        // No worries in case the links above die, just search for a list of UCI
+        // settings for popular chess engines. I don't commit to 100% feature
+        // parity with any engine; I just try and use my better judgement.
         match option_name.as_str() {
             "hash" => {
                 let cache_size = ByteSize::mib(option_value.parse().unwrap());
