@@ -1,24 +1,24 @@
+use super::color::*;
+use super::coordinates::*;
+use super::piece::*;
 use crate::result::Error;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use super::color::*;
-use super::coordinates::*;
-use super::piece::*;
-use strum_macros::EnumIter;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
+use strum_macros::EnumIter;
 
 // BOARD LOGIC
 // -----------
 
 pub struct Board {
-    bb_colors: EnumMap<Color, Bitboard>,
-    bb_roles: EnumMap<Role, Bitboard>,
-    castling_rights: CastlingRights,
-    color_to_move: Color,
-    reversible_moves_count: usize,
+    pub bb_colors: EnumMap<Color, Bitboard>,
+    pub bb_roles: EnumMap<Role, Bitboard>,
+    pub castling_rights: CastlingRights,
+    pub color_to_move: Color,
+    pub reversible_moves_count: usize,
 }
 
 impl Board {
@@ -101,7 +101,7 @@ impl Board {
         }
     }
 
-    pub fn do_move(&mut self, mv: &Move) {
+    pub fn do_move(&mut self, mv: Move) {
         self.set_at_square(mv.to, self.at(mv.from));
         self.set_at_square(mv.from, None);
     }

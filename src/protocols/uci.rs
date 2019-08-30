@@ -52,7 +52,7 @@ fn uci_position<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>
     }
     for token in tokens {
         match Move::from_str(token) {
-            Ok(mv) => zorro.board.do_move(&mv),
+            Ok(mv) => zorro.board.do_move(mv),
             Err(e) => print_err(e),
         }
     }

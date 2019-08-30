@@ -26,7 +26,12 @@ impl<'t> Iterator for MoveGenerator<'t> {
     type Item = Move;
 
     fn next(&mut self) -> Option<Self::Item> {
+        let attacker = self.board.color_to_move;
         self.moves_count += self.gen_pawns();
+        self.moves_count += self.gen_knights(
+            self.board.bb_colors[attacker] & self.board.bb_roles[Role::Knight],
+            self.board.bb_colors[attacker.other()],
+        );
         None
     }
 }

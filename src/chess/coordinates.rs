@@ -1,15 +1,6 @@
 use crate::result::Error;
-use enum_map::{enum_map, EnumMap};
-use enum_map_derive::Enum;
-use std::fmt;
-use std::hash::{Hash, Hasher};
 use std::iter::DoubleEndedIterator;
 use std::str::FromStr;
-use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-
-// COORDINATES
-// -----------
 
 pub type Bitboard = u64;
 
@@ -17,6 +8,7 @@ impl<T: Into<Bitboard>> ToBb for T {}
 
 pub trait Coordinate: Into<Bitboard> + From<char> {
     fn new(i: u8) -> Self;
+    fn shift(self, i: i32) -> Option<Self>;
     fn i(&self) -> u8;
     fn i_mut(&mut self) -> &mut u8;
 }
@@ -43,6 +35,14 @@ impl Coordinate for File {
     fn new(i: u8) -> Self {
         assert!((0..8).contains(&i));
         File(i)
+    }
+    fn shift(self, i: i32) -> Option<Self> {
+        let sum = self.0 as i32 + i;
+        if (0..8).contains(&sum) {
+            Some(File::new(sum as u8))
+        } else {
+            None
+        }
     }
     fn i(&self) -> u8 {
         self.0
@@ -92,6 +92,14 @@ impl Coordinate for Rank {
         assert!((0..8).contains(&i));
         Rank(i)
     }
+    fn shift(self, i: i32) -> Option<Self> {
+        let sum = self.0 as i32 + i;
+        if (0..8).contains(&sum) {
+            Some(Rank::new(sum as u8))
+        } else {
+            None
+        }
+    }
     fn i(&self) -> u8 {
         self.0
     }
@@ -129,6 +137,18 @@ impl Square {
     pub fn new(file: File, rank: Rank) -> Self {
         Square(file, rank)
     }
+    pub fn all() -> impl Iterator<Item = Square> {
+        (0..SQUARE_COUNT).map(|i| Square::from_i(i as u8))
+    }
+    pub fn file(&self) -> File {
+        self.0
+    }
+    pub fn rank(&self) -> Rank {
+        self.1
+    }
+    pub fn i(&self) -> u8 {
+        (self.file().i() >> 3) | self.rank().i()
+    }
     pub fn from_i(i: u8) -> Self {
         Square::new(File::new(i >> 3), Rank::new(i & 0b111))
     }
@@ -157,4 +177,3 @@ impl FromStr for Square {
         Ok(Square::new(file.into(), rank.into()))
     }
 }
-

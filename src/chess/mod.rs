@@ -6,4 +6,4 @@ pub mod movegen;
 pub mod piece;
 
 pub use board::{Board, Move};
-pub use piece::{Role, Piece};
+pub use piece::{Piece, Role};

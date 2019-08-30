@@ -5,7 +5,7 @@ struct Eval {
 }
 
 impl From<Board> for Eval {
-    fn from(board: Board) -> Self {
+    fn from(_board: Board) -> Self {
         unimplemented!()
     }
 }
