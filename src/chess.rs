@@ -1,8 +1,9 @@
+use crate::result::Error;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use std::iter::{self, DoubleEndedIterator};
+use std::iter::DoubleEndedIterator;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
@@ -50,21 +51,7 @@ impl From<Piece> for char {
 
 impl From<char> for Piece {
     fn from(c: char) -> Self {
-        let role = match c.to_ascii_uppercase() {
-            'P' => Role::Pawn,
-            'N' => Role::Knight,
-            'B' => Role::Bishop,
-            'R' => Role::Rook,
-            'Q' => Role::Queen,
-            'K' => Role::King,
-            _ => panic!(),
-        };
-        let color = if c.is_ascii_uppercase() {
-            Color::White
-        } else {
-            Color::Black
-        };
-        Piece::new(role, color)
+        Piece::new(Role::from(c), Color::from(c))
     }
 }
 
@@ -82,6 +69,20 @@ pub enum Role {
     Rook,
     King,
     Queen,
+}
+
+impl From<char> for Role {
+    fn from(c: char) -> Self {
+        match c.to_ascii_uppercase() {
+            'P' => Role::Pawn,
+            'N' => Role::Knight,
+            'B' => Role::Bishop,
+            'R' => Role::Rook,
+            'Q' => Role::Queen,
+            'K' => Role::King,
+            _ => panic!(),
+        }
+    }
 }
 
 // COORDINATES
@@ -206,7 +207,7 @@ impl<S: AsRef<str>> From<S> for Square {
 }
 
 impl FromStr for Square {
-    type Err = ();
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         assert!(s.len() == 2);
@@ -401,16 +402,17 @@ pub struct Move {
 }
 
 impl FromStr for Move {
-    type Err = ();
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         assert!(s.len() >= 4);
         let from = Square::from_str(&s[0..2])?;
         let to = Square::from_str(&s[2..4])?;
+        let promotion = s.chars().nth(5).map(Role::from);
         Ok(Move {
             from,
             to,
-            promotion: None,
+            promotion,
         })
     }
 }
@@ -425,21 +427,19 @@ impl CastlingRights {
 
 impl Default for CastlingRights {
     fn default() -> Self {
+        let both = enum_map! {
+            CastlingSide::King => true,
+            CastlingSide::Queen => true,
+        };
         CastlingRights(enum_map! {
-            Color::White => enum_map! {
-                CastlingSide::King => true,
-                CastlingSide::Queen => true,
-            },
-            Color::Black => enum_map! {
-                CastlingSide::King => true,
-                CastlingSide::Queen => true,
-            },
+            Color::White => both,
+            Color::Black => both,
         })
     }
 }
 
 impl FromStr for CastlingRights {
-    type Err = ();
+    type Err = Error;
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut castling_rights = CastlingRights::empty();
