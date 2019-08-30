@@ -1,6 +1,7 @@
 use crate::cache::Cache;
-use crate::chess::*;
+use crate::chess::board::Board;
 use crate::time::TimeControl;
+use crate::chess::color::Color;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
 

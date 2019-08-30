@@ -1,7 +1,7 @@
 // Fixed shift white magics found by Volker Annuss.
 // From: http://www.talkchess.com/forum/viewtopic.php?p=727500&t=64790
 
-use crate::chess::SQUARE_COUNT;
+use super::coordinates::SQUARE_COUNT;
 
 pub struct Magic {
     pub mask: u64,

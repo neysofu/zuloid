@@ -3,220 +3,12 @@ use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
 use std::hash::{Hash, Hasher};
-use std::iter::DoubleEndedIterator;
+use super::color::*;
+use super::coordinates::*;
+use super::piece::*;
+use strum_macros::EnumIter;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
-use strum_macros::EnumIter;
-
-#[derive(Copy, Clone, Debug, Enum, EnumIter, PartialEq)]
-pub enum Color {
-    White,
-    Black,
-}
-
-impl From<char> for Color {
-    fn from(c: char) -> Self {
-        match c.to_ascii_lowercase() {
-            'w' => Color::White,
-            'b' => Color::Black,
-            _ => panic!(),
-        }
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Piece {
-    role: Role,
-    color: Color,
-}
-
-impl From<Piece> for char {
-    fn from(piece: Piece) -> Self {
-        let c_by_role = enum_map! {
-            Role::Pawn => 'P',
-            Role::Knight => 'N',
-            Role::Bishop => 'B',
-            Role::Rook => 'R',
-            Role::Queen => 'Q',
-            Role::King => 'K',
-        };
-        let c = c_by_role[piece.role];
-        let c_by_color = enum_map! {
-            Color::White => c,
-            Color::Black => c.to_ascii_lowercase(),
-        };
-        c_by_color[piece.color]
-    }
-}
-
-impl From<char> for Piece {
-    fn from(c: char) -> Self {
-        Piece::new(Role::from(c), Color::from(c))
-    }
-}
-
-impl Piece {
-    pub fn new(role: Role, color: Color) -> Self {
-        Piece { role, color }
-    }
-}
-
-#[derive(Copy, Clone, Debug, Enum, EnumIter, PartialEq)]
-pub enum Role {
-    Pawn,
-    Knight,
-    Bishop,
-    Rook,
-    King,
-    Queen,
-}
-
-impl From<char> for Role {
-    fn from(c: char) -> Self {
-        match c.to_ascii_uppercase() {
-            'P' => Role::Pawn,
-            'N' => Role::Knight,
-            'B' => Role::Bishop,
-            'R' => Role::Rook,
-            'Q' => Role::Queen,
-            'K' => Role::King,
-            _ => panic!(),
-        }
-    }
-}
-
-// COORDINATES
-// -----------
-
-pub type Bitboard = u64;
-
-impl<T: Into<Bitboard>> ToBb for T {}
-
-pub trait Coordinate: Into<Bitboard> + From<char> {
-    fn new(i: u8) -> Self;
-}
-
-pub trait ToBb: Into<Bitboard> {
-    fn to_bb(self) -> Bitboard {
-        self.into()
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct File(u8);
-
-impl File {
-    fn all() -> impl DoubleEndedIterator<Item = Self> {
-        (0..8).map(File::new)
-    }
-    fn min() -> Self {
-        File::from('a')
-    }
-}
-
-impl Coordinate for File {
-    fn new(i: u8) -> Self {
-        assert!((0..8).contains(&i));
-        File(i)
-    }
-}
-
-impl Into<Bitboard> for File {
-    fn into(self) -> Bitboard {
-        0xff << (self.0 * 8)
-    }
-}
-
-impl From<char> for File {
-    fn from(c: char) -> Self {
-        let i = (c as u8) - b'a';
-        assert!((0..8).contains(&i));
-        File(i)
-    }
-}
-
-impl From<File> for char {
-    fn from(file: File) -> Self {
-        (file.0 + b'a') as Self
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Rank(u8);
-
-impl Rank {
-    fn all() -> impl DoubleEndedIterator<Item = Self> {
-        (0..8).map(Rank::new)
-    }
-    fn max() -> Self {
-        Rank::from('8')
-    }
-    fn min() -> Self {
-        Rank::from('1')
-    }
-}
-
-impl Coordinate for Rank {
-    fn new(i: u8) -> Self {
-        assert!((0..8).contains(&i));
-        Rank(i)
-    }
-}
-
-impl Into<Bitboard> for Rank {
-    fn into(self) -> Bitboard {
-        0x0101_0101_0101_0101 << self.0
-    }
-}
-
-impl From<char> for Rank {
-    fn from(c: char) -> Self {
-        let i = c.to_digit(9).unwrap() - 1;
-        assert!((0..8).contains(&i));
-        Rank(i as u8)
-    }
-}
-
-impl From<Rank> for char {
-    fn from(rank: Rank) -> Self {
-        (rank.0 + b'1') as Self
-    }
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Square(File, Rank);
-
-pub const SQUARE_COUNT: usize = 64;
-
-impl Square {
-    pub fn new(file: File, rank: Rank) -> Self {
-        Square(file, rank)
-    }
-}
-
-impl Into<Bitboard> for Square {
-    fn into(self) -> Bitboard {
-        self.0.to_bb() & self.1.to_bb()
-    }
-}
-
-impl<S: AsRef<str>> From<S> for Square {
-    fn from(s: S) -> Self {
-        Square::from_str(s.as_ref()).unwrap()
-    }
-}
-
-impl FromStr for Square {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        assert!(s.len() == 2);
-        let mut chars = s.chars();
-        let file = chars.next().unwrap();
-        let rank = chars.next().unwrap();
-        Ok(Square::new(file.into(), rank.into()))
-    }
-}
 
 // BOARD LOGIC
 // -----------
@@ -274,19 +66,19 @@ impl Board {
                     for _ in 0..digit {
                         let square = Square::new(file, rank);
                         board.set_at_square(square, None);
-                        file.0 += 1;
+                        *file.i_mut() += 1;
                     }
                 } else {
                     let square = Square::new(file, rank);
                     let piece = Piece::from(c);
                     board.set_at_square(square, Some(piece));
-                    file.0 += 1;
+                    *file.i_mut() += 1;
                 }
             }
             if rank == Rank::min() {
                 break;
             } else {
-                rank.0 -= 1;
+                *rank.i_mut() -= 1;
             }
         }
         let color_to_move_str = fields.next().unwrap();
@@ -395,10 +187,11 @@ pub enum CastlingSide {
     Queen,
 }
 
+#[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {
-    from: Square,
-    to: Square,
-    promotion: Option<Role>,
+    pub from: Square,
+    pub to: Square,
+    pub promotion: Option<Role>,
 }
 
 impl FromStr for Move {

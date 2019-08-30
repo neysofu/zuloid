@@ -1,4 +1,4 @@
-use crate::chess::Board;
+use crate::chess::board::Board;
 use std::collections::HashMap;
 
 struct Evaluation;

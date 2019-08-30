@@ -1,17 +1,20 @@
 use super::Protocol;
-use crate::chess::*;
+use crate::chess::{Board, Move};
 use crate::core::Zorro;
 use crate::result::Error;
 use crate::utils::clear_screen;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::io::{self, BufRead};
+use std::process;
 use std::str::FromStr;
 
 pub struct Uci;
 
 impl Protocol for Uci {
     fn init(mut zorro: Zorro) {
+        println!("# Zorro {}", VERSION);
+        println!("# Process ID: {}", process::id());
         let stdin = io::stdin();
         for line in stdin.lock().lines() {
             let line = line.unwrap();
@@ -38,8 +41,14 @@ fn uci_position<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>
         Some("current") => (),
         Some("fen") => zorro.board = Board::from_fen(&mut tokens),
         Some("startpos") => zorro.board = Board::default(),
-        Some(token) => print_err(Error::UnexpectedToken(token.to_string())),
-        None => print_err(Error::UnexpectedEndOfCommand),
+        Some(token) => {
+            print_err(Error::UnexpectedToken(token.to_string()));
+            return;
+        }
+        None => {
+            print_err(Error::UnexpectedEndOfCommand);
+            return;
+        }
     }
     for token in tokens {
         match Move::from_str(token) {
@@ -112,5 +121,5 @@ fn print_uci_message() {
 }
 
 fn print_err(err: Error) {
-    println!("{}", err)
+    print!("{}", err)
 }
