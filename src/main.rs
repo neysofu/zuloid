@@ -9,8 +9,7 @@ mod utils;
 mod version;
 
 use crate::core::Zorro;
-use crate::protocols::uci::Uci;
-use crate::protocols::Protocol;
+use crate::protocols::{Protocol, Uci};
 
 fn main() {
     Uci::init(Zorro::default())

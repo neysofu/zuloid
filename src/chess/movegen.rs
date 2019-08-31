@@ -30,7 +30,7 @@ impl<'t> Iterator for MoveGenerator<'t> {
         self.moves_count += self.gen_pawns();
         self.moves_count += self.gen_knights(
             self.board.bb_colors[attacker] & self.board.bb_roles[Role::Knight],
-            self.board.bb_colors[attacker.other()],
+            self.board.bb_colors[!attacker],
         );
         None
     }

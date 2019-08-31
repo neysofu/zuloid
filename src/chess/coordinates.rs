@@ -9,8 +9,7 @@ impl<T: Into<Bitboard>> ToBb for T {}
 pub trait Coordinate: Into<Bitboard> + From<char> {
     fn new(i: u8) -> Self;
     fn shift(self, i: i32) -> Option<Self>;
-    fn i(&self) -> u8;
-    fn i_mut(&mut self) -> &mut u8;
+    fn i(self) -> u8;
 }
 
 pub trait ToBb: Into<Bitboard> {
@@ -44,11 +43,8 @@ impl Coordinate for File {
             None
         }
     }
-    fn i(&self) -> u8 {
+    fn i(self) -> u8 {
         self.0
-    }
-    fn i_mut(&mut self) -> &mut u8 {
-        &mut self.0
     }
 }
 
@@ -92,6 +88,7 @@ impl Coordinate for Rank {
         assert!((0..8).contains(&i));
         Rank(i)
     }
+
     fn shift(self, i: i32) -> Option<Self> {
         let sum = self.0 as i32 + i;
         if (0..8).contains(&sum) {
@@ -100,11 +97,9 @@ impl Coordinate for Rank {
             None
         }
     }
-    fn i(&self) -> u8 {
+
+    fn i(self) -> u8 {
         self.0
-    }
-    fn i_mut(&mut self) -> &mut u8 {
-        &mut self.0
     }
 }
 
@@ -137,18 +132,23 @@ impl Square {
     pub fn new(file: File, rank: Rank) -> Self {
         Square(file, rank)
     }
+
     pub fn all() -> impl Iterator<Item = Square> {
         (0..SQUARE_COUNT).map(|i| Square::from_i(i as u8))
     }
-    pub fn file(&self) -> File {
+
+    pub fn file(self) -> File {
         self.0
     }
-    pub fn rank(&self) -> Rank {
+
+    pub fn rank(self) -> Rank {
         self.1
     }
-    pub fn i(&self) -> u8 {
+
+    pub fn i(self) -> u8 {
         (self.file().i() >> 3) | self.rank().i()
     }
+
     pub fn from_i(i: u8) -> Self {
         Square::new(File::new(i >> 3), Rank::new(i & 0b111))
     }

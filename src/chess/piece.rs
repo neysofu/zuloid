@@ -26,7 +26,7 @@ impl From<Piece> for char {
 
 impl From<char> for Piece {
     fn from(c: char) -> Self {
-        Piece::new(Role::from(c), Color::from(c))
+        Piece::new(Role::from(c), Color::from_char_case(c))
     }
 }
 
@@ -99,4 +99,21 @@ lazy_static! {
         }
         bitboards
     };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn piece_from_char() {
+        assert_eq!(Piece::from('N'), Piece::new(Role::Knight, Color::White));
+        assert_eq!(Piece::from('q'), Piece::new(Role::Queen, Color::Black));
+    }
+
+    #[test]
+    fn char_from_piece() {
+        assert_eq!(char::from(Piece::new(Role::King, Color::White)), 'K');
+        assert_eq!(char::from(Piece::new(Role::Pawn, Color::Black)), 'p');
+    }
 }

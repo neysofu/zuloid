@@ -10,9 +10,6 @@ use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
-// BOARD LOGIC
-// -----------
-
 pub struct Board {
     pub bb_colors: EnumMap<Color, Bitboard>,
     pub bb_roles: EnumMap<Role, Bitboard>,
@@ -66,19 +63,19 @@ impl Board {
                     for _ in 0..digit {
                         let square = Square::new(file, rank);
                         board.set_at_square(square, None);
-                        *file.i_mut() += 1;
+                        file = file.shift(1).unwrap();
                     }
                 } else {
                     let square = Square::new(file, rank);
                     let piece = Piece::from(c);
                     board.set_at_square(square, Some(piece));
-                    *file.i_mut() += 1;
+                    file = file.shift(1).unwrap();
                 }
             }
-            if rank == Rank::min() {
-                break;
+            if let Some(rank_below) = rank.shift(-1) {
+                rank = rank_below;
             } else {
-                *rank.i_mut() -= 1;
+                break;
             }
         }
         let color_to_move_str = fields.next().unwrap();
