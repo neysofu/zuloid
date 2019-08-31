@@ -61,18 +61,18 @@ impl Board {
             for c in rank_piece_map.chars() {
                 if let Some(digit) = c.to_digit(9) {
                     for _ in 0..digit {
-                        let square = Square::new(file, rank);
+                        let square = Square::at(file, rank);
                         board.set_at_square(square, None);
                         file = file.shift(1).unwrap();
                     }
                 } else {
-                    let square = Square::new(file, rank);
+                    let square = Square::at(file, rank);
                     let piece = Piece::from(c);
                     board.set_at_square(square, Some(piece));
                     file = file.shift(1).unwrap();
                 }
             }
-            if let Some(rank_below) = rank.shift(-1) {
+            if let Some(rank_below) =rank.shift(1) {
                 rank = rank_below;
             } else {
                 break;
@@ -163,7 +163,7 @@ impl fmt::Display for Board {
         for rank in Rank::all().rev() {
             write!(fmt, " {} | ", char::from(rank))?;
             for file in File::all() {
-                let square = Square::new(file, rank);
+                let square = Square::at(file, rank);
                 if let Some(piece) = self.at(square) {
                     write!(fmt, "{} ", char::from(piece))?;
                 } else {

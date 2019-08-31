@@ -92,7 +92,7 @@ lazy_static! {
                 if let (Some(file), Some(rank)) =
                     (square.file().shift(shift.0), square.rank().shift(shift.1))
                 {
-                    bb &= Square::new(file, rank).to_bb();
+                    bb &= Square::at(file, rank).to_bb();
                 }
             }
             bitboards[square.i() as usize] = bb;

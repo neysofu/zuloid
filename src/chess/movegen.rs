@@ -1,4 +1,4 @@
-use super::coordinates::{Bitboard, Square};
+use super::coordinates::{Coordinate, Bitboard, Square};
 use super::{Board, Move, Role};
 use bitintr::Blsi;
 use bitintr::Tzcnt;
@@ -83,7 +83,7 @@ impl Iterator for BitsCounter {
             let i = self.bb.tzcnt() as u8;
             let square_bb = self.bb.blsi();
             self.bb &= square_bb;
-            Some(Square::from_i(i))
+            Some(Square::new(i))
         }
     }
 }
