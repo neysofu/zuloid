@@ -72,7 +72,7 @@ impl Board {
                     file = file.shift(1).unwrap();
                 }
             }
-            if let Some(rank_below) =rank.shift(1) {
+            if let Some(rank_below) = rank.shift(1) {
                 rank = rank_below;
             } else {
                 break;
@@ -204,6 +204,13 @@ impl FromStr for Move {
             to,
             promotion,
         })
+    }
+}
+
+impl fmt::Display for Move {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", self.from)?;
+        write!(fmt, "{}", self.to)
     }
 }
 

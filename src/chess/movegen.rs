@@ -1,4 +1,4 @@
-use super::coordinates::{Coordinate, Bitboard, Square};
+use super::coordinates::{Bitboard, Coordinate, Square};
 use super::{Board, Move, Role};
 use bitintr::Blsi;
 use bitintr::Tzcnt;
@@ -6,11 +6,7 @@ use std::str::FromStr;
 
 impl Board {
     pub fn gen_moves<'t>(&'t self) -> impl Iterator<Item = Move> + 't {
-        MoveGenerator {
-            board: self,
-            moves: [Move::from_str("a1a1").unwrap(); MAX_MOVES],
-            moves_count: 0,
-        }
+        MoveGenerator::from_board(self)
     }
 }
 
@@ -22,17 +18,37 @@ struct MoveGenerator<'t> {
     moves_count: usize,
 }
 
+impl<'t> MoveGenerator<'t> {
+    pub fn from_board(board: &'t Board) -> Self {
+        let mut gen = MoveGenerator {
+            board,
+            moves: [Move::from_str("a1a1").unwrap(); MAX_MOVES],
+            moves_count: 0,
+        };
+        let attacker = board.color_to_move;
+        gen.gen_knights(
+            board.bb_colors[attacker] & board.bb_roles[Role::Knight],
+            !board.bb_colors[attacker],
+        );
+        gen.gen_king(
+            board.bb_colors[attacker] & board.bb_roles[Role::King],
+            !board.bb_colors[attacker],
+        );
+        gen
+    }
+}
+
 impl<'t> Iterator for MoveGenerator<'t> {
     type Item = Move;
 
     fn next(&mut self) -> Option<Self::Item> {
-        let attacker = self.board.color_to_move;
-        self.moves_count += self.gen_pawns();
-        self.moves_count += self.gen_knights(
-            self.board.bb_colors[attacker] & self.board.bb_roles[Role::Knight],
-            self.board.bb_colors[!attacker],
-        );
-        None
+        if self.moves_count == 0 {
+            None
+        } else {
+            let mv = self.moves[self.moves_count];
+            self.moves_count -= 1;
+            Some(mv)
+        }
     }
 }
 
@@ -55,7 +71,24 @@ impl<'t> MoveGenerator<'t> {
                 self.moves_count += 1;
             }
         }
-        initial_moves_count - self.moves_count
+        self.moves_count - initial_moves_count
+    }
+
+    fn gen_king(&mut self, attackers: Bitboard, mask: Bitboard) -> usize {
+        let initial_moves_count = self.moves_count;
+        for attacker in attackers.squares() {
+            let attacks = Role::King.attacks(attacker) & mask;
+            for attack in attacks.squares() {
+                let mv = Move {
+                    from: attacker,
+                    to: attack,
+                    promotion: None,
+                };
+                self.moves[self.moves_count] = mv;
+                self.moves_count += 1;
+            }
+        }
+        self.moves_count - initial_moves_count
     }
 }
 
@@ -81,8 +114,7 @@ impl Iterator for BitsCounter {
             None
         } else {
             let i = self.bb.tzcnt() as u8;
-            let square_bb = self.bb.blsi();
-            self.bb &= square_bb;
+            self.bb ^= self.bb.blsi();
             Some(Square::new(i))
         }
     }

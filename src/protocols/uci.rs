@@ -23,6 +23,7 @@ impl Protocol for Uci {
                 Some("cleart") => clear_screen(),
                 Some("d") => println!("{}", zorro.board),
                 Some("isready") => println!("readyok"),
+                Some("perft") => uci_perft(&zorro, tokens),
                 Some("position") => uci_position(&mut zorro, tokens),
                 Some("quit") => break,
                 Some("setoption") => uci_set_option(&mut zorro, tokens),
@@ -32,6 +33,13 @@ impl Protocol for Uci {
                 None => (),
             }
         }
+    }
+}
+
+fn uci_perft<'s>(zorro: &Zorro, mut tokens: impl Iterator<Item = &'s str>) {
+    let depth = str::parse::<usize>(tokens.next().unwrap());
+    for mv in zorro.board.gen_moves() {
+        println!("{}", mv);
     }
 }
 

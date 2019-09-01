@@ -2,6 +2,7 @@ use crate::result::Error;
 use std::iter::DoubleEndedIterator;
 use std::marker::PhantomData;
 use std::ops;
+use std::fmt;
 use std::str::FromStr;
 
 pub type Bitboard = u64;
@@ -130,6 +131,12 @@ impl From<File> for char {
     }
 }
 
+impl fmt::Display for File {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", char::from(*self))
+    }
+}
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Rank(u8);
 
@@ -163,6 +170,12 @@ impl From<char> for Rank {
 impl From<Rank> for char {
     fn from(rank: Rank) -> Self {
         (rank.0 + b'1') as Self
+    }
+}
+
+impl fmt::Display for Rank {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", char::from(*self))
     }
 }
 
@@ -201,7 +214,7 @@ impl Square {
 
 impl Into<Bitboard> for Square {
     fn into(self) -> Bitboard {
-        1 << self.0
+        1u64 << self.0
     }
 }
 
@@ -220,6 +233,13 @@ impl FromStr for Square {
         let file = chars.next().unwrap();
         let rank = chars.next().unwrap();
         Ok(Square::at(file.into(), rank.into()))
+    }
+}
+
+impl fmt::Display for Square {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(fmt, "{}", char::from(self.file()))?;
+        write!(fmt, "{}", char::from(self.rank()))
     }
 }
 
