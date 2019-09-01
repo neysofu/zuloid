@@ -1,5 +1,6 @@
 use super::color::*;
 use super::coordinates::*;
+use super::mv::Move;
 use super::piece::*;
 use crate::result::Error;
 use enum_map::{enum_map, EnumMap};
@@ -49,6 +50,10 @@ impl Board {
         } else {
             None
         }
+    }
+
+    pub fn list_legals(&self, buf: &mut [Move]) -> usize {
+        unimplemented!()
     }
 
     pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Self {
@@ -182,36 +187,6 @@ impl fmt::Display for Board {
 pub enum CastlingSide {
     King,
     Queen,
-}
-
-#[derive(Copy, Clone, Debug, PartialEq)]
-pub struct Move {
-    pub from: Square,
-    pub to: Square,
-    pub promotion: Option<Role>,
-}
-
-impl FromStr for Move {
-    type Err = Error;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        assert!(s.len() >= 4);
-        let from = Square::from_str(&s[0..2])?;
-        let to = Square::from_str(&s[2..4])?;
-        let promotion = s.chars().nth(5).map(Role::from);
-        Ok(Move {
-            from,
-            to,
-            promotion,
-        })
-    }
-}
-
-impl fmt::Display for Move {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", self.from)?;
-        write!(fmt, "{}", self.to)
-    }
 }
 
 pub struct CastlingRights(EnumMap<Color, EnumMap<CastlingSide, bool>>);

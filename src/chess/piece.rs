@@ -121,22 +121,22 @@ lazy_static! {
         }
         bitboards
     };
-    pub static ref ROOK: [Bitboard; 256] = {
-        let mut bitboards = [0; 256];
-        for i in (0..256) {
-            let mut bb = 0;
-            for square in 
-            for shift in shifts.iter() {
-                if let (Some(file), Some(rank)) =
-                    (square.file().shift(shift.0), square.rank().shift(shift.1))
-                {
-                    bb |= Square::at(file, rank).to_bb();
-                }
-            }
-            bitboards[square.i() as usize] = bb;
-        }
-        bitboards
-    };
+    //pub static ref ROOK: [Bitboard; 256] = {
+    //    let mut bitboards = [0; 256];
+    //    for i in (0..256) {
+    //        let mut bb = 0;
+    //        for square in 
+    //        for shift in shifts.iter() {
+    //            if let (Some(file), Some(rank)) =
+    //                (square.file().shift(shift.0), square.rank().shift(shift.1))
+    //            {
+    //                bb |= Square::at(file, rank).to_bb();
+    //            }
+    //        }
+    //        bitboards[square.i() as usize] = bb;
+    //    }
+    //    bitboards
+    //};
 }
 
 #[cfg(test)]

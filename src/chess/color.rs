@@ -1,3 +1,4 @@
+use super::coordinates::{Coordinate, Rank};
 use enum_map_derive::Enum;
 use std::ops;
 use strum_macros::EnumIter;
@@ -21,6 +22,34 @@ impl Color {
             Color::White
         } else {
             Color::Black
+        }
+    }
+
+    pub fn backrank(self) -> Rank {
+        match self {
+            Color::White => Rank::new(0),
+            Color::Black => Rank::new(7),
+        }
+    }
+
+    pub fn pawn_rank(self) -> Rank {
+        match self {
+            Color::White => Rank::new(1),
+            Color::Black => Rank::new(6),
+        }
+    }
+
+    pub fn fourth_rank(self) -> Rank {
+        match self {
+            Color::White => Rank::new(3),
+            Color::Black => Rank::new(4),
+        }
+    }
+
+    pub fn seventh_rank(self) -> Rank {
+        match self {
+            Color::White => Rank::new(6),
+            Color::Black => Rank::new(1),
         }
     }
 }
