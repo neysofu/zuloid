@@ -1,13 +1,13 @@
 use super::Protocol;
-use crate::chess::{Board, Move};
 use crate::core::Zorro;
-use crate::result::Error;
 use crate::utils::clear_screen;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::io::{self, BufRead};
 use std::process;
 use std::str::FromStr;
+use zorro_chess::{Board, Move};
+use zorro_common::result::Error;
 
 pub struct Uci;
 
@@ -36,9 +36,9 @@ impl Protocol for Uci {
     }
 }
 
-fn uci_perft<'s>(zorro: &Zorro, mut tokens: impl Iterator<Item = &'s str>) {
-    let depth = str::parse::<usize>(tokens.next().unwrap());
-    for mv in zorro.board.gen_moves() {
+fn uci_perft<'s>(zorro: &Zorro, tokens: impl Iterator<Item = &'s str>) {
+    let mut buf = [Move::from_str("a1a1").unwrap(); 256];
+    for mv in zorro.board.list_legals(&mut buf[..]) {
         println!("{}", mv);
     }
 }

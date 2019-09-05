@@ -1,11 +1,51 @@
-use crate::result::Error;
+use bitintr::Blsi;
+use bitintr::Tzcnt;
+use std::fmt;
 use std::iter::DoubleEndedIterator;
 use std::marker::PhantomData;
 use std::ops;
-use std::fmt;
 use std::str::FromStr;
+use zorro_common::result::Error;
 
 pub type Bitboard = u64;
+
+pub trait BitboardOps {
+    fn squares(self) -> BitsCounter;
+    fn north(self, n: usize) -> Self;
+    fn south(self, n: usize) -> Self;
+}
+
+impl BitboardOps for Bitboard {
+    fn squares(self) -> BitsCounter {
+        BitsCounter { bb: self }
+    }
+
+    fn north(self, n: usize) -> Self {
+        self << n
+    }
+
+    fn south(self, n: usize) -> Self {
+        self >> n
+    }
+}
+
+pub struct BitsCounter {
+    bb: Bitboard,
+}
+
+impl Iterator for BitsCounter {
+    type Item = Square;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.bb == 0 {
+            None
+        } else {
+            let i = self.bb.tzcnt() as u8;
+            self.bb ^= self.bb.blsi();
+            Some(Square::new(i))
+        }
+    }
+}
 
 pub trait Coordinate
 where
@@ -13,7 +53,7 @@ where
 {
     fn range() -> ops::Range<u8>;
     fn new_unchecked(i: u8) -> Self;
-    fn i(self) -> u8;
+    fn i(self) -> usize;
 
     fn new(i: u8) -> Self {
         assert!(Self::range().contains(&i));
@@ -32,7 +72,7 @@ where
     }
 
     fn shift(self, rhs: i32) -> Option<Self> {
-        Self::new_opt(rhs + i32::from(self.i()))
+        Self::new_opt(self.i() as i32 + rhs)
     }
 
     fn min() -> Self {
@@ -41,6 +81,10 @@ where
 
     fn max() -> Self {
         Self::new_unchecked(Self::range().end - 1)
+    }
+
+    fn count() -> usize {
+        (Self::range().end - Self::range().start) as usize
     }
 
     fn all() -> CoordinateWalker<Self> {
@@ -107,8 +151,8 @@ impl Coordinate for File {
         File(i)
     }
 
-    fn i(self) -> u8 {
-        self.0
+    fn i(self) -> usize {
+        self.0 as usize
     }
 }
 
@@ -149,8 +193,8 @@ impl Coordinate for Rank {
         Rank(i)
     }
 
-    fn i(self) -> u8 {
-        self.0
+    fn i(self) -> usize {
+        self.0 as usize
     }
 }
 
@@ -193,14 +237,14 @@ impl Coordinate for Square {
         Square(i)
     }
 
-    fn i(self) -> u8 {
-        self.0
+    fn i(self) -> usize {
+        self.0 as usize
     }
 }
 
 impl Square {
     pub fn at(file: File, rank: Rank) -> Self {
-        Square::new_unchecked((file.i() << 3) | rank.i())
+        Square::new_unchecked(((file.i() << 3) | rank.i()) as u8)
     }
 
     pub fn file(self) -> File {
@@ -209,6 +253,27 @@ impl Square {
 
     pub fn rank(self) -> Rank {
         Rank::new_unchecked(self.0 & 0b111)
+    }
+
+    pub fn diagonal_a1h8(self) -> Bitboard {
+        let mut main_diagonal = 0x8040_2010_0804_0201;
+        let delta = self.rank().i() as i32 - self.file().i() as i32;
+        if delta >= 0 {
+            main_diagonal <<= delta;
+        } else {
+            main_diagonal >>= delta;
+        }
+        main_diagonal
+    }
+    pub fn diagonal_h1a8(self) -> Bitboard {
+        let mut main_diagonal = 0x102_0408_1020_4080;
+        let delta = self.rank().i() as i32 + self.file().i() as i32 - 7;
+        if delta >= 0 {
+            main_diagonal <<= delta;
+        } else {
+            main_diagonal >>= delta;
+        }
+        main_diagonal
     }
 }
 

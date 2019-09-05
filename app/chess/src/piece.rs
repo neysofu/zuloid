@@ -1,6 +1,4 @@
-use super::color::Color;
-use super::coordinates::{Bitboard, Square, SQUARE_COUNT};
-use crate::chess::coordinates::{Coordinate, ToBb};
+use super::*;
 use enum_map_derive::Enum;
 use lazy_static::lazy_static;
 use strum_macros::EnumIter;
@@ -38,16 +36,6 @@ pub enum Role {
     Rook,
     King,
     Queen,
-}
-
-impl Role {
-    pub fn attacks(self, from: Square) -> Bitboard {
-        match self {
-            Role::Knight => KNIGHT[from.i() as usize],
-            Role::King => KING[from.i() as usize],
-            _ => panic!(),
-        }
-    }
 }
 
 impl From<char> for Role {
@@ -121,28 +109,36 @@ lazy_static! {
         }
         bitboards
     };
-    //pub static ref ROOK: [Bitboard; 256] = {
-    //    let mut bitboards = [0; 256];
-    //    for i in (0..256) {
-    //        let mut bb = 0;
-    //        for square in 
-    //        for shift in shifts.iter() {
-    //            if let (Some(file), Some(rank)) =
-    //                (square.file().shift(shift.0), square.rank().shift(shift.1))
-    //            {
-    //                bb |= Square::at(file, rank).to_bb();
-    //            }
-    //        }
-    //        bitboards[square.i() as usize] = bb;
-    //    }
-    //    bitboards
-    //};
+    pub static ref BOARD_FRAME: Bitboard = {
+        File::from('a').to_bb()
+            | File::from('h').to_bb()
+            | Rank::from('1').to_bb()
+            | Rank::from('8').to_bb()
+    };
+    pub static ref ROOK_MASK: [Bitboard; SQUARE_COUNT] = {
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let file_bb = square.file().to_bb();
+            let rank_bb = square.rank().to_bb();
+            bitboards[square.i() as usize] = ((file_bb | rank_bb) & !*BOARD_FRAME) | square.to_bb();
+        }
+        bitboards
+    };
+    pub static ref BISHOP_MASK: [Bitboard; SQUARE_COUNT] = {
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let diagonal_bb = square.diagonal_a1h8();
+            let antidiagonal_bb = square.diagonal_h1a8();
+            bitboards[square.i() as usize] =
+                ((diagonal_bb | antidiagonal_bb) & !*BOARD_FRAME) | square.to_bb();
+        }
+        bitboards
+    };
 }
 
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::chess::coordinates::ToBb;
     use std::str::FromStr;
 
     #[test]

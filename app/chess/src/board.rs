@@ -1,8 +1,7 @@
 use super::color::*;
 use super::coordinates::*;
-use super::mv::Move;
+use super::moving::Move;
 use super::piece::*;
-use crate::result::Error;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
@@ -10,6 +9,7 @@ use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
+use zorro_common::result::Error;
 
 pub struct Board {
     pub bb_colors: EnumMap<Color, Bitboard>,
@@ -50,10 +50,6 @@ impl Board {
         } else {
             None
         }
-    }
-
-    pub fn list_legals(&self, buf: &mut [Move]) -> usize {
-        unimplemented!()
     }
 
     pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Self {

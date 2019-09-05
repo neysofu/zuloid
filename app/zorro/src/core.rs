@@ -1,9 +1,9 @@
 use crate::cache::Cache;
-use crate::chess::board::Board;
-use crate::chess::color::Color;
 use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
+use zorro_chess::board::Board;
+use zorro_chess::color::Color;
 
 #[derive(Default)]
 pub struct Zorro {
@@ -26,7 +26,7 @@ pub struct Config {
 impl Default for Config {
     fn default() -> Self {
         Config {
-            cache_size: ByteSize::mb(8),
+            cache_size: ByteSize::mb(32),
             contempt: 0.5,
             debug: false,
             max_depth: None,
