@@ -108,8 +108,8 @@ impl Board {
         count
     }
 
-    fn gen_rooks(&self, buf: &mut [Move], attackers: Bitboard, all: Bitboard) -> usize {
-        let mut count = 0;
+    fn gen_rooks(&self, _buf: &mut [Move], _attackers: Bitboard, _all: Bitboard) -> usize {
+        let count = 0;
         // TODO
         count
     }

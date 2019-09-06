@@ -2,8 +2,7 @@ use crate::cache::Cache;
 use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
-use zorro_chess::board::Board;
-use zorro_chess::color::Color;
+use zorro_chess::{Board, Color};
 
 #[derive(Default)]
 pub struct Zorro {

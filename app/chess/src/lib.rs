@@ -1,12 +1,12 @@
-pub mod board;
-pub mod color;
-pub mod coordinates;
-pub mod fen;
-pub mod game;
-pub mod magic;
-pub mod movegen;
-pub mod moving;
-pub mod piece;
+pub(crate) mod board;
+pub(crate) mod color;
+pub(crate) mod coordinates;
+pub(crate) mod fen;
+pub(crate) mod game;
+pub(crate) mod magic;
+pub(crate) mod movegen;
+pub(crate) mod moving;
+pub(crate) mod piece;
 
 pub use board::Board;
 pub use color::Color;

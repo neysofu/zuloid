@@ -1,4 +1,4 @@
-use zorro_chess::board::Board;
+use zorro_chess::Board;
 
 struct Eval {
     score: i32,

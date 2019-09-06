@@ -1,15 +1,15 @@
-use super::color::*;
-use super::coordinates::*;
-use super::moving::Move;
-use super::piece::*;
+use crate::color::*;
+use crate::coordinates::*;
+use crate::moving::Move;
+use crate::piece::*;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
+use lazy_static::lazy_static;
 use std::fmt;
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use zorro_common::Error;
-use lazy_static::lazy_static;
 
 #[derive(Clone, Hash, PartialEq, Eq)]
 pub struct Board {
@@ -31,7 +31,7 @@ impl Board {
         }
     }
 
-    pub fn at(&self, square: Square) -> Option<Piece> {
+    pub fn piece_opt_at(&self, square: Square) -> Option<Piece> {
         let bb = square.to_bb();
         let mut square_role = None;
         for role in Role::iter() {
@@ -69,7 +69,7 @@ impl Board {
     }
 
     pub fn do_move(&mut self, mv: Move) {
-        self.set_at_square(mv.to, self.at(mv.from));
+        self.set_at_square(mv.to, self.piece_opt_at(mv.from));
         self.set_at_square(mv.from, None);
     }
 }
@@ -88,7 +88,7 @@ impl fmt::Display for Board {
             write!(fmt, " {} | ", char::from(rank))?;
             for file in File::all() {
                 let square = Square::at(file, rank);
-                if let Some(piece) = self.at(square) {
+                if let Some(piece) = self.piece_opt_at(square) {
                     write!(fmt, "{} ", char::from(piece))?;
                 } else {
                     write!(fmt, ". ")?;

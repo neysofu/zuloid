@@ -1,4 +1,4 @@
-use super::coordinates::{Coordinate, Rank};
+use crate::{Coordinate, Rank};
 use enum_map_derive::Enum;
 use std::ops;
 use strum_macros::EnumIter;

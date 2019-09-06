@@ -43,10 +43,10 @@ lazy_static! {
     pub static ref FILE_ATTACKS: [Bitboard; 4096] = { unimplemented!() };
 }
 
-pub fn rook_magics(square: Square, occupancy: Bitboard) -> Bitboard {
+pub fn rook_magics(_square: Square, _occupancy: Bitboard) -> Bitboard {
     unimplemented!()
 }
 
-pub fn bishop_magics(square: Square, occupancy: Bitboard) -> Bitboard {
+pub fn bishop_magics(_square: Square, _occupancy: Bitboard) -> Bitboard {
     unimplemented!()
 }

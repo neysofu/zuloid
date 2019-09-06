@@ -16,7 +16,7 @@ impl<'b> fmt::Display for Fen<'b> {
             let mut previous_emtpy_squares = 0;
             for file in File::all() {
                 let square = Square::at(file, rank);
-                match self.board.at(square) {
+                match self.board.piece_opt_at(square) {
                     Some(piece) => {
                         if previous_emtpy_squares > 0 {
                             write!(fmt, "{}", previous_emtpy_squares)?;
