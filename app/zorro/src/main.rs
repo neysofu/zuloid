@@ -3,7 +3,6 @@ mod core;
 mod eval;
 mod protocols;
 mod time;
-mod utils;
 mod version;
 
 use crate::core::Zorro;

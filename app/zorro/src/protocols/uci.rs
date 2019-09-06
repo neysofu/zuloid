@@ -1,112 +1,173 @@
 use super::Protocol;
 use crate::core::Zorro;
-use crate::utils::clear_screen;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::io::{self, BufRead};
-use std::process;
 use std::str::FromStr;
 use zorro_chess::{Board, Move};
-use zorro_common::result::Error;
+use zorro_common::{Error, Result};
 
 pub struct Uci;
+
+impl Uci {
+    fn handle_line<S: AsRef<str>>(zorro: &mut Zorro, line: S) -> Result<()> {
+        let mut tokens = line.as_ref().split_whitespace();
+        match tokens.next() {
+            // Standard UCI commands.
+            Some("cleart") => {
+                println!("{}[2J", 27 as char);
+                Ok(())
+            }
+            Some("isready") => {
+                println!("readyok");
+                Ok(())
+            }
+            Some("perft") => CmdPerft::run(zorro, tokens),
+            Some("position") => CmdPosition::run(zorro, tokens),
+            Some("quit") => return Ok(()),
+            Some("setoption") => CmdSetOption::run(zorro, tokens),
+            Some("uci") => {
+                print_uci_message();
+                Ok(())
+            }
+            Some("ucinewgame") => {
+                zorro.cache.clear();
+                Ok(())
+            }
+            // Non-standard but useful nonetheless.
+            Some("d") => {
+                println!("{}", zorro.board);
+                Ok(())
+            }
+            Some("open") => CmdOpen::run(zorro, tokens),
+            Some(unknown) => Err(Error::UnknownCommand(unknown.to_string())),
+            None => Ok(()),
+        }
+    }
+}
 
 impl Protocol for Uci {
     fn init(mut zorro: Zorro) {
         println!("# Zorro {}", VERSION);
-        println!("# Process ID: {}", process::id());
-        let stdin = io::stdin();
-        for line in stdin.lock().lines() {
-            let line = line.unwrap();
-            let mut tokens = line.split_whitespace();
-            match tokens.next() {
-                Some("cleart") => clear_screen(),
-                Some("d") => println!("{}", zorro.board),
-                Some("isready") => println!("readyok"),
-                Some("perft") => uci_perft(&zorro, tokens),
-                Some("position") => uci_position(&mut zorro, tokens),
-                Some("quit") => break,
-                Some("setoption") => uci_set_option(&mut zorro, tokens),
-                Some("uci") => print_uci_message(),
-                Some("ucinewgame") => zorro.cache.clear(),
-                Some(unknown) => print_err(Error::UnknownCommand(unknown.to_string())),
-                None => (),
+        println!("# Process ID: {}", std::process::id());
+        for line in io::stdin().lock().lines() {
+            if let Err(e) = Uci::handle_line(&mut zorro, line.unwrap()) {
+                print_err(e)
             }
         }
     }
 }
 
-fn uci_perft<'s>(zorro: &Zorro, tokens: impl Iterator<Item = &'s str>) {
-    let mut buf = [Move::from_str("a1a1").unwrap(); 256];
-    for mv in zorro.board.list_legals(&mut buf[..]) {
-        println!("{}", mv);
-    }
+trait Command {
+    fn run<'s>(zorro: &mut Zorro, tokens: impl Iterator<Item = &'s str>) -> Result<()>;
 }
 
-fn uci_position<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) {
-    match tokens.next() {
-        Some("960") => unimplemented!(),
-        Some("current") => (),
-        Some("fen") => zorro.board = Board::from_fen(&mut tokens),
-        Some("startpos") => zorro.board = Board::default(),
-        Some(token) => {
-            print_err(Error::UnexpectedToken(token.to_string()));
-            return;
-        }
-        None => {
-            print_err(Error::UnexpectedEndOfCommand);
-            return;
-        }
-    }
-    for token in tokens {
-        match Move::from_str(token) {
-            Ok(mv) => zorro.board.do_move(mv),
-            Err(e) => print_err(e),
+struct CmdOpen;
+struct CmdPerft;
+struct CmdPosition;
+struct CmdSetOption;
+
+impl Command for CmdOpen {
+    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+        match tokens.next() {
+            Some("lichess") => {
+                let url = format!(
+                    "https://lichess.org/analysis/standard/{}",
+                    zorro.board.fmt_fen('_')
+                );
+                webbrowser::open(url.as_str()).ok();
+                Ok(())
+            }
+            Some(s) => Err(Error::UnexpectedToken(s.to_string())),
+            None => Err(Error::UnexpectedEndOfCommand),
         }
     }
 }
 
-fn uci_set_option<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) {
-    assert_eq!(tokens.next(), Some("name"));
-    let mut option_name = String::new();
-    while let Some(token) = tokens.next() {
-        if token == "value" {
-            break;
+impl Command for CmdPerft {
+    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+        let _depth = if let Some(s) = tokens.next() {
+            match str::parse::<usize>(s) {
+                Ok(depth) => depth,
+                Err(_) => {
+                    return Err(Error::UnexpectedToken(s.to_string()));
+                }
+            }
         } else {
-            option_name.push_str(token);
+            1
+        };
+        let mut buf = [Move::from_str("a1a1").unwrap(); 256];
+        for mv in zorro.board.list_legals(&mut buf[..]) {
+            println!("{}", mv);
         }
+        Ok(())
     }
-    let mut option_value = String::new();
-    for token in tokens {
-        // From the UCI protocol specification (April 2004):
-        // > The name of the option should not be case sensitive and can inludes spaces
-        // > like also the value.
-        option_value.push_str(token.to_ascii_lowercase().as_str());
+}
+
+impl Command for CmdPosition {
+    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+        match tokens.next() {
+            Some("960") => unimplemented!(),
+            Some("current") => (),
+            Some("fen") => zorro.board = Board::from_fen(&mut tokens),
+            Some("startpos") => zorro.board = Board::default(),
+            Some(token) => return Err(Error::UnexpectedToken(token.to_string())),
+            None => return Err(Error::UnexpectedEndOfCommand),
+        }
+        for token in tokens {
+            match Move::from_str(token) {
+                Ok(mv) => zorro.board.do_move(mv),
+                Err(e) => print_err(e),
+            }
+        }
+        Ok(())
     }
-    // Option support is quite hairy and messy. I don't want to break pre-existing
-    // scripts and configs originally written for other engines.
-    //
-    // Please see:
-    //  - https://komodochess.com/Komodo-11-README.html
-    //  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
-    //
-    // No worries in case the links above die, just search for a list of UCI
-    // settings for popular chess engines. I don't commit to 100% feature
-    // parity with any engine; I just try and use my better judgement.
-    match option_name.as_str() {
-        "hash" => {
-            let cache_size = ByteSize::mib(option_value.parse().unwrap());
-            zorro.config.cache_size = cache_size;
+}
+
+impl Command for CmdSetOption {
+    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+        assert_eq!(tokens.next(), Some("name"));
+        let mut option_name = String::new();
+        while let Some(token) = tokens.next() {
+            if token == "value" {
+                break;
+            } else {
+                option_name.push_str(token);
+            }
         }
-        "ponder" => {
-            zorro.config.ponder = match option_value.chars().next() {
-                Some('f') => false,
-                Some('n') => false,
-                Some('0') => false,
-                _ => true,
-            };
+        let mut option_value = String::new();
+        for token in tokens {
+            // From the UCI protocol specification (April 2004):
+            // > The name of the option should not be case sensitive and can inludes spaces
+            // > like also the value.
+            option_value.push_str(token.to_ascii_lowercase().as_str());
         }
-        _ => (),
+        // Option support is quite hairy and messy. I don't want to break pre-existing
+        // scripts and configs originally written for other engines.
+        //
+        // Please see:
+        //  - https://komodochess.com/Komodo-11-README.html
+        //  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+        //
+        // No worries in case the links above die, just search for a list of UCI
+        // settings for popular chess engines. I don't commit to 100% feature
+        // parity with any engine; I just try and use my better judgement.
+        match option_name.as_str() {
+            "hash" => {
+                let cache_size = ByteSize::mib(option_value.parse().unwrap());
+                zorro.config.cache_size = cache_size;
+            }
+            "ponder" => {
+                zorro.config.ponder = match option_value.chars().next() {
+                    Some('f') => false,
+                    Some('n') => false,
+                    Some('0') => false,
+                    _ => true,
+                };
+            }
+            _ => (),
+        };
+        Ok(())
     }
 }
 
@@ -114,7 +175,6 @@ fn print_uci_message() {
     println!("id name Zorro {}", VERSION);
     println!("id author Filippo Costa");
     println!("option name Clear Hash type button");
-    // TODO: also implement Komodo's Drawscore option.
     println!("option name Contempt type spin default 20 min -100 max 100");
     println!("option name Hash type spin default 64 min 0 max 131072");
     println!("option name Minimum Thinking Time type spin default 20 min 0 max 5000");

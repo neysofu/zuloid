@@ -26,7 +26,16 @@ lazy_static! {
                 right_shift: 58,
             }
         }
-        [magic(0), magic(1), magic(2), magic(3), magic(4), magic(5), magic(6), magic(7)]
+        [
+            magic(0),
+            magic(1),
+            magic(2),
+            magic(3),
+            magic(4),
+            magic(5),
+            magic(6),
+            magic(7),
+        ]
     };
     pub static ref RANK_MAGICS: [Magic; SQUARE_COUNT] = { unimplemented!() };
     pub static ref DIAGONAL_A1H8_MAGICS: [Magic; SQUARE_COUNT] = { unimplemented!() };

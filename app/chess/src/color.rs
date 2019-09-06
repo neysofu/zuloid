@@ -3,7 +3,7 @@ use enum_map_derive::Enum;
 use std::ops;
 use strum_macros::EnumIter;
 
-#[derive(Copy, Clone, Debug, Enum, EnumIter, PartialEq)]
+#[derive(Copy, Clone, Debug, Enum, EnumIter, Hash, PartialEq, Eq)]
 pub enum Color {
     White,
     Black,

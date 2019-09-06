@@ -5,7 +5,7 @@ use std::iter::DoubleEndedIterator;
 use std::marker::PhantomData;
 use std::ops;
 use std::str::FromStr;
-use zorro_common::result::Error;
+use zorro_common::Error;
 
 pub type Bitboard = u64;
 
@@ -223,7 +223,7 @@ impl fmt::Display for Rank {
     }
 }
 
-#[derive(Copy, Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Square(u8);
 
 pub const SQUARE_COUNT: usize = 64;

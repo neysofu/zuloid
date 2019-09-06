@@ -5,18 +5,20 @@ use super::piece::*;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
-use std::hash::{Hash, Hasher};
 use std::str::FromStr;
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
-use zorro_common::result::Error;
+use zorro_common::Error;
+use lazy_static::lazy_static;
 
+#[derive(Clone, Hash, PartialEq, Eq)]
 pub struct Board {
     pub bb_colors: EnumMap<Color, Bitboard>,
     pub bb_roles: EnumMap<Role, Bitboard>,
     pub castling_rights: CastlingRights,
     pub color_to_move: Color,
     pub reversible_moves_count: usize,
+    pub en_passant_target_square: Option<Square>,
 }
 
 impl Board {
@@ -29,7 +31,7 @@ impl Board {
         }
     }
 
-    fn at(&self, square: Square) -> Option<Piece> {
+    pub fn at(&self, square: Square) -> Option<Piece> {
         let bb = square.to_bb();
         let mut square_role = None;
         for role in Role::iter() {
@@ -50,39 +52,6 @@ impl Board {
         } else {
             None
         }
-    }
-
-    pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Self {
-        let mut board = Board::empty();
-        let piece_map_str = fields.next().unwrap();
-        let piece_map_by_rank = piece_map_str.as_ref().split('/');
-        let mut rank = Rank::max();
-        for rank_piece_map in piece_map_by_rank {
-            let mut file = File::min();
-            for c in rank_piece_map.chars() {
-                if let Some(digit) = c.to_digit(9) {
-                    for _ in 0..digit {
-                        let square = Square::at(file, rank);
-                        board.set_at_square(square, None);
-                        file = file.shift(1).unwrap();
-                    }
-                } else {
-                    let square = Square::at(file, rank);
-                    let piece = Piece::from(c);
-                    board.set_at_square(square, Some(piece));
-                    file = file.shift(1).unwrap();
-                }
-            }
-            if let Some(rank_below) = rank.shift(1) {
-                rank = rank_below;
-            } else {
-                break;
-            }
-        }
-        let color_to_move_str = fields.next().unwrap();
-        board.color_to_move = Color::from(color_to_move_str.as_ref().chars().next().unwrap());
-        board.castling_rights = CastlingRights::from_str(fields.next().unwrap().as_ref()).unwrap();
-        board
     }
 
     pub fn set_at_square(&mut self, square: Square, piece: Option<Piece>) {
@@ -107,53 +76,7 @@ impl Board {
 
 impl Default for Board {
     fn default() -> Self {
-        let mut bb_colors = EnumMap::default();
-        bb_colors[Color::White] = Rank::from('1').to_bb() | Rank::from('2').to_bb();
-        bb_colors[Color::Black] = Rank::from('7').to_bb() | Rank::from('8').to_bb();
-        let mut bb_roles = EnumMap::default();
-        bb_roles[Role::Pawn] = Rank::from('2').to_bb() | Rank::from('7').to_bb();
-        bb_roles[Role::Knight] = Square::from("b1").to_bb()
-            | Square::from("g1").to_bb()
-            | Square::from("b8").to_bb()
-            | Square::from("g8").to_bb();
-        bb_roles[Role::Bishop] = Square::from("c1").to_bb()
-            | Square::from("f1").to_bb()
-            | Square::from("c8").to_bb()
-            | Square::from("f8").to_bb();
-        bb_roles[Role::Rook] = Square::from("a1").to_bb()
-            | Square::from("h1").to_bb()
-            | Square::from("a8").to_bb()
-            | Square::from("h8").to_bb();
-        bb_roles[Role::Queen] = Square::from("d1").to_bb() | Square::from("d8").to_bb();
-        bb_roles[Role::King] = Square::from("e1").to_bb() | Square::from("e8").to_bb();
-        Board {
-            bb_colors,
-            bb_roles,
-            castling_rights: CastlingRights::default(),
-            color_to_move: Color::White,
-            reversible_moves_count: 0,
-        }
-    }
-}
-
-impl PartialEq for Board {
-    fn eq(&self, other: &Self) -> bool {
-        self.bb_colors[Color::White] == other.bb_colors[Color::White]
-            && self.bb_colors[Color::Black] == other.bb_colors[Color::Black]
-            && self.bb_roles[Role::Pawn] == other.bb_roles[Role::Pawn]
-            && self.bb_roles[Role::Knight] == other.bb_roles[Role::Knight]
-            && self.bb_roles[Role::Bishop] == other.bb_roles[Role::Bishop]
-            && self.bb_roles[Role::Rook] == other.bb_roles[Role::Rook]
-            && self.bb_roles[Role::King] == other.bb_roles[Role::King]
-            && self.color_to_move == other.color_to_move
-    }
-}
-
-impl Eq for Board {}
-
-impl Hash for Board {
-    fn hash<H: Hasher>(&self, _state: &mut H) {
-        unimplemented!()
+        BOARD_DEFAULT.clone()
     }
 }
 
@@ -185,6 +108,7 @@ pub enum CastlingSide {
     Queen,
 }
 
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct CastlingRights(EnumMap<Color, EnumMap<CastlingSide, bool>>);
 
 impl CastlingRights {
@@ -195,13 +119,13 @@ impl CastlingRights {
 
 impl Default for CastlingRights {
     fn default() -> Self {
-        let both = enum_map! {
+        let both_sides = enum_map! {
             CastlingSide::King => true,
             CastlingSide::Queen => true,
         };
         CastlingRights(enum_map! {
-            Color::White => both,
-            Color::Black => both,
+            Color::White => both_sides,
+            Color::Black => both_sides,
         })
     }
 }
@@ -222,4 +146,55 @@ impl FromStr for CastlingRights {
         }
         Ok(castling_rights)
     }
+}
+
+impl fmt::Display for CastlingRights {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.0[Color::White][CastlingSide::King] {
+            write!(fmt, "K")?;
+        }
+        if self.0[Color::Black][CastlingSide::King] {
+            write!(fmt, "k")?;
+        }
+        if self.0[Color::White][CastlingSide::Queen] {
+            write!(fmt, "Q")?;
+        }
+        if self.0[Color::Black][CastlingSide::Queen] {
+            write!(fmt, "q")?;
+        }
+        write!(fmt, "")
+    }
+}
+
+lazy_static! {
+    // The poor man's const fn.
+    pub static ref BOARD_DEFAULT: Board = {
+        let mut bb_colors = EnumMap::default();
+        bb_colors[Color::White] = Rank::from('1').to_bb() | Rank::from('2').to_bb();
+        bb_colors[Color::Black] = Rank::from('7').to_bb() | Rank::from('8').to_bb();
+        let mut bb_roles = EnumMap::default();
+        bb_roles[Role::Pawn] = Rank::from('2').to_bb() | Rank::from('7').to_bb();
+        bb_roles[Role::Knight] = Square::from("b1").to_bb()
+            | Square::from("g1").to_bb()
+            | Square::from("b8").to_bb()
+            | Square::from("g8").to_bb();
+        bb_roles[Role::Bishop] = Square::from("c1").to_bb()
+            | Square::from("f1").to_bb()
+            | Square::from("c8").to_bb()
+            | Square::from("f8").to_bb();
+        bb_roles[Role::Rook] = Square::from("a1").to_bb()
+            | Square::from("h1").to_bb()
+            | Square::from("a8").to_bb()
+            | Square::from("h8").to_bb();
+        bb_roles[Role::Queen] = Square::from("d1").to_bb() | Square::from("d8").to_bb();
+        bb_roles[Role::King] = Square::from("e1").to_bb() | Square::from("e8").to_bb();
+        Board {
+            bb_colors,
+            bb_roles,
+            castling_rights: CastlingRights::default(),
+            color_to_move: Color::White,
+            reversible_moves_count: 0,
+            en_passant_target_square: None,
+        }
+    };
 }

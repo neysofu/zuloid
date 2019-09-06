@@ -1,6 +1,7 @@
 pub mod board;
 pub mod color;
 pub mod coordinates;
+pub mod fen;
 pub mod game;
 pub mod magic;
 pub mod movegen;

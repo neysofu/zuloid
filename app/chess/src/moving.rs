@@ -1,7 +1,7 @@
 use super::*;
 use std::fmt;
 use std::str::FromStr;
-use zorro_common::result::Error;
+use zorro_common::Error;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {
