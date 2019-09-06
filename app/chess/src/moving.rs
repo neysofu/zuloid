@@ -32,3 +32,36 @@ impl fmt::Display for Move {
         write!(fmt, "{}", self.to)
     }
 }
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::str::FromStr;
+
+    // Move validity is not relevant to parsing.
+    #[test]
+    fn move_parse_a1c7() {
+        let expected_move = Move {
+            from: Square::from_str("a1").unwrap(),
+            to: Square::from_str("c7").unwrap(),
+            promotion: None,
+        };
+        assert!(match Move::from_str("a1c7") {
+            Ok(actual_move) => actual_move == expected_move,
+            _ => false
+        });
+    }
+
+    #[test]
+    fn move_e2e4_to_string_then_from_str() {
+        let expected_move = Move {
+            from: Square::from_str("e2").unwrap(),
+            to: Square::from_str("e4").unwrap(),
+            promotion: None,
+        };
+        assert!(match Move::from_str(expected_move.to_string().as_str()) {
+            Ok(actual_move) => actual_move == expected_move,
+            _ => false
+        });
+    }
+}
