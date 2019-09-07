@@ -138,13 +138,13 @@ impl FromStr for CastlingRights {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut castling_rights = CastlingRights::empty();
         for c in s.chars() {
-            match c {
-                'K' => castling_rights.0[Color::White][CastlingSide::King] = true,
-                'k' => castling_rights.0[Color::Black][CastlingSide::King] = true,
-                'Q' => castling_rights.0[Color::White][CastlingSide::Queen] = true,
-                'q' => castling_rights.0[Color::Black][CastlingSide::Queen] = true,
-                _ => (),
-            }
+            let color = Color::from_char_case(c);
+            let side = match c.to_ascii_uppercase() {
+                'K' => CastlingSide::King,
+                'Q' => CastlingSide::Queen,
+                _ => break,
+            };
+            castling_rights.0[color][side] = true;
         }
         Ok(castling_rights)
     }

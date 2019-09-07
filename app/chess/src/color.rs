@@ -1,5 +1,7 @@
 use crate::{Coordinate, Rank};
 use enum_map_derive::Enum;
+use std::str::FromStr;
+use zorro_common::Error;
 use std::ops;
 use strum_macros::EnumIter;
 
@@ -10,18 +12,19 @@ pub enum Color {
 }
 
 impl Color {
-    pub fn set_ascii_case(self, c: char) -> char {
-        match self {
-            Color::White => c.to_ascii_uppercase(),
-            Color::Black => c.to_ascii_lowercase(),
-        }
-    }
 
     pub fn from_char_case(c: char) -> Self {
         if c.is_ascii_uppercase() {
             Color::White
         } else {
             Color::Black
+        }
+    }
+
+    pub fn set_ascii_case(self, c: char) -> char {
+        match self {
+            Color::White => c.to_ascii_uppercase(),
+            Color::Black => c.to_ascii_lowercase(),
         }
     }
 
@@ -65,12 +68,14 @@ impl ops::Not for Color {
     }
 }
 
-impl From<char> for Color {
-    fn from(c: char) -> Self {
-        match c.to_ascii_lowercase() {
-            'w' => Color::White,
-            'b' => Color::Black,
-            _ => panic!(),
+impl FromStr for Color {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s.chars().next().map(|c| c.to_ascii_lowercase()) {
+            Some('w') => Ok(Color::White),
+            Some('b') => Ok(Color::Black),
+            _ => Err(Error::InvalidColor),
         }
     }
 }
@@ -92,8 +97,8 @@ mod test {
 
     #[test]
     fn color_from_char() {
-        assert_eq!(Color::from('w'), Color::White);
-        assert_eq!(Color::from('B'), Color::Black);
+        assert_eq!(Color::from_str("w"), Ok(Color::White));
+        assert_eq!(Color::from_str("B"), Ok(Color::Black));
     }
 
     #[test]

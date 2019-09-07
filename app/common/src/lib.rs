@@ -6,6 +6,7 @@ pub enum Error {
     UnexpectedEndOfCommand,
     UnknownCommand(String),
     InvalidFen,
+    InvalidColor,
 }
 
 impl fmt::Display for Error {
@@ -17,6 +18,7 @@ impl fmt::Display for Error {
             }
             Error::UnknownCommand(s) => writeln!(f, "[ERROR] Unknown command '{}'", s),
             Error::InvalidFen => writeln!(f, "[ERROR] Invalid FEN string"),
+            Error::InvalidColor => writeln!(f, "[ERROR] Invalid color string"),
         }
     }
 }

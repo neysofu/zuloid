@@ -97,7 +97,7 @@ impl Board {
             }
         }
         field = fields.next().ok_or(Error::InvalidFen)?;
-        board.color_to_move = Color::from(field.as_ref().chars().next().unwrap());
+        board.color_to_move = Color::from_str(field.as_ref())?;
         field = fields.next().ok_or(Error::InvalidFen)?;
         board.castling_rights = CastlingRights::from_str(field.as_ref())?;
         field = fields.next().ok_or(Error::InvalidFen)?;
