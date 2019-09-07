@@ -1,6 +1,6 @@
 use super::*;
 use enum_map_derive::Enum;
-use lazy_static::lazy_static;
+
 use strum_macros::EnumIter;
 
 #[derive(Copy, Clone, Debug, PartialEq)]

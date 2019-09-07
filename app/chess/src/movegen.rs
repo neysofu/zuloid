@@ -23,7 +23,7 @@ impl Board {
         buf: &'t mut [Move],
         magic_mover: &M,
     ) -> impl Iterator<Item = Move> + 't {
-        let mover = self.color_to_move;
+        let _mover = self.color_to_move;
         let mut count = 0;
         let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
         count += self.gen_pawns(&mut buf[count..]);
