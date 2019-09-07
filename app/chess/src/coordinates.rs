@@ -1,5 +1,6 @@
 use bitintr::Blsi;
 use bitintr::Tzcnt;
+use rand::Rng;
 use std::fmt;
 use std::iter::DoubleEndedIterator;
 use std::marker::PhantomData;
@@ -9,10 +10,24 @@ use zorro_common::Error;
 
 pub type Bitboard = u64;
 
-pub trait BitboardOps {
+pub struct BitboardFormatter(Bitboard);
+
+impl fmt::Display for BitboardFormatter {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        // TODO: nice output with ranks and files.
+        write!(fmt, "{:x}", self.0)
+    }
+}
+
+pub trait BitboardOps: ops::BitAnd<Output = Self> + Sized {
     fn squares(self) -> BitsCounter;
     fn north(self, n: usize) -> Self;
     fn south(self, n: usize) -> Self;
+    fn fmt_as_board(self) -> BitboardFormatter;
+    fn rnd<R: Rng>(r: &mut R) -> Self;
+    fn rnd_sparsely_populated<R: Rng>(r: &mut R) -> Self {
+        Self::rnd(r) & Self::rnd(r) & Self::rnd(r)
+    }
 }
 
 impl BitboardOps for Bitboard {
@@ -26,6 +41,14 @@ impl BitboardOps for Bitboard {
 
     fn south(self, n: usize) -> Self {
         self >> n
+    }
+
+    fn fmt_as_board(self) -> BitboardFormatter {
+        BitboardFormatter(self)
+    }
+
+    fn rnd<R: Rng>(r: &mut R) -> Self {
+        r.gen()
     }
 }
 
@@ -69,6 +92,11 @@ where
         } else {
             None
         }
+    }
+
+    fn new_rnd<R: Rng>(r: &mut R) -> Self {
+        let range = Self::range();
+        Self::new_unchecked(r.gen_range(range.start, range.end))
     }
 
     fn shift(self, rhs: i32) -> Option<Self> {
@@ -363,5 +391,11 @@ mod test {
         let rank = Rank::max();
         let square = Square::at(file, rank);
         assert_eq!(square.i(), 31);
+    }
+
+    #[test]
+    fn rank_new_rnd_i_is_in_range() {
+        let rank = Rank::new_rnd(&mut rand::thread_rng());
+        assert!(Rank::range().contains(&(rank.i() as u8)));
     }
 }

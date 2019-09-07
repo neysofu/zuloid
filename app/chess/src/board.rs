@@ -74,6 +74,24 @@ impl Board {
         self.set_at_square(mv.to, self.piece_opt_at(mv.from));
         self.set_at_square(mv.from, None);
     }
+
+    // Bitboard accessibility utilities.
+
+    pub fn attackers(&self) -> Bitboard {
+        self.bb_colors[self.color_to_move]
+    }
+
+    pub fn attackers_with_role(&self, role: Role) -> Bitboard {
+        self.attackers() & self.bb_roles[role]
+    }
+
+    pub fn defenders(&self) -> Bitboard {
+        self.bb_colors[!self.color_to_move]
+    }
+
+    pub fn bb_all(&self) -> Bitboard {
+        self.bb_colors[Color::White] | self.bb_colors[Color::Black]
+    }
 }
 
 impl Default for Board {

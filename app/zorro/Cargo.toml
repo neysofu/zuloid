@@ -19,6 +19,7 @@ strum = "0.15.0"
 strum_macros = "0.15.0"
 zorro_common = { path = "../common" }
 zorro_chess = { path = "../chess" }
+zorro_magics = { path = "../magics" }
 webbrowser = "0.5.2"
 
 [dev-dependencies]

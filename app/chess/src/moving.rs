@@ -1,4 +1,4 @@
-use crate::{Role, Square};
+use crate::{Coordinate, Role, Square};
 use std::fmt;
 use std::str::FromStr;
 use zorro_common::Error;
@@ -8,6 +8,16 @@ pub struct Move {
     pub from: Square,
     pub to: Square,
     pub promotion: Option<Role>,
+}
+
+impl Move {
+    pub fn new_garbage() -> Self {
+        Move {
+            from: Square::new(0),
+            to: Square::new(0),
+            promotion: None,
+        }
+    }
 }
 
 impl FromStr for Move {

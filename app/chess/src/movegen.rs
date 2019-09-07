@@ -1,35 +1,53 @@
-use super::piece::*;
 use super::*;
+use lazy_static::lazy_static;
 
+/// A pre-initialized sliding pieces attack database.
+pub trait SlidingPiecesMoveGen: Default + Sized {
+    fn gen_rooks(&self, buf: &mut [Move], rooks: Bitboard, all: Bitboard) -> usize;
+    fn gen_bishops(&self, buf: &mut [Move], bishops: Bitboard, all: Bitboard) -> usize;
+}
+
+/// Some terminology:
+///
+/// > attackers
+///     All pieces of the moving color.
+/// > defenders
+///     All pieces of the non-moving color.
+/// > <plural role name>
+///     All attackers with a certain role. Note that it does *not* include
+/// defenders. > all
+///     All pieces on the board.
 impl Board {
-    pub fn list_legals<'t>(&self, buf: &'t mut [Move]) -> impl Iterator<Item = Move> + 't {
+    pub fn list_legals<'t, M: SlidingPiecesMoveGen>(
+        &self,
+        buf: &'t mut [Move],
+        magic_mover: &M,
+    ) -> impl Iterator<Item = Move> + 't {
         let mover = self.color_to_move;
         let mut count = 0;
-        count += self.gen_pawns(
+        let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
+        count += self.gen_pawns(&mut buf[count..]);
+        count += self.gen_knights(&mut buf[count..]);
+        count += self.gen_king(&mut buf[count..]);
+        // Sliding pieces.
+        count += magic_mover.gen_bishops(
             &mut buf[count..],
-            self.bb_colors[mover] & self.bb_roles[Role::Pawn],
-            self.bb_colors[!mover],
-            mover,
+            self.attackers_with_role(Role::Bishop),
+            bb_all,
         );
-        count += self.gen_knights(
+        count += magic_mover.gen_rooks(
             &mut buf[count..],
-            self.bb_colors[mover] & self.bb_roles[Role::Knight],
+            self.attackers_with_role(Role::Rook),
+            bb_all,
         );
-        count += self.gen_king(
-            &mut buf[count..],
-            self.bb_colors[mover] & self.bb_roles[Role::King],
-        );
+        // Note that queen moves are already included in bishops' and rooks'.
         (0..count).map(move |i| buf[i])
     }
 
-    fn gen_pawns(
-        &self,
-        buf: &mut [Move],
-        attackers: Bitboard,
-        defenders: Bitboard,
-        mover: Color,
-    ) -> usize {
-        let all = attackers | defenders;
+    fn gen_pawns(&self, buf: &mut [Move]) -> usize {
+        let bb_all = self.bb_all();
+        let attackers = self.attackers();
+        let defenders = self.defenders();
         fn push(attackers: Bitboard, all: Bitboard, mover: Color) -> Bitboard {
             !all & match mover {
                 Color::White => attackers.north(1),
@@ -37,12 +55,16 @@ impl Board {
             }
         }
         let mut count = 0;
-        let single_pushes = push(attackers, all, mover);
-        let double_pushes = push(single_pushes, all, mover);
+        let single_pushes = push(
+            self.attackers_with_role(Role::Pawn),
+            bb_all,
+            self.color_to_move,
+        );
+        let double_pushes = push(single_pushes, bb_all, self.color_to_move);
         let mut captures_east = attackers & !File::new(7).to_bb();
         let mut captures_west = attackers & !File::new(0).to_bb();
         let shifts: [i32; 4];
-        match mover {
+        match self.color_to_move {
             Color::White => {
                 captures_east <<= 9;
                 captures_west >>= 7;
@@ -56,49 +78,28 @@ impl Board {
         }
         captures_east &= defenders;
         captures_west &= defenders;
-        for square in single_pushes.squares() {
-            buf[count] = Move {
-                from: square.shift(shifts[0]).unwrap(),
-                to: square,
-                promotion: None,
-            };
-            count += 1;
-        }
-        for square in double_pushes.squares() {
-            buf[count] = Move {
-                from: square.shift(shifts[1]).unwrap(),
-                to: square,
-                promotion: None,
-            };
-            count += 1;
-        }
-        for square in captures_east.squares() {
-            buf[count] = Move {
-                from: square.shift(shifts[2]).unwrap(),
-                to: square,
-                promotion: None,
-            };
-            count += 1;
-        }
-        for square in captures_west.squares() {
-            buf[count] = Move {
-                from: square.shift(shifts[3]).unwrap(),
-                to: square,
-                promotion: None,
-            };
-            count += 1;
+        let sources = [single_pushes, double_pushes, captures_east, captures_west];
+        for (i, src) in sources.iter().enumerate() {
+            for square in src.squares() {
+                buf[count] = Move {
+                    from: square.shift(shifts[i]).unwrap(),
+                    to: square,
+                    promotion: None,
+                };
+                count += 1;
+            }
         }
         count
     }
 
-    fn gen_knights(&self, buf: &mut [Move], attackers: Bitboard) -> usize {
+    fn gen_knights(&self, buf: &mut [Move]) -> usize {
         let mut count = 0;
-        for attacker in attackers.squares() {
-            let attacks = KNIGHT[attacker.i() as usize];
-            for attack in attacks.squares() {
+        for from in self.attackers_with_role(Role::Knight).squares() {
+            let possible_targets = KNIGHT[from.i() as usize] & !self.attackers();
+            for to in possible_targets.squares() {
                 let mv = Move {
-                    from: attacker,
-                    to: attack,
+                    from,
+                    to,
                     promotion: None,
                 };
                 buf[count] = mv;
@@ -108,20 +109,14 @@ impl Board {
         count
     }
 
-    fn gen_rooks(&self, _buf: &mut [Move], _attackers: Bitboard, _all: Bitboard) -> usize {
-        let count = 0;
-        // TODO
-        count
-    }
-
-    fn gen_king(&self, buf: &mut [Move], attackers: Bitboard) -> usize {
+    fn gen_king(&self, buf: &mut [Move]) -> usize {
         let mut count = 0;
-        for attacker in attackers.squares() {
-            let attacks = KING[attacker.i() as usize];
-            for attack in attacks.squares() {
+        for from in self.attackers_with_role(Role::King).squares() {
+            let possible_targets = KING[from.i() as usize] & !self.attackers();
+            for to in possible_targets.squares() {
                 let mv = Move {
-                    from: attacker,
-                    to: attack,
+                    from,
+                    to,
                     promotion: None,
                 };
                 buf[count] = mv;
@@ -129,5 +124,118 @@ impl Board {
             }
         }
         count
+    }
+}
+
+lazy_static! {
+    pub static ref KNIGHT: [Bitboard; SQUARE_COUNT] = {
+        let shifts = [
+            (-1, 2),
+            (1, 2),
+            (2, 1),
+            (2, -1),
+            (1, -2),
+            (-1, -2),
+            (-2, -1),
+            (-2, 1),
+        ];
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let mut bb = 0;
+            for shift in shifts.iter() {
+                if let (Some(file), Some(rank)) =
+                    (square.file().shift(shift.0), square.rank().shift(shift.1))
+                {
+                    bb |= Square::at(file, rank).to_bb();
+                }
+            }
+            bitboards[square.i() as usize] = bb;
+        }
+        bitboards
+    };
+    pub static ref KING: [Bitboard; SQUARE_COUNT] = {
+        let shifts = [-1, 1];
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let mut files = square.file().to_bb();
+            let mut ranks = square.rank().to_bb();
+            for shift in shifts.iter() {
+                if let Some(file) = square.file().shift(*shift) {
+                    files |= file.to_bb();
+                }
+                if let Some(rank) = square.rank().shift(*shift) {
+                    ranks |= rank.to_bb();
+                }
+            }
+            bitboards[square.i() as usize] = (files & ranks) ^ square.to_bb();
+        }
+        bitboards
+    };
+    pub static ref BOARD_FRAME: Bitboard = {
+        File::from('a').to_bb()
+            | File::from('h').to_bb()
+            | Rank::from('1').to_bb()
+            | Rank::from('8').to_bb()
+    };
+    pub static ref ROOK_MASK: [Bitboard; SQUARE_COUNT] = {
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let file_bb = square.file().to_bb();
+            let rank_bb = square.rank().to_bb();
+            bitboards[square.i() as usize] = ((file_bb | rank_bb) & !*BOARD_FRAME) | square.to_bb();
+        }
+        bitboards
+    };
+    pub static ref BISHOP_MASK: [Bitboard; SQUARE_COUNT] = {
+        let mut bitboards = [0; SQUARE_COUNT];
+        for square in Square::all() {
+            let diagonal_bb = square.diagonal_a1h8();
+            let antidiagonal_bb = square.diagonal_h1a8();
+            bitboards[square.i() as usize] =
+                ((diagonal_bb | antidiagonal_bb) & !*BOARD_FRAME) | square.to_bb();
+        }
+        bitboards
+    };
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    use std::str::FromStr;
+
+    #[test]
+    fn knight_attacks_a2() {
+        let attacker = Square::from_str("a2").unwrap();
+        let attacks = Square::from_str("c1").unwrap().to_bb()
+            | Square::from_str("c3").unwrap().to_bb()
+            | Square::from_str("b4").unwrap().to_bb();
+        assert_eq!(KNIGHT[attacker.i() as usize], attacks);
+    }
+
+    #[test]
+    fn king_attacks_f8() {
+        let attacker = Square::from_str("f8").unwrap();
+        assert_eq!(KING[attacker.i() as usize], 0xc0_40c0_0000_0000);
+    }
+
+    #[test]
+    fn initial_board_has_16_pawn_moves() {
+        let board = Board::default();
+        let mut buf = [Move::new_garbage(); 256];
+        assert_eq!(board.gen_pawns(&mut buf), 16);
+    }
+
+    #[test]
+    fn initial_board_has_4_knight_moves() {
+        let board = Board::default();
+        let mut buf = [Move::new_garbage(); 256];
+        assert_eq!(board.gen_knights(&mut buf), 4);
+    }
+
+    #[test]
+    fn initial_board_has_0_king_moves() {
+        let board = Board::default();
+        let mut buf = [Move::new_garbage(); 256];
+        assert_eq!(board.gen_king(&mut buf), 0);
     }
 }

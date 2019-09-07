@@ -1,0 +1,7 @@
+[X] Establish a consistent terminology to use in move generation logic.
+[ ] Figure out attacks database and how they fit into the core Zorro object.
+[ ] Add perft tests from sample board positions.
+[ ] Implement castling and en passant.
+[ ] Test *full* compatibility with SF.
+[ ] Implement CECP implement as well (just for completeness' sake, not really used anymore)
+

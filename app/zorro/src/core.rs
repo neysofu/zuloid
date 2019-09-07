@@ -3,10 +3,12 @@ use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
 use zorro_chess::{Board, Color};
+use zorro_magics::SlidingAttacksDatabase;
 
 #[derive(Default)]
 pub struct Zorro {
     pub config: Config,
+    pub magics: SlidingAttacksDatabase,
     pub cache: Cache,
     pub board: Board,
     pub time_controls: EnumMap<Color, TimeControl>,

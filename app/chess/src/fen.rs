@@ -107,9 +107,11 @@ impl Board {
             Some(Square::from_str(field.as_ref())?)
         };
         field = fields.next().ok_or(Error::InvalidFen)?;
-        board.half_moves_counter = str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
+        board.half_moves_counter =
+            str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
         field = fields.next().ok_or(Error::InvalidFen)?;
-        board.full_moves_counter = str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
+        board.full_moves_counter =
+            str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
         Ok(board)
     }
 }

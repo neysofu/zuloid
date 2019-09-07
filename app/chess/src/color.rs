@@ -1,9 +1,9 @@
 use crate::{Coordinate, Rank};
 use enum_map_derive::Enum;
-use std::str::FromStr;
-use zorro_common::Error;
 use std::ops;
+use std::str::FromStr;
 use strum_macros::EnumIter;
+use zorro_common::Error;
 
 #[derive(Copy, Clone, Debug, Enum, EnumIter, Hash, PartialEq, Eq)]
 pub enum Color {
@@ -12,7 +12,6 @@ pub enum Color {
 }
 
 impl Color {
-
     pub fn from_char_case(c: char) -> Self {
         if c.is_ascii_uppercase() {
             Color::White
