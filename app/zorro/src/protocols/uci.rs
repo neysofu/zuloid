@@ -7,42 +7,33 @@ use std::str::FromStr;
 use zorro_chess::{Board, Move};
 use zorro_common::{Error, Result};
 
+enum State {
+    Alive,
+    Shutdown,
+}
+
 pub struct Uci;
 
 impl Uci {
-    fn handle_line<S: AsRef<str>>(zorro: &mut Zorro, line: S) -> Result<()> {
+    fn handle_line<S: AsRef<str>>(zorro: &mut Zorro, line: S) -> Result<State> {
         let mut tokens = line.as_ref().split_whitespace();
         match tokens.next() {
             // Standard UCI commands.
-            Some("cleart") => {
-                println!("{}[2J", 27 as char);
-                Ok(())
-            }
-            Some("isready") => {
-                println!("readyok");
-                Ok(())
-            }
-            Some("perft") => CmdPerft::run(zorro, tokens),
-            Some("position") => CmdPosition::run(zorro, tokens),
-            Some("quit") => return Ok(()),
-            Some("setoption") => CmdSetOption::run(zorro, tokens),
-            Some("uci") => {
-                print_uci_message();
-                Ok(())
-            }
-            Some("ucinewgame") => {
-                zorro.cache.clear();
-                Ok(())
-            }
+            Some("isready") => println!("readyok"),
+            Some("position") => CmdPosition::run(zorro, tokens)?,
+            Some("quit") => return Ok(State::Shutdown),
+            Some("setoption") => CmdSetOption::run(zorro, tokens)?,
+            Some("uci") => print_uci_message(),
+            Some("ucinewgame") => zorro.cache.clear(),
             // Non-standard but useful nonetheless.
-            Some("d") => {
-                println!("{}", zorro.board);
-                Ok(())
-            }
-            Some("open") => CmdOpen::run(zorro, tokens),
-            Some(unknown) => Err(Error::UnknownCommand(unknown.to_string())),
-            None => Ok(()),
+            Some("cleart") => println!("{}[2J", 27 as char),
+            Some("d") => println!("{}", zorro.board),
+            Some("open") => CmdOpen::run(zorro, tokens)?,
+            Some("perft") => CmdPerft::run(zorro, tokens)?,
+            Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
+            None => (),
         }
+        Ok(State::Alive)
     }
 }
 

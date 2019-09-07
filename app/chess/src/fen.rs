@@ -143,19 +143,19 @@ mod test {
     }
 
     #[test]
+    fn board_from_fen_then_to_string_common_test_cases() {
+        for fen in TEST_CASES.iter() {
+            let board = Board::from_fen(&mut fen.split_whitespace()).unwrap();
+            assert_eq!(fen, &board.fmt_fen(' ').to_string().as_str());
+        }
+    }
+
+    #[test]
     fn fmt_initial_fen_then_from_fen() {
         let default_board_fen = Board::default().fmt_fen(' ').to_string();
         assert_eq!(
             Board::from_fen(&mut default_board_fen.split_whitespace()),
             Ok(Board::default())
         );
-    }
-
-    #[test]
-    fn board_from_fen_then_to_string_common_test_cases() {
-        for fen in TEST_CASES.iter() {
-            let board = Board::from_fen(&mut fen.split_whitespace()).unwrap();
-            assert_eq!(fen, &board.fmt_fen(' ').to_string().as_str());
-        }
     }
 }
