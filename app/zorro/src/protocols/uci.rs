@@ -109,7 +109,7 @@ impl Command for CmdPosition {
         match tokens.next() {
             Some("960") => unimplemented!(),
             Some("current") => (),
-            Some("fen") => zorro.board = Board::from_fen(&mut tokens),
+            Some("fen") => zorro.board = Board::from_fen(&mut tokens)?,
             Some("startpos") => zorro.board = Board::default(),
             Some(token) => return Err(Error::UnexpectedToken(token.to_string())),
             None => return Err(Error::UnexpectedEndOfCommand),

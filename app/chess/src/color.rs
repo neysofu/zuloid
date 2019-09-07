@@ -87,7 +87,7 @@ impl From<Color> for char {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{Board, Square, File, Piece, Role, Move};
+    use crate::{Board, File, Move, Piece, Role, Square};
     use std::str::FromStr;
 
     #[test]
@@ -111,10 +111,13 @@ mod test {
     fn backrank_contains_rook_in_new_board() {
         let board = Board::default();
         let square = Square::at(File::from('a'), Color::White.backrank());
-        assert_eq!(board.piece_opt_at(square), Some(Piece {
-            role: Role::Rook,
-            color: Color::White,
-        }));
+        assert_eq!(
+            board.piece_opt_at(square),
+            Some(Piece {
+                role: Role::Rook,
+                color: Color::White,
+            })
+        );
     }
 
     #[test]
@@ -122,9 +125,12 @@ mod test {
         let mut board = Board::default();
         let square = Square::at(File::from('e'), Color::White.fourth_rank());
         board.do_move(Move::from_str("e2e4").unwrap());
-        assert_eq!(board.piece_opt_at(square), Some(Piece {
-            role: Role::Pawn,
-            color: Color::White,
-        }));
+        assert_eq!(
+            board.piece_opt_at(square),
+            Some(Piece {
+                role: Role::Pawn,
+                color: Color::White,
+            })
+        );
     }
 }

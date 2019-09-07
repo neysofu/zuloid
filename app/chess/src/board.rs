@@ -11,7 +11,7 @@ use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 use zorro_common::Error;
 
-#[derive(Clone, Hash, PartialEq, Eq)]
+#[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Board {
     pub bb_colors: EnumMap<Color, Bitboard>,
     pub bb_roles: EnumMap<Role, Bitboard>,
@@ -19,6 +19,8 @@ pub struct Board {
     pub color_to_move: Color,
     pub reversible_moves_count: usize,
     pub en_passant_target_square: Option<Square>,
+    pub half_moves_counter: usize,
+    pub full_moves_counter: usize,
 }
 
 impl Board {
@@ -150,19 +152,27 @@ impl FromStr for CastlingRights {
 
 impl fmt::Display for CastlingRights {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        let mut any = false;
         if self.0[Color::White][CastlingSide::King] {
             write!(fmt, "K")?;
-        }
-        if self.0[Color::Black][CastlingSide::King] {
-            write!(fmt, "k")?;
+            any = true;
         }
         if self.0[Color::White][CastlingSide::Queen] {
             write!(fmt, "Q")?;
+            any = true;
+        }
+        if self.0[Color::Black][CastlingSide::King] {
+            write!(fmt, "k")?;
+            any = true;
         }
         if self.0[Color::Black][CastlingSide::Queen] {
             write!(fmt, "q")?;
+            any = true;
         }
-        write!(fmt, "")
+        if !any {
+            write!(fmt, "-")?;
+        }
+        Ok(())
     }
 }
 
@@ -195,6 +205,8 @@ lazy_static! {
             color_to_move: Color::White,
             reversible_moves_count: 0,
             en_passant_target_square: None,
+            half_moves_counter: 0,
+            full_moves_counter: 1,
         }
     };
 }

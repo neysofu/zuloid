@@ -1,4 +1,4 @@
-use super::*;
+use crate::{Role, Square};
 use std::fmt;
 use std::str::FromStr;
 use zorro_common::Error;
@@ -48,7 +48,7 @@ mod test {
         };
         assert!(match Move::from_str("a1c7") {
             Ok(actual_move) => actual_move == expected_move,
-            _ => false
+            _ => false,
         });
     }
 
@@ -61,7 +61,7 @@ mod test {
         };
         assert!(match Move::from_str(expected_move.to_string().as_str()) {
             Ok(actual_move) => actual_move == expected_move,
-            _ => false
+            _ => false,
         });
     }
 }

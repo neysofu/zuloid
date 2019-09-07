@@ -1,10 +1,11 @@
 use std::fmt;
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Eq)]
 pub enum Error {
     UnexpectedToken(String),
     UnexpectedEndOfCommand,
     UnknownCommand(String),
+    InvalidFen,
 }
 
 impl fmt::Display for Error {
@@ -15,6 +16,7 @@ impl fmt::Display for Error {
                 writeln!(f, "[ERROR] End of command, a token was expected")
             }
             Error::UnknownCommand(s) => writeln!(f, "[ERROR] Unknown command '{}'", s),
+            Error::InvalidFen => writeln!(f, "[ERROR] Invalid FEN string"),
         }
     }
 }

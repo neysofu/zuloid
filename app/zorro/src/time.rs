@@ -50,12 +50,19 @@ pub struct Clock {
 }
 
 impl Clock {
+    /// Starts the clock countdown and returns the time available to the current
+    /// player.
     pub fn tick(&mut self) -> Duration {
         assert!(self.ticking_since.is_none());
         self.ticking_since = Some(Instant::now());
         self.time_control.cumulative_time_limit()
     }
 
+    /// Stops the ticking clock
+    ///
+    /// # Assumptions
+    /// This function assumes that the current clock is already ticking and will
+    /// panic otherwise.
     pub fn tock(&mut self) {
         let ticking_since = self.ticking_since.unwrap();
         let now = Instant::now();
@@ -73,4 +80,10 @@ impl From<TimeControl> for Clock {
             time_control: tc,
         }
     }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+    // TODO
 }
