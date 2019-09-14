@@ -7,6 +7,7 @@ pub enum Error {
     UnknownCommand(String),
     InvalidFen,
     InvalidColor,
+    InvalidSquare,
 }
 
 impl fmt::Display for Error {
@@ -19,6 +20,7 @@ impl fmt::Display for Error {
             Error::UnknownCommand(s) => writeln!(f, "[ERROR] Unknown command '{}'", s),
             Error::InvalidFen => writeln!(f, "[ERROR] Invalid FEN string"),
             Error::InvalidColor => writeln!(f, "[ERROR] Invalid color string"),
+            Error::InvalidSquare => writeln!(f, "[ERROR] Invalid square string"),
         }
     }
 }

@@ -22,7 +22,7 @@ __pycache__/
 # Prerequisites
 *.d
 
-# Object files
+# Object File
 *.o
 *.ko
 *.obj
@@ -57,7 +57,7 @@ __pycache__/
 *.x86_64
 *.hex
 
-# Debug files
+# Debug File
 *.dSYM/
 *.su
 *.idb

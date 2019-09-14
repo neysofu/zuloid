@@ -13,8 +13,8 @@ use zorro_common::Error;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Board {
-    pub bb_colors: EnumMap<Color, Bitboard>,
-    pub bb_roles: EnumMap<Role, Bitboard>,
+    pub bb_colors: EnumMap<Color, BitBoard>,
+    pub bb_roles: EnumMap<Role, BitBoard>,
     pub castling_rights: CastlingRights,
     pub color_to_move: Color,
     pub reversible_moves_count: usize,
@@ -75,21 +75,31 @@ impl Board {
         self.set_at_square(mv.from, None);
     }
 
-    // Bitboard accessibility utilities.
+    fn square_centric_chars(&self) -> SquareCentricBoard<char> {
+        let mut chars_by_square_i = ['.'; Square::count()];
+        for square in Square::iter() {
+            if let Some(piece) = self.piece_opt_at(square) {
+                chars_by_square_i[square.i()] = char::from(piece);
+            }
+        }
+        SquareCentricBoard::from(chars_by_square_i)
+    }
 
-    pub fn attackers(&self) -> Bitboard {
+    // BitBoard accessibility utilities.
+
+    pub fn attackers(&self) -> BitBoard {
         self.bb_colors[self.color_to_move]
     }
 
-    pub fn attackers_with_role(&self, role: Role) -> Bitboard {
+    pub fn attackers_with_role(&self, role: Role) -> BitBoard {
         self.attackers() & self.bb_roles[role]
     }
 
-    pub fn defenders(&self) -> Bitboard {
+    pub fn defenders(&self) -> BitBoard {
         self.bb_colors[!self.color_to_move]
     }
 
-    pub fn bb_all(&self) -> Bitboard {
+    pub fn bb_all(&self) -> BitBoard {
         self.bb_colors[Color::White] | self.bb_colors[Color::Black]
     }
 }
@@ -101,24 +111,8 @@ impl Default for Board {
 }
 
 impl fmt::Display for Board {
-    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        writeln!(fmt, "     A B C D E F G H")?;
-        writeln!(fmt, "   +-----------------+")?;
-        for rank in Rank::all().rev() {
-            write!(fmt, " {} | ", char::from(rank))?;
-            for file in File::all() {
-                let square = Square::at(file, rank);
-                if let Some(piece) = self.piece_opt_at(square) {
-                    write!(fmt, "{} ", char::from(piece))?;
-                } else {
-                    write!(fmt, ". ")?;
-                }
-            }
-            writeln!(fmt, "| {}", char::from(rank))?;
-        }
-        writeln!(fmt, "   +-----------------+")?;
-        writeln!(fmt, "     A B C D E F G H")?;
-        Ok(())
+    fn fmt(&self, fmt: &mut fmt::Formatter) -> fmt::Result {
+        self.square_centric_chars().fmt(fmt)
     }
 }
 
@@ -198,24 +192,24 @@ lazy_static! {
     // The poor man's const fn.
     pub static ref BOARD_DEFAULT: Board = {
         let mut bb_colors = EnumMap::default();
-        bb_colors[Color::White] = Rank::from('1').to_bb() | Rank::from('2').to_bb();
-        bb_colors[Color::Black] = Rank::from('7').to_bb() | Rank::from('8').to_bb();
+        bb_colors[Color::White] = Rank::FIRST.to_bb() | Rank::SECOND.to_bb();
+        bb_colors[Color::Black] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
         let mut bb_roles = EnumMap::default();
-        bb_roles[Role::Pawn] = Rank::from('2').to_bb() | Rank::from('7').to_bb();
-        bb_roles[Role::Knight] = Square::from("b1").to_bb()
-            | Square::from("g1").to_bb()
-            | Square::from("b8").to_bb()
-            | Square::from("g8").to_bb();
-        bb_roles[Role::Bishop] = Square::from("c1").to_bb()
-            | Square::from("f1").to_bb()
-            | Square::from("c8").to_bb()
-            | Square::from("f8").to_bb();
-        bb_roles[Role::Rook] = Square::from("a1").to_bb()
-            | Square::from("h1").to_bb()
-            | Square::from("a8").to_bb()
-            | Square::from("h8").to_bb();
-        bb_roles[Role::Queen] = Square::from("d1").to_bb() | Square::from("d8").to_bb();
-        bb_roles[Role::King] = Square::from("e1").to_bb() | Square::from("e8").to_bb();
+        bb_roles[Role::Pawn] = Rank::SECOND.to_bb() | Rank::SEVENTH.to_bb();
+        bb_roles[Role::Knight] = Square::B1.to_bb()
+            | Square::G1.to_bb()
+            | Square::B8.to_bb()
+            | Square::G8.to_bb();
+        bb_roles[Role::Bishop] = Square::C1.to_bb()
+            | Square::F1.to_bb()
+            | Square::C8.to_bb()
+            | Square::F8.to_bb();
+        bb_roles[Role::Rook] = Square::A1.to_bb()
+            | Square::H1.to_bb()
+            | Square::A8.to_bb()
+            | Square::H8.to_bb();
+        bb_roles[Role::Queen] = Square::D1.to_bb() | Square::D8.to_bb();
+        bb_roles[Role::King] = Square::E1.to_bb() | Square::E8.to_bb();
         Board {
             bb_colors,
             bb_roles,
@@ -227,4 +221,32 @@ lazy_static! {
             full_moves_counter: 1,
         }
     };
+}
+
+pub struct SquareCentricBoard<T> {
+    by_square_i: [T; Square::count()],
+}
+
+impl<T> From<[T; Square::count()]> for SquareCentricBoard<T> {
+    fn from(by_square_i: [T; Square::count()]) -> Self {
+        SquareCentricBoard { by_square_i }
+    }
+}
+
+impl fmt::Display for SquareCentricBoard<char> {
+    fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
+        writeln!(fmt, "     A B C D E F G H")?;
+        writeln!(fmt, "   +-----------------+")?;
+        for rank in Rank::iter().rev() {
+            write!(fmt, " {} | ", char::from(rank))?;
+            for file in File::iter() {
+                let square = Square::at(file, rank);
+                write!(fmt, "{} ", self.by_square_i[square.i()])?;
+            }
+            writeln!(fmt, "| {}", char::from(rank))?;
+        }
+        writeln!(fmt, "   +-----------------+")?;
+        write!(fmt, "     A B C D E F G H")?;
+        Ok(())
+    }
 }

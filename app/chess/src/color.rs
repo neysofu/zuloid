@@ -114,7 +114,7 @@ mod test {
     #[test]
     fn backrank_contains_rook_in_new_board() {
         let board = Board::default();
-        let square = Square::at(File::from('a'), Color::White.backrank());
+        let square = Square::at(File::A, Color::White.backrank());
         assert_eq!(
             board.piece_opt_at(square),
             Some(Piece {
@@ -127,7 +127,7 @@ mod test {
     #[test]
     fn pawn_double_push_is_on_fourth_rank() {
         let mut board = Board::default();
-        let square = Square::at(File::from('e'), Color::White.fourth_rank());
+        let square = Square::at(File::E, Color::White.fourth_rank());
         board.do_move(Move::from_str("e2e4").unwrap());
         assert_eq!(
             board.piece_opt_at(square),

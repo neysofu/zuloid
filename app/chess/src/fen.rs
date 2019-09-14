@@ -13,9 +13,9 @@ pub struct Fen<'b> {
 
 impl<'b> fmt::Display for Fen<'b> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        for rank in Rank::all().rev() {
+        for rank in Rank::iter().rev() {
             let mut previous_emtpy_squares = 0;
-            for file in File::all() {
+            for file in File::iter() {
                 let square = Square::at(file, rank);
                 match self.board.piece_opt_at(square) {
                     Some(piece) => {

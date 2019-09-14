@@ -4,23 +4,25 @@ use zorro_chess::*;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {
-    mask: Bitboard,
+    mask: BitBoard,
     multiplier: u64,
     right_shift: usize,
 }
 
 impl Magic {
-    /// See [https://www.chessprogramming.org/Magic_Bitboards] for more information.
-    pub fn magify(&self, bb: Bitboard) -> usize {
+    /// See [https://www.chessprogramming.org/Magic_BitBoards] for more information.
+    pub fn magify(&self, bb: BitBoard) -> usize {
         (((bb & self.mask) * self.multiplier) >> self.right_shift) as usize
     }
 }
 
 lazy_static! {
-    pub static ref BOARD_FRAME: Bitboard = File::from('a').to_bb()
-        | File::from('h').to_bb()
-        | Rank::from('1').to_bb()
-        | Rank::from('8').to_bb();
+    pub static ref BOARD_FRAME: BitBoard = {
+        File::A.to_bb()
+            | File::H.to_bb()
+            | Rank::FIRST.to_bb()
+            | Rank::EIGHTH.to_bb()
+    };
     pub static ref FILE_MAGICS: [Magic; 8] = {
         fn file_magic(file_i: u64) -> Magic {
             Magic {
@@ -40,17 +42,17 @@ lazy_static! {
             file_magic(7),
         ]
     };
-    pub static ref RANK_MAGICS: [Magic; SQUARE_COUNT] = { unimplemented!() };
-    pub static ref DIAGONAL_A1H8_MAGICS: [Magic; SQUARE_COUNT] = { unimplemented!() };
-    pub static ref DIAGONAL_H1A8_MAGICS: [Magic; SQUARE_COUNT] = { unimplemented!() };
-    pub static ref FILE_ATTACKS: [Bitboard; 4096] = { unimplemented!() };
+    pub static ref RANK_MAGICS: [Magic; Square::count()] = { unimplemented!() };
+    pub static ref DIAGONAL_A1H8_MAGICS: [Magic; Square::count()] = { unimplemented!() };
+    pub static ref DIAGONAL_H1A8_MAGICS: [Magic; Square::count()] = { unimplemented!() };
+    pub static ref FILE_ATTACKS: [BitBoard; 4096] = { unimplemented!() };
 }
 
-pub fn rook_magics(_square: Square, _occupancy: Bitboard) -> Bitboard {
+pub fn rook_magics(_square: Square, _occupancy: BitBoard) -> BitBoard {
     unimplemented!()
 }
 
-pub fn bishop_magics(_square: Square, _occupancy: Bitboard) -> Bitboard {
+pub fn bishop_magics(_square: Square, _occupancy: BitBoard) -> BitBoard {
     unimplemented!()
 }
 
@@ -69,8 +71,8 @@ pub fn find_magics() {
     // magic).count('1'):                # print('The magic candidate doesn\'t
     // have same bitcnt')                pass
     //            else:
-    //                # print('Found a possible magic value: {}'.format(hex(magic)))
-    //                found = True
+    //                # print('Found a possible magic value:
+    // {}'.format(hex(magic)))                found = True
     //                # Check with every possible source/target pair.
     //                for source_mask in range(0, 0x40):
     //                    source_mask <<= 1
@@ -88,16 +90,16 @@ pub fn find_magics() {
 
 pub struct SlidingAttacksDatabase {
     // FIXME: exact buffer sizes.
-    bb_rooks: [Bitboard; 86000],
-    bb_bishopts: [Bitboard; 86000],
+    bb_rooks: [BitBoard; 86000],
+    bb_bishopts: [BitBoard; 86000],
 }
 
 impl SlidingPiecesMoveGen for SlidingAttacksDatabase {
-    fn gen_rooks(&self, _buf: &mut [Move], _attackers: Bitboard, _all: Bitboard) -> usize {
+    fn gen_rooks(&self, _buf: &mut [Move], _attackers: BitBoard, _all: BitBoard) -> usize {
         0
     }
 
-    fn gen_bishops(&self, _buf: &mut [Move], _attackers: Bitboard, _all: Bitboard) -> usize {
+    fn gen_bishops(&self, _buf: &mut [Move], _attackers: BitBoard, _all: BitBoard) -> usize {
         0
     }
 }

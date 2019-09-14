@@ -87,7 +87,7 @@ impl Command for CmdPerft {
         } else {
             1
         };
-        let mut buf = [Move::from_str("a1a1").unwrap(); 256];
+        let mut buf = [Move::new_garbage(); 256];
         for mv in zorro.board.list_legals(&mut buf[..], &zorro.magics) {
             println!("{}", mv);
         }

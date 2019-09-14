@@ -3,8 +3,8 @@ use lazy_static::lazy_static;
 
 /// A pre-initialized sliding pieces attack database.
 pub trait SlidingPiecesMoveGen: Default + Sized {
-    fn gen_rooks(&self, buf: &mut [Move], rooks: Bitboard, all: Bitboard) -> usize;
-    fn gen_bishops(&self, buf: &mut [Move], bishops: Bitboard, all: Bitboard) -> usize;
+    fn gen_rooks(&self, buf: &mut [Move], rooks: BitBoard, all: BitBoard) -> usize;
+    fn gen_bishops(&self, buf: &mut [Move], bishops: BitBoard, all: BitBoard) -> usize;
 }
 
 /// Some terminology:
@@ -48,7 +48,7 @@ impl Board {
         let bb_all = self.bb_all();
         let attackers = self.attackers();
         let defenders = self.defenders();
-        fn push(attackers: Bitboard, all: Bitboard, mover: Color) -> Bitboard {
+        fn push(attackers: BitBoard, all: BitBoard, mover: Color) -> BitBoard {
             !all & match mover {
                 Color::White => attackers.north(1),
                 Color::Black => attackers.south(1),
@@ -128,7 +128,7 @@ impl Board {
 }
 
 lazy_static! {
-    pub static ref KNIGHT: [Bitboard; SQUARE_COUNT] = {
+    pub static ref KNIGHT: [BitBoard; Square::count()] = {
         let shifts = [
             (-1, 2),
             (1, 2),
@@ -139,8 +139,8 @@ lazy_static! {
             (-2, -1),
             (-2, 1),
         ];
-        let mut bitboards = [0; SQUARE_COUNT];
-        for square in Square::all() {
+        let mut bitboards = [0; Square::count()];
+        for square in Square::iter() {
             let mut bb = 0;
             for shift in shifts.iter() {
                 if let (Some(file), Some(rank)) =
@@ -153,46 +153,21 @@ lazy_static! {
         }
         bitboards
     };
-    pub static ref KING: [Bitboard; SQUARE_COUNT] = {
+    pub static ref KING: [BitBoard; Square::count()] = {
         let shifts = [-1, 1];
-        let mut bitboards = [0; SQUARE_COUNT];
-        for square in Square::all() {
-            let mut files = square.file().to_bb();
-            let mut ranks = square.rank().to_bb();
+        let mut bitboards = [0; Square::count()];
+        for square in Square::iter() {
+            let mut File = square.file().to_bb();
+            let mut Rank = square.rank().to_bb();
             for shift in shifts.iter() {
                 if let Some(file) = square.file().shift(*shift) {
-                    files |= file.to_bb();
+                    File |= file.to_bb();
                 }
                 if let Some(rank) = square.rank().shift(*shift) {
-                    ranks |= rank.to_bb();
+                    Rank |= rank.to_bb();
                 }
             }
-            bitboards[square.i() as usize] = (files & ranks) ^ square.to_bb();
-        }
-        bitboards
-    };
-    pub static ref BOARD_FRAME: Bitboard = {
-        File::from('a').to_bb()
-            | File::from('h').to_bb()
-            | Rank::from('1').to_bb()
-            | Rank::from('8').to_bb()
-    };
-    pub static ref ROOK_MASK: [Bitboard; SQUARE_COUNT] = {
-        let mut bitboards = [0; SQUARE_COUNT];
-        for square in Square::all() {
-            let file_bb = square.file().to_bb();
-            let rank_bb = square.rank().to_bb();
-            bitboards[square.i() as usize] = ((file_bb | rank_bb) & !*BOARD_FRAME) | square.to_bb();
-        }
-        bitboards
-    };
-    pub static ref BISHOP_MASK: [Bitboard; SQUARE_COUNT] = {
-        let mut bitboards = [0; SQUARE_COUNT];
-        for square in Square::all() {
-            let diagonal_bb = square.diagonal_a1h8();
-            let antidiagonal_bb = square.diagonal_h1a8();
-            bitboards[square.i() as usize] =
-                ((diagonal_bb | antidiagonal_bb) & !*BOARD_FRAME) | square.to_bb();
+            bitboards[square.i() as usize] = (File & Rank) ^ square.to_bb();
         }
         bitboards
     };
