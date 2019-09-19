@@ -1,7 +1,6 @@
 [workspace]
 members = [
     "chess",
-    "common",
     "magics",
     "zorro",
 ]

@@ -1,7 +1,6 @@
-use crate::{Coordinate, Role, Square};
+use crate::{Coordinate, Error, Role, Square};
 use std::fmt;
 use std::str::FromStr;
-use zorro_common::Error;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {

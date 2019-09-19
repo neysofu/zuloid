@@ -1,9 +1,8 @@
-use crate::{Coordinate, Rank};
+use crate::{Coordinate, Error, Rank};
 use enum_map_derive::Enum;
 use std::ops;
 use std::str::FromStr;
 use strum_macros::EnumIter;
-use zorro_common::Error;
 
 #[derive(Copy, Clone, Debug, Enum, EnumIter, Hash, PartialEq, Eq)]
 pub enum Color {

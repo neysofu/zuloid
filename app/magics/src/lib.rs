@@ -17,12 +17,8 @@ impl Magic {
 }
 
 lazy_static! {
-    pub static ref BOARD_FRAME: BitBoard = {
-        File::A.to_bb()
-            | File::H.to_bb()
-            | Rank::FIRST.to_bb()
-            | Rank::EIGHTH.to_bb()
-    };
+    pub static ref BOARD_FRAME: BitBoard =
+        { File::A.to_bb() | File::H.to_bb() | Rank::FIRST.to_bb() | Rank::EIGHTH.to_bb() };
     pub static ref FILE_MAGICS: [Magic; 8] = {
         fn file_magic(file_i: u64) -> Magic {
             Magic {

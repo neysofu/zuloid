@@ -1,13 +1,13 @@
+use crate::Error;
 use bitintr::Blsi;
 use bitintr::Tzcnt;
 use rand::Rng;
+use std::convert::{TryFrom, TryInto};
 use std::fmt;
 use std::iter::DoubleEndedIterator;
 use std::marker::PhantomData;
 use std::ops;
-use std::convert::{TryFrom, TryInto};
 use std::str::FromStr;
-use zorro_common::{Error, Result};
 
 pub type BitBoard = u64;
 
@@ -67,22 +67,20 @@ impl Iterator for BitsCounter {
     }
 }
 
-pub trait Coordinate
-where
-    Self: Into<BitBoard> + Sized,
-{
-    fn range() -> ops::Range<u8>;
+pub trait Coordinate: Into<BitBoard> + Sized {
+    const RANGE: ops::Range<u8>;
+
     fn new_unchecked(i: u8) -> Self;
     fn i(self) -> usize;
 
     fn new(i: u8) -> Self {
-        assert!(Self::range().contains(&i));
+        assert!(Self::RANGE.contains(&i));
         Self::new_unchecked(i)
     }
 
     fn new_opt(i: i32) -> Option<Self> {
-        let start = i32::from(Self::range().start);
-        let end = i32::from(Self::range().end);
+        let start = i32::from(Self::RANGE.start);
+        let end = i32::from(Self::RANGE.end);
         let range = ops::Range { start, end };
         if range.contains(&i) {
             Some(Self::new_unchecked(i as u8))
@@ -92,7 +90,7 @@ where
     }
 
     fn new_rnd<R: Rng>(r: &mut R) -> Self {
-        let range = Self::range();
+        let range = Self::RANGE;
         Self::new_unchecked(r.gen_range(range.start, range.end))
     }
 
@@ -101,21 +99,21 @@ where
     }
 
     fn min() -> Self {
-        Self::new_unchecked(Self::range().start)
+        Self::new_unchecked(Self::RANGE.start)
     }
 
     fn max() -> Self {
-        Self::new_unchecked(Self::range().end - 1)
+        Self::new_unchecked(Self::RANGE.end - 1)
     }
 
     fn count() -> usize {
-        (Self::range().end - Self::range().start) as usize
+        (Self::RANGE.end - Self::RANGE.start) as usize
     }
 
     fn iter() -> CoordinateWalker<Self> {
         CoordinateWalker {
             phantom: PhantomData,
-            range: Self::range(),
+            range: Self::RANGE,
         }
     }
 }
@@ -179,9 +177,7 @@ impl File {
 }
 
 impl Coordinate for File {
-    fn range() -> ops::Range<u8> {
-        (0..8)
-    }
+    const RANGE: ops::Range<u8> = 0..8;
 
     fn new_unchecked(i: u8) -> Self {
         File(i)
@@ -201,7 +197,7 @@ impl Into<BitBoard> for File {
 impl TryFrom<char> for File {
     type Error = Error;
 
-    fn try_from(c: char) -> Result<Self> {
+    fn try_from(c: char) -> Result<Self, Self::Error> {
         let i = (c as u8) - b'a';
         Ok(File::new(i))
     }
@@ -234,9 +230,7 @@ impl Rank {
 }
 
 impl Coordinate for Rank {
-    fn range() -> ops::Range<u8> {
-        (0..8)
-    }
+    const RANGE: ops::Range<u8> = 0..8;
 
     fn new_unchecked(i: u8) -> Self {
         Rank(i)
@@ -256,7 +250,7 @@ impl Into<BitBoard> for Rank {
 impl TryFrom<char> for Rank {
     type Error = Error;
 
-    fn try_from(c: char) -> Result<Self> {
+    fn try_from(c: char) -> Result<Self, Self::Error> {
         let i = c.to_digit(9).unwrap() - 1;
         Ok(Rank::new(i as u8))
     }
@@ -278,78 +272,77 @@ impl fmt::Display for Rank {
 pub struct Square(u8);
 
 impl Square {
+    pub const A1: Square = Square(8 * 0 + 0);
+    pub const A2: Square = Square(8 * 0 + 1);
+    pub const A3: Square = Square(8 * 0 + 2);
+    pub const A4: Square = Square(8 * 0 + 3);
+    pub const A5: Square = Square(8 * 0 + 4);
+    pub const A6: Square = Square(8 * 0 + 5);
+    pub const A7: Square = Square(8 * 0 + 6);
+    pub const A8: Square = Square(8 * 0 + 7);
 
-    pub const A1: Square = Square(8*0 + 0);
-    pub const A2: Square = Square(8*0 + 1);
-    pub const A3: Square = Square(8*0 + 2);
-    pub const A4: Square = Square(8*0 + 3);
-    pub const A5: Square = Square(8*0 + 4);
-    pub const A6: Square = Square(8*0 + 5);
-    pub const A7: Square = Square(8*0 + 6);
-    pub const A8: Square = Square(8*0 + 7);
+    pub const B1: Square = Square(8 * 1 + 0);
+    pub const B2: Square = Square(8 * 1 + 1);
+    pub const B3: Square = Square(8 * 1 + 2);
+    pub const B4: Square = Square(8 * 1 + 3);
+    pub const B5: Square = Square(8 * 1 + 4);
+    pub const B6: Square = Square(8 * 1 + 5);
+    pub const B7: Square = Square(8 * 1 + 6);
+    pub const B8: Square = Square(8 * 1 + 7);
 
-    pub const B1: Square = Square(8*1 + 0);
-    pub const B2: Square = Square(8*1 + 1);
-    pub const B3: Square = Square(8*1 + 2);
-    pub const B4: Square = Square(8*1 + 3);
-    pub const B5: Square = Square(8*1 + 4);
-    pub const B6: Square = Square(8*1 + 5);
-    pub const B7: Square = Square(8*1 + 6);
-    pub const B8: Square = Square(8*1 + 7);
+    pub const C1: Square = Square(8 * 2 + 0);
+    pub const C2: Square = Square(8 * 2 + 1);
+    pub const C3: Square = Square(8 * 2 + 2);
+    pub const C4: Square = Square(8 * 2 + 3);
+    pub const C5: Square = Square(8 * 2 + 4);
+    pub const C6: Square = Square(8 * 2 + 5);
+    pub const C7: Square = Square(8 * 2 + 6);
+    pub const C8: Square = Square(8 * 2 + 7);
 
-    pub const C1: Square = Square(8*2 + 0);
-    pub const C2: Square = Square(8*2 + 1);
-    pub const C3: Square = Square(8*2 + 2);
-    pub const C4: Square = Square(8*2 + 3);
-    pub const C5: Square = Square(8*2 + 4);
-    pub const C6: Square = Square(8*2 + 5);
-    pub const C7: Square = Square(8*2 + 6);
-    pub const C8: Square = Square(8*2 + 7);
+    pub const D1: Square = Square(8 * 3 + 0);
+    pub const D2: Square = Square(8 * 3 + 1);
+    pub const D3: Square = Square(8 * 3 + 2);
+    pub const D4: Square = Square(8 * 3 + 3);
+    pub const D5: Square = Square(8 * 3 + 4);
+    pub const D6: Square = Square(8 * 3 + 5);
+    pub const D7: Square = Square(8 * 3 + 6);
+    pub const D8: Square = Square(8 * 3 + 7);
 
-    pub const D1: Square = Square(8*3 + 0);
-    pub const D2: Square = Square(8*3 + 1);
-    pub const D3: Square = Square(8*3 + 2);
-    pub const D4: Square = Square(8*3 + 3);
-    pub const D5: Square = Square(8*3 + 4);
-    pub const D6: Square = Square(8*3 + 5);
-    pub const D7: Square = Square(8*3 + 6);
-    pub const D8: Square = Square(8*3 + 7);
+    pub const E1: Square = Square(8 * 4 + 0);
+    pub const E2: Square = Square(8 * 4 + 1);
+    pub const E3: Square = Square(8 * 4 + 2);
+    pub const E4: Square = Square(8 * 4 + 3);
+    pub const E5: Square = Square(8 * 4 + 4);
+    pub const E6: Square = Square(8 * 4 + 5);
+    pub const E7: Square = Square(8 * 4 + 6);
+    pub const E8: Square = Square(8 * 4 + 7);
 
-    pub const E1: Square = Square(8*4 + 0);
-    pub const E2: Square = Square(8*4 + 1);
-    pub const E3: Square = Square(8*4 + 2);
-    pub const E4: Square = Square(8*4 + 3);
-    pub const E5: Square = Square(8*4 + 4);
-    pub const E6: Square = Square(8*4 + 5);
-    pub const E7: Square = Square(8*4 + 6);
-    pub const E8: Square = Square(8*4 + 7);
+    pub const F1: Square = Square(8 * 5 + 0);
+    pub const F2: Square = Square(8 * 5 + 1);
+    pub const F3: Square = Square(8 * 5 + 2);
+    pub const F4: Square = Square(8 * 5 + 3);
+    pub const F5: Square = Square(8 * 5 + 4);
+    pub const F6: Square = Square(8 * 5 + 5);
+    pub const F7: Square = Square(8 * 5 + 6);
+    pub const F8: Square = Square(8 * 5 + 7);
 
-    pub const F1: Square = Square(8*5 + 0);
-    pub const F2: Square = Square(8*5 + 1);
-    pub const F3: Square = Square(8*5 + 2);
-    pub const F4: Square = Square(8*5 + 3);
-    pub const F5: Square = Square(8*5 + 4);
-    pub const F6: Square = Square(8*5 + 5);
-    pub const F7: Square = Square(8*5 + 6);
-    pub const F8: Square = Square(8*5 + 7);
+    pub const G1: Square = Square(8 * 6 + 0);
+    pub const G2: Square = Square(8 * 6 + 1);
+    pub const G3: Square = Square(8 * 6 + 2);
+    pub const G4: Square = Square(8 * 6 + 3);
+    pub const G5: Square = Square(8 * 6 + 4);
+    pub const G6: Square = Square(8 * 6 + 5);
+    pub const G7: Square = Square(8 * 6 + 6);
+    pub const G8: Square = Square(8 * 6 + 7);
 
-    pub const G1: Square = Square(8*6 + 0);
-    pub const G2: Square = Square(8*6 + 1);
-    pub const G3: Square = Square(8*6 + 2);
-    pub const G4: Square = Square(8*6 + 3);
-    pub const G5: Square = Square(8*6 + 4);
-    pub const G6: Square = Square(8*6 + 5);
-    pub const G7: Square = Square(8*6 + 6);
-    pub const G8: Square = Square(8*6 + 7);
-
-    pub const H1: Square = Square(8*7 + 0);
-    pub const H2: Square = Square(8*7 + 1);
-    pub const H3: Square = Square(8*7 + 2);
-    pub const H4: Square = Square(8*7 + 3);
-    pub const H5: Square = Square(8*7 + 4);
-    pub const H6: Square = Square(8*7 + 5);
-    pub const H7: Square = Square(8*7 + 6);
-    pub const H8: Square = Square(8*7 + 7);
+    pub const H1: Square = Square(8 * 7 + 0);
+    pub const H2: Square = Square(8 * 7 + 1);
+    pub const H3: Square = Square(8 * 7 + 2);
+    pub const H4: Square = Square(8 * 7 + 3);
+    pub const H5: Square = Square(8 * 7 + 4);
+    pub const H6: Square = Square(8 * 7 + 5);
+    pub const H7: Square = Square(8 * 7 + 6);
+    pub const H8: Square = Square(8 * 7 + 7);
 
     pub const fn count() -> usize {
         64
@@ -397,9 +390,7 @@ impl Into<BitBoard> for Square {
 }
 
 impl Coordinate for Square {
-    fn range() -> ops::Range<u8> {
-        (0..(Square::count() as u8))
-    }
+    const RANGE: ops::Range<u8> = 0..64;
 
     fn new_unchecked(i: u8) -> Self {
         Square(i)
@@ -413,7 +404,7 @@ impl Coordinate for Square {
 impl FromStr for Square {
     type Err = Error;
 
-    fn from_str(s: &str) -> Result<Self> {
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
         let mut chars = s.chars();
         Ok(Square::at(
             chars.next().ok_or(Error::InvalidSquare)?.try_into()?,
@@ -489,6 +480,6 @@ mod test {
     #[test]
     fn rank_new_rnd_i_is_in_range() {
         let rank = Rank::new_rnd(&mut rand::thread_rng());
-        assert!(Rank::range().contains(&(rank.i() as u8)));
+        assert!(Rank::RANGE.contains(&(rank.i() as u8)));
     }
 }

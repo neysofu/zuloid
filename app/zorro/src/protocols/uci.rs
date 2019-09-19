@@ -2,10 +2,11 @@ use super::Protocol;
 use crate::core::Zorro;
 use crate::version::VERSION;
 use bytesize::ByteSize;
-use std::io::{self, BufRead};
+use std::fmt;
+use std::io;
 use std::str::FromStr;
+use zorro_chess::Error as ChessErr;
 use zorro_chess::{Board, Move};
-use zorro_common::{Error, Result};
 
 enum State {
     Alive,
@@ -14,22 +15,45 @@ enum State {
 
 pub struct Uci;
 
+impl Protocol for Uci {
+    fn init<R, W>(mut zorro: Zorro, input: R, mut output: W) -> io::Result<()>
+    where
+        R: io::BufRead,
+        W: io::Write,
+    {
+        writeln!(&mut output, "# Zorro {}", VERSION)?;
+        writeln!(&mut output, "# Process ID: {}", std::process::id())?;
+        for line in input.lines() {
+            match Uci::handle_line(&mut zorro, line?, &mut output) {
+                Ok(State::Alive) => (),
+                Ok(State::Shutdown) => return Ok(()),
+                Err(err) => writeln!(&mut output, "{}", err)?,
+            }
+        }
+        Ok(())
+    }
+}
+
 impl Uci {
-    fn handle_line<S: AsRef<str>>(zorro: &mut Zorro, line: S) -> Result<State> {
+    fn handle_line<S, W>(zorro: &mut Zorro, line: S, mut output: W) -> Result<State>
+    where
+        S: AsRef<str>,
+        W: io::Write,
+    {
         let mut tokens = line.as_ref().split_whitespace();
         match tokens.next() {
             // Standard UCI commands.
-            Some("isready") => println!("readyok"),
-            Some("position") => CmdPosition::run(zorro, tokens)?,
+            Some("isready") => writeln!(output, "readyok")?,
+            Some("position") => CmdPosition::run(zorro, tokens, output)?,
             Some("quit") => return Ok(State::Shutdown),
-            Some("setoption") => CmdSetOption::run(zorro, tokens)?,
-            Some("uci") => print_uci_message(),
+            Some("setoption") => CmdSetOption::run(zorro, tokens, output)?,
+            Some("uci") => print_uci_message(&mut output)?,
             Some("ucinewgame") => zorro.cache.clear(),
             // Non-standard but useful nonetheless.
-            Some("cleart") => println!("{}[2J", 27 as char),
-            Some("d") => println!("{}", zorro.board),
-            Some("open") => CmdOpen::run(zorro, tokens)?,
-            Some("perft") => CmdPerft::run(zorro, tokens)?,
+            Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
+            Some("d") => writeln!(output, "{}", zorro.board)?,
+            Some("open") => CmdOpen::run(zorro, tokens, output)?,
+            Some("perft") => CmdPerft::run(zorro, tokens, output)?,
             Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
             None => (),
         }
@@ -37,20 +61,14 @@ impl Uci {
     }
 }
 
-impl Protocol for Uci {
-    fn init(mut zorro: Zorro) {
-        println!("# Zorro {}", VERSION);
-        println!("# Process ID: {}", std::process::id());
-        for line in io::stdin().lock().lines() {
-            if let Err(e) = Uci::handle_line(&mut zorro, line.unwrap()) {
-                print_err(e)
-            }
-        }
-    }
-}
-
 trait Command {
-    fn run<'s>(zorro: &mut Zorro, tokens: impl Iterator<Item = &'s str>) -> Result<()>;
+    fn run<'s, W>(
+        zorro: &mut Zorro,
+        tokens: impl Iterator<Item = &'s str>,
+        output: W,
+    ) -> Result<()>
+    where
+        W: io::Write;
 }
 
 struct CmdOpen;
@@ -59,7 +77,14 @@ struct CmdPosition;
 struct CmdSetOption;
 
 impl Command for CmdOpen {
-    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+    fn run<'s, W>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        _output: W,
+    ) -> Result<()>
+    where
+        W: io::Write,
+    {
         match tokens.next() {
             Some("lichess") => {
                 let url = format!(
@@ -76,7 +101,14 @@ impl Command for CmdOpen {
 }
 
 impl Command for CmdPerft {
-    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+    fn run<'s, W>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        mut output: W,
+    ) -> Result<()>
+    where
+        W: io::Write,
+    {
         let _depth = if let Some(s) = tokens.next() {
             match str::parse::<usize>(s) {
                 Ok(depth) => depth,
@@ -88,15 +120,24 @@ impl Command for CmdPerft {
             1
         };
         let mut buf = [Move::new_garbage(); 256];
-        for mv in zorro.board.list_legals(&mut buf[..], &zorro.magics) {
-            println!("{}", mv);
+        let legal_moves_count = zorro.board.list_legals(&mut buf[..], &zorro.magics).count();
+        writeln!(&mut output, "N.{} legal moves:", legal_moves_count)?;
+        for m in &buf[..legal_moves_count] {
+            writeln!(&mut output, "{}", m)?;
         }
         Ok(())
     }
 }
 
 impl Command for CmdPosition {
-    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+    fn run<'s, W>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        output: W,
+    ) -> Result<()>
+    where
+        W: io::Write,
+    {
         match tokens.next() {
             Some("960") => unimplemented!(),
             Some("current") => (),
@@ -108,7 +149,7 @@ impl Command for CmdPosition {
         for token in tokens {
             match Move::from_str(token) {
                 Ok(mv) => zorro.board.do_move(mv),
-                Err(e) => print_err(e),
+                Err(err) => return Err(err.into()),
             }
         }
         Ok(())
@@ -116,7 +157,14 @@ impl Command for CmdPosition {
 }
 
 impl Command for CmdSetOption {
-    fn run<'s>(zorro: &mut Zorro, mut tokens: impl Iterator<Item = &'s str>) -> Result<()> {
+    fn run<'s, W>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        _output: W,
+    ) -> Result<()>
+    where
+        W: io::Write,
+    {
         assert_eq!(tokens.next(), Some("name"));
         let mut option_name = String::new();
         while let Some(token) = tokens.next() {
@@ -162,23 +210,86 @@ impl Command for CmdSetOption {
     }
 }
 
-fn print_uci_message() {
-    println!("id name Zorro {}", VERSION);
-    println!("id author Filippo Costa");
-    println!("option name Clear Hash type button");
-    println!("option name Contempt type spin default 20 min -100 max 100");
-    println!("option name Hash type spin default 64 min 0 max 131072");
-    println!("option name Minimum Thinking Time type spin default 20 min 0 max 5000");
-    println!("option name nodestime type spin default 0 min 0 max 10000");
-    println!("option name Ponder type check default false");
-    println!("option name Skill Level type spin default 20 min 0 max 20");
-    // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308
-    println!("option name Slow Mover type spin default 84 min 10 max 1000");
-    println!("option name Threads type spin default 1 min 1 max 512");
-    println!("option name Move Overhead type spin default 30 min 0 max 60000");
-    println!("uciok");
+fn print_uci_message<W>(output: &mut W) -> io::Result<()>
+where
+    W: io::Write,
+{
+    writeln!(output, "id name Zorro {}", VERSION)?;
+    writeln!(output, "id author Filippo Costa")?;
+    writeln!(output, "option name Clear Hash type button")?;
+    writeln!(
+        output,
+        "option name Contempt type spin default 20 min -100 max 100"
+    )?;
+    writeln!(
+        output,
+        "option name Hash type spin default 64 min 0 max 131072"
+    )?;
+    writeln!(
+        output,
+        "option name Minimum Thinking Time type spin default 20 min 0 max 5000"
+    )?;
+    writeln!(
+        output,
+        "option name nodestime type spin default 0 min 0 max 10000"
+    )?;
+    writeln!(output, "option name Ponder type check default false")?;
+    writeln!(
+        output,
+        "option name Skill Level type spin default 20 min 0 max 20"
+    )?;
+    // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=4230?;
+    writeln!(
+        output,
+        "option name Slow Mover type spin default 84 min 10 max 1000"
+    )?;
+    writeln!(
+        output,
+        "option name Threads type spin default 1 min 1 max 512"
+    )?;
+    writeln!(
+        output,
+        "option name Move Overhead type spin default 30 min 0 max 60000"
+    )?;
+    writeln!(output, "uciok")?;
+    Ok(())
 }
 
-fn print_err(err: Error) {
-    print!("{}", err)
+#[derive(Debug)]
+pub enum Error {
+    UnexpectedToken(String),
+    UnexpectedEndOfCommand,
+    UnknownCommand(String),
+    Chess(zorro_chess::Error),
+    Io(io::Error),
 }
+
+impl From<io::Error> for Error {
+    fn from(err: io::Error) -> Self {
+        Error::Io(err)
+    }
+}
+
+impl From<ChessErr> for Error {
+    fn from(err: ChessErr) -> Self {
+        Error::Chess(err)
+    }
+}
+
+impl fmt::Display for Error {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Error::UnexpectedToken(s) => write!(f, "[ERROR] Unexpected token '{}'", s),
+            Error::UnexpectedEndOfCommand => {
+                write!(f, "[ERROR] End of command, a token was expected")
+            }
+            Error::UnknownCommand(s) => write!(f, "[ERROR] Unknown command '{}'", s),
+            Error::Chess(ChessErr::InvalidFen) => write!(f, "[ERROR] Invalid FEN string"),
+            Error::Chess(ChessErr::InvalidColor) => write!(f, "[ERROR] Invalid color string"),
+            Error::Chess(ChessErr::InvalidSquare) => write!(f, "[ERROR] Invalid square string"),
+            Error::Io(err) => write!(f, "[ERROR] Fatal I/O condition ({})", err),
+        }
+    }
+}
+
+pub type Result<T> = std::result::Result<T, Error>;

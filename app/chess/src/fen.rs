@@ -2,9 +2,9 @@ use super::board::*;
 use super::color::*;
 use super::coordinates::*;
 use super::piece::*;
+use crate::Error;
 use std::fmt;
 use std::str::FromStr;
-use zorro_common::{Error, Result};
 
 pub struct Fen<'b> {
     board: &'b Board,
@@ -61,7 +61,7 @@ impl Board {
         }
     }
 
-    pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Result<Board> {
+    pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Result<Board, Error> {
         fn update_coordinates(file: &mut File, rank: &mut Rank) -> Option<()> {
             if let Some(shifted_file) = file.shift(1) {
                 *file = shifted_file;

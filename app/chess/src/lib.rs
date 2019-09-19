@@ -1,6 +1,6 @@
 pub(crate) mod board;
-pub(crate) mod coordinates;
 pub(crate) mod color;
+pub(crate) mod coordinates;
 pub(crate) mod fen;
 pub(crate) mod game;
 pub(crate) mod movegen;
@@ -13,3 +13,10 @@ pub use coordinates::*;
 pub use movegen::SlidingPiecesMoveGen;
 pub use moving::Move;
 pub use piece::{Piece, Role};
+
+#[derive(Debug, PartialEq, Eq)]
+pub enum Error {
+    InvalidFen,
+    InvalidColor,
+    InvalidSquare,
+}

@@ -1,6 +1,6 @@
 [package]
 name = "zorro"
-version = "2.0.0"
+version = "2.1.0"
 authors = ["Filippo Costa <filippocosta.italy@gmail.com>"]
 build = "build.rs"
 edition = "2018"
@@ -17,7 +17,6 @@ enum-map-derive = "0.4"
 lazy_static = "1"
 strum = "0.15.0"
 strum_macros = "0.15.0"
-zorro_common = { path = "../common" }
 zorro_chess = { path = "../chess" }
 zorro_magics = { path = "../magics" }
 webbrowser = "0.5.2"
