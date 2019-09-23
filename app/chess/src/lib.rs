@@ -3,8 +3,10 @@ pub(crate) mod color;
 pub(crate) mod coordinates;
 pub(crate) mod fen;
 pub(crate) mod game;
+pub(crate) mod magic;
 pub(crate) mod movegen;
 pub(crate) mod moving;
+pub(crate) mod perft;
 pub(crate) mod piece;
 
 pub use board::Board;

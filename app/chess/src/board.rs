@@ -75,6 +75,11 @@ impl Board {
         self.set_at_square(mv.from, None);
     }
 
+    pub fn undo_move(&mut self, mv: Move) {
+        self.set_at_square(mv.from, self.piece_opt_at(mv.to));
+        self.set_at_square(mv.to, None);
+    }
+
     fn square_centric_chars(&self) -> SquareCentricBoard<char> {
         let mut chars_by_square_i = ['.'; Square::count()];
         for square in Square::iter() {

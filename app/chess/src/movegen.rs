@@ -1,4 +1,6 @@
+use super::magic::MAGICS;
 use super::*;
+
 use lazy_static::lazy_static;
 
 /// A pre-initialized sliding pieces attack database.
@@ -7,41 +9,14 @@ pub trait SlidingPiecesMoveGen: Default + Sized {
     fn gen_bishops(&self, buf: &mut [Move], bishops: BitBoard, all: BitBoard) -> usize;
 }
 
-/// Some terminology:
-///
-/// > attackers
-///     All pieces of the moving color.
-/// > defenders
-///     All pieces of the non-moving color.
-/// > <plural role name>
-///     All attackers with a certain role. Note that it does *not* include
-/// defenders. > all
-///     All pieces on the board.
 impl Board {
-    pub fn list_legals<'t, M: SlidingPiecesMoveGen>(
-        &self,
-        buf: &'t mut [Move],
-        magic_mover: &M,
-    ) -> impl Iterator<Item = Move> + 't {
-        let _mover = self.color_to_move;
+    pub fn list_legals<'t>(&self, buf: &'t mut [Move]) -> impl Iterator<Item = Move> + 't {
         let mut count = 0;
-        let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
         count += self.gen_pawns(&mut buf[count..]);
         count += self.gen_knights(&mut buf[count..]);
         count += self.gen_king(&mut buf[count..]);
-        // Sliding pieces.
-        count += magic_mover.gen_bishops(
-            &mut buf[count..],
-            self.attackers_with_role(Role::Bishop),
-            bb_all,
-        );
-        count += magic_mover.gen_rooks(
-            &mut buf[count..],
-            self.attackers_with_role(Role::Rook),
-            bb_all,
-        );
-        // Note that queen moves are already included in bishops' and rooks'.
-        (0..count).map(move |i| buf[i])
+        count += self.gen_sliding_pieces(&mut buf[count..]);
+        buf[..count].into_iter().map(|m| *m)
     }
 
     fn gen_pawns(&self, buf: &mut [Move]) -> usize {
@@ -123,6 +98,22 @@ impl Board {
                 count += 1;
             }
         }
+        count
+    }
+
+    fn gen_sliding_pieces(&self, buf: &mut [Move]) -> usize {
+        let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
+        let mut count = 0;
+        count += MAGICS.gen_bishops(
+            &mut buf[count..],
+            self.attackers_with_role(Role::Bishop),
+            bb_all,
+        );
+        count += MAGICS.gen_rooks(
+            &mut buf[count..],
+            self.attackers_with_role(Role::Rook),
+            bb_all,
+        );
         count
     }
 }

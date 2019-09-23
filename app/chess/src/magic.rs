@@ -1,6 +1,5 @@
+use crate::*;
 use lazy_static::lazy_static;
-use zorro_chess::SlidingPiecesMoveGen;
-use zorro_chess::*;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {
@@ -108,4 +107,9 @@ impl Default for SlidingAttacksDatabase {
             bb_bishopts: [0; 86000],
         }
     }
+}
+
+lazy_static! {
+    pub static ref MAGICS: Box<SlidingAttacksDatabase> =
+        Box::new(SlidingAttacksDatabase::default());
 }

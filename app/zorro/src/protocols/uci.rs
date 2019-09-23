@@ -109,7 +109,7 @@ impl Command for CmdPerft {
     where
         W: io::Write,
     {
-        let _depth = if let Some(s) = tokens.next() {
+        let depth = if let Some(s) = tokens.next() {
             match str::parse::<usize>(s) {
                 Ok(depth) => depth,
                 Err(_) => {
@@ -119,12 +119,7 @@ impl Command for CmdPerft {
         } else {
             1
         };
-        let mut buf = [Move::new_garbage(); 256];
-        let legal_moves_count = zorro.board.list_legals(&mut buf[..], &zorro.magics).count();
-        writeln!(&mut output, "N.{} legal moves:", legal_moves_count)?;
-        for m in &buf[..legal_moves_count] {
-            writeln!(&mut output, "{}", m)?;
-        }
+        writeln!(&mut output, "N.{} legal moves:", zorro.board.perft(depth))?;
         Ok(())
     }
 }
