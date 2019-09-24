@@ -143,7 +143,7 @@ impl Command for CmdPosition {
         }
         for token in tokens {
             match Move::from_str(token) {
-                Ok(mv) => zorro.board.do_move(mv),
+                Ok(m) => zorro.board.do_move(m),
                 Err(err) => return Err(err.into()),
             }
         }

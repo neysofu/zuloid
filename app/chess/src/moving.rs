@@ -42,6 +42,47 @@ impl fmt::Display for Move {
     }
 }
 
+pub struct MoveList {
+    buf: Vec<Move>,
+    len: usize,
+}
+
+impl MoveList {
+    pub fn as_slice(&self) -> &[Move] {
+        &self.buf[..]
+    }
+
+    pub fn push(&mut self, m: Move) {
+        self.buf.push(m);
+    }
+
+    pub fn reset(&mut self) {
+        self.len = 0;
+    }
+}
+
+impl Default for MoveList {
+    fn default() -> Self {
+        MoveList {
+            buf: [Move::new_garbage(); 256].to_vec(),
+            len: 0,
+        }
+    }
+}
+
+impl Iterator for MoveList {
+    type Item = Move;
+
+    fn next(&mut self) -> Option<Self::Item> {
+        if self.len == 0 {
+            None
+        } else {
+            self.len -= 1;
+            Some(self.buf[self.len])
+        }
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

@@ -70,14 +70,14 @@ impl Board {
         }
     }
 
-    pub fn do_move(&mut self, mv: Move) {
-        self.set_at_square(mv.to, self.piece_opt_at(mv.from));
-        self.set_at_square(mv.from, None);
+    pub fn do_move(&mut self, m: Move) {
+        self.set_at_square(m.to, self.piece_opt_at(m.from));
+        self.set_at_square(m.from, None);
     }
 
-    pub fn undo_move(&mut self, mv: Move) {
-        self.set_at_square(mv.from, self.piece_opt_at(mv.to));
-        self.set_at_square(mv.to, None);
+    pub fn undo_move(&mut self, m: Move) {
+        self.set_at_square(m.from, self.piece_opt_at(m.to));
+        self.set_at_square(m.to, None);
     }
 
     fn square_centric_chars(&self) -> SquareCentricBoard<char> {

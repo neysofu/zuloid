@@ -10,16 +10,15 @@ pub trait SlidingPiecesMoveGen: Default + Sized {
 }
 
 impl Board {
-    pub fn list_legals<'t>(&self, buf: &'t mut [Move]) -> impl Iterator<Item = Move> + 't {
+    pub fn list_legals(&self, move_list: &mut MoveList) {
         let mut count = 0;
-        count += self.gen_pawns(&mut buf[count..]);
-        count += self.gen_knights(&mut buf[count..]);
-        count += self.gen_king(&mut buf[count..]);
-        count += self.gen_sliding_pieces(&mut buf[count..]);
-        buf[..count].into_iter().map(|m| *m)
+        self.gen_pawns(move_list);
+        self.gen_knights(move_list);
+        self.gen_king(move_list);
+        self.gen_sliding_pieces(move_list);
     }
 
-    fn gen_pawns(&self, buf: &mut [Move]) -> usize {
+    fn gen_pawns(&self, move_list: &mut MoveList) {
         let bb_all = self.bb_all();
         let attackers = self.attackers();
         let defenders = self.defenders();
@@ -56,65 +55,53 @@ impl Board {
         let sources = [single_pushes, double_pushes, captures_east, captures_west];
         for (i, src) in sources.iter().enumerate() {
             for square in src.squares() {
-                buf[count] = Move {
+                move_list.push(Move {
                     from: square.shift(shifts[i]).unwrap(),
                     to: square,
                     promotion: None,
-                };
-                count += 1;
+                });
             }
         }
-        count
     }
 
-    fn gen_knights(&self, buf: &mut [Move]) -> usize {
-        let mut count = 0;
+    fn gen_knights(&self, move_list: &mut MoveList) {
         for from in self.attackers_with_role(Role::Knight).squares() {
             let possible_targets = KNIGHT[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
-                let mv = Move {
+                move_list.push(Move {
                     from,
                     to,
                     promotion: None,
-                };
-                buf[count] = mv;
-                count += 1;
+                });
             }
         }
-        count
     }
 
-    fn gen_king(&self, buf: &mut [Move]) -> usize {
-        let mut count = 0;
+    fn gen_king(&self, move_list: &mut MoveList) {
         for from in self.attackers_with_role(Role::King).squares() {
             let possible_targets = KING[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
-                let mv = Move {
+                move_list.push(Move {
                     from,
                     to,
                     promotion: None,
-                };
-                buf[count] = mv;
-                count += 1;
+                });
             }
         }
-        count
     }
 
-    fn gen_sliding_pieces(&self, buf: &mut [Move]) -> usize {
+    fn gen_sliding_pieces(&self, move_list: &mut MoveList) {
         let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
-        let mut count = 0;
-        count += MAGICS.gen_bishops(
-            &mut buf[count..],
+        MAGICS.gen_bishops(
+            move_list,
             self.attackers_with_role(Role::Bishop),
             bb_all,
         );
-        count += MAGICS.gen_rooks(
-            &mut buf[count..],
+        MAGICS.gen_rooks(
+            move_list,
             self.attackers_with_role(Role::Rook),
             bb_all,
         );
-        count
     }
 }
 
@@ -187,21 +174,24 @@ mod test {
     #[test]
     fn initial_board_has_16_pawn_moves() {
         let board = Board::default();
-        let mut buf = [Move::new_garbage(); 256];
-        assert_eq!(board.gen_pawns(&mut buf), 16);
+        let mut move_list = MoveList::default();
+        board.gen_pawns(&mut move_list);
+        assert_eq!(move_list.as_slice().len(), 16);
     }
 
     #[test]
     fn initial_board_has_4_knight_moves() {
         let board = Board::default();
-        let mut buf = [Move::new_garbage(); 256];
-        assert_eq!(board.gen_knights(&mut buf), 4);
+        let mut move_list = MoveList::default();
+        board.gen_knights(&mut move_list);
+        assert_eq!(move_list.as_slice().len(), 4);
     }
 
     #[test]
     fn initial_board_has_0_king_moves() {
         let board = Board::default();
-        let mut buf = [Move::new_garbage(); 256];
-        assert_eq!(board.gen_king(&mut buf), 0);
+        let mut move_list = MoveList::default();
+        board.gen_king(&mut move_list);
+        assert_eq!(move_list.as_slice().len(), 0);
     }
 }

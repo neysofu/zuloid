@@ -13,7 +13,7 @@ pub use board::Board;
 pub use color::Color;
 pub use coordinates::*;
 pub use movegen::SlidingPiecesMoveGen;
-pub use moving::Move;
+pub use moving::{Move, MoveList};
 pub use piece::{Piece, Role};
 
 #[derive(Debug, PartialEq, Eq)]
