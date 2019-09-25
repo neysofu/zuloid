@@ -5,8 +5,8 @@ use bytesize::ByteSize;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
-use zorro_chess::Error as ChessErr;
-use zorro_chess::{Board, Move};
+use crate::Error as ChessErr;
+use crate::{Board, Move};
 
 enum State {
     Alive,
@@ -255,7 +255,7 @@ pub enum Error {
     UnexpectedToken(String),
     UnexpectedEndOfCommand,
     UnknownCommand(String),
-    Chess(zorro_chess::Error),
+    Chess(crate::Error),
     Io(io::Error),
 }
 

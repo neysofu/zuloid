@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use zorro_chess::Board;
+use crate::Board;
 
 struct Evaluation;
 

@@ -5,8 +5,8 @@ use lazy_static::lazy_static;
 
 /// A pre-initialized sliding pieces attack database.
 pub trait SlidingPiecesMoveGen: Default + Sized {
-    fn gen_rooks(&self, buf: &mut [Move], rooks: BitBoard, all: BitBoard) -> usize;
-    fn gen_bishops(&self, buf: &mut [Move], bishops: BitBoard, all: BitBoard) -> usize;
+    fn gen_rooks(&self, buf: &mut MoveList, rooks: BitBoard, all: BitBoard) -> usize;
+    fn gen_bishops(&self, buf: &mut MoveList, bishops: BitBoard, all: BitBoard) -> usize;
 }
 
 impl Board {
