@@ -1,42 +1,26 @@
 use crate::*;
 use std::fmt;
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 struct Level {
-    buf: [Move; 256],
+    buf: MoveList,
     i: usize,
-    count: usize,
 }
 
-impl Level {
-    fn init(&mut self, board: &Board) {
-        self.count = board.list_legals(&mut self.buf[..]).count();
-        self.i = 0;
-    }
-}
-
-impl Default for Level {
-    fn default() -> Self {
-        Level {
-            buf: [Move::new_garbage(); 256],
-            i: 0,
-            count: 0,
-        }
-    }
-}
-
-struct State {
+struct Perft {
     tree: Vec<Level>,
     current_depth: usize,
     desired_depth: usize,
     report: Report,
 }
 
-impl State {
+impl Perft {
     fn new(depth: usize, board: &Board) -> Self {
         let mut tree = vec![Level::default(); depth];
-        tree[0].init(board);
-        State {
+        tree[0] = Level::default();
+        self.count = board.list_legals(&mut self.buf[..]).count();
+        self.i = 0;
+        Perft {
             tree,
             report: Report::new(depth),
             current_depth: 0,
@@ -72,18 +56,18 @@ impl Board {
         if depth == 0 {
             Report::new(0)
         } else if depth == 1 {
-            let mut moves = [Move::new_garbage(); 256];
-            let count = self.list_legals(&mut moves[..]).count();
+            let mut moves = MoveList::default();
+            self.list_legals(&mut moves);
             Report {
                 depth,
-                nodes: count,
-                overview: moves.to_vec(),
+                nodes: moves.as_slice().len(),
+                overview: moves.as_slice().to_vec(),
             }
         } else {
             let mut total_moves_count = 0;
-            let mut moves = [Move::new_garbage(); 256];
-            let moves_count = self.list_legals(&mut moves[..]).count();
-            for m in moves[..moves_count].iter() {
+            let mut moves = MoveList::default();
+            self.list_legals(&mut moves);
+            for m in moves.as_slice().iter() {
                 self.do_move(*m);
                 total_moves_count += self.perft(depth - 1).nodes;
                 self.undo_move(*m);
@@ -91,7 +75,7 @@ impl Board {
             Report {
                 depth,
                 nodes: total_moves_count,
-                overview: moves.to_vec(),
+                overview: moves.as_slice().to_vec(),
             }
         }
     }

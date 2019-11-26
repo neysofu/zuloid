@@ -49,7 +49,7 @@ pub struct MoveList {
 
 impl MoveList {
     pub fn as_slice(&self) -> &[Move] {
-        &self.buf[..]
+        &self.buf[..self.len]
     }
 
     pub fn push(&mut self, m: Move) {
