@@ -158,16 +158,16 @@ mod test {
 
     #[test]
     fn knight_attacks_a2() {
-        let attacker = Square::from_str("a2").unwrap();
-        let attacks = Square::from_str("c1").unwrap().to_bb()
-            | Square::from_str("c3").unwrap().to_bb()
-            | Square::from_str("b4").unwrap().to_bb();
+        let attacker = Square::A2;
+        let attacks = Square::C1.to_bb()
+            | Square::C3.to_bb()
+            | Square::B4.to_bb();
         assert_eq!(KNIGHT[attacker.i() as usize], attacks);
     }
 
     #[test]
     fn king_attacks_f8() {
-        let attacker = Square::from_str("f8").unwrap();
+        let attacker = Square::F8;
         assert_eq!(KING[attacker.i() as usize], 0xc0_40c0_0000_0000);
     }
 
