@@ -111,7 +111,35 @@ impl Board {
 
 impl Default for Board {
     fn default() -> Self {
-        BOARD_DEFAULT.clone()
+        let mut bb_colors = EnumMap::default();
+        bb_colors[Color::White] = Rank::FIRST.to_bb() | Rank::SECOND.to_bb();
+        bb_colors[Color::Black] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
+        let mut bb_roles = EnumMap::default();
+        bb_roles[Role::Pawn] = Rank::SECOND.to_bb() | Rank::SEVENTH.to_bb();
+        bb_roles[Role::Knight] = Square::B1.to_bb()
+            | Square::G1.to_bb()
+            | Square::B8.to_bb()
+            | Square::G8.to_bb();
+        bb_roles[Role::Bishop] = Square::C1.to_bb()
+            | Square::F1.to_bb()
+            | Square::C8.to_bb()
+            | Square::F8.to_bb();
+        bb_roles[Role::Rook] = Square::A1.to_bb()
+            | Square::H1.to_bb()
+            | Square::A8.to_bb()
+            | Square::H8.to_bb();
+        bb_roles[Role::Queen] = Square::D1.to_bb() | Square::D8.to_bb();
+        bb_roles[Role::King] = Square::E1.to_bb() | Square::E8.to_bb();
+        Board {
+            bb_colors,
+            bb_roles,
+            castling_rights: CastlingRights::default(),
+            color_to_move: Color::White,
+            reversible_moves_count: 0,
+            en_passant_target_square: None,
+            half_moves_counter: 0,
+            full_moves_counter: 1,
+        }
     }
 }
 
@@ -191,41 +219,6 @@ impl fmt::Display for CastlingRights {
         }
         Ok(())
     }
-}
-
-lazy_static! {
-    // The poor man's const fn.
-    pub static ref BOARD_DEFAULT: Board = {
-        let mut bb_colors = EnumMap::default();
-        bb_colors[Color::White] = Rank::FIRST.to_bb() | Rank::SECOND.to_bb();
-        bb_colors[Color::Black] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
-        let mut bb_roles = EnumMap::default();
-        bb_roles[Role::Pawn] = Rank::SECOND.to_bb() | Rank::SEVENTH.to_bb();
-        bb_roles[Role::Knight] = Square::B1.to_bb()
-            | Square::G1.to_bb()
-            | Square::B8.to_bb()
-            | Square::G8.to_bb();
-        bb_roles[Role::Bishop] = Square::C1.to_bb()
-            | Square::F1.to_bb()
-            | Square::C8.to_bb()
-            | Square::F8.to_bb();
-        bb_roles[Role::Rook] = Square::A1.to_bb()
-            | Square::H1.to_bb()
-            | Square::A8.to_bb()
-            | Square::H8.to_bb();
-        bb_roles[Role::Queen] = Square::D1.to_bb() | Square::D8.to_bb();
-        bb_roles[Role::King] = Square::E1.to_bb() | Square::E8.to_bb();
-        Board {
-            bb_colors,
-            bb_roles,
-            castling_rights: CastlingRights::default(),
-            color_to_move: Color::White,
-            reversible_moves_count: 0,
-            en_passant_target_square: None,
-            half_moves_counter: 0,
-            full_moves_counter: 1,
-        }
-    };
 }
 
 pub struct SquareCentricBoard<T> {
