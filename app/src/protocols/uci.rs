@@ -77,13 +77,11 @@ struct CmdPosition;
 struct CmdSetOption;
 
 impl Command for CmdOpen {
-    fn run<'s, W>(
+    fn run<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         _output: W,
     ) -> Result<()>
-    where
-        W: io::Write,
     {
         match tokens.next() {
             Some("lichess") => {
@@ -101,13 +99,11 @@ impl Command for CmdOpen {
 }
 
 impl Command for CmdPerft {
-    fn run<'s, W>(
+    fn run<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: W,
     ) -> Result<()>
-    where
-        W: io::Write,
     {
         let depth = if let Some(s) = tokens.next() {
             match str::parse::<usize>(s) {
@@ -125,13 +121,11 @@ impl Command for CmdPerft {
 }
 
 impl Command for CmdPosition {
-    fn run<'s, W>(
+    fn run<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         output: W,
     ) -> Result<()>
-    where
-        W: io::Write,
     {
         match tokens.next() {
             Some("960") => unimplemented!(),

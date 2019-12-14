@@ -272,77 +272,79 @@ impl fmt::Display for Rank {
 pub struct Square(u8);
 
 impl Square {
-    pub const A1: Square = Square(8 * 0 + 0);
-    pub const A2: Square = Square(8 * 0 + 1);
-    pub const A3: Square = Square(8 * 0 + 2);
-    pub const A4: Square = Square(8 * 0 + 3);
-    pub const A5: Square = Square(8 * 0 + 4);
-    pub const A6: Square = Square(8 * 0 + 5);
-    pub const A7: Square = Square(8 * 0 + 6);
-    pub const A8: Square = Square(8 * 0 + 7);
+    #![allow(dead_code)]
 
-    pub const B1: Square = Square(8 * 1 + 0);
-    pub const B2: Square = Square(8 * 1 + 1);
-    pub const B3: Square = Square(8 * 1 + 2);
-    pub const B4: Square = Square(8 * 1 + 3);
-    pub const B5: Square = Square(8 * 1 + 4);
-    pub const B6: Square = Square(8 * 1 + 5);
-    pub const B7: Square = Square(8 * 1 + 6);
-    pub const B8: Square = Square(8 * 1 + 7);
+    pub const A1: Square = Square(000);
+    pub const A2: Square = Square(001);
+    pub const A3: Square = Square(002);
+    pub const A4: Square = Square(003);
+    pub const A5: Square = Square(004);
+    pub const A6: Square = Square(005);
+    pub const A7: Square = Square(006);
+    pub const A8: Square = Square(007);
 
-    pub const C1: Square = Square(8 * 2 + 0);
-    pub const C2: Square = Square(8 * 2 + 1);
-    pub const C3: Square = Square(8 * 2 + 2);
-    pub const C4: Square = Square(8 * 2 + 3);
-    pub const C5: Square = Square(8 * 2 + 4);
-    pub const C6: Square = Square(8 * 2 + 5);
-    pub const C7: Square = Square(8 * 2 + 6);
-    pub const C8: Square = Square(8 * 2 + 7);
+    pub const B1: Square = Square(010);
+    pub const B2: Square = Square(011);
+    pub const B3: Square = Square(012);
+    pub const B4: Square = Square(013);
+    pub const B5: Square = Square(014);
+    pub const B6: Square = Square(015);
+    pub const B7: Square = Square(016);
+    pub const B8: Square = Square(017);
 
-    pub const D1: Square = Square(8 * 3 + 0);
-    pub const D2: Square = Square(8 * 3 + 1);
-    pub const D3: Square = Square(8 * 3 + 2);
-    pub const D4: Square = Square(8 * 3 + 3);
-    pub const D5: Square = Square(8 * 3 + 4);
-    pub const D6: Square = Square(8 * 3 + 5);
-    pub const D7: Square = Square(8 * 3 + 6);
-    pub const D8: Square = Square(8 * 3 + 7);
+    pub const C1: Square = Square(020);
+    pub const C2: Square = Square(021);
+    pub const C3: Square = Square(022);
+    pub const C4: Square = Square(023);
+    pub const C5: Square = Square(024);
+    pub const C6: Square = Square(025);
+    pub const C7: Square = Square(026);
+    pub const C8: Square = Square(027);
 
-    pub const E1: Square = Square(8 * 4 + 0);
-    pub const E2: Square = Square(8 * 4 + 1);
-    pub const E3: Square = Square(8 * 4 + 2);
-    pub const E4: Square = Square(8 * 4 + 3);
-    pub const E5: Square = Square(8 * 4 + 4);
-    pub const E6: Square = Square(8 * 4 + 5);
-    pub const E7: Square = Square(8 * 4 + 6);
-    pub const E8: Square = Square(8 * 4 + 7);
+    pub const D1: Square = Square(030);
+    pub const D2: Square = Square(031);
+    pub const D3: Square = Square(032);
+    pub const D4: Square = Square(033);
+    pub const D5: Square = Square(034);
+    pub const D6: Square = Square(035);
+    pub const D7: Square = Square(036);
+    pub const D8: Square = Square(037);
 
-    pub const F1: Square = Square(8 * 5 + 0);
-    pub const F2: Square = Square(8 * 5 + 1);
-    pub const F3: Square = Square(8 * 5 + 2);
-    pub const F4: Square = Square(8 * 5 + 3);
-    pub const F5: Square = Square(8 * 5 + 4);
-    pub const F6: Square = Square(8 * 5 + 5);
-    pub const F7: Square = Square(8 * 5 + 6);
-    pub const F8: Square = Square(8 * 5 + 7);
+    pub const E1: Square = Square(040);
+    pub const E2: Square = Square(041);
+    pub const E3: Square = Square(042);
+    pub const E4: Square = Square(043);
+    pub const E5: Square = Square(044);
+    pub const E6: Square = Square(045);
+    pub const E7: Square = Square(046);
+    pub const E8: Square = Square(047);
 
-    pub const G1: Square = Square(8 * 6 + 0);
-    pub const G2: Square = Square(8 * 6 + 1);
-    pub const G3: Square = Square(8 * 6 + 2);
-    pub const G4: Square = Square(8 * 6 + 3);
-    pub const G5: Square = Square(8 * 6 + 4);
-    pub const G6: Square = Square(8 * 6 + 5);
-    pub const G7: Square = Square(8 * 6 + 6);
-    pub const G8: Square = Square(8 * 6 + 7);
+    pub const F1: Square = Square(050);
+    pub const F2: Square = Square(051);
+    pub const F3: Square = Square(052);
+    pub const F4: Square = Square(053);
+    pub const F5: Square = Square(054);
+    pub const F6: Square = Square(055);
+    pub const F7: Square = Square(056);
+    pub const F8: Square = Square(057);
 
-    pub const H1: Square = Square(8 * 7 + 0);
-    pub const H2: Square = Square(8 * 7 + 1);
-    pub const H3: Square = Square(8 * 7 + 2);
-    pub const H4: Square = Square(8 * 7 + 3);
-    pub const H5: Square = Square(8 * 7 + 4);
-    pub const H6: Square = Square(8 * 7 + 5);
-    pub const H7: Square = Square(8 * 7 + 6);
-    pub const H8: Square = Square(8 * 7 + 7);
+    pub const G1: Square = Square(060);
+    pub const G2: Square = Square(061);
+    pub const G3: Square = Square(062);
+    pub const G4: Square = Square(063);
+    pub const G5: Square = Square(064);
+    pub const G6: Square = Square(065);
+    pub const G7: Square = Square(066);
+    pub const G8: Square = Square(067);
+
+    pub const H1: Square = Square(070);
+    pub const H2: Square = Square(071);
+    pub const H3: Square = Square(072);
+    pub const H4: Square = Square(073);
+    pub const H5: Square = Square(074);
+    pub const H6: Square = Square(075);
+    pub const H7: Square = Square(076);
+    pub const H8: Square = Square(077);
 
     pub const fn count() -> usize {
         64
