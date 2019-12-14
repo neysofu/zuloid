@@ -2,7 +2,7 @@ use super::board::*;
 use super::color::*;
 use super::coordinates::*;
 use super::piece::*;
-use crate::Error;
+use crate::err::Error;
 use std::fmt;
 use std::str::FromStr;
 

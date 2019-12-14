@@ -1,4 +1,4 @@
-use crate::*;
+use super::*;
 use std::fmt;
 
 #[derive(Clone, Default)]
@@ -16,38 +16,40 @@ struct Perft {
 
 impl Perft {
     fn new(depth: usize, board: &Board) -> Self {
-        let mut tree = vec![Level::default(); depth];
-        tree[0] = Level::default();
-        self.count = board.list_legals(&mut self.buf[..]).count();
-        self.i = 0;
-        Perft {
-            tree,
-            report: Report::new(depth),
-            current_depth: 0,
-            desired_depth: depth,
-        }
+        unimplemented!()
+        //let mut tree = vec![Level::default(); depth];
+        //tree[0] = Level::default();
+        //self.count = board.list_legals(&mut self.buf[..]).count();
+        //self.i = 0;
+        //Perft {
+        //    tree,
+        //    report: Report::new(depth),
+        //    current_depth: 0,
+        //    desired_depth: depth,
+        //}
     }
 
     fn run(mut self, board: &mut Board) -> Report {
-        while self.tree[0].i < self.tree[0].count {
-            while self.tree[self.current_depth].i < self.tree[self.current_depth].count {
-                let current_move =
-                    self.tree[self.current_depth].buf[self.tree[self.current_depth].i];
-                if self.current_depth == self.desired_depth {
-                    self.report.nodes += board
-                        .list_legals(&mut self.tree[self.current_depth].buf[..])
-                        .count();
-                } else {
-                    board.do_move(current_move);
-                    self.current_depth += 1;
-                }
-                if self.current_depth == self.desired_depth {
-                    self.current_depth -= 1;
-                }
-                self.tree[self.current_depth].i += 1;
-            }
-        }
-        self.report.clone()
+        unimplemented!()
+        //while self.tree[0].i < self.tree[0].count {
+        //    while self.tree[self.current_depth].i < self.tree[self.current_depth].count {
+        //        let current_move =
+        //            self.tree[self.current_depth].buf[self.tree[self.current_depth].i];
+        //        if self.current_depth == self.desired_depth {
+        //            self.report.nodes += board
+        //                .list_legals(&mut self.tree[self.current_depth].buf[..])
+        //                .count();
+        //        } else {
+        //            board.do_move(current_move);
+        //            self.current_depth += 1;
+        //        }
+        //        if self.current_depth == self.desired_depth {
+        //            self.current_depth -= 1;
+        //        }
+        //        self.tree[self.current_depth].i += 1;
+        //    }
+        //}
+        //self.report.clone()
     }
 }
 

@@ -1,4 +1,5 @@
-use crate::{Coordinate, Error, Rank};
+use super::{Coordinate, Rank};
+use crate::err::Error;
 use enum_map_derive::Enum;
 use std::ops;
 use std::str::FromStr;
@@ -90,7 +91,7 @@ impl From<Color> for char {
 #[cfg(test)]
 mod test {
     use super::*;
-    use crate::{Board, File, Move, Piece, Role, Square};
+    use crate::chess::{Board, File, Move, Piece, Role, Square};
     use std::str::FromStr;
 
     #[test]

@@ -1,4 +1,4 @@
-use crate::Error;
+use crate::err::Error;
 use bitintr::Blsi;
 use bitintr::Tzcnt;
 use rand::Rng;

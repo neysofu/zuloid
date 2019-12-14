@@ -1,4 +1,5 @@
-use crate::{Coordinate, Error, Role, Square};
+use super::{Coordinate, Role, Square};
+use crate::err::Error;
 use std::fmt;
 use std::str::FromStr;
 
@@ -42,6 +43,7 @@ impl fmt::Display for Move {
     }
 }
 
+#[derive(Clone)]
 pub struct MoveList {
     buf: Vec<Move>,
     len: usize,

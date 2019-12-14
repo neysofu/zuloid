@@ -1,8 +1,8 @@
-use crate::color::*;
-use crate::coordinates::*;
-use crate::moving::Move;
-use crate::piece::*;
-use crate::Error;
+use super::color::*;
+use super::coordinates::*;
+use super::moving::Move;
+use super::piece::*;
+use crate::err::Error;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use lazy_static::lazy_static;

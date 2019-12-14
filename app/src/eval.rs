@@ -1,4 +1,4 @@
-use crate::Board;
+use crate::chess::Board;
 
 struct Eval {
     score: i32,
