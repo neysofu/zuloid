@@ -274,14 +274,14 @@ pub struct Square(u8);
 impl Square {
     #![allow(dead_code)]
 
-    pub const A1: Square = Square(000);
-    pub const A2: Square = Square(001);
-    pub const A3: Square = Square(002);
-    pub const A4: Square = Square(003);
-    pub const A5: Square = Square(004);
-    pub const A6: Square = Square(005);
-    pub const A7: Square = Square(006);
-    pub const A8: Square = Square(007);
+    pub const A1: Square = Square(0o0);
+    pub const A2: Square = Square(0o1);
+    pub const A3: Square = Square(0o2);
+    pub const A4: Square = Square(0o3);
+    pub const A5: Square = Square(0o4);
+    pub const A6: Square = Square(0o5);
+    pub const A7: Square = Square(0o6);
+    pub const A8: Square = Square(0o7);
 
     pub const B1: Square = Square(0o10);
     pub const B2: Square = Square(0o11);
