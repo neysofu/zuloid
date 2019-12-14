@@ -5,12 +5,12 @@ use lazy_static::lazy_static;
 
 /// A pre-initialized sliding pieces attack database.
 pub trait SlidingPiecesMoveGen: Default + Sized {
-    fn gen_rooks(&self, buf: &mut MoveList, rooks: BitBoard, all: BitBoard) -> usize;
-    fn gen_bishops(&self, buf: &mut MoveList, bishops: BitBoard, all: BitBoard) -> usize;
+    fn gen_rooks(&self, buf: &mut AvailableMoves, rooks: BitBoard, all: BitBoard) -> usize;
+    fn gen_bishops(&self, buf: &mut AvailableMoves, bishops: BitBoard, all: BitBoard) -> usize;
 }
 
 impl Board {
-    pub fn list_legals(&self, move_list: &mut MoveList) {
+    pub fn list_legals(&self, move_list: &mut AvailableMoves) {
         let mut count = 0;
         self.gen_pawns(move_list);
         self.gen_knights(move_list);
@@ -18,7 +18,7 @@ impl Board {
         self.gen_sliding_pieces(move_list);
     }
 
-    fn gen_pawns(&self, move_list: &mut MoveList) {
+    fn gen_pawns(&self, move_list: &mut AvailableMoves) {
         let bb_all = self.bb_all();
         let attackers = self.attackers();
         let defenders = self.defenders();
@@ -28,7 +28,6 @@ impl Board {
                 Color::Black => attackers.south(1),
             }
         }
-        let mut count = 0;
         let single_pushes = push(
             self.attackers_with_role(Role::Pawn),
             bb_all,
@@ -64,7 +63,7 @@ impl Board {
         }
     }
 
-    fn gen_knights(&self, move_list: &mut MoveList) {
+    fn gen_knights(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::Knight).squares() {
             let possible_targets = KNIGHT[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
@@ -77,7 +76,7 @@ impl Board {
         }
     }
 
-    fn gen_king(&self, move_list: &mut MoveList) {
+    fn gen_king(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::King).squares() {
             let possible_targets = KING[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
@@ -90,7 +89,7 @@ impl Board {
         }
     }
 
-    fn gen_sliding_pieces(&self, move_list: &mut MoveList) {
+    fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
         let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
         MAGICS.gen_bishops(
             move_list,
@@ -174,7 +173,7 @@ mod test {
     #[test]
     fn initial_board_has_16_pawn_moves() {
         let board = Board::default();
-        let mut move_list = MoveList::default();
+        let mut move_list = AvailableMoves::default();
         board.gen_pawns(&mut move_list);
         assert_eq!(move_list.as_slice().len(), 16);
     }
@@ -182,7 +181,7 @@ mod test {
     #[test]
     fn initial_board_has_4_knight_moves() {
         let board = Board::default();
-        let mut move_list = MoveList::default();
+        let mut move_list = AvailableMoves::default();
         board.gen_knights(&mut move_list);
         assert_eq!(move_list.as_slice().len(), 4);
     }
@@ -190,7 +189,7 @@ mod test {
     #[test]
     fn initial_board_has_0_king_moves() {
         let board = Board::default();
-        let mut move_list = MoveList::default();
+        let mut move_list = AvailableMoves::default();
         board.gen_king(&mut move_list);
         assert_eq!(move_list.as_slice().len(), 0);
     }

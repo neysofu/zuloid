@@ -3,7 +3,7 @@ use std::fmt;
 
 #[derive(Clone, Default)]
 struct Level {
-    buf: MoveList,
+    buf: AvailableMoves,
     i: usize,
 }
 
@@ -58,7 +58,7 @@ impl Board {
         if depth == 0 {
             Report::new(0)
         } else if depth == 1 {
-            let mut moves = MoveList::default();
+            let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
             Report {
                 depth,
@@ -67,7 +67,7 @@ impl Board {
             }
         } else {
             let mut total_moves_count = 0;
-            let mut moves = MoveList::default();
+            let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
             for m in moves.as_slice().iter() {
                 self.do_move(*m);

@@ -90,11 +90,11 @@ pub struct SlidingAttacksDatabase {
 }
 
 impl SlidingPiecesMoveGen for SlidingAttacksDatabase {
-    fn gen_rooks(&self, _buf: &mut MoveList, _attackers: BitBoard, _all: BitBoard) -> usize {
+    fn gen_rooks(&self, _buf: &mut AvailableMoves, _attackers: BitBoard, _all: BitBoard) -> usize {
         0
     }
 
-    fn gen_bishops(&self, _buf: &mut MoveList, _attackers: BitBoard, _all: BitBoard) -> usize {
+    fn gen_bishops(&self, _buf: &mut AvailableMoves, _attackers: BitBoard, _all: BitBoard) -> usize {
         0
     }
 }

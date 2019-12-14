@@ -2,6 +2,7 @@ use super::{Coordinate, Role, Square};
 use crate::err::Error;
 use std::fmt;
 use std::str::FromStr;
+use std::iter::IntoIterator;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {
@@ -44,43 +45,54 @@ impl fmt::Display for Move {
 }
 
 #[derive(Clone)]
-pub struct MoveList {
+pub struct AvailableMoves {
     buf: Vec<Move>,
-    len: usize,
 }
 
-impl MoveList {
+impl AvailableMoves {
     pub fn as_slice(&self) -> &[Move] {
-        &self.buf[..self.len]
+        &self.buf[..self.buf.len()]
     }
 
     pub fn push(&mut self, m: Move) {
         self.buf.push(m);
     }
-
-    pub fn reset(&mut self) {
-        self.len = 0;
-    }
 }
 
-impl Default for MoveList {
+impl Default for AvailableMoves {
     fn default() -> Self {
-        MoveList {
-            buf: [Move::new_garbage(); 256].to_vec(),
-            len: 0,
+        AvailableMoves {
+            buf: Vec::with_capacity(140)
         }
     }
 }
 
-impl Iterator for MoveList {
+impl<'a> IntoIterator for &'a AvailableMoves {
+    type Item = Move;
+    type IntoIter = AvailableMovesIter<'a>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        AvailableMovesIter {
+            available_moves: self,
+            index: self.buf.len(),
+        }
+    }
+}
+
+pub struct AvailableMovesIter<'a> {
+    available_moves: &'a AvailableMoves,
+    index: usize,
+}
+
+impl<'a> Iterator for AvailableMovesIter<'a> {
     type Item = Move;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.len == 0 {
+        if self.index == 0 {
             None
         } else {
-            self.len -= 1;
-            Some(self.buf[self.len])
+            self.index -= 1;
+            Some(self.available_moves.buf[self.index])
         }
     }
 }
