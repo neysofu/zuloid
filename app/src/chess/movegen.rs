@@ -11,7 +11,6 @@ pub trait SlidingPiecesMoveGen: Default + Sized {
 
 impl Board {
     pub fn list_legals(&self, move_list: &mut AvailableMoves) {
-        let mut count = 0;
         self.gen_pawns(move_list);
         self.gen_knights(move_list);
         self.gen_king(move_list);
@@ -90,17 +89,17 @@ impl Board {
     }
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
-        let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
-        MAGICS.gen_bishops(
-            move_list,
-            self.attackers_with_role(Role::Bishop),
-            bb_all,
-        );
-        MAGICS.gen_rooks(
-            move_list,
-            self.attackers_with_role(Role::Rook),
-            bb_all,
-        );
+        //let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
+        //MAGICS.gen_bishops(
+        //    move_list,
+        //    self.attackers_with_role(Role::Bishop),
+        //    bb_all,
+        //);
+        //MAGICS.gen_rooks(
+        //    move_list,
+        //    self.attackers_with_role(Role::Rook),
+        //    bb_all,
+        //);
     }
 }
 
@@ -192,5 +191,13 @@ mod test {
         let mut move_list = AvailableMoves::default();
         board.gen_king(&mut move_list);
         assert_eq!(move_list.as_slice().len(), 0);
+    }
+
+    #[test]
+    fn initial_board_has_20_moves() {
+        let board = Board::default();
+        let mut move_list = AvailableMoves::default();
+        board.list_legals(&mut move_list);
+        assert_eq!(move_list.as_slice().len(), 20);
     }
 }
