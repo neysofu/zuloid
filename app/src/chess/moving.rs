@@ -106,8 +106,8 @@ mod test {
     #[test]
     fn move_parse_a1c7() {
         let expected_move = Move {
-            from: Square::from_str("a1").unwrap(),
-            to: Square::from_str("c7").unwrap(),
+            from: Square::A1,
+            to: Square::C7,
             promotion: None,
         };
         assert!(match Move::from_str("a1c7") {
