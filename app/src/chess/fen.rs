@@ -145,7 +145,7 @@ mod test {
     }
 
     #[test]
-    fn board_from_fen_then_to_string_common_test_cases() {
+    fn back_and_forth_samples() {
         for fen in TEST_CASES.iter() {
             let board = Board::from_fen(&mut fen.split_whitespace()).unwrap();
             assert_eq!(fen, &board.fmt_fen(' ').to_string().as_str());
@@ -153,7 +153,7 @@ mod test {
     }
 
     #[test]
-    fn fmt_initial_fen_then_from_fen() {
+    fn back_and_forth_init() {
         let default_board_fen = Board::default().fmt_fen(' ').to_string();
         assert_eq!(
             Board::from_fen(&mut default_board_fen.split_whitespace()),
