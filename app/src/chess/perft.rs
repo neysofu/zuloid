@@ -58,30 +58,23 @@ impl Board {
         let mut report = Report::new(depth);
         if depth == 0 {
             report.nodes_count = 1;
-            return report;
         } else if depth == 1 {
             let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
-            Report {
-                depth,
-                nodes_count: moves.as_slice().len(),
-                overview: moves.as_slice().to_vec(),
-            }
+            report.nodes_count = moves.into_iter().count();
+            report.overview = moves.into_iter().map(|m| (m, 1)).collect();
         } else {
-            let mut total_moves_count = 0;
             let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
             for m in moves.as_slice().iter() {
                 self.do_move(*m);
-                total_moves_count += self.perft(depth - 1).nodes_count;
+                let count = self.perft(depth - 1).nodes_count;
+                report.nodes_count += count;
+                report.overview.push((*m, count));
                 self.undo_move(*m);
             }
-            Report {
-                depth,
-                nodes_count: total_moves_count,
-                overview: moves.as_slice().to_vec(),
-            }
         }
+        report
     }
 }
 
@@ -89,7 +82,7 @@ impl Board {
 pub struct Report {
     depth: usize,
     nodes_count: usize,
-    overview: Vec<Move>,
+    overview: Vec<(Move, usize)>,
 }
 
 impl Report {
@@ -103,7 +96,12 @@ impl Report {
 }
 
 impl fmt::Display for Report {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+    fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(w, "--- Overview by branch:")?;
+        for m in self.overview.iter() {
+            writeln!(w, "{}: {}", m.0, m.1)?;
+        }
+        write!(w, "---")?;
         Ok(())
     }
 }
@@ -113,8 +111,9 @@ mod test {
     use super::*;
 
     #[test]
-    fn perft_0_is_1() {
-        let report = Board::default().perft(0);
-        assert_eq!(report.nodes_count, 1);
+    fn up_to_depth_2() {
+        let board = Board::default();
+        assert_eq!(board.clone().perft(0).nodes_count, 1);
+        assert_eq!(board.clone().perft(1).nodes_count, 20);
     }
 }
