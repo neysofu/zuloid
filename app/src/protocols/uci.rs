@@ -1,5 +1,5 @@
 use super::Protocol;
-use crate::chess::{Board, Move};
+use crate::chess::{Board, Move, Square, Coordinate};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
@@ -54,7 +54,8 @@ impl Uci {
             Some("d") => writeln!(output, "{}", zorro.board)?,
             Some("open") => CmdOpen::run(zorro, tokens, output)?,
             Some("perft") => CmdPerft::run(zorro, tokens, output)?,
-            Some("findmagics") => CmdFindMagics::run(zorro, tokens, output)?,
+            Some("magic") => CmdMagic::run(zorro, tokens, output)?,
+            Some("listmagics") => CmdListMagics::run(zorro, tokens, output)?,
             Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
             None => (),
         }
@@ -72,18 +73,45 @@ trait Command {
         W: io::Write;
 }
 
-struct CmdFindMagics;
+struct CmdListMagics;
+struct CmdMagic;
 struct CmdOpen;
 struct CmdPerft;
 struct CmdPosition;
 struct CmdSetOption;
 
-impl Command for CmdFindMagics {
+impl Command for CmdListMagics {
     fn run<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
-        _output: W,
+        mut output: W,
     ) -> Result<()> {
+        use crate::chess::Magic;
+        for magic in Magic::by_file().iter() {
+            writeln!(&mut output, "{}", magic)?;
+        }
+        Ok(())
+    }
+}
+
+impl Command for CmdMagic {
+    fn run<'s, W: io::Write>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        mut output: W,
+    ) -> Result<()> {
+        use crate::chess::Magic;
+        let square = Square::from_str(tokens.next().unwrap()).unwrap();
+        let kind = tokens.next().unwrap();
+        let mut bb = tokens.next().unwrap().parse().unwrap();
+        match kind {
+            "file" => {
+                bb = (*Magic::by_file())[square.i()].magify(bb);
+                
+                writeln!(&mut output, "0x{:x}", bb)?;
+            },
+            _ => {},
+        };
         Ok(())
     }
 }

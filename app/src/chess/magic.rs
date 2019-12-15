@@ -1,4 +1,5 @@
 use super::*;
+use array_init::array_init;
 use lazy_static::lazy_static;
 use std::fmt;
 use std::iter::FromIterator;
@@ -16,7 +17,30 @@ impl Magic {
         ((bb & self.mask) * self.multiplier) >> self.right_shift
     }
 
-    fn by_file() -> [Magic; Square::count()] {
+    pub fn by_file() -> Box<[Magic; Square::count()]> {
+        Box::new(array_init(|i| {
+            let sq = Square::new_unchecked(i as u8);
+            Magic {
+                mask: 0x7e << (8 * sq.file().i()),
+                multiplier: 0x2 * (0x100 * (8 - sq.file().i())) as u64,
+                right_shift: 58,
+            }
+        }))
+    }
+
+    pub fn by_rank() -> Box<[Magic; Square::count()]> {
+        // FIXME
+        Box::new(array_init(|i| {
+            let sq = Square::new_unchecked(i as u8);
+            Magic {
+                mask: 0x7e << (8 * sq.file().i()),
+                multiplier: 0x2 * (0x100 * (8 - sq.file().i())) as u64,
+                right_shift: 58,
+            }
+        }))
+    }
+
+    pub fn by_main_diagonal() -> [Magic; Square::count()] {
         //Vec::from_iter(Square::iter()
         //    .map(|sq| Magic {
         //        mask: 0x7e << (8 * sq.file().i()),
@@ -26,27 +50,7 @@ impl Magic {
         unimplemented!()
     }
 
-    fn by_rank() -> [Magic; Square::count()] {
-        //Vec::from_iter(Square::iter()
-        //    .map(|sq| Magic {
-        //        mask: 0x7e << (8 * sq.file().i()),
-        //        multiplier: 0x2 * (0x100 * (8 - sq.file().i())) as u64,
-        //        right_shift: 58,
-        //    }))[..];
-        unimplemented!()
-    }
-
-    fn by_main_diagonal() -> [Magic; Square::count()] {
-        //Vec::from_iter(Square::iter()
-        //    .map(|sq| Magic {
-        //        mask: 0x7e << (8 * sq.file().i()),
-        //        multiplier: 0x2 * (0x100 * (8 - sq.file().i())) as u64,
-        //        right_shift: 58,
-        //    }))[..];
-        unimplemented!()
-    }
-
-    fn by_anti_diagonal() -> [Magic; Square::count()] {
+    pub fn by_anti_diagonal() -> [Magic; Square::count()] {
         //Vec::from_iter(Square::iter()
         //    .map(|sq| Magic {
         //        mask: 0x7e << (8 * sq.file().i()),
@@ -59,9 +63,9 @@ impl Magic {
 
 impl fmt::Display for Magic {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(
+        write!(
             f,
-            "(BB & {}) * {} >> {}",
+            "(BB & 0x{:x}) * 0x{:x} >> 0o{:o}",
             self.mask, self.multiplier, self.right_shift
         )
     }

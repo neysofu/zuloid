@@ -8,6 +8,7 @@ edition = "2018"
 publish = false
 
 [dependencies]
+array-init = "0.1.1"
 bitintr = "0.3"
 bytesize = "1"
 enum-map = "0.6"
