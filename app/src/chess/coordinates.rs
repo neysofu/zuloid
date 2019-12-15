@@ -363,25 +363,25 @@ impl Square {
     }
 
     pub fn diagonal_a1h8(self) -> BitBoard {
-        let mut main_diagonal = 0x8040_2010_0804_0201;
+        let mut diagonal = 0x8040_2010_0804_0201;
         let delta = self.rank().i() as i32 - self.file().i() as i32;
         if delta >= 0 {
-            main_diagonal <<= delta;
+            diagonal <<= delta;
         } else {
-            main_diagonal >>= delta;
+            diagonal >>= delta;
         }
-        main_diagonal
+        diagonal
     }
 
     pub fn diagonal_h1a8(self) -> BitBoard {
-        let mut main_diagonal = 0x102_0408_1020_4080;
+        let mut diagonal = 0x102_0408_1020_4080;
         let delta = self.rank().i() as i32 + self.file().i() as i32 - 7;
         if delta >= 0 {
-            main_diagonal <<= delta;
+            diagonal <<= delta;
         } else {
-            main_diagonal >>= delta;
+            diagonal >>= delta;
         }
-        main_diagonal
+        diagonal
     }
 }
 
