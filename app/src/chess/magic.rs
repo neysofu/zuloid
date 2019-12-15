@@ -10,8 +10,8 @@ pub struct Magic {
 
 impl Magic {
     /// See [https://www.chessprogramming.org/Magic_BitBoards] for more information.
-    pub fn magify(&self, bb: BitBoard) -> usize {
-        (((bb & self.mask) * self.multiplier) >> self.right_shift) as usize
+    pub fn magify(&self, bb: BitBoard) -> u64 {
+        ((bb & self.mask) * self.multiplier) >> self.right_shift
     }
 }
 
