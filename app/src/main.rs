@@ -8,7 +8,7 @@ mod time;
 mod version;
  
 use crate::core::Zorro;
-use crate::protocols::{uci::Uci, Protocol};
+use crate::protocols::{Protocol, Uci};
 use std::io;
 
 fn main() -> io::Result<()> {
