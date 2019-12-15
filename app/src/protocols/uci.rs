@@ -54,6 +54,7 @@ impl Uci {
             Some("d") => writeln!(output, "{}", zorro.board)?,
             Some("open") => CmdOpen::run(zorro, tokens, output)?,
             Some("perft") => CmdPerft::run(zorro, tokens, output)?,
+            Some("findmagics") => CmdFindMagics::run(zorro, tokens, output)?,
             Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
             None => (),
         }
@@ -71,10 +72,21 @@ trait Command {
         W: io::Write;
 }
 
+struct CmdFindMagics;
 struct CmdOpen;
 struct CmdPerft;
 struct CmdPosition;
 struct CmdSetOption;
+
+impl Command for CmdFindMagics {
+    fn run<'s, W: io::Write>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        _output: W,
+    ) -> Result<()> {
+        Ok(())
+    }
+}
 
 impl Command for CmdOpen {
     fn run<'s, W: io::Write>(
