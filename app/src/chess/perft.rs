@@ -55,14 +55,16 @@ impl Perft {
 
 impl Board {
     pub fn perft(&mut self, depth: usize) -> Report {
+        let mut report = Report::new(depth);
         if depth == 0 {
-            Report::new(0)
+            report.nodes_count = 1;
+            return report;
         } else if depth == 1 {
             let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
             Report {
                 depth,
-                nodes: moves.as_slice().len(),
+                nodes_count: moves.as_slice().len(),
                 overview: moves.as_slice().to_vec(),
             }
         } else {
@@ -71,12 +73,12 @@ impl Board {
             self.list_legals(&mut moves);
             for m in moves.as_slice().iter() {
                 self.do_move(*m);
-                total_moves_count += self.perft(depth - 1).nodes;
+                total_moves_count += self.perft(depth - 1).nodes_count;
                 self.undo_move(*m);
             }
             Report {
                 depth,
-                nodes: total_moves_count,
+                nodes_count: total_moves_count,
                 overview: moves.as_slice().to_vec(),
             }
         }
@@ -86,7 +88,7 @@ impl Board {
 #[derive(Clone)]
 pub struct Report {
     depth: usize,
-    nodes: usize,
+    nodes_count: usize,
     overview: Vec<Move>,
 }
 
@@ -94,8 +96,8 @@ impl Report {
     fn new(depth: usize) -> Self {
         Report {
             depth,
-            nodes: 0,
-            overview: Vec::default(),
+            nodes_count: 0,
+            overview: vec![],
         }
     }
 }
@@ -103,5 +105,16 @@ impl Report {
 impl fmt::Display for Report {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Ok(())
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn perft_0_is_1() {
+        let report = Board::default().perft(0);
+        assert_eq!(report.nodes_count, 1);
     }
 }
