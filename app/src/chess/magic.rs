@@ -20,10 +20,11 @@ impl Magic {
     pub fn by_file() -> Box<[Magic; Square::count()]> {
         Box::new(array_init(|i| {
             let sq = Square::new_unchecked(i as u8);
+            let area = sq.file().i() * File::count();
             Magic {
-                mask: 0x7f << (8 * sq.file().i()),
+                mask: 0x7f << area,
                 multiplier: 1,
-                right_shift: 1 + 8 * sq.file().i(),
+                right_shift: area + 1,
             }
         }))
     }
