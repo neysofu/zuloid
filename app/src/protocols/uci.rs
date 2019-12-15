@@ -107,7 +107,6 @@ impl Command for CmdMagic {
         match kind {
             "file" => {
                 bb = (*Magic::by_file())[square.i()].magify(bb);
-                
                 writeln!(&mut output, "0x{:x}", bb)?;
             },
             _ => {},

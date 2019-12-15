@@ -21,9 +21,9 @@ impl Magic {
         Box::new(array_init(|i| {
             let sq = Square::new_unchecked(i as u8);
             Magic {
-                mask: 0x7e << (8 * sq.file().i()),
-                multiplier: 0x2 * (0x100 * (8 - sq.file().i())) as u64,
-                right_shift: 58,
+                mask: 0x7f << (8 * sq.file().i()),
+                multiplier: 1,
+                right_shift: 1 + 8 * sq.file().i(),
             }
         }))
     }
