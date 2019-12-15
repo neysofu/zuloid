@@ -1,6 +1,7 @@
 use super::*;
 use lazy_static::lazy_static;
 use std::iter::FromIterator;
+use std::fmt;
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {
@@ -53,6 +54,12 @@ impl Magic {
         //        right_shift: 58,
         //    }))[..];
         unimplemented!()
+    }
+}
+
+impl fmt::Display for Magic {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(f, "(BB & {}) * {} >> {}", self.mask, self.multiplier, self.right_shift)
     }
 }
 
