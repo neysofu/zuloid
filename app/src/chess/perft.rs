@@ -34,12 +34,12 @@ impl Perft {
         //while self.tree[0].i < self.tree[0].count {
         //    while self.tree[self.current_depth].i <
         // self.tree[self.current_depth].count {        let current_move
-        // =            
+        // =
         // self.tree[self.current_depth].buf[self.tree[self.current_depth].i];
         //        if self.current_depth == self.desired_depth {
         //            self.report.nodes += board
         //                .list_legals(&mut
-        // self.tree[self.current_depth].buf[..])                
+        // self.tree[self.current_depth].buf[..])
         // .count();        } else {
         //            board.do_move(current_move);
         //            self.current_depth += 1;

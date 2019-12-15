@@ -1,4 +1,3 @@
-use super::magic::MAGICS;
 use super::*;
 
 use lazy_static::lazy_static;
