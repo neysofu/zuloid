@@ -115,18 +115,12 @@ impl Default for Board {
         bb_colors[Color::Black] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
         let mut bb_roles = EnumMap::default();
         bb_roles[Role::Pawn] = Rank::SECOND.to_bb() | Rank::SEVENTH.to_bb();
-        bb_roles[Role::Knight] = Square::B1.to_bb()
-            | Square::G1.to_bb()
-            | Square::B8.to_bb()
-            | Square::G8.to_bb();
-        bb_roles[Role::Bishop] = Square::C1.to_bb()
-            | Square::F1.to_bb()
-            | Square::C8.to_bb()
-            | Square::F8.to_bb();
-        bb_roles[Role::Rook] = Square::A1.to_bb()
-            | Square::H1.to_bb()
-            | Square::A8.to_bb()
-            | Square::H8.to_bb();
+        bb_roles[Role::Knight] =
+            Square::B1.to_bb() | Square::G1.to_bb() | Square::B8.to_bb() | Square::G8.to_bb();
+        bb_roles[Role::Bishop] =
+            Square::C1.to_bb() | Square::F1.to_bb() | Square::C8.to_bb() | Square::F8.to_bb();
+        bb_roles[Role::Rook] =
+            Square::A1.to_bb() | Square::H1.to_bb() | Square::A8.to_bb() | Square::H8.to_bb();
         bb_roles[Role::Queen] = Square::D1.to_bb() | Square::D8.to_bb();
         bb_roles[Role::King] = Square::E1.to_bb() | Square::E8.to_bb();
         Board {

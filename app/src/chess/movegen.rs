@@ -89,8 +89,8 @@ impl Board {
     }
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
-        //let bb_all = self.bb_colors[Color::White] | self.bb_colors[Color::Black];
-        //MAGICS.gen_bishops(
+        //let bb_all = self.bb_colors[Color::White] |
+        // self.bb_colors[Color::Black]; MAGICS.gen_bishops(
         //    move_list,
         //    self.attackers_with_role(Role::Bishop),
         //    bb_all,
@@ -157,9 +157,7 @@ mod test {
     #[test]
     fn knight_attacks_a2() {
         let attacker = Square::A2;
-        let attacks = Square::C1.to_bb()
-            | Square::C3.to_bb()
-            | Square::B4.to_bb();
+        let attacks = Square::C1.to_bb() | Square::C3.to_bb() | Square::B4.to_bb();
         assert_eq!(KNIGHT[attacker.i() as usize], attacks);
     }
 

@@ -6,7 +6,7 @@ mod eval;
 mod protocols;
 mod time;
 mod version;
- 
+
 use crate::core::Zorro;
 use crate::protocols::{Protocol, Uci};
 use std::io;

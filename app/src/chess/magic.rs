@@ -94,7 +94,12 @@ impl SlidingPiecesMoveGen for SlidingAttacksDatabase {
         0
     }
 
-    fn gen_bishops(&self, _buf: &mut AvailableMoves, _attackers: BitBoard, _all: BitBoard) -> usize {
+    fn gen_bishops(
+        &self,
+        _buf: &mut AvailableMoves,
+        _attackers: BitBoard,
+        _all: BitBoard,
+    ) -> usize {
         0
     }
 }

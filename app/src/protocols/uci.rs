@@ -1,12 +1,12 @@
 use super::Protocol;
+use crate::chess::{Board, Move};
 use crate::core::Zorro;
+use crate::err::Error as ChessErr;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
-use crate::err::Error as ChessErr;
-use crate::chess::{Board, Move};
 
 enum State {
     Alive,
@@ -81,8 +81,7 @@ impl Command for CmdOpen {
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         _output: W,
-    ) -> Result<()>
-    {
+    ) -> Result<()> {
         match tokens.next() {
             Some("lichess") => {
                 let url = format!(
@@ -103,8 +102,7 @@ impl Command for CmdPerft {
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: W,
-    ) -> Result<()>
-    {
+    ) -> Result<()> {
         let depth = if let Some(s) = tokens.next() {
             match str::parse::<usize>(s) {
                 Ok(depth) => depth,
@@ -125,8 +123,7 @@ impl Command for CmdPosition {
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         output: W,
-    ) -> Result<()>
-    {
+    ) -> Result<()> {
         match tokens.next() {
             Some("960") => unimplemented!(),
             Some("current") => (),

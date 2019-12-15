@@ -1,8 +1,8 @@
 use super::{Coordinate, Role, Square};
 use crate::err::Error;
 use std::fmt;
-use std::str::FromStr;
 use std::iter::IntoIterator;
+use std::str::FromStr;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {
@@ -62,7 +62,7 @@ impl AvailableMoves {
 impl Default for AvailableMoves {
     fn default() -> Self {
         AvailableMoves {
-            buf: Vec::with_capacity(140)
+            buf: Vec::with_capacity(140),
         }
     }
 }

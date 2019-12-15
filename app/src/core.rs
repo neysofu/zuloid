@@ -1,8 +1,8 @@
 use crate::cache::Cache;
+use crate::chess::{Board, Color};
 use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
-use crate::chess::{Board, Color};
 
 #[derive(Default)]
 pub struct Zorro {

@@ -13,5 +13,5 @@ pub use board::Board;
 pub use color::Color;
 pub use coordinates::*;
 pub use movegen::SlidingPiecesMoveGen;
-pub use moving::{Move, AvailableMoves};
+pub use moving::{AvailableMoves, Move};
 pub use piece::{Piece, Role};
