@@ -7,10 +7,11 @@ pub mod mover;
 pub mod moves;
 pub mod perft;
 pub mod piece;
+pub mod tables;
 
 pub use board::Board;
 pub use color::Color;
 pub use coordinates::*;
-pub use mover::{Mover, Magic};
+pub use mover::{Magic, Mover};
 pub use moves::{AvailableMoves, Move};
 pub use piece::{Piece, Role};

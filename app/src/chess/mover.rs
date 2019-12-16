@@ -2,18 +2,26 @@ use super::*;
 use array_init::array_init;
 use lazy_static::lazy_static;
 use std::fmt;
-use std::iter::FromIterator;
 
 pub struct Mover {
     by_file: [BitBoard; Square::count()],
     by_rank: [BitBoard; Square::count()],
     by_main_diagonal: [BitBoard; Square::count()],
     bb_anti_diagonal: [BitBoard; Square::count()],
+    bb_king: [BitBoard; Square::count()],
+    bb_knight: [BitBoard; Square::count()],
 }
 
 impl Default for Mover {
     fn default() -> Self {
-        unimplemented!()
+        Mover {
+            by_file: [0; 64],
+            by_rank: [0; 64],
+            by_main_diagonal: [0; 64],
+            bb_anti_diagonal: [0; 64],
+            bb_king: [0; 64],
+            bb_knight: [0; 64],
+        }
     }
 }
 
@@ -97,7 +105,7 @@ impl Mover {
         }
     }
 
-    fn gen_sliding_pieces(&self, board: &Board, move_list: &mut AvailableMoves) {
+    fn gen_sliding_pieces(&self, _board: &Board, _move_list: &mut AvailableMoves) {
         //let bb_all = self.bb_colors[Color::White] |
         // self.bb_colors[Color::Black]; MAGICS.gen_bishops(
         //    move_list,
@@ -111,6 +119,47 @@ impl Mover {
         //);
     }
 }
+
+//fn init_bb_knight(&mut self) {
+//    let shifts = [
+//        (-1, 2),
+//        (1, 2),
+//        (2, 1),
+//        (2, -1),
+//        (1, -2),
+//        (-1, -2),
+//        (-2, -1),
+//        (-2, 1),
+//    ];
+//    for square in Square::iter() {
+//        let mut bb = 0;
+//        for shift in shifts.iter() {
+//            if let (Some(file), Some(rank)) =
+//                (square.file().shift(shift.0), square.rank().shift(shift.1))
+//            {
+//                bb |= Square::at(file, rank).to_bb();
+//            }
+//        }
+//        self.bb_knight[square.i() as usize] = bb;
+//    }
+//}
+//
+//fn init_bb_king(&mut self) {
+//    let shifts = [-1, 1];
+//    for sq in Square::iter() {
+//        let mut file_bb = sq.file().to_bb();
+//        let mut rank_bb = sq.rank().to_bb();
+//        for shift in shifts.iter() {
+//            if let Some(file) = sq.file().shift(*shift) {
+//                file_bb |= file.to_bb();
+//            }
+//            if let Some(rank) = sq.rank().shift(*shift) {
+//                rank_bb |= rank.to_bb();
+//            }
+//        }
+//        self.bb_king[sq.i() as usize] = (file_bb & rank_bb) ^ sq.to_bb();
+//    }
+//}
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {
@@ -209,18 +258,18 @@ lazy_static! {
     pub static ref KING: [BitBoard; Square::count()] = {
         let shifts = [-1, 1];
         let mut bitboards = [0; Square::count()];
-        for square in Square::iter() {
-            let mut File = square.file().to_bb();
-            let mut Rank = square.rank().to_bb();
+        for sq in Square::iter() {
+            let mut file_bb = sq.file().to_bb();
+            let mut rank_bb = sq.rank().to_bb();
             for shift in shifts.iter() {
-                if let Some(file) = square.file().shift(*shift) {
-                    File |= file.to_bb();
+                if let Some(file) = sq.file().shift(*shift) {
+                    file_bb |= file.to_bb();
                 }
-                if let Some(rank) = square.rank().shift(*shift) {
-                    Rank |= rank.to_bb();
+                if let Some(rank) = sq.rank().shift(*shift) {
+                    rank_bb |= rank.to_bb();
                 }
             }
-            bitboards[square.i() as usize] = (File & Rank) ^ square.to_bb();
+            bitboards[sq.i() as usize] = (file_bb & rank_bb) ^ sq.to_bb();
         }
         bitboards
     };

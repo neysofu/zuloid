@@ -1,5 +1,5 @@
 use super::Protocol;
-use crate::chess::{Board, Move, Square, Coordinate};
+use crate::chess::{Board, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
@@ -56,6 +56,7 @@ impl Uci {
             Some("perft") => CmdPerft::run(zorro, tokens, output)?,
             Some("magic") => CmdMagic::run(zorro, tokens, output)?,
             Some("listmagics") => CmdListMagics::run(zorro, tokens, output)?,
+            Some("gentables") => CmdGenTables::run(zorro, tokens, output)?,
             Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
             None => (),
         }
@@ -73,6 +74,7 @@ trait Command {
         W: io::Write;
 }
 
+struct CmdGenTables;
 struct CmdListMagics;
 struct CmdMagic;
 struct CmdOpen;
@@ -80,10 +82,29 @@ struct CmdPerft;
 struct CmdPosition;
 struct CmdSetOption;
 
+impl Command for CmdGenTables {
+    fn run<'s, W: io::Write>(
+        _zorro: &mut Zorro,
+        _tokens: impl Iterator<Item = &'s str>,
+        mut output: W,
+    ) -> Result<()> {
+        use crate::chess::tables;
+        writeln!(output, "KING ATTACKS")?;
+        for bb in (*tables::boxed_king_attacks()).iter() {
+            writeln!(output, "0x{:016x}", bb)?;
+        }
+        writeln!(output, "KNIGHT ATTACKS")?;
+        for bb in (*tables::boxed_knight_attacks()).iter() {
+            writeln!(output, "0x{:016x}", bb)?;
+        }
+        Ok(())
+    }
+}
+
 impl Command for CmdListMagics {
     fn run<'s, W: io::Write>(
-        zorro: &mut Zorro,
-        mut tokens: impl Iterator<Item = &'s str>,
+        _zorro: &mut Zorro,
+        _tokens: impl Iterator<Item = &'s str>,
         mut output: W,
     ) -> Result<()> {
         use crate::chess::Magic;
@@ -96,7 +117,7 @@ impl Command for CmdListMagics {
 
 impl Command for CmdMagic {
     fn run<'s, W: io::Write>(
-        zorro: &mut Zorro,
+        _zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: W,
     ) -> Result<()> {
@@ -108,8 +129,8 @@ impl Command for CmdMagic {
             "file" => {
                 bb = (*Magic::by_file())[square.i()].magify(bb);
                 writeln!(&mut output, "0x{:x}", bb)?;
-            },
-            _ => {},
+            }
+            _ => {}
         };
         Ok(())
     }
@@ -161,7 +182,7 @@ impl Command for CmdPosition {
     fn run<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
-        output: W,
+        _output: W,
     ) -> Result<()> {
         match tokens.next() {
             Some("960") => unimplemented!(),

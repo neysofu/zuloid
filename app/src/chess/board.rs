@@ -1,7 +1,7 @@
 use super::color::*;
 use super::coordinates::*;
-use super::Move;
 use super::piece::*;
+use super::Move;
 use crate::err::Error;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;

@@ -1,5 +1,5 @@
-use crate::err::Error;
 use super::Color;
+use crate::err::Error;
 use bitintr::Blsi;
 use bitintr::Tzcnt;
 use rand::Rng;
@@ -175,6 +175,10 @@ impl File {
     pub const F: Self = File(5);
     pub const G: Self = File(6);
     pub const H: Self = File(7);
+
+    pub const fn to_bb(self) -> BitBoard {
+        0xff << (self.0 * 8)
+    }
 }
 
 impl Coordinate for File {
@@ -191,7 +195,7 @@ impl Coordinate for File {
 
 impl Into<BitBoard> for File {
     fn into(self) -> BitBoard {
-        0xff << (self.0 * 8)
+        self.to_bb()
     }
 }
 
@@ -229,6 +233,15 @@ impl Rank {
     pub const SEVENTH: Rank = Rank(6);
     pub const EIGHTH: Rank = Rank(7);
 
+    pub const _1: Rank = Rank(0);
+    pub const _2: Rank = Rank(1);
+    pub const _3: Rank = Rank(2);
+    pub const _4: Rank = Rank(3);
+    pub const _5: Rank = Rank(4);
+    pub const _6: Rank = Rank(5);
+    pub const _7: Rank = Rank(6);
+    pub const _8: Rank = Rank(7);
+
     pub fn symmetric(self) -> Self {
         Rank::new_unchecked(7 - self.i() as u8)
     }
@@ -239,6 +252,10 @@ impl Rank {
             Color::White => rank,
             Color::Black => rank.symmetric(),
         }
+    }
+
+    pub const fn to_bb(self) -> BitBoard {
+        0x0101_0101_0101_0101 << self.0
     }
 }
 
@@ -256,7 +273,7 @@ impl Coordinate for Rank {
 
 impl Into<BitBoard> for Rank {
     fn into(self) -> BitBoard {
-        0x0101_0101_0101_0101 << self.0
+        self.to_bb()
     }
 }
 
@@ -363,6 +380,10 @@ impl Square {
         64
     }
 
+    pub const fn to_bb(self) -> BitBoard {
+        1u64 << self.0
+    }
+
     pub const fn at(file: File, rank: Rank) -> Self {
         Square(((file.0 << 3) | rank.0) as u8)
     }
@@ -400,7 +421,7 @@ impl Square {
 
 impl Into<BitBoard> for Square {
     fn into(self) -> BitBoard {
-        1u64 << self.0
+        self.to_bb()
     }
 }
 

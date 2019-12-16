@@ -15,7 +15,7 @@ struct Perft {
 }
 
 impl Perft {
-    fn new(depth: usize, board: &Board) -> Self {
+    fn new(_depth: usize, _board: &Board) -> Self {
         unimplemented!()
         //let mut tree = vec![Level::default(); depth];
         //tree[0] = Level::default();
@@ -29,7 +29,7 @@ impl Perft {
         //}
     }
 
-    fn run(mut self, board: &mut Board) -> Report {
+    fn run(self, _board: &mut Board) -> Report {
         unimplemented!()
         //while self.tree[0].i < self.tree[0].count {
         //    while self.tree[self.current_depth].i <
@@ -55,7 +55,7 @@ impl Perft {
 }
 
 impl Board {
-    pub fn perft(&mut self, depth: usize) -> Report {
+    pub fn perft(&mut self, _depth: usize) -> Report {
         unimplemented!()
         //let mut report = Report::new(depth);
         //if depth == 0 {
