@@ -1,4 +1,4 @@
-use super::{Coordinate, Rank};
+use super::Rank;
 use crate::err::Error;
 use enum_map_derive::Enum;
 use std::ops;
@@ -28,31 +28,19 @@ impl Color {
     }
 
     pub fn backrank(self) -> Rank {
-        match self {
-            Color::White => Rank::new(0),
-            Color::Black => Rank::new(7),
-        }
+        Rank::new_with_side(0, self)
     }
 
     pub fn pawn_rank(self) -> Rank {
-        match self {
-            Color::White => Rank::new(1),
-            Color::Black => Rank::new(6),
-        }
+        Rank::new_with_side(1, self)
     }
 
     pub fn fourth_rank(self) -> Rank {
-        match self {
-            Color::White => Rank::new(3),
-            Color::Black => Rank::new(4),
-        }
+        Rank::new_with_side(3, self)
     }
 
     pub fn seventh_rank(self) -> Rank {
-        match self {
-            Color::White => Rank::new(6),
-            Color::Black => Rank::new(1),
-        }
+        Rank::new_with_side(6, self)
     }
 }
 

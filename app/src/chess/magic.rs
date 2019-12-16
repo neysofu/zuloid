@@ -79,7 +79,7 @@ pub struct MagicsDb {
     bb_anti_diagonal: [BitBoard; Square::count()],
 }
 
-impl SlidingPiecesMoveGen for MagicsDb {
+impl Slider for MagicsDb {
     fn gen_rooks(&self, _buf: &mut AvailableMoves, _attackers: BitBoard, _all: BitBoard) -> usize {
         0
     }

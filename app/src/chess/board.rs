@@ -1,6 +1,6 @@
 use super::color::*;
 use super::coordinates::*;
-use super::moving::Move;
+use super::Move;
 use super::piece::*;
 use crate::err::Error;
 use enum_map::{enum_map, EnumMap};

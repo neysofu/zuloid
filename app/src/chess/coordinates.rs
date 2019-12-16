@@ -1,4 +1,5 @@
 use crate::err::Error;
+use super::Color;
 use bitintr::Blsi;
 use bitintr::Tzcnt;
 use rand::Rng;
@@ -227,6 +228,18 @@ impl Rank {
     pub const SIXTH: Rank = Rank(5);
     pub const SEVENTH: Rank = Rank(6);
     pub const EIGHTH: Rank = Rank(7);
+
+    pub fn symmetric(self) -> Self {
+        Rank::new_unchecked(7 - self.i() as u8)
+    }
+
+    pub fn new_with_side(i: u8, side: Color) -> Self {
+        let rank = Rank::new(i);
+        match side {
+            Color::White => rank,
+            Color::Black => rank.symmetric(),
+        }
+    }
 }
 
 impl Coordinate for Rank {
