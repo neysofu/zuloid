@@ -84,60 +84,10 @@ impl Board {
     }
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
-        //let bb_all = self.bb_colors[Color::White] |
-        // self.bb_colors[Color::Black]; MAGICS.gen_bishops(
-        //    move_list,
-        //    self.attackers_with_role(Role::Bishop),
-        //    bb_all,
-        //);
-        //MAGICS.gen_rooks(
-        //    move_list,
-        //    self.attackers_with_role(Role::Rook),
-        //    bb_all,
-        //);
+        for from in self.attackers_with_role(Role::Rook).squares() {
+        }
     }
 }
-
-//fn init_bb_knight(&mut self) {
-//    let shifts = [
-//        (-1, 2),
-//        (1, 2),
-//        (2, 1),
-//        (2, -1),
-//        (1, -2),
-//        (-1, -2),
-//        (-2, -1),
-//        (-2, 1),
-//    ];
-//    for square in Square::iter() {
-//        let mut bb = 0;
-//        for shift in shifts.iter() {
-//            if let (Some(file), Some(rank)) =
-//                (square.file().shift(shift.0), square.rank().shift(shift.1))
-//            {
-//                bb |= Square::at(file, rank).to_bb();
-//            }
-//        }
-//        self.bb_knight[square.i() as usize] = bb;
-//    }
-//}
-//
-//fn init_bb_king(&mut self) {
-//    let shifts = [-1, 1];
-//    for sq in Square::iter() {
-//        let mut file_bb = sq.file().to_bb();
-//        let mut rank_bb = sq.rank().to_bb();
-//        for shift in shifts.iter() {
-//            if let Some(file) = sq.file().shift(*shift) {
-//                file_bb |= file.to_bb();
-//            }
-//            if let Some(rank) = sq.rank().shift(*shift) {
-//                rank_bb |= rank.to_bb();
-//            }
-//        }
-//        self.bb_king[sq.i() as usize] = (file_bb & rank_bb) ^ sq.to_bb();
-//    }
-//}
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {

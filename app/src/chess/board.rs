@@ -72,11 +72,13 @@ impl Board {
     pub fn do_move(&mut self, m: Move) {
         self.set_at_square(m.to, self.piece_opt_at(m.from));
         self.set_at_square(m.from, None);
+        self.color_to_move = !self.color_to_move;
     }
 
     pub fn undo_move(&mut self, m: Move) {
         self.set_at_square(m.from, self.piece_opt_at(m.to));
         self.set_at_square(m.to, None);
+        self.color_to_move = !self.color_to_move;
     }
 
     fn square_centric_chars(&self) -> SquareCentricBoard<char> {
