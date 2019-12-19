@@ -113,9 +113,14 @@ mod test {
     use super::*;
 
     #[test]
-    fn up_to_depth_2() {
+    fn depth_0() {
         let board = Board::default();
         assert_eq!(board.clone().perft(0).nodes_count, 1);
+    }
+
+    #[test]
+    fn depth_1() {
+        let board = Board::default();
         assert_eq!(board.clone().perft(1).nodes_count, 20);
     }
 }

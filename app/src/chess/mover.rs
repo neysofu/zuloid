@@ -1,4 +1,5 @@
 use super::*;
+use super::tables::KNIGHT_ATTACKS;
 use array_init::array_init;
 use lazy_static::lazy_static;
 use std::fmt;
@@ -81,7 +82,7 @@ impl Mover {
 
     fn gen_knights(&self, board: &Board, move_list: &mut AvailableMoves) {
         for from in board.attackers_with_role(Role::Knight).squares() {
-            let possible_targets = KNIGHT[from.i() as usize] & !board.attackers();
+            let possible_targets = KNIGHT_ATTACKS[from.i() as usize] & !board.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -94,7 +95,7 @@ impl Mover {
 
     fn gen_king(&self, board: &Board, move_list: &mut AvailableMoves) {
         for from in board.attackers_with_role(Role::King).squares() {
-            let possible_targets = KING[from.i() as usize] & !board.attackers();
+            let possible_targets = KNIGHT_ATTACKS[from.i() as usize] & !board.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -227,50 +228,4 @@ impl fmt::Display for Magic {
             self.mask, self.multiplier, self.right_shift
         )
     }
-}
-
-lazy_static! {
-    pub static ref KNIGHT: [BitBoard; Square::count()] = {
-        let shifts = [
-            (-1, 2),
-            (1, 2),
-            (2, 1),
-            (2, -1),
-            (1, -2),
-            (-1, -2),
-            (-2, -1),
-            (-2, 1),
-        ];
-        let mut bitboards = [0; Square::count()];
-        for square in Square::iter() {
-            let mut bb = 0;
-            for shift in shifts.iter() {
-                if let (Some(file), Some(rank)) =
-                    (square.file().shift(shift.0), square.rank().shift(shift.1))
-                {
-                    bb |= Square::at(file, rank).to_bb();
-                }
-            }
-            bitboards[square.i() as usize] = bb;
-        }
-        bitboards
-    };
-    pub static ref KING: [BitBoard; Square::count()] = {
-        let shifts = [-1, 1];
-        let mut bitboards = [0; Square::count()];
-        for sq in Square::iter() {
-            let mut file_bb = sq.file().to_bb();
-            let mut rank_bb = sq.rank().to_bb();
-            for shift in shifts.iter() {
-                if let Some(file) = sq.file().shift(*shift) {
-                    file_bb |= file.to_bb();
-                }
-                if let Some(rank) = sq.rank().shift(*shift) {
-                    rank_bb |= rank.to_bb();
-                }
-            }
-            bitboards[sq.i() as usize] = (file_bb & rank_bb) ^ sq.to_bb();
-        }
-        bitboards
-    };
 }

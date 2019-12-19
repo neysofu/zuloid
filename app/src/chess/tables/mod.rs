@@ -1,6 +1,9 @@
 mod king;
 mod knight;
 
+pub use king::KING_ATTACKS;
+pub use knight::KNIGHT_ATTACKS;
+
 use crate::chess::*;
 use array_init;
 
