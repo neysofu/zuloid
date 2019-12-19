@@ -1,7 +1,6 @@
 use super::*;
 use super::tables::KNIGHT_ATTACKS;
 use array_init::array_init;
-use lazy_static::lazy_static;
 use std::fmt;
 
 pub struct Mover {
