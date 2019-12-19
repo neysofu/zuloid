@@ -1,5 +1,5 @@
 use crate::cache::Cache;
-use crate::chess::{Board, Color, Mover};
+use crate::chess::{Board, Color};
 use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
@@ -9,7 +9,6 @@ pub struct Zorro {
     pub config: Config,
     pub cache: Cache,
     pub board: Board,
-    pub mover: Mover,
     pub time_controls: EnumMap<Color, TimeControl>,
 }
 

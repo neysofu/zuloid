@@ -12,6 +12,6 @@ pub mod tables;
 pub use board::Board;
 pub use color::Color;
 pub use coordinates::*;
-pub use mover::{Magic, Mover};
+pub use mover::Magic;
 pub use moves::{AvailableMoves, Move};
 pub use piece::{Piece, Role};

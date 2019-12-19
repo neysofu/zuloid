@@ -173,7 +173,7 @@ impl Command for CmdPerft {
         } else {
             1
         };
-        writeln!(&mut output, "N.{} legal moves:", zorro.board.perft(depth))?;
+        writeln!(&mut output, "{}", zorro.board.perft(depth))?;
         Ok(())
     }
 }

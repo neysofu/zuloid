@@ -1,43 +1,21 @@
+use super::tables;
 use super::*;
-use super::tables::KNIGHT_ATTACKS;
 use array_init::array_init;
 use std::fmt;
 
-pub struct Mover {
-    by_file: [BitBoard; Square::count()],
-    by_rank: [BitBoard; Square::count()],
-    by_main_diagonal: [BitBoard; Square::count()],
-    bb_anti_diagonal: [BitBoard; Square::count()],
-    bb_king: [BitBoard; Square::count()],
-    bb_knight: [BitBoard; Square::count()],
-}
-
-impl Default for Mover {
-    fn default() -> Self {
-        Mover {
-            by_file: [0; 64],
-            by_rank: [0; 64],
-            by_main_diagonal: [0; 64],
-            bb_anti_diagonal: [0; 64],
-            bb_king: [0; 64],
-            bb_knight: [0; 64],
-        }
-    }
-}
-
 /// A pre-initialized sliding pieces attack database.
-impl Mover {
-    pub fn list_legals(&self, board: &Board, move_list: &mut AvailableMoves) {
-        self.gen_pawns(board, move_list);
-        self.gen_knights(board, move_list);
-        self.gen_king(board, move_list);
-        self.gen_sliding_pieces(board, move_list);
+impl Board {
+    pub fn list_legals(&self, move_list: &mut AvailableMoves) {
+        self.gen_pawns(move_list);
+        self.gen_knights(move_list);
+        self.gen_king(move_list);
+        self.gen_sliding_pieces(move_list);
     }
 
-    fn gen_pawns(&self, board: &Board, move_list: &mut AvailableMoves) {
-        let bb_all = board.bb_all();
-        let attackers = board.attackers();
-        let defenders = board.defenders();
+    fn gen_pawns(&self, move_list: &mut AvailableMoves) {
+        let bb_all = self.bb_all();
+        let attackers = self.attackers();
+        let defenders = self.defenders();
         fn push(attackers: BitBoard, all: BitBoard, mover: Color) -> BitBoard {
             !all & match mover {
                 Color::White => attackers.north(1),
@@ -45,15 +23,15 @@ impl Mover {
             }
         }
         let single_pushes = push(
-            board.attackers_with_role(Role::Pawn),
+            self.attackers_with_role(Role::Pawn),
             bb_all,
-            board.color_to_move,
+            self.color_to_move,
         );
-        let double_pushes = push(single_pushes, bb_all, board.color_to_move);
+        let double_pushes = push(single_pushes, bb_all, self.color_to_move);
         let mut captures_east = attackers & !File::H.to_bb();
         let mut captures_west = attackers & !File::A.to_bb();
         let shifts: [i32; 4];
-        match board.color_to_move {
+        match self.color_to_move {
             Color::White => {
                 captures_east <<= 9;
                 captures_west >>= 7;
@@ -79,9 +57,9 @@ impl Mover {
         }
     }
 
-    fn gen_knights(&self, board: &Board, move_list: &mut AvailableMoves) {
-        for from in board.attackers_with_role(Role::Knight).squares() {
-            let possible_targets = KNIGHT_ATTACKS[from.i() as usize] & !board.attackers();
+    fn gen_knights(&self, move_list: &mut AvailableMoves) {
+        for from in self.attackers_with_role(Role::Knight).squares() {
+            let possible_targets = tables::KNIGHT_ATTACKS[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -92,9 +70,9 @@ impl Mover {
         }
     }
 
-    fn gen_king(&self, board: &Board, move_list: &mut AvailableMoves) {
-        for from in board.attackers_with_role(Role::King).squares() {
-            let possible_targets = KNIGHT_ATTACKS[from.i() as usize] & !board.attackers();
+    fn gen_king(&self, move_list: &mut AvailableMoves) {
+        for from in self.attackers_with_role(Role::King).squares() {
+            let possible_targets = tables::KING_ATTACKS[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -105,7 +83,7 @@ impl Mover {
         }
     }
 
-    fn gen_sliding_pieces(&self, _board: &Board, _move_list: &mut AvailableMoves) {
+    fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
         //let bb_all = self.bb_colors[Color::White] |
         // self.bb_colors[Color::Black]; MAGICS.gen_bishops(
         //    move_list,

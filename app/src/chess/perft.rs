@@ -55,28 +55,27 @@ impl Perft {
 }
 
 impl Board {
-    pub fn perft(&mut self, _depth: usize) -> Report {
-        unimplemented!()
-        //let mut report = Report::new(depth);
-        //if depth == 0 {
-        //    report.nodes_count = 1;
-        //} else if depth == 1 {
-        //    let mut moves = AvailableMoves::default();
-        //    self.list_legals(&mut moves);
-        //    report.nodes_count = moves.into_iter().count();
-        //    report.overview = moves.into_iter().map(|m| (m, 1)).collect();
-        //} else {
-        //    let mut moves = AvailableMoves::default();
-        //    self.list_legals(&mut moves);
-        //    for m in moves.as_slice().iter() {
-        //        self.do_move(*m);
-        //        let count = self.perft(depth - 1).nodes_count;
-        //        report.nodes_count += count;
-        //        report.overview.push((*m, count));
-        //        self.undo_move(*m);
-        //    }
-        //}
-        //report
+    pub fn perft(&mut self, depth: usize) -> Report {
+        let mut report = Report::new(depth);
+        if depth == 0 {
+            report.nodes_count = 1;
+        } else if depth == 1 {
+            let mut moves = AvailableMoves::default();
+            self.list_legals(&mut moves);
+            report.nodes_count = moves.into_iter().count();
+            report.overview = moves.into_iter().map(|m| (m, 1)).collect();
+        } else {
+            let mut moves = AvailableMoves::default();
+            self.list_legals(&mut moves);
+            for m in moves.as_slice().iter() {
+                self.do_move(*m);
+                let count = self.perft(depth - 1).nodes_count;
+                report.nodes_count += count;
+                report.overview.push((*m, count));
+                self.undo_move(*m);
+            }
+        }
+        report
     }
 }
 
