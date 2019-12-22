@@ -56,6 +56,7 @@ impl Board {
                     from: square.shift(shifts[i]).unwrap(),
                     to: square,
                     promotion: None,
+                    capture: None,
                 });
             }
         }
@@ -69,6 +70,7 @@ impl Board {
                     from,
                     to,
                     promotion: None,
+                    capture: None,
                 });
             }
         }
@@ -82,6 +84,7 @@ impl Board {
                     from,
                     to,
                     promotion: None,
+                    capture: None,
                 });
             }
         }
@@ -96,6 +99,7 @@ impl Board {
                     from,
                     to,
                     promotion: None,
+                    capture: None,
                 });
             }
         }
@@ -106,6 +110,7 @@ impl Board {
                     from,
                     to,
                     promotion: None,
+                    capture: None,
                 });
             }
         }

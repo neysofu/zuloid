@@ -9,6 +9,7 @@ pub struct Move {
     pub from: Square,
     pub to: Square,
     pub promotion: Option<Role>,
+    pub capture: Option<Role>,
 }
 
 impl Move {
@@ -17,6 +18,7 @@ impl Move {
             from: Square::new(0),
             to: Square::new(0),
             promotion: None,
+            capture: None,
         }
     }
 }
@@ -33,6 +35,7 @@ impl FromStr for Move {
             from,
             to,
             promotion,
+            capture: None,
         })
     }
 }
@@ -109,6 +112,7 @@ mod test {
             from: Square::A1,
             to: Square::C7,
             promotion: None,
+            capture: None,
         };
         assert!(match Move::from_str("a1c7") {
             Ok(actual_move) => actual_move == expected_move,
@@ -122,6 +126,7 @@ mod test {
             from: Square::from_str("e2").unwrap(),
             to: Square::from_str("e4").unwrap(),
             promotion: None,
+            capture: None,
         };
         assert!(match Move::from_str(expected_move.to_string().as_str()) {
             Ok(actual_move) => actual_move == expected_move,
