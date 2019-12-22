@@ -56,7 +56,7 @@ impl Board {
                     from: square.shift(shifts[i]).unwrap(),
                     to: square,
                     promotion: None,
-                    capture: None,
+                    capture: self.piece_opt_at(square).map(|p| p.role),
                 });
             }
         }
