@@ -69,16 +69,18 @@ impl Board {
         }
     }
 
-    pub fn do_move(&mut self, m: Move) {
+    pub fn do_move(&mut self, m: Move) -> Option<Piece> {
         let promoted = m.promotion.map(|role| Piece::new(role, self.color_to_move));
+        let capture = self.piece_opt_at(m.to);
         self.set_at_square(m.to, promoted.or(self.piece_opt_at(m.from)));
         self.set_at_square(m.from, None);
         self.color_to_move = !self.color_to_move;
+        capture
     }
 
-    pub fn undo_move(&mut self, m: Move) {
+    pub fn undo_move(&mut self, m: Move, captured: Option<Piece>) {
         self.set_at_square(m.from, self.piece_opt_at(m.to));
-        self.set_at_square(m.to, None);
+        self.set_at_square(m.to, captured);
         self.color_to_move = !self.color_to_move;
     }
 

@@ -63,11 +63,11 @@ impl Board {
             let mut moves = AvailableMoves::default();
             self.list_legals(&mut moves);
             for m in moves.as_slice().iter() {
-                self.do_move(*m);
+                let capture = self.do_move(*m);
                 let count = self.perft(depth - 1).nodes_count;
                 report.nodes_count += count;
                 report.overview.push((*m, count));
-                self.undo_move(*m);
+                self.undo_move(*m, capture);
             }
         }
         report

@@ -194,7 +194,9 @@ impl Command for CmdPosition {
         }
         for token in tokens.skip_while(|s| *s == "moves") {
             match Move::from_str(token) {
-                Ok(m) => zorro.board.do_move(m),
+                Ok(m) => {
+                    zorro.board.do_move(m);
+                }
                 Err(err) => return Err(err.into()),
             }
         }
