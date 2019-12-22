@@ -54,6 +54,46 @@ fn king_attacks(from: Square) -> BitBoard {
     (file_bb & rank_bb) ^ from.to_bb()
 }
 
+pub fn rook_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
+    let mut bb = 0;
+    let shifts = [-1, 1, 8, -8];
+    for shift in shifts.iter() {
+        let mut to = from;
+        while let Some(to_next) = Square::new_opt(to.i() as i32 + shift) {
+            if to_next.file() != to.file() && to_next.rank() != to.rank() {
+                break;
+            }
+            if to_next.to_bb() & occupancy != 0 {
+                break;
+            }
+            to = to_next;
+            bb |= to.to_bb();
+        }
+    }
+    bb
+}
+
+pub fn bishop_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
+    let mut bb = 0;
+    let shifts = [-9, -7, 9, 7];
+    for shift in shifts.iter() {
+        let mut to = from;
+        while let Some(to_next) = Square::new_opt(to.i() as i32 + shift) {
+            if (to_next.file().i() as i32 - to.file().i() as i32).abs() != 1
+                && (to_next.rank().i() as i32 - to.rank().i() as i32).abs() != 1
+            {
+                break;
+            }
+            if to_next.to_bb() & occupancy != 0 {
+                break;
+            }
+            to = to_next;
+            bb |= to.to_bb();
+        }
+    }
+    bb
+}
+
 #[cfg(test)]
 mod test {
     use super::*;
@@ -70,5 +110,19 @@ mod test {
         let expected = *boxed_knight_attacks();
         let actual = knight::KNIGHT_ATTACKS;
         assert!(expected.iter().zip(actual.iter()).all(|(a, b)| a == b));
+    }
+
+    #[test]
+    fn free_rook_in_a1() {
+        let expected = File::A.to_bb() ^ Rank::_1.to_bb();
+        let actual = rook_attacks(Square::A1, 0);
+        assert_eq!(expected, actual);
+    }
+
+    #[test]
+    fn trapped_rook_in_e4() {
+        let expected = 0x8080808;
+        let actual = rook_attacks(Square::E4, 0x81400000000);
+        assert_eq!(expected, actual);
     }
 }

@@ -27,7 +27,11 @@ impl Board {
             bb_all,
             self.color_to_move,
         );
-        let double_pushes = push(single_pushes, bb_all, self.color_to_move);
+        let double_pushes = push(
+            single_pushes & Rank::new_with_side(2, self.color_to_move).to_bb(),
+            bb_all,
+            self.color_to_move,
+        );
         let mut captures_east = attackers & !File::H.to_bb();
         let mut captures_west = attackers & !File::A.to_bb();
         let shifts: [i32; 4];
@@ -85,6 +89,25 @@ impl Board {
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::Rook).squares() {
+            let possible_targets = tables::rook_attacks(from, self.bb_all());
+
+            for to in possible_targets.squares() {
+                move_list.push(Move {
+                    from,
+                    to,
+                    promotion: None,
+                });
+            }
+        }
+        for from in self.attackers_with_role(Role::Bishop).squares() {
+            let possible_targets = tables::bishop_attacks(from, self.bb_all());
+            for to in possible_targets.squares() {
+                move_list.push(Move {
+                    from,
+                    to,
+                    promotion: None,
+                });
+            }
         }
     }
 }

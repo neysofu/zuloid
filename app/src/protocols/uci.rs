@@ -192,7 +192,7 @@ impl Command for CmdPosition {
             Some(token) => return Err(Error::UnexpectedToken(token.to_string())),
             None => return Err(Error::UnexpectedEndOfCommand),
         }
-        for token in tokens {
+        for token in tokens.skip_while(|s| *s == "moves") {
             match Move::from_str(token) {
                 Ok(m) => zorro.board.do_move(m),
                 Err(err) => return Err(err.into()),

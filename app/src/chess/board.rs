@@ -70,7 +70,8 @@ impl Board {
     }
 
     pub fn do_move(&mut self, m: Move) {
-        self.set_at_square(m.to, self.piece_opt_at(m.from));
+        let promoted = m.promotion.map(|role| Piece::new(role, self.color_to_move));
+        self.set_at_square(m.to, promoted.or(self.piece_opt_at(m.from)));
         self.set_at_square(m.from, None);
         self.color_to_move = !self.color_to_move;
     }
