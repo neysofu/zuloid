@@ -63,11 +63,11 @@ pub fn rook_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
             if to_next.file() != to.file() && to_next.rank() != to.rank() {
                 break;
             }
-            if to_next.to_bb() & occupancy != 0 {
-                break;
-            }
             to = to_next;
             bb |= to.to_bb();
+            if to.to_bb() & occupancy != 0 {
+                break;
+            }
         }
     }
     bb
@@ -84,11 +84,11 @@ pub fn bishop_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
             {
                 break;
             }
-            if to_next.to_bb() & occupancy != 0 {
-                break;
-            }
             to = to_next;
             bb |= to.to_bb();
+            if to.to_bb() & occupancy != 0 {
+                break;
+            }
         }
     }
     bb
@@ -121,8 +121,8 @@ mod test {
 
     #[test]
     fn trapped_rook_in_e4() {
-        let expected = 0x8080808;
-        let actual = rook_attacks(Square::E4, 0x81400000000);
+        let expected = 8882127112200;
+        let actual = rook_attacks(Square::E4, 8881992368128);
         assert_eq!(expected, actual);
     }
 }
