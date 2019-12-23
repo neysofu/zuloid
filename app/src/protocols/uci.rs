@@ -44,19 +44,18 @@ impl Uci {
         match tokens.next() {
             // Standard UCI commands.
             Some("isready") => writeln!(output, "readyok")?,
-            Some("position") => CmdPosition::run(zorro, tokens, output)?,
+            Some("position") => cmd::position(zorro, tokens)?,
             Some("quit") => return Ok(State::Shutdown),
-            Some("setoption") => CmdSetOption::run(zorro, tokens, output)?,
-            Some("uci") => print_uci_message(&mut output)?,
+            Some("setoption") => cmd::set_option(zorro, tokens)?,
+            Some("uci") => cmd::uci(output)?,
             Some("ucinewgame") => zorro.cache.clear(),
             // Non-standard but useful nonetheless.
             Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
-            Some("d") => writeln!(output, "{}", zorro.board)?,
-            Some("open") => CmdOpen::run(zorro, tokens, output)?,
-            Some("perft") => CmdPerft::run(zorro, tokens, output)?,
-            Some("magic") => CmdMagic::run(zorro, tokens, output)?,
-            Some("listmagics") => CmdListMagics::run(zorro, tokens, output)?,
-            Some("gentables") => CmdGenTables::run(zorro, tokens, output)?,
+            Some("d") => cmd::d(zorro, tokens, output)?,
+            Some("perft") => cmd::perft(zorro, tokens, output)?,
+            Some("magic") => cmd::magic(tokens, output)?,
+            Some("listmagics") => cmd::list_magics(output)?,
+            Some("gentables") => cmd::gen_tables(output)?,
             Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
             None => (),
         }
@@ -64,30 +63,71 @@ impl Uci {
     }
 }
 
-trait Command {
-    fn run<'s, W>(
-        zorro: &mut Zorro,
-        tokens: impl Iterator<Item = &'s str>,
-        output: W,
-    ) -> Result<()>
-    where
-        W: io::Write;
-}
+mod cmd {
+    use super::*;
 
-struct CmdGenTables;
-struct CmdListMagics;
-struct CmdMagic;
-struct CmdOpen;
-struct CmdPerft;
-struct CmdPosition;
-struct CmdSetOption;
+    pub fn uci(mut output: impl io::Write) -> Result<()> {
+        writeln!(output, "id name Zorro {}", VERSION)?;
+        writeln!(output, "id author Filippo Costa")?;
+        writeln!(output, "option name Clear Hash type button")?;
+        writeln!(
+            output,
+            "option name Contempt type spin default 20 min -100 max 100"
+        )?;
+        writeln!(
+            output,
+            "option name Hash type spin default 64 min 0 max 131072"
+        )?;
+        writeln!(
+            output,
+            "option name Minimum Thinking Time type spin default 20 min 0 max 5000"
+        )?;
+        writeln!(
+            output,
+            "option name nodestime type spin default 0 min 0 max 10000"
+        )?;
+        writeln!(output, "option name Ponder type check default false")?;
+        writeln!(
+            output,
+            "option name Skill Level type spin default 20 min 0 max 20"
+        )?;
+        // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=4230?;
+        writeln!(
+            output,
+            "option name Slow Mover type spin default 84 min 10 max 1000"
+        )?;
+        writeln!(
+            output,
+            "option name Threads type spin default 1 min 1 max 512"
+        )?;
+        writeln!(
+            output,
+            "option name Move Overhead type spin default 30 min 0 max 60000"
+        )?;
+        writeln!(output, "uciok")?;
+        Ok(())
+    }
 
-impl Command for CmdGenTables {
-    fn run<'s, W: io::Write>(
-        _zorro: &mut Zorro,
-        _tokens: impl Iterator<Item = &'s str>,
-        mut output: W,
+    pub fn d<'s>(
+        zorro: &Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        mut output: impl io::Write,
     ) -> Result<()> {
+        match tokens.next() {
+            Some("lichess") => {
+                let url = format!(
+                    "https://lichess.org/analysis/standard/{}",
+                    zorro.board.fmt_fen('_')
+                );
+                webbrowser::open(url.as_str()).ok();
+            }
+            Some(s) => return Err(Error::UnexpectedToken(s.to_string())),
+            None => writeln!(output, "{}", zorro.board)?,
+        }
+        Ok(())
+    }
+
+    pub fn gen_tables<W: io::Write>(mut output: W) -> Result<()> {
         use crate::chess::tables;
         writeln!(output, "KING ATTACKS")?;
         for bb in (*tables::boxed_king_attacks()).iter() {
@@ -99,13 +139,9 @@ impl Command for CmdGenTables {
         }
         Ok(())
     }
-}
 
-impl Command for CmdListMagics {
-    fn run<'s, W: io::Write>(
-        _zorro: &mut Zorro,
-        _tokens: impl Iterator<Item = &'s str>,
-        mut output: W,
+    pub fn list_magics(
+        mut output: impl io::Write,
     ) -> Result<()> {
         use crate::chess::Magic;
         for magic in Magic::by_file().iter() {
@@ -113,13 +149,10 @@ impl Command for CmdListMagics {
         }
         Ok(())
     }
-}
 
-impl Command for CmdMagic {
-    fn run<'s, W: io::Write>(
-        _zorro: &mut Zorro,
+    pub fn magic<'s>(
         mut tokens: impl Iterator<Item = &'s str>,
-        mut output: W,
+        mut output: impl io::Write,
     ) -> Result<()> {
         use crate::chess::Magic;
         let square = Square::from_str(tokens.next().unwrap()).unwrap();
@@ -134,31 +167,8 @@ impl Command for CmdMagic {
         };
         Ok(())
     }
-}
 
-impl Command for CmdOpen {
-    fn run<'s, W: io::Write>(
-        zorro: &mut Zorro,
-        mut tokens: impl Iterator<Item = &'s str>,
-        _output: W,
-    ) -> Result<()> {
-        match tokens.next() {
-            Some("lichess") => {
-                let url = format!(
-                    "https://lichess.org/analysis/standard/{}",
-                    zorro.board.fmt_fen('_')
-                );
-                webbrowser::open(url.as_str()).ok();
-                Ok(())
-            }
-            Some(s) => Err(Error::UnexpectedToken(s.to_string())),
-            None => Err(Error::UnexpectedEndOfCommand),
-        }
-    }
-}
-
-impl Command for CmdPerft {
-    fn run<'s, W: io::Write>(
+    pub fn perft<'s, W: io::Write>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: W,
@@ -176,13 +186,10 @@ impl Command for CmdPerft {
         writeln!(&mut output, "{}", zorro.board.perft(depth))?;
         Ok(())
     }
-}
 
-impl Command for CmdPosition {
-    fn run<'s, W: io::Write>(
+    pub fn position<'s>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
-        _output: W,
     ) -> Result<()> {
         match tokens.next() {
             Some("960") => unimplemented!(),
@@ -202,17 +209,11 @@ impl Command for CmdPosition {
         }
         Ok(())
     }
-}
 
-impl Command for CmdSetOption {
-    fn run<'s, W>(
+    pub fn set_option<'s>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
-        _output: W,
-    ) -> Result<()>
-    where
-        W: io::Write,
-    {
+    ) -> Result<()> {
         assert_eq!(tokens.next(), Some("name"));
         let mut option_name = String::new();
         while let Some(token) = tokens.next() {
@@ -256,51 +257,6 @@ impl Command for CmdSetOption {
         };
         Ok(())
     }
-}
-
-fn print_uci_message<W>(output: &mut W) -> io::Result<()>
-where
-    W: io::Write,
-{
-    writeln!(output, "id name Zorro {}", VERSION)?;
-    writeln!(output, "id author Filippo Costa")?;
-    writeln!(output, "option name Clear Hash type button")?;
-    writeln!(
-        output,
-        "option name Contempt type spin default 20 min -100 max 100"
-    )?;
-    writeln!(
-        output,
-        "option name Hash type spin default 64 min 0 max 131072"
-    )?;
-    writeln!(
-        output,
-        "option name Minimum Thinking Time type spin default 20 min 0 max 5000"
-    )?;
-    writeln!(
-        output,
-        "option name nodestime type spin default 0 min 0 max 10000"
-    )?;
-    writeln!(output, "option name Ponder type check default false")?;
-    writeln!(
-        output,
-        "option name Skill Level type spin default 20 min 0 max 20"
-    )?;
-    // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=4230?;
-    writeln!(
-        output,
-        "option name Slow Mover type spin default 84 min 10 max 1000"
-    )?;
-    writeln!(
-        output,
-        "option name Threads type spin default 1 min 1 max 512"
-    )?;
-    writeln!(
-        output,
-        "option name Move Overhead type spin default 30 min 0 max 60000"
-    )?;
-    writeln!(output, "uciok")?;
-    Ok(())
 }
 
 #[derive(Debug)]
