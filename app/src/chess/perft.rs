@@ -2,59 +2,6 @@ use super::*;
 use std::fmt;
 use std::time::{Duration, Instant};
 
-#[derive(Clone, Default)]
-struct Level {
-    buf: AvailableMoves,
-    i: usize,
-}
-
-struct Perft {
-    tree: Vec<Level>,
-    current_depth: usize,
-    desired_depth: usize,
-    report: Report,
-}
-
-impl Perft {
-    fn new(_depth: usize, _board: &Board) -> Self {
-        unimplemented!()
-        //let mut tree = vec![Level::default(); depth];
-        //tree[0] = Level::default();
-        //self.count = board.list_legals(&mut self.buf[..]).count();
-        //self.i = 0;
-        //Perft {
-        //    tree,
-        //    report: Report::new(depth),
-        //    current_depth: 0,
-        //    desired_depth: depth,
-        //}
-    }
-
-    fn run(self, _board: &mut Board) -> Report {
-        unimplemented!()
-        //while self.tree[0].i < self.tree[0].count {
-        //    while self.tree[self.current_depth].i <
-        // self.tree[self.current_depth].count {        let current_move
-        // =
-        // self.tree[self.current_depth].buf[self.tree[self.current_depth].i];
-        //        if self.current_depth == self.desired_depth {
-        //            self.report.nodes += board
-        //                .list_legals(&mut
-        // self.tree[self.current_depth].buf[..])
-        // .count();        } else {
-        //            board.do_move(current_move);
-        //            self.current_depth += 1;
-        //        }
-        //        if self.current_depth == self.desired_depth {
-        //            self.current_depth -= 1;
-        //        }
-        //        self.tree[self.current_depth].i += 1;
-        //    }
-        //}
-        //self.report.clone()
-    }
-}
-
 impl Board {
     pub fn perft(&mut self, depth: usize) -> Report {
         let start = Instant::now();
@@ -97,6 +44,24 @@ impl Report {
 
     fn nodes_per_second(&self) -> usize {
         (self.nodes_count as f64 / (self.duration.as_nanos() as f64 / 10E9)).round() as usize
+    }
+
+    fn backtrace(&self, expected: &Report, board: &mut Board) -> Option<Report> {
+        let mut report = self.clone();
+        while report.depth != 0 {
+            let first_mismatch = report
+                .overview
+                .iter()
+                .zip(expected.overview.iter())
+                .position(|(a, b)| a != b);
+            if let Some(i) = first_mismatch {
+                board.do_move(report.overview[i].0);
+                report = board.perft(report.depth - 1);
+            } else {
+                return None;
+            }
+        }
+        Some(report.clone())
     }
 }
 
@@ -149,9 +114,9 @@ mod test {
         assert_eq!(board, Board::default());
     }
 
-    //#[test]
-    //fn depth_4() {
-    //    let board = Board::default();
-    //    assert_eq!(board.clone().perft(4).nodes_count, 197281);
-    //}
+    #[test]
+    fn depth_4() {
+        let board = Board::default();
+        assert_eq!(board.clone().perft(4).nodes_count, 197281);
+    }
 }

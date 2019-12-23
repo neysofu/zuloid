@@ -35,20 +35,20 @@ impl Protocol for Uci {
 }
 
 impl Uci {
-    fn handle_line<S, W>(zorro: &mut Zorro, line: S, mut output: W) -> Result<State>
-    where
-        S: AsRef<str>,
-        W: io::Write,
-    {
+    fn handle_line(
+        zorro: &mut Zorro,
+        line: impl AsRef<str>,
+        mut output: impl io::Write,
+    ) -> Result<State> {
         let mut tokens = line.as_ref().split_whitespace();
         match tokens.next() {
             // Standard UCI commands.
+            Some("uci") => cmd::uci(output)?,
             Some("isready") => writeln!(output, "readyok")?,
+            Some("setoption") => cmd::set_option(zorro, tokens)?,
+            Some("ucinewgame") => zorro.cache.clear(),
             Some("position") => cmd::position(zorro, tokens)?,
             Some("quit") => return Ok(State::Shutdown),
-            Some("setoption") => cmd::set_option(zorro, tokens)?,
-            Some("uci") => cmd::uci(output)?,
-            Some("ucinewgame") => zorro.cache.clear(),
             // Non-standard but useful nonetheless.
             Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
             Some("d") => cmd::d(zorro, tokens, output)?,
@@ -166,10 +166,10 @@ mod cmd {
         Ok(())
     }
 
-    pub fn perft<'s, W: io::Write>(
+    pub fn perft<'s>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
-        mut output: W,
+        mut output: impl io::Write,
     ) -> Result<()> {
         let depth = if let Some(s) = tokens.next() {
             match str::parse::<usize>(s) {
