@@ -130,4 +130,17 @@ mod test {
         let board = Board::default();
         assert_eq!(board.clone().perft(3).nodes_count, 8902);
     }
+
+    #[test]
+    fn depth_3_doesnt_alter_the_board() {
+        let mut board = Board::default();
+        board.perft(3);
+        assert_eq!(board, Board::default());
+    }
+
+    //#[test]
+    //fn depth_4() {
+    //    let board = Board::default();
+    //    assert_eq!(board.clone().perft(4).nodes_count, 197281);
+    //}
 }
