@@ -140,9 +140,7 @@ mod cmd {
         Ok(())
     }
 
-    pub fn list_magics(
-        mut output: impl io::Write,
-    ) -> Result<()> {
+    pub fn list_magics(mut output: impl io::Write) -> Result<()> {
         use crate::chess::Magic;
         for magic in Magic::by_file().iter() {
             writeln!(output, "{}", magic)?;

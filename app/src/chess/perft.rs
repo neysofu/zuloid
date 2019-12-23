@@ -1,5 +1,6 @@
 use super::*;
 use std::fmt;
+use std::time::{Duration, Instant};
 
 #[derive(Clone, Default)]
 struct Level {
@@ -56,6 +57,7 @@ impl Perft {
 
 impl Board {
     pub fn perft(&mut self, depth: usize) -> Report {
+        let start = Instant::now();
         let mut report = Report::new(depth);
         if depth == 0 {
             report.nodes_count = 1;
@@ -70,6 +72,7 @@ impl Board {
                 self.undo_move(*m, capture);
             }
         }
+        report.duration = start.elapsed();
         report
     }
 }
@@ -79,6 +82,7 @@ pub struct Report {
     depth: usize,
     nodes_count: usize,
     overview: Vec<(Move, usize)>,
+    duration: Duration,
 }
 
 impl Report {
@@ -87,18 +91,25 @@ impl Report {
             depth,
             nodes_count: 0,
             overview: vec![],
+            duration: Duration::default(),
         }
+    }
+
+    fn nodes_per_second(&self) -> usize {
+        (self.nodes_count as f64 / (self.duration.as_nanos() as f64 / 10E9)).round() as usize
     }
 }
 
 impl fmt::Display for Report {
     fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(w, "N.{} total moves.", self.nodes_count)?;
-        writeln!(w, "--- Overview by branch:")?;
+        writeln!(w, "\nPosition 1/1")?;
         for m in self.overview.iter() {
             writeln!(w, "{}: {}", m.0, m.1)?;
         }
-        write!(w, "---")?;
+        writeln!(w, "\n===========================")?;
+        writeln!(w, "Total time (ms) : {}", self.duration.as_millis())?;
+        writeln!(w, "Nodes searched  : {}", self.nodes_count)?;
+        writeln!(w, "Nodes/second    : {}", self.nodes_per_second())?;
         Ok(())
     }
 }
