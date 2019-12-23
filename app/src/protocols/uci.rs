@@ -21,13 +21,13 @@ impl Protocol for Uci {
         R: io::BufRead,
         W: io::Write,
     {
-        writeln!(&mut output, "# Zorro {}", VERSION)?;
-        writeln!(&mut output, "# Process ID: {}", std::process::id())?;
+        writeln!(output, "# Zorro {}", VERSION)?;
+        writeln!(output, "# Process ID: {}", std::process::id())?;
         for line in input.lines() {
             match Uci::handle_line(&mut zorro, line?, &mut output) {
                 Ok(State::Alive) => (),
                 Ok(State::Shutdown) => return Ok(()),
-                Err(err) => writeln!(&mut output, "{}", err)?,
+                Err(err) => writeln!(output, "{}", err)?,
             }
         }
         Ok(())
@@ -145,7 +145,7 @@ mod cmd {
     ) -> Result<()> {
         use crate::chess::Magic;
         for magic in Magic::by_file().iter() {
-            writeln!(&mut output, "{}", magic)?;
+            writeln!(output, "{}", magic)?;
         }
         Ok(())
     }
@@ -161,7 +161,7 @@ mod cmd {
         match kind {
             "file" => {
                 bb = (*Magic::by_file())[square.i()].magify(bb);
-                writeln!(&mut output, "0x{:x}", bb)?;
+                writeln!(output, "0x{:x}", bb)?;
             }
             _ => {}
         };
@@ -183,7 +183,7 @@ mod cmd {
         } else {
             1
         };
-        writeln!(&mut output, "{}", zorro.board.perft(depth))?;
+        writeln!(output, "{}", zorro.board.perft(depth))?;
         Ok(())
     }
 
