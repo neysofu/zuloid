@@ -3,6 +3,7 @@ use super::coordinates::*;
 use super::piece::*;
 use super::Move;
 use crate::err::Error;
+use bitintr::Popcnt;
 use enum_map::{enum_map, EnumMap};
 use enum_map_derive::Enum;
 use std::fmt;
@@ -94,6 +95,13 @@ impl Board {
         SquareCentricBoard::from(chars_by_square_i)
     }
 
+    pub fn lichess_url(&self) -> String {
+        format!(
+            "https://lichess.org/analysis/standard/{}",
+            self.fmt_fen('_')
+        )
+    }
+
     // BitBoard accessibility utilities.
 
     pub fn attackers(&self) -> BitBoard {
@@ -110,6 +118,10 @@ impl Board {
 
     pub fn bb_all(&self) -> BitBoard {
         self.bb_colors[Color::White] | self.bb_colors[Color::Black]
+    }
+
+    pub fn has_both_kings(&self) -> bool {
+        self.bb_roles[Role::King].popcnt() == 2
     }
 }
 

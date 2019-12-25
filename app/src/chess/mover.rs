@@ -5,11 +5,31 @@ use std::fmt;
 
 /// A pre-initialized sliding pieces attack database.
 impl Board {
-    pub fn list_legals(&self, move_list: &mut AvailableMoves) {
+    pub fn list_pseudolegals(&mut self, move_list: &mut AvailableMoves) {
         self.gen_pawns(move_list);
         self.gen_knights(move_list);
         self.gen_king(move_list);
         self.gen_sliding_pieces(move_list);
+    }
+    pub fn list_legals(&mut self, move_list: &mut AvailableMoves) {
+        let pseudolegals = &mut AvailableMoves::default();
+        let temp = &mut AvailableMoves::default();
+        self.list_pseudolegals(pseudolegals);
+        for m in pseudolegals.into_iter() {
+            let captured = self.do_move(m);
+            self.list_pseudolegals(temp);
+            let mut is_legal = true;
+            for _ in temp.into_iter() {
+                if !self.has_both_kings() {
+                    is_legal = false;
+                    break;
+                }
+            }
+            if is_legal {
+                move_list.push(m);
+            }
+            self.undo_move(m, captured)
+        }
     }
 
     fn gen_pawns(&self, move_list: &mut AvailableMoves) {

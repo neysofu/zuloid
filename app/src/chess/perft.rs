@@ -22,6 +22,31 @@ impl Board {
         report.duration = start.elapsed();
         report
     }
+
+    pub fn backtrace_perft(&mut self, depth: usize) -> (usize, usize) {
+        let report = self.perft(depth);
+        println!("{}", report);
+        for (m, count) in report.overview {
+            let captured = self.do_move(m);
+            let expected_count = self.shakmaty_perft(depth - 1);
+            if count != expected_count {
+                if depth <= 1 {
+                    return (count, expected_count);
+                } else {
+                    return self.backtrace_perft(depth - 1);
+                }
+            }
+            self.undo_move(m, captured);
+        }
+        return (0, 0);
+    }
+
+    fn shakmaty_perft(&self, depth: usize) -> usize {
+        use shakmaty::{fen::Fen, perft, Chess};
+        let fen: Fen = self.fmt_fen(' ').to_string().parse().unwrap();
+        let position: Chess = fen.position().unwrap();
+        perft(&position, depth as u32) as usize
+    }
 }
 
 #[derive(Clone)]
@@ -45,29 +70,11 @@ impl Report {
     fn nodes_per_second(&self) -> usize {
         (self.nodes_count as f64 / (self.duration.as_nanos() as f64 / 10E9)).round() as usize
     }
-
-    fn backtrace(&self, expected: &Report, board: &mut Board) -> Option<Report> {
-        let mut report = self.clone();
-        while report.depth != 0 {
-            let first_mismatch = report
-                .overview
-                .iter()
-                .zip(expected.overview.iter())
-                .position(|(a, b)| a != b);
-            if let Some(i) = first_mismatch {
-                board.do_move(report.overview[i].0);
-                report = board.perft(report.depth - 1);
-            } else {
-                return None;
-            }
-        }
-        Some(report.clone())
-    }
 }
 
 impl fmt::Display for Report {
     fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(w, "\nPosition 1/1")?;
+        writeln!(w, "\nPosition: 1/1")?;
         for m in self.overview.iter() {
             writeln!(w, "{}: {}", m.0, m.1)?;
         }

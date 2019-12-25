@@ -1,11 +1,13 @@
 use super::Protocol;
-use crate::chess::{Board, Coordinate, Move, Square};
+use crate::chess::{perft::Report, Board, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::fmt;
 use std::io;
+use std::io::{Read, Write};
+use std::process::{Command, Stdio};
 use std::str::FromStr;
 
 enum State {
@@ -48,7 +50,7 @@ impl Uci {
             Some("setoption") => cmd::set_option(zorro, tokens)?,
             Some("ucinewgame") => zorro.cache.clear(),
             Some("position") => cmd::position(zorro, tokens)?,
-            Some("quit") => return Ok(State::Shutdown),
+            Some("quit") | Some("stop") => return Ok(State::Shutdown),
             // Non-standard but useful nonetheless.
             Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
             Some("d") => cmd::d(zorro, tokens, output)?,
@@ -115,13 +117,9 @@ mod cmd {
     ) -> Result<()> {
         match tokens.next() {
             Some("lichess") => {
-                let url = format!(
-                    "https://lichess.org/analysis/standard/{}",
-                    zorro.board.fmt_fen('_')
-                );
-                webbrowser::open(url.as_str()).ok();
+                webbrowser::open(zorro.board.lichess_url().as_str()).ok();
             }
-            Some(s) => return Err(Error::UnexpectedToken(s.to_string())),
+            Some(_) => Err(Error::Syntax)?,
             None => writeln!(output, "{}", zorro.board)?,
         }
         Ok(())
@@ -171,17 +169,18 @@ mod cmd {
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: impl io::Write,
     ) -> Result<()> {
-        let depth = if let Some(s) = tokens.next() {
-            match str::parse::<usize>(s) {
-                Ok(depth) => depth,
-                Err(_) => {
-                    return Err(Error::UnexpectedToken(s.to_string()));
-                }
-            }
-        } else {
-            1
-        };
+        let token = tokens.next().unwrap_or("1");
+        let depth = str::parse::<usize>(token)?;
         writeln!(output, "{}", zorro.board.perft(depth))?;
+        if let Some("bt") = tokens.next() {
+            let (actual, expected) = zorro.board.backtrace_perft(depth);
+            if actual == expected {
+                writeln!(output, "Backtrace FEN   : none")?;
+            } else {
+                writeln!(output, "Backtrace FEN   : {}", zorro.board.fmt_fen(' '))?;
+            }
+            writeln!(output, "Nodes searched (expected) : {}", expected)?;
+        }
         Ok(())
     }
 
@@ -190,20 +189,14 @@ mod cmd {
         mut tokens: impl Iterator<Item = &'s str>,
     ) -> Result<()> {
         match tokens.next() {
+            Some("startpos") => zorro.board = Board::default(),
+            Some("fen") => zorro.board = Board::from_fen(&mut tokens)?,
             Some("960") => unimplemented!(),
             Some("current") => (),
-            Some("fen") => zorro.board = Board::from_fen(&mut tokens)?,
-            Some("startpos") => zorro.board = Board::default(),
-            Some(token) => return Err(Error::UnexpectedToken(token.to_string())),
-            None => return Err(Error::UnexpectedEndOfCommand),
+            _ => Err(Error::Syntax)?,
         }
-        for token in tokens.skip_while(|s| *s == "moves") {
-            match Move::from_str(token) {
-                Ok(m) => {
-                    zorro.board.do_move(m);
-                }
-                Err(err) => return Err(err.into()),
-            }
+        for s in tokens.skip(1) {
+            zorro.board.do_move(Move::from_str(s)?);
         }
         Ok(())
     }
@@ -259,8 +252,7 @@ mod cmd {
 
 #[derive(Debug)]
 pub enum Error {
-    UnexpectedToken(String),
-    UnexpectedEndOfCommand,
+    Syntax,
     UnknownCommand(String),
     Chess(crate::err::Error),
     Io(io::Error),
@@ -278,13 +270,16 @@ impl From<ChessErr> for Error {
     }
 }
 
+impl From<std::num::ParseIntError> for Error {
+    fn from(err: std::num::ParseIntError) -> Self {
+        Error::Syntax
+    }
+}
+
 impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Error::UnexpectedToken(s) => write!(f, "[ERROR] Unexpected token '{}'", s),
-            Error::UnexpectedEndOfCommand => {
-                write!(f, "[ERROR] End of command, a token was expected")
-            }
+            Error::Syntax => write!(f, "[ERROR] Invalid command syntax"),
             Error::UnknownCommand(s) => write!(f, "[ERROR] Unknown command '{}'", s),
             Error::Chess(ChessErr::InvalidFen) => write!(f, "[ERROR] Invalid FEN string"),
             Error::Chess(ChessErr::InvalidColor) => write!(f, "[ERROR] Invalid color string"),
