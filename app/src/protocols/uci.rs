@@ -119,6 +119,7 @@ mod cmd {
             Some("lichess") => {
                 webbrowser::open(zorro.board.lichess_url().as_str()).ok();
             }
+            Some("fen") => writeln!(output, "{}", zorro.board.fmt_fen(' '))?,
             Some(_) => Err(Error::Syntax)?,
             None => writeln!(output, "{}", zorro.board)?,
         }
@@ -179,7 +180,8 @@ mod cmd {
             } else {
                 writeln!(output, "Backtrace FEN   : {}", zorro.board.fmt_fen(' '))?;
             }
-            writeln!(output, "Nodes searched (expected) : {}", expected)?;
+            writeln!(output, "Final searched (expected) : {}", expected)?;
+            writeln!(output, "Final searched (actual) : {}", actual)?;
         }
         Ok(())
     }

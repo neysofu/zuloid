@@ -25,16 +25,14 @@ impl Board {
 
     pub fn backtrace_perft(&mut self, depth: usize) -> (usize, usize) {
         let report = self.perft(depth);
-        println!("{}", report);
+        if depth == 1 {
+            return (report.nodes_count, self.shakmaty_perft(1));
+        }
         for (m, count) in report.overview {
             let captured = self.do_move(m);
             let expected_count = self.shakmaty_perft(depth - 1);
             if count != expected_count {
-                if depth <= 1 {
-                    return (count, expected_count);
-                } else {
-                    return self.backtrace_perft(depth - 1);
-                }
+                return self.backtrace_perft(depth - 1);
             }
             self.undo_move(m, captured);
         }
@@ -106,6 +104,13 @@ mod test {
     fn depth_2() {
         let board = Board::default();
         assert_eq!(board.clone().perft(2).nodes_count, 400);
+    }
+
+    #[test]
+    fn depth_of_report_is_consistent_with_call() {
+        let board = Board::default();
+        assert_eq!(board.clone().perft(1).depth, 1);
+        assert_eq!(board.clone().perft(2).depth, 2);
     }
 
     #[test]
