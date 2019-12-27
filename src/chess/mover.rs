@@ -11,6 +11,7 @@ impl Board {
         self.gen_king(move_list);
         self.gen_sliding_pieces(move_list);
     }
+
     pub fn list_legals(&mut self, move_list: &mut AvailableMoves) {
         let pseudolegals = &mut AvailableMoves::default();
         let temp = &mut AvailableMoves::default();

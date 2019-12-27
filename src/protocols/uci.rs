@@ -151,13 +151,18 @@ mod cmd {
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: impl io::Write,
     ) -> Result<()> {
+        use crate::chess::tables;
         use crate::chess::Magic;
         let square = Square::from_str(tokens.next().unwrap()).unwrap();
         let kind = tokens.next().unwrap();
-        let mut bb = tokens.next().unwrap().parse().unwrap();
+        let mut bb = tokens.next().unwrap_or("0").parse().unwrap();
         match kind {
             "file" => {
                 bb = (*Magic::by_file())[square.i()].magify(bb);
+                writeln!(output, "0x{:x}", bb)?;
+            }
+            "knight" => {
+                bb = tables::KNIGHT_ATTACKS[square.i()];
                 writeln!(output, "0x{:x}", bb)?;
             }
             _ => {}
@@ -181,7 +186,7 @@ mod cmd {
                 writeln!(output, "Backtrace FEN   : {}", zorro.board.fmt_fen(' '))?;
             }
             writeln!(output, "Final searched (expected) : {}", expected)?;
-            writeln!(output, "Final searched (actual) : {}", actual)?;
+            writeln!(output, "Final searched (actual)   : {}", actual)?;
         }
         Ok(())
     }
