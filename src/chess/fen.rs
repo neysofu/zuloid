@@ -101,7 +101,7 @@ impl Board {
         field = fields.next().ok_or(Error::InvalidFen)?;
         board.castling_rights = CastlingRights::from_str(field.as_ref())?;
         field = fields.next().ok_or(Error::InvalidFen)?;
-        board.en_passant_target_square = if field.as_ref().chars().next().unwrap() == '-' {
+        board.en_passant_target_square = if field.as_ref().starts_with('-') {
             None
         } else {
             Some(Square::from_str(field.as_ref())?)
