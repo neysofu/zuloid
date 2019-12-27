@@ -73,7 +73,7 @@ impl Board {
     pub fn do_move(&mut self, m: Move) -> Option<Piece> {
         let promoted = m.promotion.map(|role| Piece::new(role, self.color_to_move));
         let capture = self.piece_opt_at(m.to);
-        self.set_at_square(m.to, promoted.or(self.piece_opt_at(m.from)));
+        self.set_at_square(m.to, promoted.or_else(|| self.piece_opt_at(m.from)));
         self.set_at_square(m.from, None);
         self.color_to_move = !self.color_to_move;
         capture

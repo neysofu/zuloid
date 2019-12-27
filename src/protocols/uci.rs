@@ -1,15 +1,14 @@
 use super::Protocol;
-use crate::chess::{perft::Report, Board, Coordinate, Move, Square};
+use crate::chess::{Board, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::fmt;
 use std::io;
-use std::io::{Read, Write};
-use std::process::{Command, Stdio};
 use std::str::FromStr;
 
+#[derive(Debug, PartialEq)]
 enum State {
     Alive,
     Shutdown,
@@ -120,7 +119,7 @@ mod cmd {
                 webbrowser::open(zorro.board.lichess_url().as_str()).ok();
             }
             Some("fen") => writeln!(output, "{}", zorro.board.fmt_fen(' '))?,
-            Some(_) => Err(Error::Syntax)?,
+            Some(_) => return Err(Error::Syntax),
             None => writeln!(output, "{}", zorro.board)?,
         }
         Ok(())
@@ -278,7 +277,7 @@ impl From<ChessErr> for Error {
 }
 
 impl From<std::num::ParseIntError> for Error {
-    fn from(err: std::num::ParseIntError) -> Self {
+    fn from(_err: std::num::ParseIntError) -> Self {
         Error::Syntax
     }
 }
@@ -297,3 +296,33 @@ impl fmt::Display for Error {
 }
 
 pub type Result<T> = std::result::Result<T, Error>;
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn stop_cmd_triggers_shutdown() {
+        match Uci::handle_line(&mut Zorro::default(), "stop", io::sink()) {
+            Ok(State::Shutdown) => true,
+            _ => false,
+        };
+    }
+
+    #[test]
+    fn quit_cmd_triggers_shutdown() {
+        match Uci::handle_line(&mut Zorro::default(), "quit", io::sink()) {
+            Ok(State::Shutdown) => true,
+            _ => false,
+        };
+    }
+
+    #[test]
+    fn readyok_always_follows_isready() {
+        let zorro = &mut Zorro::default();
+        let mut output = vec![];
+        assert!(Uci::handle_line(zorro, "isready", &mut output).is_ok());
+        output.retain(|c| !(*c as char).is_whitespace());
+        assert_eq!(output, b"readyok");
+    }
+}
