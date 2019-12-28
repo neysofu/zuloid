@@ -1,6 +1,7 @@
 use crate::chess::{Board, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
+use crate::search::*;
 use crate::version::VERSION;
 use bytesize::ByteSize;
 use std::fmt;
@@ -136,6 +137,7 @@ mod cmd {
                 _ => return Err(Error::Syntax),
             }
         }
+        writeln!(output, "bestmove {}", search(zorro))?;
         Ok(())
     }
 
@@ -212,47 +214,47 @@ mod cmd {
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
     ) -> Result<()> {
-        assert_eq!(tokens.next(), Some("name"));
-        let mut option_name = String::new();
-        while let Some(token) = tokens.next() {
-            if token == "value" {
-                break;
-            } else {
-                option_name.push_str(token);
-            }
-        }
-        let mut option_value = String::new();
-        for token in tokens {
-            // From the UCI protocol specification (April 2004):
-            // > The name of the option should not be case sensitive and can inludes spaces
-            // > like also the value.
-            option_value.push_str(token.to_ascii_lowercase().as_str());
-        }
-        // Option support is quite hairy and messy. I don't want to break pre-existing
-        // scripts and configs originally written for other engines.
-        //
-        // Please see:
-        //  - https://komodochess.com/Komodo-11-README.html
-        //  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
-        //
-        // No worries in case the links above die, just search for a list of UCI
-        // settings for popular chess engines. I don't commit to 100% feature
-        // parity with any engine; I just try and use my better judgement.
-        match option_name.as_str() {
-            "hash" => {
-                let cache_size = ByteSize::mib(option_value.parse().unwrap());
-                zorro.config.cache_size = cache_size;
-            }
-            "ponder" => {
-                zorro.config.ponder = match option_value.chars().next() {
-                    Some('f') => false,
-                    Some('n') => false,
-                    Some('0') => false,
-                    _ => true,
-                };
-            }
-            _ => (),
-        };
+        //assert_eq!(tokens.next(), Some("name"));
+        //let mut option_name = String::new();
+        //while let Some(token) = tokens.next() {
+        //    if token == "value" {
+        //        break;
+        //    } else {
+        //        option_name.push_str(token);
+        //    }
+        //}
+        //let mut option_value = String::new();
+        //for token in tokens {
+        //    // From the UCI protocol specification (April 2004):
+        //    // > The name of the option should not be case sensitive and can inludes spaces
+        //    // > like also the value.
+        //    option_value.push_str(token.to_ascii_lowercase().as_str());
+        //}
+        //// Option support is quite hairy and messy. I don't want to break pre-existing
+        //// scripts and configs originally written for other engines.
+        ////
+        //// Please see:
+        ////  - https://komodochess.com/Komodo-11-README.html
+        ////  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+        ////
+        //// No worries in case the links above die, just search for a list of UCI
+        //// settings for popular chess engines. I don't commit to 100% feature
+        //// parity with any engine; I just try and use my better judgement.
+        //match option_name.as_str() {
+        //    "hash" => {
+        //        let cache_size = ByteSize::mib(option_value.parse().unwrap());
+        //        zorro.config.cache_size = cache_size;
+        //    }
+        //    "ponder" => {
+        //        zorro.config.ponder = match option_value.chars().next() {
+        //            Some('f') => false,
+        //            Some('n') => false,
+        //            Some('0') => false,
+        //            _ => true,
+        //        };
+        //    }
+        //    _ => (),
+        //};
         Ok(())
     }
 }

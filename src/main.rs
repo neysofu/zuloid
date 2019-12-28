@@ -4,6 +4,7 @@ mod core;
 mod err;
 mod eval;
 mod protocols;
+mod search;
 mod time;
 mod version;
 
