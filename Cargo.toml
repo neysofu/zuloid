@@ -26,3 +26,5 @@ semver = "0.9"
 [build-dependencies]
 chrono = "0.4.7"
 
+[profile.test]
+opt-level = 2

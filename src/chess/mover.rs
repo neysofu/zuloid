@@ -14,17 +14,20 @@ impl Board {
 
     pub fn list_legals(&mut self, move_list: &mut AvailableMoves) {
         let pseudolegals = &mut AvailableMoves::default();
-        let temp = &mut AvailableMoves::default();
         self.list_pseudolegals(pseudolegals);
         for m in pseudolegals.into_iter() {
+            let temp = &mut AvailableMoves::default();
             let captured = self.do_move(m);
             self.list_pseudolegals(temp);
             let mut is_legal = true;
-            for _ in temp.into_iter() {
+            for m in temp.into_iter() {
+                let captured = self.do_move(m);
                 if !self.has_both_kings() {
                     is_legal = false;
+                    self.undo_move(m, captured);
                     break;
                 }
+                self.undo_move(m, captured);
             }
             if is_legal {
                 move_list.push(m);
@@ -35,42 +38,35 @@ impl Board {
 
     fn gen_pawns(&self, move_list: &mut AvailableMoves) {
         let bb_all = self.bb_all();
-        let attackers = self.attackers();
-        let defenders = self.defenders();
-        fn push(attackers: BitBoard, all: BitBoard, mover: Color) -> BitBoard {
-            !all & match mover {
-                Color::White => attackers.north(1),
-                Color::Black => attackers.south(1),
-            }
-        }
-        let single_pushes = push(
-            self.attackers_with_role(Role::Pawn),
-            bb_all,
-            self.color_to_move,
-        );
-        let double_pushes = push(
-            single_pushes & Rank::new_with_side(1, self.color_to_move).to_bb(),
-            bb_all,
-            self.color_to_move,
-        );
-        let mut captures_east = attackers & !File::H.to_bb();
-        let mut captures_west = attackers & !File::A.to_bb();
+        let bb_pawns = self.attackers_with_role(Role::Pawn);
+        let bb_defenders = self.defenders();
+        let push = |bb: BitBoard| {
+            !bb_all
+                & match self.color_to_move {
+                    Color::White => bb.north(1),
+                    Color::Black => bb.south(1),
+                }
+        };
+        let bb_push_1 = push(bb_pawns);
+        let bb_push_2 = push(bb_push_1 & Rank::new_with_side(2, self.color_to_move).to_bb());
+        let mut bb_captures_east = bb_pawns & !File::H.to_bb();
+        let mut bb_captures_west = bb_pawns & !File::A.to_bb();
         let shifts: [i32; 4];
         match self.color_to_move {
             Color::White => {
-                captures_east <<= 9;
-                captures_west >>= 7;
+                bb_captures_east <<= 9;
+                bb_captures_west >>= 7;
                 shifts = [-1, -2, -9, 7];
             }
             Color::Black => {
-                captures_east <<= 7;
-                captures_west >>= 9;
+                bb_captures_east <<= 7;
+                bb_captures_west >>= 9;
                 shifts = [1, 2, -7, 9];
             }
         }
-        captures_east &= defenders;
-        captures_west &= defenders;
-        let sources = [single_pushes, double_pushes, captures_east, captures_west];
+        bb_captures_east &= bb_defenders;
+        bb_captures_west &= bb_defenders;
+        let sources = [bb_push_1, bb_push_2, bb_captures_east, bb_captures_west];
         for (i, src) in sources.iter().enumerate() {
             for square in src.squares() {
                 move_list.push(Move {

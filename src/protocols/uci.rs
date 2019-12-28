@@ -3,7 +3,6 @@ use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
 use bytesize::ByteSize;
-use std::collections::VecDeque;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
@@ -38,19 +37,20 @@ fn handle_line(
     let mut tokens = line.as_ref().split_whitespace();
     match tokens.next() {
         // Standard UCI commands.
-        Some("uci") => cmd::uci(output)?,
+        Some("debug") => (),
         Some("isready") => writeln!(output, "readyok")?,
-        Some("setoption") => cmd::set_option(zorro, tokens)?,
-        Some("ucinewgame") => zorro.cache.clear(),
         Some("position") => cmd::position(zorro, tokens)?,
         Some("quit") | Some("stop") => return Ok(State::Shutdown),
+        Some("setoption") => cmd::set_option(zorro, tokens)?,
+        Some("uci") => cmd::uci(output)?,
+        Some("ucinewgame") => zorro.cache.clear(),
         // Non-standard but useful nonetheless.
         Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
         Some("d") => cmd::d(zorro, tokens, output)?,
-        Some("perft") => cmd::perft(zorro, tokens, output)?,
-        Some("magic") => cmd::magic(tokens, output)?,
-        Some("listmagics") => cmd::list_magics(output)?,
         Some("gentables") => cmd::gen_tables(output)?,
+        Some("listmagics") => cmd::list_magics(output)?,
+        Some("magic") => cmd::magic(tokens, output)?,
+        Some("perft") => cmd::perft(zorro, tokens, output)?,
         Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
         None => (),
     }
