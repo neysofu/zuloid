@@ -12,12 +12,14 @@ pub struct Zorro {
     pub time_controls: EnumMap<Color, TimeControl>,
 }
 
+#[derive(Clone)]
 pub struct Config {
     pub cache_size: ByteSize,
     pub contempt: f32,
     pub debug: bool,
     pub max_depth: Option<usize>,
     pub max_nodes: Option<usize>,
+    pub moves_to_go: Option<usize>,
     pub ponder: bool,
     pub selectivity: f32,
 }
@@ -28,6 +30,7 @@ impl Default for Config {
             cache_size: ByteSize::mb(32),
             contempt: 0.5,
             debug: false,
+            moves_to_go: None,
             max_depth: None,
             max_nodes: None,
             ponder: false,

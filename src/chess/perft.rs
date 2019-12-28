@@ -90,33 +90,28 @@ mod test {
 
     #[test]
     fn depth_0() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(0).nodes_count, 1);
+        assert_eq!(Board::default().perft(0).nodes_count, 1);
     }
 
     #[test]
     fn depth_1() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(1).nodes_count, 20);
+        assert_eq!(Board::default().perft(1).nodes_count, 20);
     }
 
     #[test]
     fn depth_2() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(2).nodes_count, 400);
+        assert_eq!(Board::default().perft(2).nodes_count, 400);
     }
 
     #[test]
     fn depth_of_report_is_consistent_with_call() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(1).depth, 1);
-        assert_eq!(board.clone().perft(2).depth, 2);
+        assert_eq!(Board::default().perft(1).depth, 1);
+        assert_eq!(Board::default().perft(2).depth, 2);
     }
 
     #[test]
     fn depth_3() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(3).nodes_count, 8902);
+        assert_eq!(Board::default().perft(3).nodes_count, 8902);
     }
 
     #[test]
@@ -128,7 +123,11 @@ mod test {
 
     #[test]
     fn depth_4() {
-        let board = Board::default();
-        assert_eq!(board.clone().perft(4).nodes_count, 197281);
+        assert_eq!(Board::default().perft(4).nodes_count, 197_281);
+    }
+
+    #[test]
+    fn depth_5() {
+        assert_eq!(Board::default().perft(5).nodes_count, 4_865_609);
     }
 }

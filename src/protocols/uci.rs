@@ -12,6 +12,7 @@ enum State {
     Alive,
     Shutdown,
 }
+
 pub fn uci(
     zorro: &mut Zorro,
     input: impl io::BufRead,
@@ -22,7 +23,8 @@ pub fn uci(
     for line in input.lines() {
         match handle_line(zorro, line?, &mut output) {
             Ok(State::Alive) => (),
-            Ok(State::Shutdown) => return Ok(()),
+            Ok(State::Shutdown) => break,
+            // Don't exit on error.
             Err(err) => writeln!(output, "{}", err)?,
         }
     }
@@ -38,6 +40,7 @@ fn handle_line(
     match tokens.next() {
         // Standard UCI commands.
         Some("debug") => (),
+        Some("go") => cmd::go(zorro, tokens, output)?,
         Some("isready") => writeln!(output, "readyok")?,
         Some("position") => cmd::position(zorro, tokens)?,
         Some("quit") | Some("stop") => return Ok(State::Shutdown),
@@ -52,6 +55,7 @@ fn handle_line(
         Some("magic") => cmd::magic(tokens, output)?,
         Some("perft") => cmd::perft(zorro, tokens, output)?,
         Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
+        // Simply ignore empty commands.
         None => (),
     }
     Ok(State::Alive)
@@ -61,44 +65,23 @@ mod cmd {
     use super::*;
 
     pub fn uci(mut output: impl io::Write) -> Result<()> {
-        writeln!(output, "id name Zorro {}", VERSION)?;
-        writeln!(output, "id author Filippo Costa")?;
-        writeln!(output, "option name Clear Hash type button")?;
-        writeln!(
-            output,
-            "option name Contempt type spin default 20 min -100 max 100"
-        )?;
-        writeln!(
-            output,
-            "option name Hash type spin default 64 min 0 max 131072"
-        )?;
-        writeln!(
-            output,
-            "option name Minimum Thinking Time type spin default 20 min 0 max 5000"
-        )?;
-        writeln!(
-            output,
-            "option name nodestime type spin default 0 min 0 max 10000"
-        )?;
-        writeln!(output, "option name Ponder type check default false")?;
-        writeln!(
-            output,
-            "option name Skill Level type spin default 20 min 0 max 20"
-        )?;
         // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=4230?;
         writeln!(
             output,
-            "option name Slow Mover type spin default 84 min 10 max 1000"
+            "id name Zorro {}\n\
+             id author Filippo Costa\n\
+             option name Clear Hash type button\n\
+             option name Contempt type spin default 20 min -100 max 100\n\
+             option name Hash type spin default 64 min 0 max 131072\n\
+             option name Minimum Thinking Time type spin default 20 min 0 max 5000\n\
+             option name nodestime type spin default 0 min 0 max 10000\n\
+             option name Skill Level type spin default 20 min 0 max 20\n\
+             option name Slow Mover type spin default 84 min 10 max 1000\n\
+             option name Threads type spin default 1 min 1 max 512\n\
+             option name Move Overhead type spin default 30 min 0 max 60000\n\
+             uciok",
+            VERSION
         )?;
-        writeln!(
-            output,
-            "option name Threads type spin default 1 min 1 max 512"
-        )?;
-        writeln!(
-            output,
-            "option name Move Overhead type spin default 30 min 0 max 60000"
-        )?;
-        writeln!(output, "uciok")?;
         Ok(())
     }
 
@@ -127,6 +110,31 @@ mod cmd {
         writeln!(output, "KNIGHT ATTACKS")?;
         for bb in (*tables::boxed_knight_attacks()).iter() {
             writeln!(output, "0x{:016x}", bb)?;
+        }
+        Ok(())
+    }
+
+    pub fn go<'s>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        mut output: impl io::Write,
+    ) -> Result<()> {
+        let mut config = zorro.config.clone();
+        while let Some(token) = tokens.next() {
+            let next = tokens.next().ok_or(Error::Syntax);
+            match token {
+                "wtime" => (),
+                "btime" => (),
+                "winc" => (),
+                "binc" => (),
+                "movestogo" => config.moves_to_go = Some(str::parse(next?)?),
+                "depth" => config.max_depth = Some(str::parse(next?)?),
+                "nodes" => config.max_nodes = Some(str::parse(next?)?),
+                "infinite" => (),
+                "ponder" => config.ponder = true,
+                "perft" => return perft(zorro, tokens, output),
+                _ => return Err(Error::Syntax),
+            }
         }
         Ok(())
     }
