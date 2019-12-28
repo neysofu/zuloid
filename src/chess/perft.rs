@@ -126,8 +126,8 @@ mod test {
         assert_eq!(Board::default().perft(4).nodes_count, 197_281);
     }
 
-    #[test]
-    fn depth_5() {
-        assert_eq!(Board::default().perft(5).nodes_count, 4_865_609);
-    }
+    //#[test]
+    //fn depth_5() {
+    //    assert_eq!(Board::default().perft(5).nodes_count, 4_865_609);
+    //}
 }

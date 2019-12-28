@@ -17,15 +17,14 @@ impl<'b> fmt::Display for Fen<'b> {
             let mut previous_emtpy_squares = 0;
             for file in File::iter() {
                 let square = Square::at(file, rank);
-                match self.board.piece_opt_at(square) {
-                    Some(piece) => {
-                        if previous_emtpy_squares > 0 {
-                            write!(fmt, "{}", previous_emtpy_squares)?;
-                            previous_emtpy_squares = 0;
-                        }
-                        write!(fmt, "{}", char::from(piece))?;
+                if let Some(piece) = self.board.piece_opt_at(square) {
+                    if previous_emtpy_squares > 0 {
+                        write!(fmt, "{}", previous_emtpy_squares)?;
+                        previous_emtpy_squares = 0;
                     }
-                    None => previous_emtpy_squares += 1,
+                    write!(fmt, "{}", char::from(piece))?;
+                } else {
+                    previous_emtpy_squares += 1;
                 }
             }
             if previous_emtpy_squares > 0 {
@@ -35,20 +34,23 @@ impl<'b> fmt::Display for Fen<'b> {
                 write!(fmt, "/")?;
             }
         }
-        write!(fmt, "{}", self.filler)?;
-        write!(fmt, "{}", char::from(self.board.color_to_move))?;
-        write!(fmt, "{}", self.filler)?;
-        write!(fmt, "{}", self.board.castling_rights)?;
-        write!(fmt, "{}", self.filler)?;
+        write!(
+            fmt,
+            "{}{}{0}{}{0}",
+            self.filler,
+            char::from(self.board.color_to_move),
+            self.board.castling_rights,
+        )?;
         if let Some(square) = self.board.en_passant_target_square {
-            write!(fmt, "{}", square)?;
+            write!(fmt, "{}", square.to_string())?;
         } else {
             write!(fmt, "-")?;
         }
-        write!(fmt, "{}", self.filler)?;
-        write!(fmt, "{}", self.board.half_moves_counter)?;
-        write!(fmt, "{}", self.filler)?;
-        write!(fmt, "{}", self.board.full_moves_counter)?;
+        write!(
+            fmt,
+            "{0}{1}{0}{2}",
+            self.filler, self.board.half_moves_counter, self.board.full_moves_counter
+        )?;
         Ok(())
     }
 }
