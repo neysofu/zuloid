@@ -49,7 +49,7 @@ impl Board {
             self.color_to_move,
         );
         let double_pushes = push(
-            single_pushes & Rank::new_with_side(2, self.color_to_move).to_bb(),
+            single_pushes & Rank::new_with_side(1, self.color_to_move).to_bb(),
             bb_all,
             self.color_to_move,
         );

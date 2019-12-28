@@ -81,6 +81,14 @@ mod test {
     use super::*;
     use crate::chess::{Board, File, Move, Piece, Role, Square};
     use std::str::FromStr;
+    use strum::IntoEnumIterator;
+
+    #[test]
+    fn color_case_is_consistent() {
+        for c in Color::iter() {
+            assert_eq!(Color::from_char_case(c.set_ascii_case('x')), c);
+        }
+    }
 
     #[test]
     fn color_from_char() {

@@ -1,9 +1,9 @@
-use super::Protocol;
 use crate::chess::{Board, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::version::VERSION;
 use bytesize::ByteSize;
+use std::collections::VecDeque;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
@@ -13,55 +13,48 @@ enum State {
     Alive,
     Shutdown,
 }
-
-pub struct Uci;
-
-impl Protocol for Uci {
-    fn init<R, W>(mut zorro: Zorro, input: R, mut output: W) -> io::Result<()>
-    where
-        R: io::BufRead,
-        W: io::Write,
-    {
-        writeln!(output, "# Zorro {}", VERSION)?;
-        writeln!(output, "# Process ID: {}", std::process::id())?;
-        for line in input.lines() {
-            match Uci::handle_line(&mut zorro, line?, &mut output) {
-                Ok(State::Alive) => (),
-                Ok(State::Shutdown) => return Ok(()),
-                Err(err) => writeln!(output, "{}", err)?,
-            }
+pub fn uci(
+    zorro: &mut Zorro,
+    input: impl io::BufRead,
+    mut output: impl io::Write,
+) -> io::Result<()> {
+    writeln!(output, "# Zorro {}", VERSION)?;
+    writeln!(output, "# Process ID: {}", std::process::id())?;
+    for line in input.lines() {
+        match handle_line(zorro, line?, &mut output) {
+            Ok(State::Alive) => (),
+            Ok(State::Shutdown) => return Ok(()),
+            Err(err) => writeln!(output, "{}", err)?,
         }
-        Ok(())
     }
+    Ok(())
 }
 
-impl Uci {
-    fn handle_line(
-        zorro: &mut Zorro,
-        line: impl AsRef<str>,
-        mut output: impl io::Write,
-    ) -> Result<State> {
-        let mut tokens = line.as_ref().split_whitespace();
-        match tokens.next() {
-            // Standard UCI commands.
-            Some("uci") => cmd::uci(output)?,
-            Some("isready") => writeln!(output, "readyok")?,
-            Some("setoption") => cmd::set_option(zorro, tokens)?,
-            Some("ucinewgame") => zorro.cache.clear(),
-            Some("position") => cmd::position(zorro, tokens)?,
-            Some("quit") | Some("stop") => return Ok(State::Shutdown),
-            // Non-standard but useful nonetheless.
-            Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
-            Some("d") => cmd::d(zorro, tokens, output)?,
-            Some("perft") => cmd::perft(zorro, tokens, output)?,
-            Some("magic") => cmd::magic(tokens, output)?,
-            Some("listmagics") => cmd::list_magics(output)?,
-            Some("gentables") => cmd::gen_tables(output)?,
-            Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
-            None => (),
-        }
-        Ok(State::Alive)
+fn handle_line(
+    zorro: &mut Zorro,
+    line: impl AsRef<str>,
+    mut output: impl io::Write,
+) -> Result<State> {
+    let mut tokens = line.as_ref().split_whitespace();
+    match tokens.next() {
+        // Standard UCI commands.
+        Some("uci") => cmd::uci(output)?,
+        Some("isready") => writeln!(output, "readyok")?,
+        Some("setoption") => cmd::set_option(zorro, tokens)?,
+        Some("ucinewgame") => zorro.cache.clear(),
+        Some("position") => cmd::position(zorro, tokens)?,
+        Some("quit") | Some("stop") => return Ok(State::Shutdown),
+        // Non-standard but useful nonetheless.
+        Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
+        Some("d") => cmd::d(zorro, tokens, output)?,
+        Some("perft") => cmd::perft(zorro, tokens, output)?,
+        Some("magic") => cmd::magic(tokens, output)?,
+        Some("listmagics") => cmd::list_magics(output)?,
+        Some("gentables") => cmd::gen_tables(output)?,
+        Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
+        None => (),
     }
+    Ok(State::Alive)
 }
 
 mod cmd {
@@ -199,7 +192,7 @@ mod cmd {
             Some("fen") => zorro.board = Board::from_fen(&mut tokens)?,
             Some("960") => unimplemented!(),
             Some("current") => (),
-            _ => Err(Error::Syntax)?,
+            _ => return Err(Error::Syntax),
         }
         for s in tokens.skip(1) {
             zorro.board.do_move(Move::from_str(s)?);
@@ -303,7 +296,7 @@ mod test {
 
     #[test]
     fn stop_cmd_triggers_shutdown() {
-        match Uci::handle_line(&mut Zorro::default(), "stop", io::sink()) {
+        match handle_line(&mut Zorro::default(), "stop", io::sink()) {
             Ok(State::Shutdown) => true,
             _ => false,
         };
@@ -311,7 +304,7 @@ mod test {
 
     #[test]
     fn quit_cmd_triggers_shutdown() {
-        match Uci::handle_line(&mut Zorro::default(), "quit", io::sink()) {
+        match handle_line(&mut Zorro::default(), "quit", io::sink()) {
             Ok(State::Shutdown) => true,
             _ => false,
         };
@@ -321,7 +314,7 @@ mod test {
     fn readyok_always_follows_isready() {
         let zorro = &mut Zorro::default();
         let mut output = vec![];
-        assert!(Uci::handle_line(zorro, "isready", &mut output).is_ok());
+        assert!(handle_line(zorro, "isready", &mut output).is_ok());
         output.retain(|c| !(*c as char).is_whitespace());
         assert_eq!(output, b"readyok");
     }

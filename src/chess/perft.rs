@@ -36,7 +36,7 @@ impl Board {
             }
             self.undo_move(m, captured);
         }
-        return (0, 0);
+        (0, 0)
     }
 
     fn shakmaty_perft(&self, depth: usize) -> usize {
