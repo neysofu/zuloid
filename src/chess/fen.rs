@@ -14,21 +14,21 @@ pub struct Fen<'b> {
 impl<'b> fmt::Display for Fen<'b> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         for rank in Rank::iter().rev() {
-            let mut previous_emtpy_squares = 0;
+            let mut previous_empty_squares = 0;
             for file in File::iter() {
                 let square = Square::at(file, rank);
                 if let Some(piece) = self.board.piece_opt_at(square) {
-                    if previous_emtpy_squares > 0 {
-                        write!(fmt, "{}", previous_emtpy_squares)?;
-                        previous_emtpy_squares = 0;
+                    if previous_empty_squares > 0 {
+                        write!(fmt, "{}", previous_empty_squares)?;
+                        previous_empty_squares = 0;
                     }
                     write!(fmt, "{}", char::from(piece))?;
                 } else {
-                    previous_emtpy_squares += 1;
+                    previous_empty_squares += 1;
                 }
             }
-            if previous_emtpy_squares > 0 {
-                write!(fmt, "{}", previous_emtpy_squares)?;
+            if previous_empty_squares > 0 {
+                write!(fmt, "{}", previous_empty_squares)?;
             }
             if rank != Rank::min() {
                 write!(fmt, "/")?;
