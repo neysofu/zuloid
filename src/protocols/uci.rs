@@ -55,7 +55,9 @@ fn handle_line(
         Some("listmagics") => cmd::list_magics(output)?,
         Some("magic") => cmd::magic(tokens, output)?,
         Some("perft") => cmd::perft(zorro, tokens, output)?,
-        Some(unknown) => return Err(Error::UnknownCommand(unknown.to_string())),
+        Some(unknown) => {
+            return Err(Error::UnknownCommand(unknown.to_string()))
+        }
         // Simply ignore empty commands.
         None => (),
     }
@@ -185,7 +187,11 @@ mod cmd {
             if actual == expected {
                 writeln!(output, "Backtrace FEN   : none")?;
             } else {
-                writeln!(output, "Backtrace FEN   : {}", zorro.board.fmt_fen(' '))?;
+                writeln!(
+                    output,
+                    "Backtrace FEN   : {}",
+                    zorro.board.fmt_fen(' ')
+                )?;
             }
             writeln!(output, "Final searched (expected) : {}", expected)?;
             writeln!(output, "Final searched (actual)   : {}", actual)?;
@@ -226,25 +232,27 @@ mod cmd {
         //let mut option_value = String::new();
         //for token in tokens {
         //    // From the UCI protocol specification (April 2004):
-        //    // > The name of the option should not be case sensitive and can inludes spaces
-        //    // > like also the value.
+        //    // > The name of the option should not be case sensitive and can
+        // inludes spaces    // > like also the value.
         //    option_value.push_str(token.to_ascii_lowercase().as_str());
         //}
-        //// Option support is quite hairy and messy. I don't want to break pre-existing
-        //// scripts and configs originally written for other engines.
+        //// Option support is quite hairy and messy. I don't want to break
+        //// pre-existing scripts and configs originally written for
+        //// other engines.
         ////
         //// Please see:
         ////  - https://komodochess.com/Komodo-11-README.html
         ////  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
         ////
-        //// No worries in case the links above die, just search for a list of UCI
-        //// settings for popular chess engines. I don't commit to 100% feature
-        //// parity with any engine; I just try and use my better judgement.
+        //// No worries in case the links above die, just search for a list of
+        //// UCI settings for popular chess engines. I don't commit to
+        //// 100% feature parity with any engine; I just try and use my
+        //// better judgement.
         //match option_name.as_str() {
         //    "hash" => {
-        //        let cache_size = ByteSize::mib(option_value.parse().unwrap());
-        //        zorro.config.cache_size = cache_size;
-        //    }
+        //        let cache_size =
+        // ByteSize::mib(option_value.parse().unwrap());        zorro.
+        // config.cache_size = cache_size;    }
         //    "ponder" => {
         //        zorro.config.ponder = match option_value.chars().next() {
         //            Some('f') => false,
@@ -289,11 +297,21 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::Syntax => write!(f, "[ERROR] Invalid command syntax"),
-            Error::UnknownCommand(s) => write!(f, "[ERROR] Unknown command '{}'", s),
-            Error::Chess(ChessErr::InvalidFen) => write!(f, "[ERROR] Invalid FEN string"),
-            Error::Chess(ChessErr::InvalidColor) => write!(f, "[ERROR] Invalid color string"),
-            Error::Chess(ChessErr::InvalidSquare) => write!(f, "[ERROR] Invalid square string"),
-            Error::Io(err) => write!(f, "[ERROR] Fatal I/O condition ({})", err),
+            Error::UnknownCommand(s) => {
+                write!(f, "[ERROR] Unknown command '{}'", s)
+            }
+            Error::Chess(ChessErr::InvalidFen) => {
+                write!(f, "[ERROR] Invalid FEN string")
+            }
+            Error::Chess(ChessErr::InvalidColor) => {
+                write!(f, "[ERROR] Invalid color string")
+            }
+            Error::Chess(ChessErr::InvalidSquare) => {
+                write!(f, "[ERROR] Invalid square string")
+            }
+            Error::Io(err) => {
+                write!(f, "[ERROR] Fatal I/O condition ({})", err)
+            }
         }
     }
 }

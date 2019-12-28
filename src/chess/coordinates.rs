@@ -249,8 +249,8 @@ impl Rank {
     pub fn new_with_side(i: u8, side: Color) -> Self {
         let rank = Rank::new(i);
         match side {
-            Color::White => rank,
-            Color::Black => rank.symmetric(),
+            Color::W => rank,
+            Color::B => rank.symmetric(),
         }
     }
 
@@ -451,8 +451,12 @@ impl FromStr for Square {
 
 impl fmt::Display for Square {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(fmt, "{}", char::from(self.file()))?;
-        write!(fmt, "{}", char::from(self.rank()))
+        write!(
+            fmt,
+            "{}{}",
+            char::from(self.file()),
+            char::from(self.rank())
+        )
     }
 }
 

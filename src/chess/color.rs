@@ -7,23 +7,23 @@ use strum_macros::EnumIter;
 
 #[derive(Copy, Clone, Debug, Enum, EnumIter, Hash, PartialEq, Eq)]
 pub enum Color {
-    White,
-    Black,
+    W,
+    B,
 }
 
 impl Color {
     pub fn from_char_case(c: char) -> Self {
         if c.is_ascii_uppercase() {
-            Color::White
+            Color::W
         } else {
-            Color::Black
+            Color::B
         }
     }
 
     pub fn set_ascii_case(self, c: char) -> char {
         match self {
-            Color::White => c.to_ascii_uppercase(),
-            Color::Black => c.to_ascii_lowercase(),
+            Color::W => c.to_ascii_uppercase(),
+            Color::B => c.to_ascii_lowercase(),
         }
     }
 
@@ -49,8 +49,8 @@ impl ops::Not for Color {
 
     fn not(self) -> Self::Output {
         match self {
-            Color::White => Color::Black,
-            Color::Black => Color::White,
+            Color::W => Color::B,
+            Color::B => Color::W,
         }
     }
 }
@@ -60,8 +60,8 @@ impl FromStr for Color {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s.chars().next().map(|c| c.to_ascii_lowercase()) {
-            Some('w') => Ok(Color::White),
-            Some('b') => Ok(Color::Black),
+            Some('w') => Ok(Color::W),
+            Some('b') => Ok(Color::B),
             _ => Err(Error::InvalidColor),
         }
     }
@@ -70,8 +70,8 @@ impl FromStr for Color {
 impl From<Color> for char {
     fn from(color: Color) -> Self {
         match color {
-            Color::White => 'w',
-            Color::Black => 'b',
+            Color::W => 'w',
+            Color::B => 'b',
         }
     }
 }
@@ -92,30 +92,30 @@ mod test {
 
     #[test]
     fn color_from_char() {
-        assert_eq!(Color::from_str("w"), Ok(Color::White));
-        assert_eq!(Color::from_str("B"), Ok(Color::Black));
+        assert_eq!(Color::from_str("w"), Ok(Color::W));
+        assert_eq!(Color::from_str("B"), Ok(Color::B));
     }
 
     #[test]
     fn char_from_color() {
-        assert_eq!(char::from(Color::White), 'w');
-        assert_eq!(char::from(Color::Black), 'b');
+        assert_eq!(char::from(Color::W), 'w');
+        assert_eq!(char::from(Color::B), 'b');
     }
 
     #[test]
     fn not_black_is_white() {
-        assert_eq!(!Color::Black, Color::White);
+        assert_eq!(!Color::B, Color::W);
     }
 
     #[test]
     fn backrank_contains_rook_in_new_board() {
         let board = Board::default();
-        let square = Square::at(File::A, Color::White.backrank());
+        let square = Square::at(File::A, Color::W.backrank());
         assert_eq!(
             board.piece_opt_at(square),
             Some(Piece {
                 role: Role::Rook,
-                color: Color::White,
+                color: Color::W,
             })
         );
     }
@@ -123,13 +123,13 @@ mod test {
     #[test]
     fn pawn_double_push_is_on_fourth_rank() {
         let mut board = Board::default();
-        let square = Square::at(File::E, Color::White.fourth_rank());
+        let square = Square::at(File::E, Color::W.fourth_rank());
         board.do_move(Move::from_str("e2e4").unwrap());
         assert_eq!(
             board.piece_opt_at(square),
             Some(Piece {
                 role: Role::Pawn,
-                color: Color::White,
+                color: Color::W,
             })
         );
     }

@@ -71,9 +71,13 @@ impl Board {
     }
 
     pub fn do_move(&mut self, m: Move) -> Option<Piece> {
-        let promoted = m.promotion.map(|role| Piece::new(role, self.color_to_move));
+        let promoted =
+            m.promotion.map(|role| Piece::new(role, self.color_to_move));
         let capture = self.piece_opt_at(m.to);
-        self.set_at_square(m.to, promoted.or_else(|| self.piece_opt_at(m.from)));
+        self.set_at_square(
+            m.to,
+            promoted.or_else(|| self.piece_opt_at(m.from)),
+        );
         self.set_at_square(m.from, None);
         self.color_to_move = !self.color_to_move;
         capture
@@ -117,7 +121,7 @@ impl Board {
     }
 
     pub fn bb_all(&self) -> BitBoard {
-        self.bb_colors[Color::White] | self.bb_colors[Color::Black]
+        self.bb_colors[Color::W] | self.bb_colors[Color::B]
     }
 
     pub fn has_both_kings(&self) -> bool {
@@ -128,23 +132,29 @@ impl Board {
 impl Default for Board {
     fn default() -> Self {
         let mut bb_colors = EnumMap::default();
-        bb_colors[Color::White] = Rank::FIRST.to_bb() | Rank::SECOND.to_bb();
-        bb_colors[Color::Black] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
+        bb_colors[Color::W] = Rank::FIRST.to_bb() | Rank::SECOND.to_bb();
+        bb_colors[Color::B] = Rank::SEVENTH.to_bb() | Rank::EIGHTH.to_bb();
         let mut bb_roles = EnumMap::default();
         bb_roles[Role::Pawn] = Rank::SECOND.to_bb() | Rank::SEVENTH.to_bb();
-        bb_roles[Role::Knight] =
-            Square::B1.to_bb() | Square::G1.to_bb() | Square::B8.to_bb() | Square::G8.to_bb();
-        bb_roles[Role::Bishop] =
-            Square::C1.to_bb() | Square::F1.to_bb() | Square::C8.to_bb() | Square::F8.to_bb();
-        bb_roles[Role::Rook] =
-            Square::A1.to_bb() | Square::H1.to_bb() | Square::A8.to_bb() | Square::H8.to_bb();
+        bb_roles[Role::Knight] = Square::B1.to_bb()
+            | Square::G1.to_bb()
+            | Square::B8.to_bb()
+            | Square::G8.to_bb();
+        bb_roles[Role::Bishop] = Square::C1.to_bb()
+            | Square::F1.to_bb()
+            | Square::C8.to_bb()
+            | Square::F8.to_bb();
+        bb_roles[Role::Rook] = Square::A1.to_bb()
+            | Square::H1.to_bb()
+            | Square::A8.to_bb()
+            | Square::H8.to_bb();
         bb_roles[Role::Queen] = Square::D1.to_bb() | Square::D8.to_bb();
         bb_roles[Role::King] = Square::E1.to_bb() | Square::E8.to_bb();
         Board {
             bb_colors,
             bb_roles,
             castling_rights: CastlingRights::default(),
-            color_to_move: Color::White,
+            color_to_move: Color::W,
             reversible_moves_count: 0,
             en_passant_target_square: None,
             half_moves_counter: 0,
@@ -181,8 +191,8 @@ impl Default for CastlingRights {
             CastlingSide::Queen => true,
         };
         CastlingRights(enum_map! {
-            Color::White => both_sides,
-            Color::Black => both_sides,
+            Color::W => both_sides,
+            Color::B => both_sides,
         })
     }
 }
@@ -208,19 +218,19 @@ impl FromStr for CastlingRights {
 impl fmt::Display for CastlingRights {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut any = false;
-        if self.0[Color::White][CastlingSide::King] {
+        if self.0[Color::W][CastlingSide::King] {
             write!(fmt, "K")?;
             any = true;
         }
-        if self.0[Color::White][CastlingSide::Queen] {
+        if self.0[Color::W][CastlingSide::Queen] {
             write!(fmt, "Q")?;
             any = true;
         }
-        if self.0[Color::Black][CastlingSide::King] {
+        if self.0[Color::B][CastlingSide::King] {
             write!(fmt, "k")?;
             any = true;
         }
-        if self.0[Color::Black][CastlingSide::Queen] {
+        if self.0[Color::B][CastlingSide::Queen] {
             write!(fmt, "q")?;
             any = true;
         }

@@ -16,7 +16,10 @@ pub struct TimeControl {
 }
 
 impl TimeControl {
-    pub fn new_with_increment_secs(time_limit: usize, increment: usize) -> Self {
+    pub fn new_with_increment_secs(
+        time_limit: usize,
+        increment: usize,
+    ) -> Self {
         TimeControl {
             time_limit: Duration::from_secs(time_limit as u64),
             increment: Duration::from_secs(increment as u64),
@@ -59,8 +62,8 @@ impl Clock {
         time_left
     }
 
-    /// Starts the clock countdown and returns the time available to the current
-    /// player.
+    /// Starts the clock countdown and returns the time available to the
+    /// current player.
     pub fn tick(&mut self) -> Duration {
         assert!(self.ticking_since.is_none());
         self.ticking_since = Some(Instant::now());
@@ -71,8 +74,8 @@ impl Clock {
     /// hasn't flagged, None otherwise.
     ///
     /// # Assumptions
-    /// This function assumes that the current clock is already ticking and will
-    /// panic otherwise.
+    /// This function assumes that the current clock is already ticking and
+    /// will panic otherwise.
     pub fn tock(&mut self) -> Option<Duration> {
         let ticking_since = self.ticking_since.unwrap();
         let now = Instant::now();

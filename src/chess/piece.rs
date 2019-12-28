@@ -71,13 +71,13 @@ mod test {
 
     #[test]
     fn piece_from_char() {
-        assert_eq!(Piece::from('N'), Piece::new(Role::Knight, Color::White));
-        assert_eq!(Piece::from('q'), Piece::new(Role::Queen, Color::Black));
+        assert_eq!(Piece::from('N'), Piece::new(Role::Knight, Color::W));
+        assert_eq!(Piece::from('q'), Piece::new(Role::Queen, Color::B));
     }
 
     #[test]
     fn char_from_piece() {
-        assert_eq!(char::from(Piece::new(Role::King, Color::White)), 'K');
-        assert_eq!(char::from(Piece::new(Role::Pawn, Color::Black)), 'p');
+        assert_eq!(char::from(Piece::new(Role::King, Color::W)), 'K');
+        assert_eq!(char::from(Piece::new(Role::Pawn, Color::B)), 'p');
     }
 }

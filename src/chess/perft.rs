@@ -66,7 +66,8 @@ impl Report {
     }
 
     fn nodes_per_second(&self) -> usize {
-        (self.nodes_count as f64 / (self.duration.as_nanos() as f64 / 10E9)).round() as usize
+        (self.nodes_count as f64 / (self.duration.as_nanos() as f64 / 10E9))
+            .round() as usize
     }
 }
 

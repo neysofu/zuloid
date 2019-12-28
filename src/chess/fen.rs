@@ -14,21 +14,21 @@ pub struct Fen<'b> {
 impl<'b> fmt::Display for Fen<'b> {
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         for rank in Rank::iter().rev() {
-            let mut previous_empty_squares = 0;
+            let mut previous_emtpy_squares = 0;
             for file in File::iter() {
                 let square = Square::at(file, rank);
                 if let Some(piece) = self.board.piece_opt_at(square) {
-                    if previous_empty_squares > 0 {
-                        write!(fmt, "{}", previous_empty_squares)?;
-                        previous_empty_squares = 0;
+                    if previous_emtpy_squares > 0 {
+                        write!(fmt, "{}", previous_emtpy_squares)?;
+                        previous_emtpy_squares = 0;
                     }
                     write!(fmt, "{}", char::from(piece))?;
                 } else {
-                    previous_empty_squares += 1;
+                    previous_emtpy_squares += 1;
                 }
             }
-            if previous_empty_squares > 0 {
-                write!(fmt, "{}", previous_empty_squares)?;
+            if previous_emtpy_squares > 0 {
+                write!(fmt, "{}", previous_emtpy_squares)?;
             }
             if rank != Rank::min() {
                 write!(fmt, "/")?;
@@ -36,20 +36,22 @@ impl<'b> fmt::Display for Fen<'b> {
         }
         write!(
             fmt,
-            "{}{}{0}{}{0}",
+            "{0}{1}{0}{2}{0}",
             self.filler,
             char::from(self.board.color_to_move),
             self.board.castling_rights,
         )?;
         if let Some(square) = self.board.en_passant_target_square {
-            write!(fmt, "{}", square.to_string())?;
+            write!(fmt, "{}", square)?;
         } else {
             write!(fmt, "-")?;
         }
         write!(
             fmt,
             "{0}{1}{0}{2}",
-            self.filler, self.board.half_moves_counter, self.board.full_moves_counter
+            self.filler,
+            self.board.half_moves_counter,
+            self.board.full_moves_counter
         )?;
         Ok(())
     }
@@ -63,57 +65,54 @@ impl Board {
         }
     }
 
-    pub fn from_fen<S: AsRef<str>>(fields: &mut impl Iterator<Item = S>) -> Result<Board, Error> {
-        fn update_coordinates(file: &mut File, rank: &mut Rank) -> Option<()> {
-            if let Some(shifted_file) = file.shift(1) {
-                *file = shifted_file;
-                Some(())
-            } else if let Some(rank_below) = rank.shift(-1) {
-                *file = File::min();
-                *rank = rank_below;
-                Some(())
-            } else {
-                None
-            }
-        }
+    pub fn from_fen(
+        fields: &mut impl Iterator<Item = impl AsRef<str>>,
+    ) -> Result<Board, Error> {
         let mut board = Board::empty();
-        let mut field = fields.next().ok_or(Error::InvalidFen)?;
-        let mut file = File::min();
-        let mut rank = Rank::max();
-        for c in field.as_ref().chars().filter(|c| c.is_ascii_alphanumeric()) {
+        let mut field = || fields.next().ok_or(Error::InvalidFen);
+        let file = &mut File::min();
+        let rank = &mut Rank::max();
+        fn board_is_over(f: &mut File, r: &mut Rank) -> bool {
+            if let Some(shifted_file) = f.shift(1) {
+                *f = shifted_file;
+                false
+            } else if let Some(rank_below) = r.shift(-1) {
+                *f = File::min();
+                *r = rank_below;
+                false
+            } else {
+                true
+            }
+        };
+        for c in field()?
+            .as_ref()
+            .chars()
+            .filter(char::is_ascii_alphanumeric)
+        {
             if let Some(digit) = c.to_digit(10) {
                 for _ in 0..digit {
-                    let square = Square::at(file, rank);
-                    board.set_at_square(square, None);
-                    if update_coordinates(&mut file, &mut rank).is_none() {
+                    if board_is_over(file, rank) {
                         break;
                     }
                 }
             } else {
-                let square = Square::at(file, rank);
-                let piece = Piece::from(c);
-                board.set_at_square(square, Some(piece));
-                if update_coordinates(&mut file, &mut rank).is_none() {
+                let square = Square::at(*file, *rank);
+                board.set_at_square(square, Some(Piece::from(c)));
+                if board_is_over(file, rank) {
                     break;
                 }
             }
         }
-        field = fields.next().ok_or(Error::InvalidFen)?;
-        board.color_to_move = Color::from_str(field.as_ref())?;
-        field = fields.next().ok_or(Error::InvalidFen)?;
-        board.castling_rights = CastlingRights::from_str(field.as_ref())?;
-        field = fields.next().ok_or(Error::InvalidFen)?;
-        board.en_passant_target_square = if field.as_ref().starts_with('-') {
-            None
-        } else {
-            Some(Square::from_str(field.as_ref())?)
+        board.color_to_move = Color::from_str(field()?.as_ref())?;
+        board.castling_rights = CastlingRights::from_str(field()?.as_ref())?;
+        board.en_passant_target_square = match field()?.as_ref() {
+            "-" => None,
+            s => Some(Square::from_str(s)?),
         };
-        field = fields.next().ok_or(Error::InvalidFen)?;
         board.half_moves_counter =
-            str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
-        field = fields.next().ok_or(Error::InvalidFen)?;
+            str::parse(field()?.as_ref()).map_err(|_| Error::InvalidFen)?;
         board.full_moves_counter =
-            str::parse::<usize>(field.as_ref()).map_err(|_| Error::InvalidFen)?;
+            str::parse(field()?.as_ref()).map_err(|_| Error::InvalidFen)?;
         Ok(board)
     }
 }

@@ -32,7 +32,9 @@ fn knight_attacks(from: Square) -> BitBoard {
     ];
     let mut bb = 0;
     for shift in shifts.iter() {
-        if let (Some(file), Some(rank)) = (from.file().shift(shift.0), from.rank().shift(shift.1)) {
+        if let (Some(file), Some(rank)) =
+            (from.file().shift(shift.0), from.rank().shift(shift.1))
+        {
             bb |= Square::at(file, rank).to_bb();
         }
     }
@@ -80,7 +82,8 @@ pub fn bishop_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
         let mut to = from;
         while let Some(to_next) = Square::new_opt(to.i() as i32 + shift) {
             if (to_next.file().i() as i32 - to.file().i() as i32).abs() != 1
-                && (to_next.rank().i() as i32 - to.rank().i() as i32).abs() != 1
+                && (to_next.rank().i() as i32 - to.rank().i() as i32).abs()
+                    != 1
             {
                 break;
             }

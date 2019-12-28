@@ -43,22 +43,24 @@ impl Board {
         let push = |bb: BitBoard| {
             !bb_all
                 & match self.color_to_move {
-                    Color::White => bb.north(1),
-                    Color::Black => bb.south(1),
+                    Color::W => bb.north(1),
+                    Color::B => bb.south(1),
                 }
         };
         let bb_push_1 = push(bb_pawns);
-        let bb_push_2 = push(bb_push_1 & Rank::new_with_side(2, self.color_to_move).to_bb());
+        let bb_push_2 = push(
+            bb_push_1 & Rank::new_with_side(2, self.color_to_move).to_bb(),
+        );
         let mut bb_captures_east = bb_pawns & !File::H.to_bb();
         let mut bb_captures_west = bb_pawns & !File::A.to_bb();
         let shifts: [i32; 4];
         match self.color_to_move {
-            Color::White => {
+            Color::W => {
                 bb_captures_east <<= 9;
                 bb_captures_west >>= 7;
                 shifts = [-1, -2, -9, 7];
             }
-            Color::Black => {
+            Color::B => {
                 bb_captures_east <<= 7;
                 bb_captures_west >>= 9;
                 shifts = [1, 2, -7, 9];
@@ -66,7 +68,8 @@ impl Board {
         }
         bb_captures_east &= bb_defenders;
         bb_captures_west &= bb_defenders;
-        let sources = [bb_push_1, bb_push_2, bb_captures_east, bb_captures_west];
+        let sources =
+            [bb_push_1, bb_push_2, bb_captures_east, bb_captures_west];
         for (i, src) in sources.iter().enumerate() {
             for square in src.squares() {
                 move_list.push(Move {
@@ -81,7 +84,8 @@ impl Board {
 
     fn gen_knights(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::Knight).squares() {
-            let possible_targets = tables::KNIGHT_ATTACKS[from.i() as usize] & !self.attackers();
+            let possible_targets =
+                tables::KNIGHT_ATTACKS[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -95,7 +99,8 @@ impl Board {
 
     fn gen_king(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::King).squares() {
-            let possible_targets = tables::KING_ATTACKS[from.i() as usize] & !self.attackers();
+            let possible_targets =
+                tables::KING_ATTACKS[from.i() as usize] & !self.attackers();
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -109,8 +114,8 @@ impl Board {
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::Rook).squares() {
-            let possible_targets =
-                tables::rook_attacks(from, self.bb_all()) & !self.bb_colors[self.color_to_move];
+            let possible_targets = tables::rook_attacks(from, self.bb_all())
+                & !self.bb_colors[self.color_to_move];
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
@@ -121,8 +126,8 @@ impl Board {
             }
         }
         for from in self.attackers_with_role(Role::Bishop).squares() {
-            let possible_targets =
-                tables::bishop_attacks(from, self.bb_all()) & !self.bb_colors[self.color_to_move];
+            let possible_targets = tables::bishop_attacks(from, self.bb_all())
+                & !self.bb_colors[self.color_to_move];
             for to in possible_targets.squares() {
                 move_list.push(Move {
                     from,
