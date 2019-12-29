@@ -1,11 +1,19 @@
-use crate::chess::Board;
+use crate::chess::*;
 
-struct Eval {
-    score: i32,
+pub struct Eval {
+    pub score: f32,
+    pub sharpness: f32,
+    pub best_move: Move,
+    pub mate_in: Option<u32>,
 }
 
-impl From<Board> for Eval {
-    fn from(_board: Board) -> Self {
-        unimplemented!()
+impl Default for Eval {
+    fn default() -> Self {
+        Eval {
+            score: 0.0,
+            sharpness: 0.5,
+            best_move: Move::new_garbage(),
+            mate_in: None,
+        }
     }
 }

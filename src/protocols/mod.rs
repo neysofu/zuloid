@@ -1,3 +1,3 @@
 mod uci;
 
-pub use uci::uci;
+pub use uci::{handle_line, uci};

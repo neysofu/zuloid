@@ -3,13 +3,12 @@ use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::search::*;
 use crate::version::VERSION;
-use bytesize::ByteSize;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
 
 #[derive(Debug, PartialEq)]
-enum State {
+pub enum State {
     Alive,
     Shutdown,
 }
@@ -32,7 +31,7 @@ pub fn uci(
     Ok(())
 }
 
-fn handle_line(
+pub fn handle_line(
     zorro: &mut Zorro,
     line: impl AsRef<str>,
     mut output: impl io::Write,
@@ -40,7 +39,7 @@ fn handle_line(
     let mut tokens = line.as_ref().split_whitespace();
     match tokens.next() {
         // Standard UCI commands.
-        Some("debug") => (),
+        Some("debug") => cmd::debug(zorro, tokens)?,
         Some("go") => cmd::go(zorro, tokens, output)?,
         Some("isready") => writeln!(output, "readyok")?,
         Some("position") => cmd::position(zorro, tokens)?,
@@ -50,14 +49,12 @@ fn handle_line(
         Some("ucinewgame") => zorro.cache.clear(),
         // Non-standard but useful nonetheless.
         Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
-        Some("d") => cmd::d(zorro, tokens, output)?,
+        Some("d") => cmd::d(&zorro.board, tokens, output)?,
         Some("gentables") => cmd::gen_tables(output)?,
         Some("listmagics") => cmd::list_magics(output)?,
         Some("magic") => cmd::magic(tokens, output)?,
         Some("perft") => cmd::perft(zorro, tokens, output)?,
-        Some(unknown) => {
-            return Err(Error::UnknownCommand(unknown.to_string()))
-        }
+        Some(s) => return Err(Error::UnknownCommand(s.to_string())),
         // Simply ignore empty commands.
         None => (),
     }
@@ -66,6 +63,18 @@ fn handle_line(
 
 mod cmd {
     use super::*;
+
+    pub fn debug<'a>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'a str>,
+    ) -> Result<()> {
+        zorro.config.debug = match tokens.next() {
+            Some("on") => true,
+            Some("off") => false,
+            _ => return Err(Error::Syntax),
+        };
+        Ok(())
+    }
 
     pub fn uci(mut output: impl io::Write) -> Result<()> {
         // See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=4230?;
@@ -89,17 +98,19 @@ mod cmd {
     }
 
     pub fn d<'s>(
-        zorro: &Zorro,
+        board: &Board,
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: impl io::Write,
     ) -> Result<()> {
         match tokens.next() {
+            None => write!(output, "{}", board)?,
+            Some("fen") => writeln!(output, "{}", board.fmt_fen(' '))?,
             Some("lichess") => {
-                webbrowser::open(zorro.board.lichess_url().as_str()).ok();
+                let url = board.lichess_url();
+                writeln!(output, "{}", url)?;
+                webbrowser::open(url.as_str()).ok();
             }
-            Some("fen") => writeln!(output, "{}", zorro.board.fmt_fen(' '))?,
-            Some(_) => return Err(Error::Syntax),
-            None => writeln!(output, "{}", zorro.board)?,
+            _ => return Err(Error::Syntax),
         }
         Ok(())
     }
@@ -139,7 +150,7 @@ mod cmd {
                 _ => return Err(Error::Syntax),
             }
         }
-        writeln!(output, "bestmove {}", search(zorro))?;
+        writeln!(output, "bestmove {}", search(zorro).best_move)?;
         Ok(())
     }
 
@@ -210,7 +221,9 @@ mod cmd {
             Some("current") => (),
             _ => return Err(Error::Syntax),
         }
-        for s in tokens.skip(1) {
+        // '.skip(1)' intuitively makes more sense, but that would happily skip
+        // a valid move in case you forget the "moves" token.
+        for s in tokens.skip_while(|s| *s == "moves") {
             zorro.board.do_move(Move::from_str(s)?);
         }
         Ok(())
@@ -321,29 +334,41 @@ pub type Result<T> = std::result::Result<T, Error>;
 #[cfg(test)]
 mod test {
     use super::*;
+    use crate::utils::buf_to_str;
+
+    #[test]
+    fn d_fen_prints_fen() {
+        let zorro = &mut Zorro::default();
+        let mut output = vec![];
+        handle_line(zorro, "uci", io::sink()).unwrap();
+        handle_line(zorro, "position current moves b1c3", io::sink()).unwrap();
+        let fen = zorro.board.fmt_fen(' ').to_string();
+        handle_line(zorro, "d fen", &mut output).unwrap();
+        assert_eq!(buf_to_str(&mut output), fen);
+    }
 
     #[test]
     fn stop_cmd_triggers_shutdown() {
-        match handle_line(&mut Zorro::default(), "stop", io::sink()) {
-            Ok(State::Shutdown) => true,
-            _ => false,
-        };
+        assert_eq!(
+            handle_line(&mut Zorro::default(), "stop", io::sink()).unwrap(),
+            State::Shutdown
+        );
     }
 
     #[test]
     fn quit_cmd_triggers_shutdown() {
-        match handle_line(&mut Zorro::default(), "quit", io::sink()) {
-            Ok(State::Shutdown) => true,
-            _ => false,
-        };
+        assert_eq!(
+            handle_line(&mut Zorro::default(), "quit", io::sink()).unwrap(),
+            State::Shutdown
+        );
     }
 
     #[test]
     fn readyok_always_follows_isready() {
         let zorro = &mut Zorro::default();
         let mut output = vec![];
-        assert!(handle_line(zorro, "isready", &mut output).is_ok());
-        output.retain(|c| !(*c as char).is_whitespace());
-        assert_eq!(output, b"readyok");
+        handle_line(zorro, "uci", io::sink()).unwrap();
+        handle_line(zorro, "isready", &mut output).unwrap();
+        assert_eq!(buf_to_str(&mut output), "readyok");
     }
 }

@@ -216,6 +216,7 @@ impl FromStr for CastlingRights {
 }
 
 impl fmt::Display for CastlingRights {
+    #[allow(clippy::useless_let_if_seq)]
     fn fmt(&self, fmt: &mut fmt::Formatter<'_>) -> fmt::Result {
         let mut any = false;
         if self.0[Color::W][CastlingSide::King] {
@@ -264,7 +265,7 @@ impl fmt::Display for SquareCentricBoard<char> {
             writeln!(fmt, "| {}", char::from(rank))?;
         }
         writeln!(fmt, "   +-----------------+")?;
-        write!(fmt, "     A B C D E F G H")?;
+        writeln!(fmt, "     A B C D E F G H")?;
         Ok(())
     }
 }
