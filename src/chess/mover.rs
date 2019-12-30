@@ -13,14 +13,14 @@ impl Board {
     }
 
     pub fn list_legals(&mut self, move_list: &mut AvailableMoves) {
-        let pseudolegals = &mut AvailableMoves::default();
-        self.list_pseudolegals(pseudolegals);
-        for m in pseudolegals.into_iter() {
-            let temp = &mut AvailableMoves::default();
+        let mut pseudolegals = AvailableMoves::default();
+        self.list_pseudolegals(&mut pseudolegals);
+        for m in (&pseudolegals).into_iter() {
+            let mut temp = AvailableMoves::default();
             let captured = self.do_move(m);
-            self.list_pseudolegals(temp);
+            self.list_pseudolegals(&mut temp);
             let mut is_legal = true;
-            for m in temp.into_iter() {
+            for m in (&temp).into_iter() {
                 let captured = self.do_move(m);
                 if !self.has_both_kings() {
                     is_legal = false;

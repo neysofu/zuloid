@@ -3,6 +3,7 @@ use crate::err::Error;
 use std::fmt;
 use std::iter::IntoIterator;
 use std::str::FromStr;
+use std::vec;
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct Move {
@@ -67,6 +68,15 @@ impl Default for AvailableMoves {
         AvailableMoves {
             buf: Vec::with_capacity(140),
         }
+    }
+}
+
+impl IntoIterator for AvailableMoves {
+    type Item = Move;
+    type IntoIter = vec::IntoIter<Move>;
+
+    fn into_iter(self) -> Self::IntoIter {
+        self.buf.into_iter()
     }
 }
 

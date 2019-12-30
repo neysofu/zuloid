@@ -150,7 +150,11 @@ mod cmd {
                 _ => return Err(Error::Syntax),
             }
         }
-        writeln!(output, "bestmove {}", search(zorro).best_move)?;
+        writeln!(
+            output,
+            "bestmove {}",
+            search(zorro, config.max_depth.unwrap_or(2)).best_move
+        )?;
         Ok(())
     }
 
