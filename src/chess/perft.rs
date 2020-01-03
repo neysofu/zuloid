@@ -23,8 +23,56 @@ impl Board {
         report
     }
 
+    pub fn iter_perft(&mut self, depth: usize) -> Report {
+        let mut report = Report::new(depth);
+        if depth == 0 {
+            report.nodes_count = 1;
+            return report;
+        }
+        let start = Instant::now();
+        let mut root_moves = AvailableMoves::default();
+        self.list_legals(&mut root_moves);
+        for root_move in root_moves.into_iter() {
+            let root_capture = self.do_move(root_move);
+            let mut current_depth = 1;
+            let mut buf = AvailableMoves::default();
+            self.list_legals(&mut buf);
+            let mut stack = Vec::with_capacity(depth);
+            stack.push((buf.into_iter(), root_move, root_capture));
+            let mut nodes_count = 0;
+            while !stack.is_empty() {
+                if let Some(next_move) = stack.last_mut().unwrap().0.next() {
+                    if current_depth >= depth {
+                        current_depth -= 1;
+                        nodes_count += 1;
+                        let popped = stack.pop().unwrap();
+                    //self.undo_move(popped.1, popped.2);
+                    } else {
+                        current_depth += 1;
+                        let next_capture = self.do_move(next_move);
+                        let mut buf = AvailableMoves::default();
+                        self.list_legals(&mut buf);
+                        stack.push((buf.into_iter(), next_move, next_capture));
+                    }
+                } else {
+                    current_depth -= 1;
+                    let popped = stack.pop().unwrap();
+                    self.undo_move(popped.1, popped.2);
+                }
+            }
+            if nodes_count == 0 {
+                nodes_count = 1;
+            }
+            self.undo_move(root_move, root_capture);
+            report.overview.push((root_move, nodes_count));
+            report.nodes_count += nodes_count;
+        }
+        report.duration = start.elapsed();
+        report
+    }
+
     pub fn backtrace_perft(&mut self, depth: usize) -> (usize, usize) {
-        let report = self.perft(depth);
+        let report = self.iter_perft(depth);
         if depth == 1 {
             return (report.nodes_count, self.shakmaty_perft(1));
         }
@@ -61,7 +109,7 @@ impl Report {
             depth,
             nodes_count: 0,
             overview: vec![],
-            duration: Duration::default(),
+            duration: Duration::from_millis(1),
         }
     }
 

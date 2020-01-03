@@ -6,6 +6,11 @@ use zorro::protocols::*;
 use zorro::utils::buf_to_str;
 
 const TACTICS: &[(&str, &str)] = &[
+    // TEMPORARY
+    (
+        "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1",
+        "400",
+    ),
     (
         "r1bqkbnr/ppp2ppp/2np4/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 4",
         "f3f7",
