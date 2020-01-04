@@ -13,11 +13,10 @@ bitintr = "0.3"
 bytesize = "1"
 enum-map = "0.6"
 enum-map-derive = "0.4"
-lazy_static = "1"
-shakmaty = "0.15.0"
 rand = "0.7"
 strum = "0.15.0"
 strum_macros = "0.15.0"
+shakmaty = "0.15.0"
 webbrowser = "0.5.2"
 
 [dev-dependencies]

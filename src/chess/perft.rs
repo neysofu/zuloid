@@ -2,30 +2,30 @@ use super::*;
 use std::fmt;
 use std::time::{Duration, Instant};
 
-pub fn bare_perft(board: &mut Board, depth: usize) -> usize {
+pub fn bare_perft(board: &mut Board, mut depth: usize) -> usize {
     if depth == 0 {
         return 1;
     }
-    let mut current_depth = 1;
+    //depth -= 1;
     let mut nodes_count = 0;
     let mut buffer = AvailableMoves::default();
     board.list_legals(&mut buffer);
     let mut stack = vec![(buffer.into_iter(), Move::ID, None)];
-    while let Some(last) = stack.last_mut() {
-        if let Some(next_move) = last.0.next() {
-            if current_depth >= depth as i32 {
-                nodes_count += 1;
+    while !stack.is_empty() {
+        if let Some(mv) = stack.last_mut().unwrap().0.next() {
+            let mv_capture = board.do_move(mv);
+            let mut buffer = AvailableMoves::default();
+            board.list_legals(&mut buffer);
+            if stack.len() == depth {
+                nodes_count += buffer.into_iter().count();
+                board.undo_move(mv, mv_capture);
             } else {
-                current_depth += 1;
-                let next_capture = board.do_move(next_move);
-                let mut buffer = AvailableMoves::default();
-                board.list_legals(&mut buffer);
-                stack.push((buffer.into_iter(), next_move, next_capture));
+                stack.push((buffer.into_iter(), mv, mv_capture));
             }
-        } else if current_depth == 1 {
+        } else if stack.len() == 1 {
             break;
         } else {
-            current_depth -= 1;
+            let last = stack.last_mut().unwrap();
             board.undo_move(last.1, last.2);
             stack.pop().unwrap();
         }

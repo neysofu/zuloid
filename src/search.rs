@@ -11,6 +11,7 @@
 
 use crate::chess::*;
 use crate::core::*;
+use crate::eval::count_materials;
 use crate::eval::Eval;
 use std::vec;
 
@@ -46,25 +47,6 @@ impl Stack {
     fn is_empty(&self) -> bool {
         self.tree.is_empty()
     }
-}
-
-pub fn search(zorro: &mut Zorro, depth: usize) -> Eval {
-    let mut stack = Stack::new(&zorro.board);
-    while !stack.is_empty() {
-        // The branching condition determines wheather to keep exploring the
-        // tree or to backtrace its way up.
-        if stack.tree.len() < depth {
-            let mut legal_moves = AvailableMoves::default();
-            stack.board.list_legals(&mut legal_moves);
-            stack.tree.push(legal_moves.into_iter());
-        } else {
-            println!("this is depth {}", stack.tree.len());
-            stack.backtrace();
-        }
-    }
-    let eval = Eval::default();
-    //eval.best_move = best.unwrap();
-    eval
 }
 
 pub struct Perft {
@@ -109,4 +91,30 @@ pub trait Visitor<T> {
     fn visit(&mut self, m: Move) -> bool;
     fn backtrace(&mut self, depth: usize);
     fn wrap_it_up(&mut self) -> T;
+}
+
+pub fn iter_search(zorro: &mut Zorro) -> Eval {
+    let mut eval = Eval::new(&zorro.board);
+    let mut line_best: Vec<Move> = vec![];
+    let mut line_current: Vec<Move> = vec![];
+    let mut buffer = AvailableMoves::default();
+    zorro.board.list_legals(&mut buffer);
+    let mut stack = vec![(buffer.into_iter(), Move::ID, None)];
+    while let Some(last) = stack.last_mut() {
+        if let Some(mv) = last.0.next() {
+            let mut buffer = AvailableMoves::default();
+            let mv_capture = zorro.board.do_move(mv);
+            let score = count_materials(&zorro.board);
+            zorro.board.list_legals(&mut buffer);
+            if stack.len() < 3 {
+                stack.push((buffer.into_iter(), mv, mv_capture));
+            } else {
+                zorro.board.undo_move(mv, mv_capture);
+            }
+        } else {
+            zorro.board.undo_move(last.1, last.2);
+            stack.pop().unwrap();
+        }
+    }
+    eval
 }

@@ -26,7 +26,7 @@ fn piece_value(role: Role) -> f32 {
     }
 }
 
-fn count_materials(board: &Board) -> f32 {
+pub fn count_materials(board: &Board) -> f32 {
     let mut balance = 0.0;
     for sq in Square::iter() {
         if let Some(piece) = board.piece_opt_at(sq) {

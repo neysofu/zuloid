@@ -154,11 +154,7 @@ mod cmd {
                 _ => return Err(Error::Syntax),
             }
         }
-        writeln!(
-            output,
-            "bestmove {}",
-            search(zorro, config.max_depth.unwrap_or(2)).best_move
-        )?;
+        writeln!(output, "bestmove {}", iter_search(zorro).best_move)?;
         Ok(())
     }
 
@@ -200,7 +196,7 @@ mod cmd {
     ) -> Result<()> {
         let token = tokens.next().unwrap_or("1");
         let depth = str::parse::<usize>(token)?;
-        writeln!(
+        write!(
             output,
             "{}",
             crate::chess::perft::perft(&mut zorro.board, depth)
