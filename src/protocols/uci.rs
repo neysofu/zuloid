@@ -200,7 +200,11 @@ mod cmd {
     ) -> Result<()> {
         let token = tokens.next().unwrap_or("1");
         let depth = str::parse::<usize>(token)?;
-        writeln!(output, "{}", zorro.board.iter_perft(depth))?;
+        writeln!(
+            output,
+            "{}",
+            crate::chess::perft::perft(&mut zorro.board, depth)
+        )?;
         if let Some("bt") = tokens.next() {
             let (actual, expected) = zorro.board.backtrace_perft(depth);
             if actual == expected {

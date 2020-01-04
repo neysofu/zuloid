@@ -1,6 +1,6 @@
 [package]
 name = "zorro"
-version = "2.4.0"
+version = "2.5.0"
 authors = ["Filippo Costa <filippocosta.italy@gmail.com>"]
 build = "build.rs"
 readme = "README.md"

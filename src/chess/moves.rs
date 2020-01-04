@@ -14,6 +14,13 @@ pub struct Move {
 }
 
 impl Move {
+    pub const ID: Move = Move {
+        from: Square::E4,
+        to: Square::E4,
+        promotion: None,
+        capture: None,
+    };
+
     pub fn new_garbage() -> Self {
         Move {
             from: Square::new(0),
