@@ -62,7 +62,7 @@ pub fn search(zorro: &mut Zorro, depth: usize) -> Eval {
             stack.backtrace();
         }
     }
-    let mut eval = Eval::default();
+    let eval = Eval::default();
     //eval.best_move = best.unwrap();
     eval
 }

@@ -242,8 +242,8 @@ mod cmd {
     }
 
     pub fn set_option<'s>(
-        zorro: &mut Zorro,
-        mut tokens: impl Iterator<Item = &'s str>,
+        _zorro: &mut Zorro,
+        _tokens: impl Iterator<Item = &'s str>,
     ) -> Result<()> {
         //assert_eq!(tokens.next(), Some("name"));
         //let mut option_name = String::new();
