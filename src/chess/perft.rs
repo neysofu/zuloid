@@ -33,13 +33,6 @@ pub fn bare_perft(board: &mut Board, mut depth: usize) -> usize {
     nodes_count
 }
 
-fn shakmaty_perft(board: &Board, depth: usize) -> usize {
-    use shakmaty::{fen::Fen, perft, Chess};
-    let fen: Fen = board.fmt_fen(' ').to_string().parse().unwrap();
-    let position: Chess = fen.position().unwrap();
-    perft(&position, depth as u32) as usize
-}
-
 pub fn perft(board: &mut Board, depth: usize) -> Report {
     let mut report = Report::new(depth);
     let start = Instant::now();
@@ -58,24 +51,6 @@ pub fn perft(board: &mut Board, depth: usize) -> Report {
     }
     report.duration += start.elapsed();
     report
-}
-
-impl Board {
-    pub fn backtrace_perft(&mut self, depth: usize) -> (usize, usize) {
-        let report = perft(self, depth);
-        if depth == 1 {
-            return (report.nodes_count, shakmaty_perft(self, 1));
-        }
-        for (m, count) in report.overview {
-            let captured = self.do_move(m);
-            let expected_count = shakmaty_perft(self, depth - 1);
-            if count != expected_count {
-                return self.backtrace_perft(depth - 1);
-            }
-            self.undo_move(m, captured);
-        }
-        (0, 0)
-    }
 }
 
 #[derive(Clone)]

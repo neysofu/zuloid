@@ -1,11 +1,21 @@
-use crate::chess::{Board, Coordinate, Move, Square};
+//! Universal Chess Interface implementation for Zorro.
+//! Documentation is available at
+//! <https://wbec-ridderkerk.nl/html/UCIProtocol.html>.
+//!
+//! We aim for full compliance. Stockfish-like debugging features are also
+//! present.
+
+use crate::chess::{Board, Color, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
 use crate::search::*;
+use crate::time::TimeControl;
 use crate::version::VERSION;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
+use std::time::Duration;
+use strum::IntoEnumIterator;
 
 #[derive(Debug, PartialEq)]
 pub enum State {
@@ -18,6 +28,7 @@ pub fn uci(
     input: impl io::BufRead,
     mut output: impl io::Write,
 ) -> io::Result<()> {
+    // Greet the user with some information about the engine.
     writeln!(output, "# Zorro {}", VERSION)?;
     writeln!(output, "# Process ID: {}", std::process::id())?;
     for line in input.lines() {
@@ -28,6 +39,7 @@ pub fn uci(
             Err(err) => writeln!(output, "{}", err)?,
         }
     }
+    // Ave, Caesar, moriturus te salutat.
     Ok(())
 }
 
@@ -57,14 +69,15 @@ pub fn handle_line(
         // Easter eggs.
         Some("detroit") => writeln!(output, "JESUS CHRIST CONNOR")?,
         Some("kara") => writeln!(output, "I'm cold")?,
-        Some("nakamura") => writeln!(output, "You should resign when you're lost")?,
         Some("meow") => writeln!(output, "Wowwwww, you meow like a cat! That means you are one, right? Shut the fuck up. If you really want to be put on a leash and treated like a domestic animal then that’s called a fetish, not “quirky” or “cute”. What part of you seriously thinks that any part of acting like a feline establishes a reputation of appreciation? Is it your lack of any defining aspect of personality that urges you to resort to shitty representations of cats to create an illusion of meaning in your worthless life? Wearing “cat ears” in the shape of headbands further notes the complete absence of human attribution to your false sense of personality, such as intelligence or charisma in any form or shape. Where do you think this mindset’s gonna lead you? You think you’re funny, random, quirky even? What makes you think that acting like a fucking cat will make a goddamn hyena laugh? I, personally, feel extremely sympathetic towards you as your only escape from the worthless thing you call your existence is to pretend to be an animal. But it’s not a worthy choice to assert this horrifying fact as a dominant trait, mainly because personality traits require an initial personality to lay their foundation on. You’re not worthy of anybody’s time, so go fuck off, “cat-girl”.")?,
         Some(s) => return Err(Error::UnknownCommand(s.to_string())),
+        // Skip empty lines.
         None => (),
     }
     Ok(State::Alive)
 }
 
+/// UCI commands handlers.
 mod cmd {
     use super::*;
 
@@ -96,7 +109,7 @@ mod cmd {
              option name Threads type spin default 1 min 1 max 512\n\
              option name Move Overhead type spin default 30 min 0 max 60000\n\
              uciok",
-            VERSION
+            VERSION,
         )?;
         Ok(())
     }
@@ -112,7 +125,7 @@ mod cmd {
             Some("lichess") => {
                 let url = board.lichess_url();
                 writeln!(output, "{}", url)?;
-                webbrowser::open(url.as_str()).ok();
+                webbrowser::open(url.as_str()).map_err(|_| Error::Other)?;
             }
             _ => return Err(Error::Syntax),
         }
@@ -139,16 +152,40 @@ mod cmd {
     ) -> Result<()> {
         let mut config = zorro.config.clone();
         while let Some(token) = tokens.next() {
-            let next = tokens.next().ok_or(Error::Syntax);
+            let mut next = || tokens.next().ok_or(Error::Syntax);
             match token {
-                "wtime" => (),
-                "btime" => (),
-                "winc" => (),
-                "binc" => (),
-                "movestogo" => config.moves_to_go = Some(str::parse(next?)?),
-                "depth" => config.max_depth = Some(str::parse(next?)?),
-                "nodes" => config.max_nodes = Some(str::parse(next?)?),
-                "infinite" => (),
+                "searchmoves" => {
+                    // A for loop will cause ownership issues. FIXME?
+                    while let Some(s) = tokens.next() {
+                        config.restrict_search.push(Move::from_str(s)?);
+                    }
+                }
+                "wtime" | "btime" | "winc" | "binc" => {
+                    let color = Color::from_str(token)?;
+                    let time_control = &mut zorro.time_controls[color];
+                    let dur = Duration::from_millis(str::parse(next()?)?);
+                    if &token[1..] == "time" {
+                        time_control.time_limit = dur;
+                    } else {
+                        time_control.increment = dur;
+                    }
+                }
+                "movestogo" => config.moves_to_go = Some(str::parse(next()?)?),
+                "depth" => config.max_depth = Some(str::parse(next()?)?),
+                "nodes" => config.max_nodes = Some(str::parse(next()?)?),
+                "mate" => (),
+                "movetime" => {
+                    let color = zorro.board.color_to_move;
+                    let time_control = &mut zorro.time_controls[color];
+                    let dur = Duration::from_millis(str::parse(next()?)?);
+                    time_control.time_limit = dur;
+                    time_control.delay = Duration::default();
+                }
+                "infinite" => {
+                    for c in Color::iter() {
+                        zorro.time_controls[c] = TimeControl::infinite();
+                    }
+                }
                 "ponder" => config.ponder = true,
                 "perft" => return perft(zorro, tokens, output),
                 _ => return Err(Error::Syntax),
@@ -201,20 +238,6 @@ mod cmd {
             "{}",
             crate::chess::perft::perft(&mut zorro.board, depth)
         )?;
-        if let Some("bt") = tokens.next() {
-            let (actual, expected) = zorro.board.backtrace_perft(depth);
-            if actual == expected {
-                writeln!(output, "Backtrace FEN   : none")?;
-            } else {
-                writeln!(
-                    output,
-                    "Backtrace FEN   : {}",
-                    zorro.board.fmt_fen(' ')
-                )?;
-            }
-            writeln!(output, "Final searched (expected) : {}", expected)?;
-            writeln!(output, "Final searched (actual)   : {}", actual)?;
-        }
         Ok(())
     }
 
@@ -294,6 +317,7 @@ pub enum Error {
     UnknownCommand(String),
     Chess(crate::err::Error),
     Io(io::Error),
+    Other,
 }
 
 impl From<io::Error> for Error {
@@ -318,6 +342,9 @@ impl fmt::Display for Error {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Error::Syntax => write!(f, "[ERROR] Invalid command syntax"),
+            Error::Other => {
+                write!(f, "[ERROR] An unspecified error has happened")
+            }
             Error::UnknownCommand(s) => {
                 write!(f, "[ERROR] Unknown command '{}'", s)
             }

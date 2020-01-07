@@ -1,11 +1,11 @@
 use crate::chess::board::Board;
+use crate::eval::ConciseEval;
 use bytesize::ByteSize;
 use std::collections::HashMap;
 
-struct Evaluation;
-
+#[derive(Clone)]
 pub struct Cache {
-    hashmap: HashMap<Board, Evaluation>,
+    hashmap: HashMap<Board, ConciseEval>,
 }
 
 impl Cache {

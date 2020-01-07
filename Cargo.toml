@@ -7,16 +7,20 @@ readme = "README.md"
 edition = "2018"
 publish = false
 
+[features]
+default = []
+protection = []
+
 [dependencies]
 array-init = "0.1.1"
 bitintr = "0.3"
 bytesize = "1"
+crossbeam-channel = "0.4"
 enum-map = "0.6"
 enum-map-derive = "0.4"
 rand = "0.7"
 strum = "0.15.0"
 strum_macros = "0.15.0"
-shakmaty = "0.15.0"
 webbrowser = "0.5.2"
 
 [dev-dependencies]
@@ -27,3 +31,10 @@ chrono = "0.4.7"
 
 [profile.test]
 opt-level = 2
+
+[profile.release]
+panic = "abort"
+lto = true
+codegen-units = 1
+incremental = false
+opt-level = 3
