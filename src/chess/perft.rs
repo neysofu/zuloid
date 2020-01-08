@@ -1,56 +1,113 @@
 use super::*;
+use crate::chess::Board;
+use array_init::array_init;
 use std::fmt;
 use std::time::{Duration, Instant};
+use std::vec;
 
-pub fn bare_perft(board: &mut Board, mut depth: usize) -> usize {
+pub fn perft_with_generator(
+    board: &mut Board,
+    generator: Move,
+    depth: usize,
+) -> usize {
     if depth == 0 {
-        return 1;
-    }
-    //depth -= 1;
-    let mut nodes_count = 0;
-    let mut buffer = AvailableMoves::default();
-    board.list_legals(&mut buffer);
-    let mut stack = vec![(buffer.into_iter(), Move::ID, None)];
-    while !stack.is_empty() {
-        if let Some(mv) = stack.last_mut().unwrap().0.next() {
-            let mv_capture = board.do_move(mv);
-            let mut buffer = AvailableMoves::default();
-            board.list_legals(&mut buffer);
-            if stack.len() == depth {
-                nodes_count += buffer.into_iter().count();
-                board.undo_move(mv, mv_capture);
+        1
+    } else {
+        let mut stack = Stack::new(board.clone(), generator);
+        let mut total = 0;
+        while stack.depth > 0 {
+            if let Some(mv) = stack.top_mut().unwrap().children.next() {
+                debug_assert!(stack.depth <= depth);
+                if stack.depth == depth {
+                    total += stack.pop();
+                } else {
+                    stack.push(mv);
+                }
             } else {
-                stack.push((buffer.into_iter(), mv, mv_capture));
+                stack.pop();
             }
-        } else if stack.len() == 1 {
-            break;
-        } else {
-            let last = stack.last_mut().unwrap();
-            board.undo_move(last.1, last.2);
-            stack.pop().unwrap();
         }
+        total
     }
-    nodes_count
 }
 
 pub fn perft(board: &mut Board, depth: usize) -> Report {
-    let mut report = Report::new(depth);
     let start = Instant::now();
+    let mut report = Report::new(depth);
     if depth == 0 {
         report.nodes_count = 1;
     } else {
         let mut legal_moves = AvailableMoves::default();
         board.list_legals(&mut legal_moves);
         for m in legal_moves.into_iter() {
-            let capture = board.do_move(m);
-            let result = bare_perft(board, depth - 1);
+            let result = perft_with_generator(board, m, depth - 1);
             report.overview.push((m, result));
             report.nodes_count += result;
-            board.undo_move(m, capture);
         }
     }
     report.duration += start.elapsed();
     report
+}
+
+struct Stack {
+    board: Board,
+    levels: [Level; 20],
+    depth: usize,
+}
+
+struct Level {
+    generator: Move,
+    capture: Option<Piece>,
+    children: vec::IntoIter<Move>,
+}
+
+impl Stack {
+    fn new(mut board: Board, generator: Move) -> Self {
+        let capture = board.do_move(generator);
+        let levels = array_init(|_| {
+            let mut children = AvailableMoves::default();
+            board.list_legals(&mut children);
+            Level {
+                generator,
+                capture,
+                children: children.into_iter(),
+            }
+        });
+        Stack {
+            board,
+            levels,
+            depth: 1,
+        }
+    }
+
+    fn push(&mut self, mv: Move) {
+        let capture = self.board.do_move(mv);
+        let mut children = AvailableMoves::default();
+        self.board.list_legals(&mut children);
+        self.levels[self.depth] = Level {
+            generator: mv,
+            capture,
+            children: children.into_iter(),
+        };
+        self.depth += 1;
+    }
+
+    fn pop(&mut self) -> usize {
+        self.depth -= 1;
+        self.board.undo_move(
+            self.levels[self.depth].generator,
+            self.levels[self.depth].capture,
+        );
+        self.levels[self.depth].children.clone().count()
+    }
+
+    fn top_mut(&mut self) -> Option<&mut Level> {
+        if self.depth == 0 {
+            None
+        } else {
+            Some(&mut self.levels[self.depth - 1])
+        }
+    }
 }
 
 #[derive(Clone)]
