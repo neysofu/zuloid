@@ -1,5 +1,6 @@
 use super::{Coordinate, Role, Square};
 use crate::err::Error;
+use rayon::prelude::*;
 use std::fmt;
 use std::iter::IntoIterator;
 use std::str::FromStr;
@@ -84,6 +85,15 @@ impl IntoIterator for AvailableMoves {
 
     fn into_iter(self) -> Self::IntoIter {
         self.buf.into_iter()
+    }
+}
+
+impl IntoParallelIterator for AvailableMoves {
+    type Item = Move;
+    type Iter = rayon::vec::IntoIter<Move>;
+
+    fn into_par_iter(self) -> Self::Iter {
+        self.buf.into_par_iter()
     }
 }
 

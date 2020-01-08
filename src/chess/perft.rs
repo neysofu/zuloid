@@ -1,53 +1,13 @@
 use super::*;
 use crate::chess::Board;
 use array_init::array_init;
+use rayon::iter::IntoParallelIterator;
+use rayon::iter::ParallelIterator;
 use std::fmt;
+use std::mem;
+use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use std::vec;
-
-pub fn perft_with_generator(
-    board: &mut Board,
-    generator: Move,
-    depth: usize,
-) -> usize {
-    if depth == 0 {
-        1
-    } else {
-        let mut stack = Stack::new(board.clone(), generator);
-        let mut total = 0;
-        while stack.depth > 0 {
-            if let Some(mv) = stack.top_mut().unwrap().children.next() {
-                debug_assert!(stack.depth <= depth);
-                if stack.depth == depth {
-                    total += stack.pop();
-                } else {
-                    stack.push(mv);
-                }
-            } else {
-                stack.pop();
-            }
-        }
-        total
-    }
-}
-
-pub fn perft(board: &mut Board, depth: usize) -> Report {
-    let start = Instant::now();
-    let mut report = Report::new(depth);
-    if depth == 0 {
-        report.nodes_count = 1;
-    } else {
-        let mut legal_moves = AvailableMoves::default();
-        board.list_legals(&mut legal_moves);
-        for m in legal_moves.into_iter() {
-            let result = perft_with_generator(board, m, depth - 1);
-            report.overview.push((m, result));
-            report.nodes_count += result;
-        }
-    }
-    report.duration += start.elapsed();
-    report
-}
 
 struct Stack {
     board: Board,
@@ -80,7 +40,7 @@ impl Stack {
         }
     }
 
-    fn push(&mut self, mv: Move) {
+    unsafe fn push(&mut self, mv: Move) {
         let capture = self.board.do_move(mv);
         let mut children = AvailableMoves::default();
         self.board.list_legals(&mut children);
@@ -92,21 +52,26 @@ impl Stack {
         self.depth += 1;
     }
 
-    fn pop(&mut self) -> usize {
+    unsafe fn pop(&mut self) -> usize {
         self.depth -= 1;
         self.board.undo_move(
-            self.levels[self.depth].generator,
-            self.levels[self.depth].capture,
+            self.levels.get_unchecked(self.depth).generator,
+            self.levels.get_unchecked(self.depth).capture,
         );
-        self.levels[self.depth].children.clone().count()
+        mem::replace(
+            self.levels.get_unchecked_mut(self.depth),
+            Level {
+                generator: Move::ID,
+                capture: None,
+                children: AvailableMoves::default().into_iter(),
+            },
+        )
+        .children
+        .count()
     }
 
-    fn top_mut(&mut self) -> Option<&mut Level> {
-        if self.depth == 0 {
-            None
-        } else {
-            Some(&mut self.levels[self.depth - 1])
-        }
+    unsafe fn top_mut(&mut self) -> &mut Level {
+        self.levels.get_unchecked_mut(self.depth - 1)
     }
 }
 
@@ -146,6 +111,54 @@ impl fmt::Display for Report {
         writeln!(w, "Nodes/second    : {}", self.nodes_per_second())?;
         Ok(())
     }
+}
+
+pub fn perft_with_generator(
+    board: &mut Board,
+    generator: Move,
+    depth: usize,
+) -> usize {
+    if depth == 0 {
+        1
+    } else {
+        let mut stack = Stack::new(board.clone(), generator);
+        let mut total = 0;
+        while stack.depth != 0 {
+            unsafe {
+                if let Some(mv) = stack.top_mut().children.next() {
+                    if stack.depth == depth {
+                        total += stack.pop() + 1;
+                    } else {
+                        stack.push(mv);
+                    }
+                } else {
+                    stack.pop();
+                }
+            }
+        }
+        total
+    }
+}
+
+pub fn perft(board: &mut Board, depth: usize) -> Report {
+    let start = Instant::now();
+    let report = Mutex::new(Report::new(depth));
+    if depth == 0 {
+        report.lock().unwrap().nodes_count = 1;
+    } else {
+        let mut legal_moves = AvailableMoves::default();
+        board.list_legals(&mut legal_moves);
+        legal_moves.into_par_iter().for_each(|m| {
+            let result =
+                perft_with_generator(&mut board.clone(), m, depth - 1);
+            let mut locked = report.lock().unwrap();
+            locked.overview.push((m, result));
+            locked.nodes_count += result;
+        });
+    }
+    let mut locked = report.lock().unwrap();
+    locked.duration += start.elapsed();
+    locked.clone()
 }
 
 #[cfg(test)]
