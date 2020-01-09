@@ -13,46 +13,75 @@ use crate::chess::*;
 use crate::core::*;
 use crate::eval::count_materials;
 use crate::eval::Eval;
-use crossbeam_channel::unbounded;
 use std::vec;
 
 struct Stack {
-    zorro: Zorro,
-    best_move: Move,
-    buffer: Vec<StackItem>,
+    board: Board,
+    levels: Vec<Level>,
 }
 
-type StackItem = (vec::IntoIter<Move>, Move, Option<Piece>);
+struct Level {
+    generator: Move,
+    capture: Option<Piece>,
+    children: vec::IntoIter<Move>,
+    best_move: Move,
+    best_score: i32,
+}
 
 impl Stack {
     fn new(zorro: &Zorro) -> Self {
-        let mut root = AvailableMoves::default();
-        zorro.board.clone().list_legals(&mut root);
-        Stack {
-            zorro: (*zorro).clone(),
+        let mut board = zorro.board.clone();
+        let levels = vec![{
+            let mut children = AvailableMoves::default();
+            board.list_legals(&mut children);
+            Level {
+                generator: Move::ID,
+                capture: None,
+                children: children.into_iter(),
+                best_move: Move::ID,
+                best_score: std::i32::MIN,
+            }
+        }];
+        Stack { board, levels }
+    }
+
+    fn push(&mut self, mv: Move) {
+        let capture = self.board.do_move(mv);
+        let mut children = AvailableMoves::default();
+        self.board.list_legals(&mut children);
+        self.levels.push(Level {
+            generator: mv,
+            capture,
+            children: children.into_iter(),
             best_move: Move::ID,
-            buffer: vec![(root.into_iter(), Move::ID, None)],
-        }
-    }
-
-    fn depth(&self) -> usize {
-        self.buffer.len()
-    }
-
-    fn push(&mut self, mv: Move, legals: AvailableMoves) {
-        self.buffer.push((legals.into_iter(), mv, None));
+            best_score: std::i32::MIN,
+        });
     }
 
     fn pop(&mut self) {
-        self.buffer.pop();
+        let last_level = self.levels.pop().unwrap();
+        self.board
+            .undo_move(last_level.generator, last_level.capture);
     }
 
-    fn top_mut(&mut self) -> Option<&mut StackItem> {
-        self.buffer.last_mut()
+    fn top_mut(&mut self) -> &mut Level {
+        self.levels.last_mut().unwrap()
     }
 
-    fn line(&self) -> impl Iterator<Item = Move> {
-        self.buffer.clone().into_iter().map(|x| x.1)
+    fn depth(&self) -> usize {
+        self.levels.len()
+    }
+
+    fn candidate_move(&mut self, mv: Move, score: i32) {
+        let top = self.top_mut();
+        if top.best_score < score {
+            top.best_move = mv;
+            top.best_score = score;
+        }
+    }
+
+    fn winner_move(&mut self) -> Move {
+        unimplemented!()
     }
 }
 
@@ -63,35 +92,25 @@ fn minimax_sign(color: Color) -> i32 {
     }
 }
 
+/// See:
+///   - https://en.wikipedia.org/wiki/Minimax#Pseudocode
 pub fn iter_search(zorro: &mut Zorro) -> Eval {
     let mut eval = Eval::new(&zorro.board);
-    let mut line_best: Vec<Move> = vec![];
-    let mut line_best_value = std::i32::MIN;
     let mut stack = Stack::new(&zorro);
-    while let Some(last) = stack.top_mut() {
-        if let Some(mv) = last.0.next() {
-            let mut buffer = AvailableMoves::default();
-            let mv_capture = zorro.board.do_move(mv);
-            let score = Eval::new(&zorro.board).score
-                * minimax_sign(zorro.board.color_to_move);
-            zorro.board.list_legals(&mut buffer);
-            if stack.depth() < 2 {
-                stack.push(mv, buffer);
+    while stack.depth() != 0 {
+        if let Some(mv) = stack.top_mut().children.next() {
+            let score = 0;
+            stack.candidate_move(mv, score);
+            // TODO: reduce horizon effect.
+            if stack.depth() == 4 {
+                stack.pop();
             } else {
-                if score > line_best_value {
-                    line_best = vec![];
-                    line_best_value = score;
-                    for mv in stack.line() {
-                        line_best.push(mv);
-                    }
-                }
-                zorro.board.undo_move(mv, mv_capture);
+                stack.push(mv);
             }
         } else {
-            zorro.board.undo_move(last.1, last.2);
             stack.pop();
         }
     }
-    eval.best_move = line_best[1];
+    eval.best_move = stack.winner_move();
     eval
 }
