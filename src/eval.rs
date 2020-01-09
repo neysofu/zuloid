@@ -1,5 +1,6 @@
 use crate::chess::*;
 use bitintr::Popcnt;
+use std::fmt;
 
 // EXTERNAL INTERFACE
 // ------------------
@@ -9,6 +10,10 @@ pub struct Eval {
     pub sharpness: i32,
     pub best_move: Move,
     pub mate_in: Option<u32>,
+}
+
+pub struct Detailed {
+    pub eval: Eval,
 }
 
 impl Eval {
@@ -75,5 +80,11 @@ impl Default for Eval {
             best_move: Move::ID,
             mate_in: None,
         }
+    }
+}
+
+impl fmt::Display for Eval {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        unimplemented!()
     }
 }

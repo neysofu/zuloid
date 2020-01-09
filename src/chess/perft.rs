@@ -9,6 +9,44 @@ use std::sync::Mutex;
 use std::time::{Duration, Instant};
 use std::vec;
 
+#[derive(Clone)]
+pub struct Report {
+    depth: usize,
+    nodes_count: usize,
+    overview: Vec<(Move, usize)>,
+    duration: Duration,
+}
+
+impl Report {
+    fn new(depth: usize) -> Self {
+        Report {
+            depth,
+            nodes_count: 0,
+            overview: vec![],
+            duration: Duration::from_millis(1),
+        }
+    }
+
+    fn nodes_per_second(&self) -> usize {
+        let duration_as_secs = self.duration.as_secs_f64();
+        (self.nodes_count as f64 / duration_as_secs).round() as usize
+    }
+}
+
+impl fmt::Display for Report {
+    fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
+        writeln!(w, "\nPosition: 1/1")?;
+        for m in self.overview.iter() {
+            writeln!(w, "{}: {}", m.0, m.1)?;
+        }
+        writeln!(w, "\n===========================")?;
+        writeln!(w, "Total time (ms) : {}", self.duration.as_millis())?;
+        writeln!(w, "Nodes searched  : {}", self.nodes_count)?;
+        writeln!(w, "Nodes/second    : {}", self.nodes_per_second())?;
+        Ok(())
+    }
+}
+
 struct Stack {
     board: Board,
     levels: [Level; 20],
@@ -72,44 +110,6 @@ impl Stack {
 
     unsafe fn top_mut(&mut self) -> &mut Level {
         self.levels.get_unchecked_mut(self.depth - 1)
-    }
-}
-
-#[derive(Clone)]
-pub struct Report {
-    depth: usize,
-    nodes_count: usize,
-    overview: Vec<(Move, usize)>,
-    duration: Duration,
-}
-
-impl Report {
-    fn new(depth: usize) -> Self {
-        Report {
-            depth,
-            nodes_count: 0,
-            overview: vec![],
-            duration: Duration::from_millis(1),
-        }
-    }
-
-    fn nodes_per_second(&self) -> usize {
-        let duration_as_secs = self.duration.as_secs_f64();
-        (self.nodes_count as f64 / duration_as_secs).round() as usize
-    }
-}
-
-impl fmt::Display for Report {
-    fn fmt(&self, w: &mut fmt::Formatter) -> fmt::Result {
-        writeln!(w, "\nPosition: 1/1")?;
-        for m in self.overview.iter() {
-            writeln!(w, "{}: {}", m.0, m.1)?;
-        }
-        writeln!(w, "\n===========================")?;
-        writeln!(w, "Total time (ms) : {}", self.duration.as_millis())?;
-        writeln!(w, "Nodes searched  : {}", self.nodes_count)?;
-        writeln!(w, "Nodes/second    : {}", self.nodes_per_second())?;
-        Ok(())
     }
 }
 

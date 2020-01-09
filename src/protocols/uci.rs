@@ -30,6 +30,7 @@ pub fn uci(
 ) -> io::Result<()> {
     // Greet the user with some information about the engine.
     writeln!(output, "# Zorro {}", VERSION)?;
+    writeln!(output, "# Copyright (c) 2019, Filippo Costa")?;
     writeln!(output, "# Process ID: {}", std::process::id())?;
     for line in input.lines() {
         match handle_line(zorro, line?, &mut output) {
@@ -62,6 +63,7 @@ pub fn handle_line(
         // Non-standard but useful nonetheless.
         Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
         Some("d") => cmd::d(&zorro.board, tokens, output)?,
+        Some("eval") => cmd::eval(&zorro.board, output)?,
         Some("gentables") => cmd::gen_tables(output)?,
         Some("listmagics") => cmd::list_magics(output)?,
         Some("magic") => cmd::magic(tokens, output)?,
@@ -129,6 +131,17 @@ mod cmd {
             }
             _ => return Err(Error::Syntax),
         }
+        Ok(())
+    }
+
+    pub fn eval(board: &Board, mut output: impl io::Write) -> Result<()> {
+        let eval = 1.00;
+        writeln!(
+            output,
+            "Total evaluation: {:.2} ({} side)",
+            eval,
+            if eval >= 0.0 { "white" } else { "black" }
+        )?;
         Ok(())
     }
 
