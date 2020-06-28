@@ -11,7 +11,6 @@
 
 use crate::chess::*;
 use crate::core::*;
-use crate::eval::count_materials;
 use crate::eval::Eval;
 use std::vec;
 
@@ -35,10 +34,10 @@ impl Stack {
             let mut children = AvailableMoves::default();
             board.list_legals(&mut children);
             Level {
-                generator: Move::ID,
+                generator: Move::IDENTITY,
                 capture: None,
                 children: children.into_iter(),
-                best_move: Move::ID,
+                best_move: Move::IDENTITY,
                 best_score: std::i32::MIN,
             }
         }];
@@ -53,7 +52,7 @@ impl Stack {
             generator: mv,
             capture,
             children: children.into_iter(),
-            best_move: Move::ID,
+            best_move: Move::IDENTITY,
             best_score: std::i32::MIN,
         });
     }
@@ -81,7 +80,7 @@ impl Stack {
     }
 
     fn winner_move(&mut self) -> Move {
-        unimplemented!()
+        self.top_mut().best_move
     }
 }
 
@@ -97,7 +96,7 @@ fn minimax_sign(color: Color) -> i32 {
 pub fn iter_search(zorro: &mut Zorro) -> Eval {
     let mut eval = Eval::new(&zorro.board);
     let mut stack = Stack::new(&zorro);
-    while stack.depth() != 0 {
+    loop {
         if let Some(mv) = stack.top_mut().children.next() {
             let score = 0;
             stack.candidate_move(mv, score);
@@ -107,10 +106,12 @@ pub fn iter_search(zorro: &mut Zorro) -> Eval {
             } else {
                 stack.push(mv);
             }
+        } else if stack.levels.len() == 1 {
+            eval.best_move = stack.levels[0].best_move;
+            break;
         } else {
             stack.pop();
         }
     }
-    eval.best_move = stack.winner_move();
     eval
 }

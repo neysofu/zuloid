@@ -99,7 +99,7 @@ impl Stack {
         mem::replace(
             self.levels.get_unchecked_mut(self.depth),
             Level {
-                generator: Move::ID,
+                generator: Move::IDENTITY,
                 capture: None,
                 children: AvailableMoves::default().into_iter(),
             },

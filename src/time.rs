@@ -84,7 +84,7 @@ pub struct Clock {
 }
 
 impl Clock {
-    /// A note about increments: technically, FIDE includes them in the ticking
+    /// A note about increments: technically, FIDENTITYE includes them in the ticking
     /// time right from the first move. This clock behavior is, however, really
     /// uncommon and unexpected - so we don't implement it.
     ///

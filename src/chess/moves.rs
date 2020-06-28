@@ -15,7 +15,7 @@ pub struct Move {
 }
 
 impl Move {
-    pub const ID: Move = Move {
+    pub const IDENTITY: Move = Move {
         from: Square::E4,
         to: Square::E4,
         promotion: None,

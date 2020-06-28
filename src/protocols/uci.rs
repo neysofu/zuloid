@@ -11,6 +11,7 @@ use crate::err::Error as ChessErr;
 use crate::search::*;
 use crate::time::TimeControl;
 use crate::version::VERSION;
+use crate::eval::Eval;
 use std::fmt;
 use std::io;
 use std::str::FromStr;
@@ -30,7 +31,7 @@ pub fn uci(
 ) -> io::Result<()> {
     // Greet the user with some information about the engine.
     writeln!(output, "# Zorro {}", VERSION)?;
-    writeln!(output, "# Copyright (c) 2019, Filippo Costa")?;
+    writeln!(output, "# Copyright (c) 2019-2020, Filippo Costa")?;
     writeln!(output, "# Process ID: {}", std::process::id())?;
     for line in input.lines() {
         match handle_line(zorro, line?, &mut output) {
@@ -40,7 +41,7 @@ pub fn uci(
             Err(err) => writeln!(output, "{}", err)?,
         }
     }
-    // Ave, Caesar, moriturus te salutat.
+    // Ave, Caesar, moriturus te salutat!
     Ok(())
 }
 
@@ -50,27 +51,24 @@ pub fn handle_line(
     mut output: impl io::Write,
 ) -> Result<State> {
     let mut tokens = line.as_ref().split_whitespace();
-    match tokens.next() {
-        // Standard UCI commands.
-        Some("debug") => cmd::debug(zorro, tokens)?,
-        Some("go") => cmd::go(zorro, tokens, output)?,
-        Some("isready") => writeln!(output, "readyok")?,
-        Some("position") => cmd::position(zorro, tokens)?,
-        Some("quit") | Some("stop") => return Ok(State::Shutdown),
-        Some("setoption") => cmd::set_option(zorro, tokens)?,
-        Some("uci") => cmd::uci(output)?,
-        Some("ucinewgame") => zorro.cache.clear(),
-        // Non-standard but useful nonetheless.
-        Some("cleart") => writeln!(output, "{}[2J", 27 as char)?,
-        Some("d") => cmd::d(&zorro.board, tokens, output)?,
-        Some("eval") => cmd::eval(&zorro.board, output)?,
-        Some("gentables") => cmd::gen_tables(output)?,
-        Some("listmagics") => cmd::list_magics(output)?,
-        Some("magic") => cmd::magic(tokens, output)?,
-        Some("perft") => cmd::perft(zorro, tokens, output)?,
-        Some(s) => return Err(Error::UnknownCommand(s.to_string())),
-        // Skip empty lines.
-        None => (),
+    match tokens.next().unwrap_or("") {
+        "" => (),
+        "cleart" => writeln!(output, "{}[2J", 27 as char)?,
+        "d" => cmd::d(&zorro.board, tokens, output)?,
+        "debug" => cmd::debug(zorro, tokens)?,
+        "eval" => cmd::eval(&zorro.board, output)?,
+        "gentables" => cmd::gen_tables(output)?,
+        "go" => cmd::go(zorro, tokens, output)?,
+        "isready" => writeln!(output, "readyok")?,
+        "listmagics" => cmd::list_magics(output)?,
+        "magic" => cmd::magic(tokens, output)?,
+        "perft" => cmd::perft(zorro, tokens, output)?,
+        "position" => cmd::position(zorro, tokens)?,
+        "quit" | "stop" => return Ok(State::Shutdown),
+        "setoption" => cmd::set_option(zorro, tokens)?,
+        "uci" => cmd::uci(output)?,
+        "ucinewgame" => zorro.cache.clear(),
+        s => return Err(Error::UnknownCommand(s.to_string())),
     }
     Ok(State::Alive)
 }
@@ -131,12 +129,12 @@ mod cmd {
     }
 
     pub fn eval(board: &Board, mut output: impl io::Write) -> Result<()> {
-        let eval = 1.00;
+        let eval = Eval::new(board);
         writeln!(
             output,
-            "Total evaluation: {:.2} ({} side)",
-            eval,
-            if eval >= 0.0 { "white" } else { "black" }
+            "Total evaluation: {} ({} side)",
+            eval.score,
+            if eval.score >= 0 { "white" } else { "black" }
         )?;
         Ok(())
     }
@@ -159,6 +157,8 @@ mod cmd {
         mut tokens: impl Iterator<Item = &'s str>,
         mut output: impl io::Write,
     ) -> Result<()> {
+        // We must preserve a freezed copy of current configuration options in
+        // case the user changes things while searching.
         let mut config = zorro.config.clone();
         while let Some(token) = tokens.next() {
             let mut next = || tokens.next().ok_or(Error::Syntax);
@@ -261,10 +261,10 @@ mod cmd {
             Some("current") => (),
             _ => return Err(Error::Syntax),
         }
-        // '.skip(1)' intuitively makes more sense, but that would happily skip
+        // `.skip(1)` intuitively makes more sense, but that would happily skip
         // a valid move in case you forget the "moves" token.
-        for s in tokens.skip_while(|s| *s == "moves") {
-            zorro.board.do_move(Move::from_str(s)?);
+        for token in tokens.skip_while(|s| *s == "moves") {
+            zorro.board.do_move(Move::from_str(token)?);
         }
         Ok(())
     }

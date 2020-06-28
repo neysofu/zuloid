@@ -77,7 +77,7 @@ impl Default for Eval {
         Eval {
             score: 0,
             sharpness: 0,
-            best_move: Move::ID,
+            best_move: Move::IDENTITY,
             mate_in: None,
         }
     }
