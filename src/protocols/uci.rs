@@ -68,10 +68,6 @@ pub fn handle_line(
         Some("listmagics") => cmd::list_magics(output)?,
         Some("magic") => cmd::magic(tokens, output)?,
         Some("perft") => cmd::perft(zorro, tokens, output)?,
-        // Easter eggs.
-        Some("detroit") => writeln!(output, "JESUS CHRIST CONNOR")?,
-        Some("kara") => writeln!(output, "I'm cold")?,
-        Some("meow") => writeln!(output, "Wowwwww, you meow like a cat! That means you are one, right? Shut the fuck up. If you really want to be put on a leash and treated like a domestic animal then that’s called a fetish, not “quirky” or “cute”. What part of you seriously thinks that any part of acting like a feline establishes a reputation of appreciation? Is it your lack of any defining aspect of personality that urges you to resort to shitty representations of cats to create an illusion of meaning in your worthless life? Wearing “cat ears” in the shape of headbands further notes the complete absence of human attribution to your false sense of personality, such as intelligence or charisma in any form or shape. Where do you think this mindset’s gonna lead you? You think you’re funny, random, quirky even? What makes you think that acting like a fucking cat will make a goddamn hyena laugh? I, personally, feel extremely sympathetic towards you as your only escape from the worthless thing you call your existence is to pretend to be an animal. But it’s not a worthy choice to assert this horrifying fact as a dominant trait, mainly because personality traits require an initial personality to lay their foundation on. You’re not worthy of anybody’s time, so go fuck off, “cat-girl”.")?,
         Some(s) => return Err(Error::UnknownCommand(s.to_string())),
         // Skip empty lines.
         None => (),
