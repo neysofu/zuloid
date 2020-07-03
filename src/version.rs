@@ -1,5 +1,7 @@
 /// A [SemVer](https://semver.org/)-compliant version string of the main executable.
-pub const VERSION: &str = concat!(
+pub const VERSION: &str = env!("CARGO_PKG_VERSION");
+
+pub const VERSION_WITH_BUILD_INFO: &str = concat!(
     env!("CARGO_PKG_VERSION"),
     "+",
     env!("CARGO_PKG_COMMIT_HASH"),
@@ -15,5 +17,10 @@ mod test {
     #[test]
     fn version_is_semver() {
         assert!(Version::parse(VERSION).is_ok());
+    }
+
+    #[test]
+    fn version_with_build_info_is_semver() {
+        assert!(Version::parse(VERSION_WITH_BUILD_INFO).is_ok());
     }
 }

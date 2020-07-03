@@ -2,11 +2,11 @@ use chrono::Utc;
 use std::process::Command;
 
 fn main() {
-    set_rustc_var("CARGO_PKG_COMMIT_HASH", git_commit_hash());
-    set_rustc_var("CARGO_PKG_BUILD_TIMESTAMP", timestamp());
+    set_rustc_var("CARGO_PKG_COMMIT_HASH", git_commit_hash().as_str());
+    set_rustc_var("CARGO_PKG_BUILD_TIMESTAMP", timestamp().as_str());
 }
 
-fn set_rustc_var(key: &str, value: String) {
+fn set_rustc_var(key: &str, value: &str) {
     println!("cargo:rustc-env={}={}", key, value);
 }
 

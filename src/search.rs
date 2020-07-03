@@ -1,13 +1,9 @@
-//! Iterative deepening depth-first search. It implements a flexible search
-//! algorithm.
-//!
-//! This is arguably the most important code in Zorro, ELO-wise.
-//!
-//! Resources:
-//!   - https://en.wikipedia.org/wiki/Iterative_deepening_depth-first_search
-//!   - https://www.chessprogramming.org/Iterative_Deepening
-//!   - https://www.chessprogramming.org/Depth-First
-//!   - https://stackoverflow.com/a/5278751/5148606
+//! Heuristic-driven depth-first search (HDDFS) is a novel search strategy
+//! that was developed specifically for Zorro. HDDFS does not fight the horizon
+//! effect by itself; instead, it employs a heuristic provided by the
+//! evaluation function and time management system. Thus the game tree is only
+//! searched up to a point where branchs are deemed interesting by the
+//! evaluation function.
 
 use crate::chess::*;
 use crate::core::*;
@@ -24,10 +20,15 @@ struct Level {
     capture: Option<Piece>,
     children: vec::IntoIter<Move>,
     best_move: Move,
-    best_score: i32,
+    score: i32,
+}
+
+fn default_score(color: Color) -> i32 {
+    (std::i32::MIN + 1) * minimax_sign(color)
 }
 
 impl Stack {
+    /// Creates a new empty stack for the given board configuration.
     fn new(zorro: &Zorro) -> Self {
         let mut board = zorro.board.clone();
         let levels = vec![{
@@ -38,7 +39,7 @@ impl Stack {
                 capture: None,
                 children: children.into_iter(),
                 best_move: Move::IDENTITY,
-                best_score: std::i32::MIN,
+                score: default_score(board.color_to_move),
             }
         }];
         Stack { board, levels }
@@ -53,7 +54,7 @@ impl Stack {
             capture,
             children: children.into_iter(),
             best_move: Move::IDENTITY,
-            best_score: std::i32::MIN,
+            score: default_score(self.board.color_to_move),
         });
     }
 
@@ -61,6 +62,16 @@ impl Stack {
         let last_level = self.levels.pop().unwrap();
         self.board
             .undo_move(last_level.generator, last_level.capture);
+        let parent_level = self.levels.last_mut().unwrap();
+        if (self.board.color_to_move == Color::B) ^ (last_level.score > parent_level.score) {
+            parent_level.score = last_level.score;
+            parent_level.best_move = last_level.generator;
+        }
+        println!("{}", Move::to_string(&last_level.generator));
+    }
+
+    fn visit_next(&mut self) -> Option<Move> {
+        self.top_mut().children.next()
     }
 
     fn top_mut(&mut self) -> &mut Level {
@@ -71,16 +82,8 @@ impl Stack {
         self.levels.len()
     }
 
-    fn candidate_move(&mut self, mv: Move, score: i32) {
-        let top = self.top_mut();
-        if top.best_score < score {
-            top.best_move = mv;
-            top.best_score = score;
-        }
-    }
-
-    fn winner_move(&mut self) -> Move {
-        self.top_mut().best_move
+    fn heuristic(&self) -> i32 {
+        Eval::new(&self.board).score
     }
 }
 
@@ -91,22 +94,17 @@ fn minimax_sign(color: Color) -> i32 {
     }
 }
 
-/// See:
-///   - https://en.wikipedia.org/wiki/Minimax#Pseudocode
 pub fn iter_search(zorro: &mut Zorro) -> Eval {
     let mut eval = Eval::new(&zorro.board);
     let mut stack = Stack::new(&zorro);
     loop {
-        if let Some(mv) = stack.top_mut().children.next() {
-            let score = 0;
-            stack.candidate_move(mv, score);
-            // TODO: reduce horizon effect.
-            if stack.depth() == 4 {
-                stack.pop();
-            } else {
-                stack.push(mv);
-            }
-        } else if stack.levels.len() == 1 {
+        if stack.depth() == 5 {
+            // Terminal nodes have heuristic score assigned to them.
+            stack.top_mut().score = stack.heuristic();
+            stack.pop();
+        } else if let Some(mv) = stack.visit_next() {
+            stack.push(mv);
+        } else if stack.depth() == 1 {
             eval.best_move = stack.levels[0].best_move;
             break;
         } else {

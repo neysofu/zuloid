@@ -1,24 +1,25 @@
 /// Chess clock abstractions.
 ///
-/// Note, this is NOT time management. The following code simply provides the
-/// abstractions needed to reason about time during a chess game.
+/// Note, this is NOT time management. The following code simply provides
+/// the abstractions needed to reason about time during a chess game.
 ///
 /// Resources:
 ///   - https://en.wikipedia.org/wiki/Chess_clock
 use std::rc::Rc;
 use std::time::{Duration, Instant};
 
-/// An enforceable limit to thinking time. It supports several advanced features,
-/// like:
+/// An enforceable limit to thinking time. It supports several advanced
+/// features, like:
 ///   - Fischer increments;
 ///   - Bronstein delays;
 ///   - overtime;
 ///   - sudden death.
 ///
-/// You can model a wide range of real-life time controls using this abstraction,
-/// including many unorthodox ones, such as byo-yomi and Canadian overtime. Under
-/// the hood, time controls are modelled by breaking them into multiple
-/// "periods". After time depletion of each period, two things can happen:
+/// You can model a wide range of real-life time controls using this
+/// abstraction, including many unorthodox ones, such as byo-yomi and Canadian
+/// overtime. Under the hood, time controls are modelled by breaking them into
+/// multiple "periods". After time depletion of each period, two things can
+/// happen:
 ///   - Sudden death.
 ///   - Switch to a custom "overtime" period.
 ///
@@ -44,7 +45,8 @@ pub struct TimeControl {
     /// Delay after which the clock starts ticking at the beginning of every
     /// turn. It can be negative to model network latency.
     pub delay: Duration,
-    // Upper limit on the number of moves that can be played inside this period.
+    // Upper limit on the number of moves that can be played inside this
+    // period.
     pub length: Option<usize>,
     pub next: Option<Rc<TimeControl>>,
     /// If absent, will result in sudden death.
@@ -84,9 +86,9 @@ pub struct Clock {
 }
 
 impl Clock {
-    /// A note about increments: technically, FIDENTITYE includes them in the ticking
-    /// time right from the first move. This clock behavior is, however, really
-    /// uncommon and unexpected - so we don't implement it.
+    /// A note about increments: technically, FIDENTITYE includes them in the
+    /// ticking time right from the first move. This clock behavior is,
+    /// however, really uncommon and unexpected - so we don't implement it.
     ///
     /// How much time does the current player have to play a move?
     fn cumulative_time_limit(&self) -> Duration {

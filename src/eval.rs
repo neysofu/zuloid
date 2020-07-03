@@ -2,9 +2,6 @@ use crate::chess::*;
 use bitintr::Popcnt;
 use std::fmt;
 
-// EXTERNAL INTERFACE
-// ------------------
-
 pub struct Eval {
     pub score: i32,
     pub sharpness: i32,
@@ -23,8 +20,8 @@ impl Eval {
         let pawns_count = board.bb_roles[Role::Pawn].popcnt() as usize;
         let knights_count = board.bb_roles[Role::Knight].popcnt() as usize;
         let rooks_count = board.bb_roles[Role::Rook].popcnt() as usize;
-        eval.score += KNIGHT_ADJ[knights_count];
-        eval.score += ROOK_ADJ[rooks_count];
+        //eval.score += KNIGHT_ADJ[knights_count];
+        //eval.score += ROOK_ADJ[rooks_count];
         eval
     }
 }
@@ -55,7 +52,7 @@ fn piece_value(role: Role) -> i32 {
         Role::Bishop => 3200,
         Role::Rook => 4790,
         Role::Queen => 9290,
-        Role::King => 613370,
+        Role::King => 613_370,
     }
 }
 

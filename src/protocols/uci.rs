@@ -8,10 +8,10 @@
 use crate::chess::{Board, Color, Coordinate, Move, Square};
 use crate::core::Zorro;
 use crate::err::Error as ChessErr;
+use crate::eval::Eval;
 use crate::search::*;
 use crate::time::TimeControl;
-use crate::version::VERSION;
-use crate::eval::Eval;
+use crate::version::{VERSION, VERSION_WITH_BUILD_INFO};
 use std::fmt;
 use std::io;
 use std::str::FromStr;
@@ -30,7 +30,7 @@ pub fn uci(
     mut output: impl io::Write,
 ) -> io::Result<()> {
     // Greet the user with some information about the engine.
-    writeln!(output, "# Zorro {}", VERSION)?;
+    writeln!(output, "# Zorro {}", VERSION_WITH_BUILD_INFO)?;
     writeln!(output, "# Copyright (c) 2019-2020, Filippo Costa")?;
     writeln!(output, "# Process ID: {}", std::process::id())?;
     for line in input.lines() {
