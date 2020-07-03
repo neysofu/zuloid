@@ -4,7 +4,7 @@ use crate::time::TimeControl;
 use bytesize::ByteSize;
 use enum_map::EnumMap;
 
-#[derive(Clone, Default)]
+#[derive(Default)]
 pub struct Zorro {
     pub config: Config,
     pub cache: Cache,

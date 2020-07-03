@@ -98,7 +98,7 @@ pub fn iter_search(zorro: &mut Zorro) -> Eval {
     let mut eval = Eval::new(&zorro.board);
     let mut stack = Stack::new(&zorro);
     loop {
-        if stack.depth() == 5 {
+        if stack.depth() == 4 {
             // Terminal nodes have heuristic score assigned to them.
             stack.top_mut().score = stack.heuristic();
             stack.pop();
