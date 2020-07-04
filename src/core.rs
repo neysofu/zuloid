@@ -24,6 +24,7 @@ pub struct Config {
     pub moves_to_go: Option<usize>,
     pub ponder: bool,
     pub selectivity: f32,
+    pub show_n_best: i32,
 }
 
 impl Default for Config {
@@ -38,6 +39,7 @@ impl Default for Config {
             max_nodes: None,
             ponder: false,
             selectivity: 0.5,
+            show_n_best: 1,
         }
     }
 }

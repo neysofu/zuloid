@@ -1,33 +1,38 @@
 use crate::chess::board::Board;
 use crate::eval::Eval;
-use lru::LruCache;
 use bytesize::ByteSize;
-use std::collections::HashMap;
+use lru::LruCache;
+
+struct Node {
+    score: i32,
+    quiescence: u8,
+}
 
 pub struct Cache {
-    hashmap: HashMap<Board, i32>,
-    lru: LruCache<Board, i32>,
+    lru: LruCache<Board, Node>,
 }
 
 impl Cache {
     pub fn new_with_capacity(size: ByteSize) -> Self {
         Cache {
-            hashmap: HashMap::with_capacity(size.as_u64() as usize),
             lru: LruCache::new(8192),
         }
     }
 
     pub fn clear(&mut self) {
-        self.hashmap.clear();
         self.lru.clear();
     }
 
     pub fn hit(&mut self, board: &Board) -> Option<i32> {
         let opt_result = self.lru.get(board);
         match opt_result {
-            Some(r) => Some(*r),
+            Some(r) => Some((*r).score),
             None => {
-                self.lru.put(board.clone(), Eval::new(board).score);
+                let node = Node {
+                    score: Eval::new(board).score,
+                    quiescence: 2,
+                };
+                self.lru.put(board.clone(), node);
                 None
             }
         }

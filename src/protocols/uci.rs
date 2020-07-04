@@ -1,6 +1,4 @@
 //! Universal Chess Interface implementation for Zorro.
-//! Documentation is available at
-//! <https://wbec-ridderkerk.nl/html/UCIProtocol.html>.
 //!
 //! We aim for full compliance. Stockfish-like debugging features are also
 //! present.
@@ -41,7 +39,6 @@ pub fn uci(
             Err(err) => writeln!(output, "{}", err)?,
         }
     }
-    // Ave, Caesar, moriturus te salutat!
     Ok(())
 }
 
@@ -53,9 +50,9 @@ pub fn handle_line(
     let mut tokens = line.as_ref().split_whitespace();
     match tokens.next().unwrap_or("") {
         "" => (),
-        "cleart" => writeln!(output, "{}[2J", 27 as char)?,
-        "d" => cmd::d(&zorro.board, tokens, output)?,
-        "debug" => cmd::debug(zorro, tokens)?,
+        "cleart" => clean_terminal_screen(output)?,
+        "d" => cmd::debug_engine_state(&zorro, tokens, output)?,
+        "debug" => cmd::set_debug_mode(zorro, tokens)?,
         "eval" => cmd::eval(&zorro.board, output)?,
         "gentables" => cmd::gen_tables(output)?,
         "go" => cmd::go(zorro, tokens, output)?,
@@ -67,25 +64,69 @@ pub fn handle_line(
         "quit" | "stop" => return Ok(State::Shutdown),
         "setoption" => cmd::set_option(zorro, tokens)?,
         "uci" => cmd::uci(output)?,
+        "ucispec" => cmd::open_uci_docs(output)?,
         "ucinewgame" => zorro.cache.clear(),
         s => return Err(Error::UnknownCommand(s.to_string())),
     }
     Ok(State::Alive)
 }
 
+fn clean_terminal_screen(mut output: impl io::Write) -> io::Result<()> {
+    writeln!(output, "{}[2J", 27 as char)
+}
+
 /// UCI commands handlers.
 mod cmd {
     use super::*;
 
-    pub fn debug<'a>(
-        zorro: &mut Zorro,
-        mut tokens: impl Iterator<Item = &'a str>,
+    pub fn debug_engine_state<'s>(
+        zorro: &Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
+        mut output: impl io::Write,
     ) -> Result<()> {
-        zorro.config.debug = match tokens.next() {
-            Some("on") => true,
-            Some("off") => false,
+        match tokens.next() {
+            None => write!(output, "{}", zorro.board)?,
+            Some("fen") => writeln!(output, "{}", zorro.board.fmt_fen(' '))?,
+            Some("time") => {
+                for color in Color::iter() {
+                    writeln!(output)?;
+                    writeln!(
+                        output,
+                        "{}",
+                        match color {
+                            Color::W => "White:",
+                            Color::B => "Black:",
+                        }
+                    )?;
+                    writeln!(
+                        output,
+                        "Initial:   {}s",
+                        zorro.time_controls[color].time_limit.as_secs()
+                    )?;
+                    writeln!(
+                        output,
+                        "Remaining: {}s",
+                        zorro.time_controls[color].time_limit.as_secs()
+                    )?;
+                    writeln!(
+                        output,
+                        "Increment: {}s",
+                        zorro.time_controls[color].time_limit.as_secs()
+                    )?;
+                    writeln!(
+                        output,
+                        "Delay:     {}s",
+                        zorro.time_controls[color].time_limit.as_secs()
+                    )?;
+                }
+            }
+            Some("lichess") => {
+                let url = zorro.board.lichess_url();
+                writeln!(output, "{}", url)?;
+                webbrowser::open(url.as_str()).map_err(|_| Error::Other)?;
+            }
             _ => return Err(Error::Syntax),
-        };
+        }
         Ok(())
     }
 
@@ -107,24 +148,6 @@ mod cmd {
              uciok",
             VERSION,
         )?;
-        Ok(())
-    }
-
-    pub fn d<'s>(
-        board: &Board,
-        mut tokens: impl Iterator<Item = &'s str>,
-        mut output: impl io::Write,
-    ) -> Result<()> {
-        match tokens.next() {
-            None => write!(output, "{}", board)?,
-            Some("fen") => writeln!(output, "{}", board.fmt_fen(' '))?,
-            Some("lichess") => {
-                let url = board.lichess_url();
-                writeln!(output, "{}", url)?;
-                webbrowser::open(url.as_str()).map_err(|_| Error::Other)?;
-            }
-            _ => return Err(Error::Syntax),
-        }
         Ok(())
     }
 
@@ -235,6 +258,13 @@ mod cmd {
         Ok(())
     }
 
+    pub fn open_uci_docs(mut output: impl io::Write) -> Result<()> {
+        let url = "http://wbec-ridderkerk.nl/html/UCIProtocol.html";
+        writeln!(output, "{}", url)?;
+        webbrowser::open(url).map_err(|_| Error::Other)?;
+        Ok(())
+    }
+
     pub fn perft<'s>(
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
@@ -254,68 +284,103 @@ mod cmd {
         zorro: &mut Zorro,
         mut tokens: impl Iterator<Item = &'s str>,
     ) -> Result<()> {
-        match tokens.next() {
-            Some("startpos") => zorro.board = Board::default(),
-            Some("fen") => zorro.board = Board::from_fen(&mut tokens)?,
-            Some("960") => unimplemented!(),
-            Some("current") => (),
+        match tokens.next().unwrap_or("") {
+            "startpos" => zorro.board = Board::default(),
+            "fen" => zorro.board = Board::from_fen(&mut tokens)?,
+            "960" => unimplemented!(),
+            "current" => (),
             _ => return Err(Error::Syntax),
         }
-        // `.skip(1)` intuitively makes more sense, but that would happily skip
-        // a valid move in case you forget the "moves" token.
         for token in tokens.skip_while(|s| *s == "moves") {
             zorro.board.do_move(Move::from_str(token)?);
         }
         Ok(())
     }
 
+    fn option_check<S: AsRef<str>>(s: S) -> Result<bool> {
+        match s.as_ref() {
+            "true" => Ok(true),
+            "false" => Ok(false),
+            _ => Err(Error::Syntax),
+        }
+    }
+
+    fn option_spin<S: AsRef<str>>(s: S) -> Result<i32> {
+        Ok(s.as_ref().parse::<i32>()?)
+    }
+
     pub fn set_option<'s>(
-        _zorro: &mut Zorro,
-        _tokens: impl Iterator<Item = &'s str>,
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'s str>,
     ) -> Result<()> {
-        //assert_eq!(tokens.next(), Some("name"));
-        //let mut option_name = String::new();
-        //while let Some(token) = tokens.next() {
-        //    if token == "value" {
-        //        break;
-        //    } else {
-        //        option_name.push_str(token);
-        //    }
-        //}
-        //let mut option_value = String::new();
-        //for token in tokens {
-        //    // From the UCI protocol specification (April 2004):
-        //    // > The name of the option should not be case sensitive and can
-        // inludes spaces    // > like also the value.
-        //    option_value.push_str(token.to_ascii_lowercase().as_str());
-        //}
-        //// Option support is quite hairy and messy. I don't want to break
-        //// pre-existing scripts and configs originally written for
-        //// other engines.
-        ////
-        //// Please see:
-        ////  - https://komodochess.com/Komodo-11-README.html
-        ////  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
-        ////
-        //// No worries in case the links above die, just search for a list of
-        //// UCI settings for popular chess engines. I don't commit to
-        //// 100% feature parity with any engine; I just try and use my
-        //// better judgement.
-        //match option_name.as_str() {
-        //    "hash" => {
-        //        let cache_size =
-        // ByteSize::mib(option_value.parse().unwrap());        zorro.
-        // config.cache_size = cache_size;    }
-        //    "ponder" => {
-        //        zorro.config.ponder = match option_value.chars().next() {
-        //            Some('f') => false,
-        //            Some('n') => false,
-        //            Some('0') => false,
-        //            _ => true,
-        //        };
-        //    }
-        //    _ => (),
-        //};
+        if tokens.next() != Some("name") {
+            return Err(Error::Syntax);
+        }
+        let mut option_name = String::new();
+        while let Some(token) = tokens.next() {
+            if token == "value" {
+                break;
+            } else {
+                option_name.push_str(token);
+            }
+        }
+        let option_value = tokens.fold(String::new(), |mut base, s| {
+            if !base.is_empty() {
+                base.push_str(" ");
+            }
+            base.push_str(s);
+            base
+        });
+        // Option support is quite hairy and messy. I don't want to break
+        // pre-existing scripts and configs originally written for
+        // other engines.
+        //
+        // Please see:
+        //  - https://komodochess.com/Komodo-11-README.html
+        //  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+        //
+        // No worries in case the links above die, just search for a list of
+        // UCI settings for popular chess engines. I don't commit to
+        // 100% feature parity with any engine; I just try and use my
+        // better judgement.
+        match option_name.as_str() {
+            "hash" => {
+                //let cache_size =
+                // ByteSize::mib(option_value.parse().unwrap());
+                // zorro.config.cache_size = cache_size;
+            }
+            "ponder" => zorro.config.ponder = option_check(option_value)?,
+            "nalimovpath" => {}
+            "nalimovcache" => {}
+            "ownbook" => {}
+            "multipv" => {
+                zorro.config.show_n_best = option_spin(option_value)? as i32
+            }
+            "uci_showcurrline" => {}
+            "uci_showrefutations" => {}
+            "uci_elo" => {}
+            "uci_limitstrength" => {}
+            "uci_opponent" => {
+                use crate::elo::{expected_score, OWN_ELO};
+                let mut tokens = option_value.split_whitespace();
+                let _title = tokens.next();
+                let elo = tokens.next().unwrap_or("none").parse::<u16>()?;
+                zorro.config.contempt = expected_score(OWN_ELO, elo);
+            }
+            _ => (),
+        };
+        Ok(())
+    }
+
+    pub fn set_debug_mode<'a>(
+        zorro: &mut Zorro,
+        mut tokens: impl Iterator<Item = &'a str>,
+    ) -> Result<()> {
+        zorro.config.debug = match tokens.next() {
+            Some("on") => true,
+            Some("off") => false,
+            _ => return Err(Error::Syntax),
+        };
         Ok(())
     }
 }

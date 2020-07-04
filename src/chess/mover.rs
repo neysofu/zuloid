@@ -40,7 +40,7 @@ impl Board {
         let bb_all = self.bb_all();
         let bb_pawns = self.attackers_with_role(Role::Pawn);
         let bb_defenders = self.defenders();
-        let push = |bb: BitBoard| {
+        let push = |bb: Bitboard| {
             !bb_all
                 & match self.color_to_move {
                     Color::W => bb.north(1),
@@ -155,14 +155,14 @@ impl Board {
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {
-    mask: BitBoard,
+    mask: Bitboard,
     multiplier: u64,
     right_shift: usize,
 }
 
 impl Magic {
-    /// See [https://www.chessprogramming.org/Magic_BitBoards] for more information.
-    pub fn magify(&self, bb: BitBoard) -> u64 {
+    /// See [https://www.chessprogramming.org/Magic_Bitboards] for more information.
+    pub fn magify(&self, bb: Bitboard) -> u64 {
         ((bb & self.mask) * self.multiplier) >> self.right_shift
     }
 

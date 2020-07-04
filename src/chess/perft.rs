@@ -51,6 +51,25 @@ struct Stack {
     board: Board,
     levels: [Level; 20],
     depth: usize,
+    cache: Cache,
+}
+
+struct Cache {
+    lru: lru::LruCache<(Board, u8), usize>,
+}
+
+impl Cache {
+    fn hit(&mut self, board: Board, depth: u8) -> Option<usize> {
+        self.lru.get(&(board, depth)).map(|x| *x)
+    }
+}
+
+impl Default for Cache {
+    fn default() -> Self {
+        Cache {
+            lru: lru::LruCache::new(4096),
+        }
+    }
 }
 
 struct Level {
@@ -75,6 +94,7 @@ impl Stack {
             board,
             levels,
             depth: 1,
+            cache: Cache::default(),
         }
     }
 

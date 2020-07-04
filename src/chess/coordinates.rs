@@ -10,9 +10,9 @@ use std::marker::PhantomData;
 use std::ops;
 use std::str::FromStr;
 
-pub type BitBoard = u64;
+pub type Bitboard = u64;
 
-pub trait BitBoardOps: ops::BitAnd<Output = Self> + Sized {
+pub trait BitboardOps: ops::BitAnd<Output = Self> + Sized {
     fn squares(self) -> BitsCounter;
     fn north(self, n: usize) -> Self;
     fn south(self, n: usize) -> Self;
@@ -24,7 +24,7 @@ pub trait BitBoardOps: ops::BitAnd<Output = Self> + Sized {
     }
 }
 
-impl BitBoardOps for BitBoard {
+impl BitboardOps for Bitboard {
     fn squares(self) -> BitsCounter {
         BitsCounter { bb: self }
     }
@@ -51,7 +51,7 @@ impl BitBoardOps for BitBoard {
 }
 
 pub struct BitsCounter {
-    bb: BitBoard,
+    bb: Bitboard,
 }
 
 impl Iterator for BitsCounter {
@@ -68,7 +68,7 @@ impl Iterator for BitsCounter {
     }
 }
 
-pub trait Coordinate: Into<BitBoard> + Sized {
+pub trait Coordinate: Into<Bitboard> + Sized {
     const RANGE: ops::Range<u8>;
 
     fn new_unchecked(i: u8) -> Self;
@@ -155,13 +155,13 @@ impl<S: Coordinate> DoubleEndedIterator for CoordinateWalker<S> {
     }
 }
 
-pub trait ToBb: Into<BitBoard> {
-    fn to_bb(self) -> BitBoard {
+pub trait ToBb: Into<Bitboard> {
+    fn to_bb(self) -> Bitboard {
         self.into()
     }
 }
 
-impl<T: Into<BitBoard>> ToBb for T {}
+impl<T: Into<Bitboard>> ToBb for T {}
 
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub struct File(u8);
@@ -176,7 +176,7 @@ impl File {
     pub const G: Self = File(6);
     pub const H: Self = File(7);
 
-    pub const fn to_bb(self) -> BitBoard {
+    pub const fn to_bb(self) -> Bitboard {
         0xff << (self.0 * 8)
     }
 }
@@ -193,8 +193,8 @@ impl Coordinate for File {
     }
 }
 
-impl Into<BitBoard> for File {
-    fn into(self) -> BitBoard {
+impl Into<Bitboard> for File {
+    fn into(self) -> Bitboard {
         self.to_bb()
     }
 }
@@ -254,7 +254,7 @@ impl Rank {
         }
     }
 
-    pub const fn to_bb(self) -> BitBoard {
+    pub const fn to_bb(self) -> Bitboard {
         0x0101_0101_0101_0101 << self.0
     }
 }
@@ -271,8 +271,8 @@ impl Coordinate for Rank {
     }
 }
 
-impl Into<BitBoard> for Rank {
-    fn into(self) -> BitBoard {
+impl Into<Bitboard> for Rank {
+    fn into(self) -> Bitboard {
         self.to_bb()
     }
 }
@@ -380,7 +380,7 @@ impl Square {
         64
     }
 
-    pub const fn to_bb(self) -> BitBoard {
+    pub const fn to_bb(self) -> Bitboard {
         1u64 << self.0
     }
 
@@ -396,7 +396,7 @@ impl Square {
         Rank::new_unchecked(self.0 & 0b111)
     }
 
-    pub fn diagonal_a1h8(self) -> BitBoard {
+    pub fn diagonal_a1h8(self) -> Bitboard {
         let mut diagonal = 0x8040_2010_0804_0201;
         let delta = self.rank().i() as i32 - self.file().i() as i32;
         if delta >= 0 {
@@ -407,7 +407,7 @@ impl Square {
         diagonal
     }
 
-    pub fn diagonal_h1a8(self) -> BitBoard {
+    pub fn diagonal_h1a8(self) -> Bitboard {
         let mut diagonal = 0x102_0408_1020_4080;
         let delta = self.rank().i() as i32 + self.file().i() as i32 - 7;
         if delta >= 0 {
@@ -419,8 +419,8 @@ impl Square {
     }
 }
 
-impl Into<BitBoard> for Square {
-    fn into(self) -> BitBoard {
+impl Into<Bitboard> for Square {
+    fn into(self) -> Bitboard {
         self.to_bb()
     }
 }

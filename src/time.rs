@@ -43,7 +43,7 @@ pub struct TimeControl {
     /// Time added to the time bank after every move.
     pub increment: Duration,
     /// Delay after which the clock starts ticking at the beginning of every
-    /// turn. It can be negative to model network latency.
+    /// turn. It can be negative to account for network latency.
     pub delay: Duration,
     // Upper limit on the number of moves that can be played inside this
     // period.

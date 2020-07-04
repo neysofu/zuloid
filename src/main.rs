@@ -3,6 +3,7 @@
 mod cache;
 mod chess;
 mod core;
+mod elo;
 mod err;
 mod eval;
 mod protocols;

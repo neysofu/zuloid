@@ -13,8 +13,8 @@ use strum_macros::EnumIter;
 
 #[derive(Clone, Debug, Hash, PartialEq, Eq)]
 pub struct Board {
-    pub bb_colors: EnumMap<Color, BitBoard>,
-    pub bb_roles: EnumMap<Role, BitBoard>,
+    pub bb_colors: EnumMap<Color, Bitboard>,
+    pub bb_roles: EnumMap<Role, Bitboard>,
     pub castling_rights: CastlingRights,
     pub color_to_move: Color,
     pub reversible_moves_count: usize,
@@ -106,21 +106,21 @@ impl Board {
         )
     }
 
-    // BitBoard accessibility utilities.
+    // Bitboard accessibility utilities.
 
-    pub fn attackers(&self) -> BitBoard {
+    pub fn attackers(&self) -> Bitboard {
         self.bb_colors[self.color_to_move]
     }
 
-    pub fn attackers_with_role(&self, role: Role) -> BitBoard {
+    pub fn attackers_with_role(&self, role: Role) -> Bitboard {
         self.attackers() & self.bb_roles[role]
     }
 
-    pub fn defenders(&self) -> BitBoard {
+    pub fn defenders(&self) -> Bitboard {
         self.bb_colors[!self.color_to_move]
     }
 
-    pub fn bb_all(&self) -> BitBoard {
+    pub fn bb_all(&self) -> Bitboard {
         self.bb_colors[Color::W] | self.bb_colors[Color::B]
     }
 

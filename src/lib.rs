@@ -1,6 +1,7 @@
 mod cache;
 mod chess;
 pub mod core;
+mod elo;
 mod err;
 mod eval;
 pub mod protocols;

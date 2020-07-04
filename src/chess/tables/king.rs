@@ -1,7 +1,7 @@
 use crate::chess::*;
 
 #[allow(clippy::unreadable_literal)]
-pub static KING_ATTACKS: [BitBoard; Square::count()] = [
+pub static KING_ATTACKS: [Bitboard; Square::count()] = [
     0x0000000000000302,
     0x0000000000000705,
     0x0000000000000e0a,

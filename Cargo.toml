@@ -7,10 +7,6 @@ readme = "README.md"
 edition = "2018"
 publish = false
 
-[features]
-default = []
-protection = []
-
 [dependencies]
 array-init = "0.1.1"
 bitintr = "0.3"

@@ -7,19 +7,19 @@ pub use knight::KNIGHT_ATTACKS;
 use crate::chess::*;
 use array_init;
 
-pub fn boxed_king_attacks() -> Box<[BitBoard; Square::count()]> {
+pub fn boxed_king_attacks() -> Box<[Bitboard; Square::count()]> {
     Box::new(array_init::array_init(|i| {
         king_attacks(Square::new(i as u8))
     }))
 }
 
-pub fn boxed_knight_attacks() -> Box<[BitBoard; Square::count()]> {
+pub fn boxed_knight_attacks() -> Box<[Bitboard; Square::count()]> {
     Box::new(array_init::array_init(|i| {
         knight_attacks(Square::new(i as u8))
     }))
 }
 
-fn knight_attacks(from: Square) -> BitBoard {
+fn knight_attacks(from: Square) -> Bitboard {
     let shifts = [
         (-1, 2),
         (1, 2),
@@ -41,7 +41,7 @@ fn knight_attacks(from: Square) -> BitBoard {
     bb
 }
 
-fn king_attacks(from: Square) -> BitBoard {
+fn king_attacks(from: Square) -> Bitboard {
     let shifts = [-1, 1];
     let mut file_bb = from.file().to_bb();
     let mut rank_bb = from.rank().to_bb();
@@ -56,7 +56,7 @@ fn king_attacks(from: Square) -> BitBoard {
     (file_bb & rank_bb) ^ from.to_bb()
 }
 
-pub fn rook_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
+pub fn rook_attacks(from: Square, occupancy: Bitboard) -> Bitboard {
     let mut bb = 0;
     let shifts = [-1, 1, 8, -8];
     for shift in shifts.iter() {
@@ -75,7 +75,7 @@ pub fn rook_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
     bb
 }
 
-pub fn bishop_attacks(from: Square, occupancy: BitBoard) -> BitBoard {
+pub fn bishop_attacks(from: Square, occupancy: Bitboard) -> Bitboard {
     let mut bb = 0;
     let shifts = [-9, -7, 9, 7];
     for shift in shifts.iter() {

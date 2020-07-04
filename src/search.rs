@@ -63,7 +63,9 @@ impl Stack {
         self.board
             .undo_move(last_level.generator, last_level.capture);
         let parent_level = self.levels.last_mut().unwrap();
-        if (self.board.color_to_move == Color::B) ^ (last_level.score > parent_level.score) {
+        if (self.board.color_to_move == Color::B)
+            ^ (last_level.score > parent_level.score)
+        {
             parent_level.score = last_level.score;
             parent_level.best_move = last_level.generator;
         }

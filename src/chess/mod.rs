@@ -3,6 +3,7 @@ pub mod color;
 pub mod coordinates;
 pub mod fen;
 pub mod game;
+pub mod magic;
 pub mod mover;
 pub mod moves;
 pub mod perft;

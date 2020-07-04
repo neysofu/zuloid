@@ -1,6 +1,9 @@
-/// A [SemVer](https://semver.org/)-compliant version string of the main executable.
+/// A [SemVer](https://semver.org/)-compliant version string of the main
+/// executable.
 pub const VERSION: &str = env!("CARGO_PKG_VERSION");
 
+/// A [SemVer](https://semver.org/)-compliant version string of the main
+/// executable with associated build metadata.
 pub const VERSION_WITH_BUILD_INFO: &str = concat!(
     env!("CARGO_PKG_VERSION"),
     "+",
