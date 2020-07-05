@@ -26,7 +26,7 @@ enum Mode
 struct Engine
 {
 	/* Only one position at the time. */
-	struct Board position;
+	struct Board board;
 	struct Cache *cache;
 	struct Agent *agent;
 	struct Eval eval;

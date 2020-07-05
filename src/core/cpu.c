@@ -190,21 +190,21 @@ engine_start_search(struct Engine *engine)
 	 * evaluation, only candidate moves. Moves are suggested by  square: */
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	struct Move moves[MAX_MOVES] = { 0 };
-	size_t count = gen_legal_moves(moves, &engine->position);
+	size_t count = gen_legal_moves(moves, &engine->board);
 	size_t best_i = count - 1;
 	// size_t best_centipawns = 0;
-	// int multiplier = engine->position.side_to_move == COLOR_WHITE ? +1 : -1;
+	// int multiplier = engine->board.side_to_move == COLOR_WHITE ? +1 : -1;
 	// for (size_t i = count - 1; i > 0; i--) {
-	//	if ((engine->position.side_to_move == COLOR_WHITE &&
-	//	     position_eval(&engine->position) > best_centipawns) ||
-	//	    (engine->position.side_to_move == COLOR_WHITE &&
-	//	     position_eval(&engine->position) < best_centipawns)) {
+	//	if ((engine->board.side_to_move == COLOR_WHITE &&
+	//	     position_eval(&engine->board) > best_centipawns) ||
+	//	    (engine->board.side_to_move == COLOR_WHITE &&
+	//	     position_eval(&engine->board) < best_centipawns)) {
 	//		best_i = i;
-	//		best_centipawns = position_eval(&engine->position);
+	//		best_centipawns = position_eval(&engine->board);
 	//	}
 	//}
 	move_to_string(moves[best_i], buf);
-	printf("info depth score cp %f\n", position_eval(&engine->position));
+	printf("info depth score cp %f\n", position_eval(&engine->board));
 	printf("bestmove %s\n", buf);
 }
 
@@ -212,7 +212,7 @@ struct Move
 engine_search_with_depth(struct Engine *engine)
 {
 	struct Move moves[MAX_MOVES] = { 0 };
-	size_t count = gen_legal_moves(moves, &engine->position);
+	size_t count = gen_legal_moves(moves, &engine->board);
 }
 
 void

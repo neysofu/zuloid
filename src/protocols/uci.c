@@ -22,9 +22,9 @@
 void
 uci_call_eval(struct Engine *engine, char *cmd)
 {
-	printf("wmaterial %f\n", position_eval_color(&engine->position, COLOR_WHITE));
-	printf("bmaterial %f\n", position_eval_color(&engine->position, COLOR_BLACK));
-	printf("totmaterial %f\n", position_eval(&engine->position));
+	printf("wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
+	printf("bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
+	printf("totmaterial %f\n", position_eval(&engine->board));
 }
 
 void
@@ -39,7 +39,7 @@ uci_call_go(struct Engine *engine, char *cmd)
 		ENGINE_DEBUGF(engine, "[INFO] The next token is '%s'.\n", token);
 		switch (XXH64(token, strlen(token), 0)) {
 			case 0xf34bf7d8e647f9df: /* "perft" */
-				position_perft(&engine->position, atoi(strtok_whitespace(NULL)));
+				position_perft(&engine->board, atoi(strtok_whitespace(NULL)));
 				return;
 			case 0x2a8ef3657cf9a920: /* "wtime" */
 				token = strtok_whitespace(NULL);
@@ -85,7 +85,7 @@ uci_call_go(struct Engine *engine, char *cmd)
 				break;
 			case 0x653009b7ced43713: // "movetime"
 				token = strtok_whitespace(NULL);
-				engine->game_clocks[engine->position.side_to_move].time_left_in_seconds =
+				engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
 				  atoi(token) * 1000;
 				break;
 			default:
@@ -105,7 +105,7 @@ uci_call_islegal(struct Engine *engine, char *cmd)
 		ENGINE_DEBUGF(engine, "[ERROR] Expected token with a chess move.\n");
 		return;
 	}
-	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	size_t count = gen_pseudolegal_moves(moves, &engine->board);
 	ENGINE_DEBUGF(engine, "[TRACE] Examining %zu legal moves...\n", count);
 	for (size_t i = 0; i < count; i++) {
 		if (moves[i].source == mv.source && moves[i].target == mv.target) {
@@ -121,7 +121,7 @@ uci_call_legalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
 	/* FIXME */
-	size_t count = gen_legal_moves(moves, &engine->position);
+	size_t count = gen_legal_moves(moves, &engine->board);
 	printf("%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
@@ -135,7 +135,7 @@ void
 uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
-	size_t count = gen_pseudolegal_moves(moves, &engine->position);
+	size_t count = gen_pseudolegal_moves(moves, &engine->board);
 	printf("%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
@@ -153,7 +153,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
-		engine->position = POSITION_INIT;
+		engine->board = POSITION_INIT;
 	} else if (strcmp(token, "fen") == 0) {
 		char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
@@ -168,11 +168,11 @@ uci_call_position(struct Engine *engine, char *cmd)
 			}
 			fen_fields[i] = token;
 		}
-		position_init_from_fen_fields(&engine->position, fen_fields);
+		position_init_from_fen_fields(&engine->board, fen_fields);
 	} else if (strcmp(token, "960") == 0) {
 		/* The "960" command is a custom addition the standard. I figured it could be useful
 		 * for training. */
-		position_init_960(&engine->position);
+		position_init_960(&engine->board);
 	} else {
 		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
 	}
@@ -180,7 +180,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
 		string_to_move(token, &mv);
-		position_do_move_and_flip(&engine->position, &mv);
+		position_do_move_and_flip(&engine->board, &mv);
 	}
 }
 
@@ -188,14 +188,14 @@ void
 uci_call_d(struct Engine *engine, char *cmd) {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		position_print(&engine->position);
+		position_print(&engine->board);
 		return;
 	}
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x7348d0088acc7c6c: // "lichess"
 			;
 			char *command = malloc(64 + FEN_SIZE);
-			char *fen = fen_from_position(NULL, &engine->position, '_');
+			char *fen = fen_from_position(NULL, &engine->board, '_');
 			printf("https://lichess.org/analysis/standard/%s\n", fen);
 			free(command);
 			free(fen);

@@ -13,7 +13,7 @@ engine_new(void)
 	struct Engine *engine = malloc(sizeof(struct Engine));
 	if (engine) {
 		*engine = (struct Engine){
-			.position = POSITION_INIT,
+			.board = POSITION_INIT,
 			.time_controls = { NULL, NULL },
 			.cache = NULL,
 			.agent = agent_new(),
