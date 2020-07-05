@@ -1,9 +1,4 @@
-notes.txt
-
-# Rust
-target/
-Cargo.lock
-**/*.rs.bk
+build/
 
 # PyTest stuff
 __pycache__/
@@ -22,7 +17,7 @@ __pycache__/
 # Prerequisites
 *.d
 
-# Object File
+# Object files
 *.o
 *.ko
 *.obj
@@ -57,8 +52,17 @@ __pycache__/
 *.x86_64
 *.hex
 
-# Debug File
+# Debug files
 *.dSYM/
 *.su
 *.idb
 *.pdb
+
+# Kernel Module Compile Results
+*.mod*
+*.cmd
+.tmp_versions/
+modules.order
+Module.symvers
+Mkfile.old
+dkms.conf
