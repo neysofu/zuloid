@@ -40,7 +40,7 @@ void
 test_fen_conversion(void)
 {
 	for (size_t i = 0; *VALID_FEN[i]; i++) {
-		struct Position position;
+		struct Board position;
 		char fen[FEN_SIZE];
 		strcpy(fen, VALID_FEN[i]);
 		position_init_from_fen(&position, fen);

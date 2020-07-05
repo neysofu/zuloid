@@ -108,7 +108,7 @@ gen_knight_moves(struct Move moves[], Bitboard sources, Bitboard mask)
 	Square source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_KNIGHT[source] & mask;
+		Bitboard targets = BB_KNIGHT_ATTACKS[source] & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -156,7 +156,7 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_KING[source] & mask;
+		Bitboard targets = BB_KING_ATTACKS[source] & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -166,7 +166,7 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 }
 
 size_t
-gen_king_castles(struct Move moves[], struct Position *pos)
+gen_king_castles(struct Move moves[], struct Board *pos)
 {
 	struct Move *ptr = moves;
 	// Bitboard mask, maskk, foo;
@@ -208,7 +208,7 @@ gen_king_castles(struct Move moves[], struct Position *pos)
 
 size_t
 gen_attacks_against_from(struct Move moves[],
-                         struct Position *pos,
+                         struct Board *pos,
                          Bitboard victims,
                          enum Color attacker)
 {
@@ -227,14 +227,14 @@ gen_attacks_against_from(struct Move moves[],
 }
 
 size_t
-gen_pseudolegal_moves(struct Move moves[], struct Position *pos)
+gen_pseudolegal_moves(struct Move moves[], struct Board *pos)
 {
 	return gen_attacks_against_from(
 	  moves, pos, ~pos->bb[pos->side_to_move], pos->side_to_move);
 }
 
 bool
-position_is_illegal(struct Position *pos)
+position_is_illegal(struct Board *pos)
 {
 	struct Move moves[MAX_MOVES];
 	return gen_attacks_against_from(moves,
@@ -244,7 +244,7 @@ position_is_illegal(struct Position *pos)
 }
 
 size_t
-gen_legal_moves(struct Move moves[], struct Position *pos)
+gen_legal_moves(struct Move moves[], struct Board *pos)
 {
 	int i = 0;
 	int j = gen_pseudolegal_moves(moves, pos) - 1;
@@ -263,7 +263,7 @@ gen_legal_moves(struct Move moves[], struct Position *pos)
 }
 
 // size_t
-// gen_black_pawn_attacks_against(struct Position *pos, struct Move *moves, Bitboard mask)
+// gen_black_pawn_attacks_against(struct Board *pos, struct Move *moves, Bitboard mask)
 //{
 //	struct Move *ptr = moves;
 //	Bitboard pawns = pos->black_pawns;
@@ -282,14 +282,14 @@ gen_legal_moves(struct Move moves[], struct Position *pos)
 //}
 
 bool
-position_is_stalemate(struct Position *pos)
+position_is_stalemate(struct Board *pos)
 {
 	struct Move moves[MAX_MOVES];
 	return gen_legal_moves(moves, pos) == 0;
 }
 
 size_t
-position_perft_inner(struct Position *pos, size_t depth)
+position_perft_inner(struct Board *pos, size_t depth)
 {
 	assert(depth >= 1);
 	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
@@ -309,7 +309,7 @@ position_perft_inner(struct Position *pos, size_t depth)
 }
 
 size_t
-position_perft(struct Position *pos, size_t depth)
+position_perft(struct Board *pos, size_t depth)
 {
 	if (depth == 0) {
 		printf("1\n");

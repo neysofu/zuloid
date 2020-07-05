@@ -13,7 +13,7 @@
 #include <string.h>
 
 char *
-fen_write_position_pieces(char *fen, const struct Position *position)
+fen_write_position_pieces(char *fen, const struct Board *position)
 {
 	Rank rank = RANK_MAX;
 	do {
@@ -39,7 +39,7 @@ fen_write_position_pieces(char *fen, const struct Position *position)
 }
 
 char *
-fen_from_position(char *fen, const struct Position *position, char sep)
+fen_from_position(char *fen, const struct Board *position, char sep)
 {
 	assert(position);
 	if (!fen && !(fen = malloc(FEN_SIZE))) {
@@ -79,7 +79,7 @@ fen_from_position(char *fen, const struct Position *position, char sep)
 }
 
 int
-position_init_from_fen_fields(struct Position *pos, char **fieldsptr)
+position_init_from_fen_fields(struct Board *pos, char **fieldsptr)
 {
 	position_empty(pos);
 	char *token = fieldsptr[0];
@@ -126,7 +126,7 @@ position_init_from_fen_fields(struct Position *pos, char **fieldsptr)
 }
 
 int
-position_init_from_fen(struct Position *pos, char *fen)
+position_init_from_fen(struct Board *pos, char *fen)
 {
 	assert(pos);
 	assert(fen);
@@ -138,7 +138,7 @@ position_init_from_fen(struct Position *pos, char *fen)
 }
 
 void
-position_print(struct Position *position)
+position_print(struct Board *position)
 {
 	printf("     A B C D E F G H\n"
 	       "   +-----------------+\n");

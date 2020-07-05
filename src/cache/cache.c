@@ -65,7 +65,7 @@ cache_clear(struct Cache *cache)
 }
 
 struct CacheEntry *
-cache_get(struct Cache *cache, const struct Position *position)
+cache_get(struct Cache *cache, const struct Board *position)
 {
 	/* 1. Get the correct index based on the position hash.
 	 * 2. Iterate in the cell until you find an item that has the same signature and
@@ -77,15 +77,15 @@ cache_get(struct Cache *cache, const struct Position *position)
 	size_t i;
 	switch (ADDRESS_SIZE) {
 		case 64:
-			i = fast_range_64(XXH64(position, sizeof(struct Position), 0), cache->capacity);
+			i = fast_range_64(XXH64(position, sizeof(struct Board), 0), cache->capacity);
 			break;
 		default:
 			/* Fall back to 32 bits for everything else. */
-			i = fast_range_32(XXH32(position, sizeof(struct Position), 0), cache->capacity);
+			i = fast_range_32(XXH32(position, sizeof(struct Board), 0), cache->capacity);
 			break;
 	}
 	/* TODO: reuse the previous hash operation. */
-	int32_t signature = XXH32(position, sizeof(struct Position), 0);
+	int32_t signature = XXH32(position, sizeof(struct Board), 0);
 	struct CacheSlot *slot = cache->slots + i;
 	for (size_t probe_count = 0; probe_count < CACHE_BUCKET_SIZE; probe_count++, slot++) {
 		if (slot->signature == 0) {

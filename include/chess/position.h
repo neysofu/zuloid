@@ -21,7 +21,7 @@ enum
 int
 string_to_castling_rights(const char *str);
 
-struct Position
+struct Board
 {
 	Bitboard bb[POSITION_BB_COUNT];
 	enum Color side_to_move;
@@ -33,28 +33,28 @@ struct Position
 
 /* Randomly sets up the chess position from Chess 960. */
 void
-position_init_960(struct Position *position);
+position_init_960(struct Board *position);
 
 /* Removes a piece from the board and replaces it with another one. */
 void
-position_set_piece_at_square(struct Position *position, Square square, struct Piece piece);
+position_set_piece_at_square(struct Board *position, Square square, struct Piece piece);
 
 enum Color
-position_flip_side_to_move(struct Position *pos);
+position_flip_side_to_move(struct Board *pos);
 
 Bitboard
-position_occupancy(struct Position *pos);
+position_occupancy(struct Board *pos);
 
 /* Tracks the king movement when castling. */
 Bitboard
-position_castle_mask(struct Position *pos, int castling_right);
+position_castle_mask(struct Board *pos, int castling_right);
 
 struct Piece
-position_piece_at_square(const struct Position *position, Square square);
+position_piece_at_square(const struct Board *position, Square square);
 
 void
-position_empty(struct Position *position);
+position_empty(struct Board *position);
 
-extern const struct Position POSITION_INIT;
+extern const struct Board POSITION_INIT;
 
 #endif

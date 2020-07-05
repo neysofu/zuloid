@@ -1,5 +1,4 @@
-#ifndef ZORRO_CHESS_BB_H
-#define ZORRO_CHESS_BB_H
+#pragma once
 
 #include "chess/coordinates.h"
 
@@ -17,8 +16,8 @@
 	b = MSB(x);                                                                            \
 	x &= ~BIT(b);
 
-extern Bitboard BB_KNIGHT[64];
-extern Bitboard BB_KING[64];
+extern Bitboard BB_KNIGHT_ATTACKS[64];
+extern Bitboard BB_KING_ATTACKS[64];
 extern const Bitboard MAGIC_BISHOP[64];
 extern const Bitboard MAGIC_ROOK[64];
 
@@ -36,5 +35,3 @@ Bitboard
 bb_bishop(Square sq, Bitboard obstacles);
 Bitboard
 bb_rook(Square sq, Bitboard obstacles);
-
-#endif

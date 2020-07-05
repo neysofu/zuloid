@@ -2,7 +2,6 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
-#include "protocols.h"
 #include <assert.h>
 #include <stdarg.h>
 #include <stdio.h>
@@ -27,7 +26,6 @@ engine_new(void)
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
-			.protocol = PROTOCOL_UNKNOWN,
 			.mode = MODE_IDLE,
 			.exit_status = EXIT_SUCCESS,
 		};
@@ -51,23 +49,6 @@ engine_delete(struct Engine *engine)
 }
 
 void
-engine_call(struct Engine *engine, char *cmd)
-{
-	assert(engine);
-	assert(cmd);
-	switch (engine->protocol) {
-		case PROTOCOL_UNKNOWN:
-			engine_unknown_protocol(engine, cmd);
-			break;
-		case PROTOCOL_UCI:
-			engine_uci(engine, cmd);
-			break;
-		default:
-			engine->mode = MODE_EXIT;
-	}
-}
-
-void
 engine_debugf(struct Engine *engine,
               const char *filename,
               size_t line_num,
@@ -80,16 +61,7 @@ engine_debugf(struct Engine *engine,
 	if (!engine->debug) {
 		return;
 	}
-	switch (engine->protocol) {
-		case PROTOCOL_UCI:
-			printf("info string ");
-			break;
-		case PROTOCOL_CECP:
-			printf("# ");
-			break;
-		default:
-			return;
-	}
+	printf("info string ");
 #ifndef NDEBUG
 	printf("%s:%zu @ %s -- ", filename, line_num, function_name);
 #endif

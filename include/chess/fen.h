@@ -25,16 +25,16 @@ enum
 
 /*  */
 char *
-fen_from_position(char *buf, const struct Position *pos, char sep);
+fen_from_position(char *buf, const struct Board *pos, char sep);
 
 int
-position_init_from_fen_fields(struct Position *pos, char **fieldsptr);
+position_init_from_fen_fields(struct Board *pos, char **fieldsptr);
 
 int
-position_init_from_fen(struct Position *pos, char *fen);
+position_init_from_fen(struct Board *pos, char *fen);
 
 /* Pretty printing to stdout for debug purposes. */
 void
-position_print(struct Position *pos);
+position_print(struct Board *pos);
 
 #endif

@@ -16,6 +16,7 @@ set (CMAKE_C_FLAGS " \
     -Wpedantic \
     -Wextra \
     -Wshadow \
+    -Wcomment \
     -Wno-missing-braces \
     -Wno-missing-field-initializers \
     -Wswitch-default \

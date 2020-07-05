@@ -1,31 +1,21 @@
-/* This Source Code Form is subject to the terms of the Mozilla Public
- * License, v. 2.0. If a copy of the MPL was not distributed with this
- * file, You can obtain one at https://mozilla.org/MPL/2.0/.
- *
- * Useful resources:
- *  -  https://www.chessprogramming.org/Bitboards
- *  -  https://www.chessprogramming.org/General_Setwise_Operations
- *  -  https://en.wikipedia.org/wiki/Bitboard
- *  -  https://graphics.stanford.edu/~seander/bithacks.html
- *  -  https://cinnamonchess.altervista.org/bitboard_calculator/Calc.html */
-
-#ifndef ZORRO_CHESS_COORDINATES_H
-#define ZORRO_CHESS_COORDINATES_H
+#pragma once
 
 #include <stdint.h>
 
-/* Squares are enumerated in a little-endian and file-first fashion, with the following
- * compass rose:
- *
- *    -7  +1  +9
- *      \  |  /
- *   -8 <- 0 -> +8
- *      /  |  \
- *    -9  -1  +7
- *
- */
 typedef int8_t File;
 typedef int8_t Rank;
+
+// Squares are enumerated in a little-endian and file-first fashion, with the
+// following compass rose:
+//
+//   +---------------+
+//   |  -7  +1  +9   |
+//   |    \  |  /    |
+//   | -8 <- 0 -> +8 |
+//   |    /  |  \    |
+//   |  -9  -1  +7   |
+//   +---------------+
+//
 typedef int8_t Square;
 typedef uint64_t Bitboard;
 
@@ -41,6 +31,7 @@ enum
 
 	FILES_COUNT = 8,
 	RANKS_COUNT = 8,
+	SQUARES_COUNT = 64,
 };
 
 char
@@ -77,5 +68,3 @@ msb_to_square(int msb);
 static const Bitboard BB_LIGHT_SQUARES = 0xaaaaaaaaaaaaaaaa;
 static const Bitboard BB_DARK_SQUARES = 0x5555555555555555;
 static const Bitboard BB_CENTER_SQUARES = 0x183c3c180000;
-
-#endif

@@ -1,5 +1,4 @@
-#ifndef ZORRO_CHESS_TERMINATION_H
-#define ZORRO_CHESS_TERMINATION_H
+#pragma once
 
 /* See https://en.wikipedia.org/wiki/Rules_of_chess#End_of_the_game. */
 enum Termination
@@ -17,5 +16,3 @@ enum Termination
 	/* An ongoing game. */
 	TERMINATION_NONE,
 };
-
-#endif

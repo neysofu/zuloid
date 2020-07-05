@@ -26,7 +26,7 @@ cache_new(size_t size);
 
 /* Probes an existing entry or finds a place to insert one if not found. */
 struct CacheEntry *
-cache_get(struct Cache *cache, const struct Position *pos);
+cache_get(struct Cache *cache, const struct Board *pos);
 
 bool
 cache_entry_is_empty(struct CacheEntry *entry);

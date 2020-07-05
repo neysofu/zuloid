@@ -39,7 +39,7 @@ string_to_move(const char *str, struct Move *mv)
 }
 
 void
-position_do_move(struct Position *pos, struct Move *mv)
+position_do_move(struct Board *pos, struct Move *mv)
 {
 	mv->capture = position_piece_at_square(pos, mv->target).type;
 	position_set_piece_at_square(
@@ -49,21 +49,21 @@ position_do_move(struct Position *pos, struct Move *mv)
 }
 
 void
-position_do_move_and_flip(struct Position *pos, struct Move *mv)
+position_do_move_and_flip(struct Board *pos, struct Move *mv)
 {
 	position_do_move(pos, mv);
 	position_flip_side_to_move(pos);
 }
 
 void
-position_undo_move_and_flip(struct Position *pos, const struct Move *mv)
+position_undo_move_and_flip(struct Board *pos, const struct Move *mv)
 {
 	position_undo_move(pos, mv);
 	position_flip_side_to_move(pos);
 }
 
 void
-position_undo_move(struct Position *pos, const struct Move *mv)
+position_undo_move(struct Board *pos, const struct Move *mv)
 {
 	position_set_piece_at_square(
 	  pos, mv->source, position_piece_at_square(pos, mv->target));
@@ -92,7 +92,7 @@ move_ray(struct Move *mv)
 }
 
 // bool
-// position_check_castling_legality(struct Position *pos, struct Move *mv)
+// position_check_castling_legality(struct Board *pos, struct Move *mv)
 //{
 //	int file_diff = move_file_diff(mv);
 //	if (file_diff > 0) {
@@ -104,7 +104,7 @@ move_ray(struct Move *mv)
 //}
 //
 // void
-// position_do_move(struct Position *pos, struct Move *mv)
+// position_do_move(struct Board *pos, struct Move *mv)
 //{
 //	assert(position_check_pseudolegality(pos, mv));
 //	if (move_is_capture(move, position) || piece == PIECE_PAWN) {
@@ -158,14 +158,14 @@ move_ray(struct Move *mv)
 //}
 //
 // struct Result
-// position_push_legal_move(struct Position *pos, struct Move mv, enum Piece pc)
+// position_push_legal_move(struct Board *pos, struct Move mv, enum Piece pc)
 //{
 //	return position_push_pseudolegal_move(position, move, piece); // TODO
 //}
 //
 
 bool
-position_check_pawn_pseudolegality(struct Position *pos, struct Move *mv)
+position_check_pawn_pseudolegality(struct Board *pos, struct Move *mv)
 {
 	assert(pos);
 	bool is_on_home_rank = square_rank(mv->source) == color_pawn_rank(pos->side_to_move);
@@ -184,11 +184,11 @@ position_check_pawn_pseudolegality(struct Position *pos, struct Move *mv)
 }
 
 bool
-position_check_knights_pseudolegality(struct Position *pos, struct Move *mv)
+position_check_knights_pseudolegality(struct Board *pos, struct Move *mv)
 {}
 
 bool
-position_check_rook_pseudolegality(struct Position *pos, struct Move *mv)
+position_check_rook_pseudolegality(struct Board *pos, struct Move *mv)
 {
 	if (mv->source == mv->target) {
 		return false;
@@ -199,7 +199,7 @@ position_check_rook_pseudolegality(struct Position *pos, struct Move *mv)
 }
 
 bool
-position_check_pseudolegality(struct Position *pos, struct Move *mv)
+position_check_pseudolegality(struct Board *pos, struct Move *mv)
 {
 	Bitboard color_bb = pos->bb[pos->side_to_move];
 	if (!(color_bb & square_to_bb(mv->source))) {

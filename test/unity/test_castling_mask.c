@@ -9,7 +9,7 @@
 void
 test_castling_mask(void)
 {
-	struct Position pos = POSITION_INIT;
+	struct Board pos = POSITION_INIT;
 	TEST_ASSERT_EQUAL_INT64(0x1010100000000,
 	                        position_castle_mask(&pos, CASTLING_RIGHT_KINGSIDE));
 	TEST_ASSERT_EQUAL_INT64(0x101010000,

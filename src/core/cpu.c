@@ -132,7 +132,7 @@ agent_new(void)
 }
 //
 // void
-// agent_predict(struct Agent *agent, struct Position *pos)
+// agent_predict(struct Agent *agent, struct Board *pos)
 //{
 //	/* Input layer evaluation. */
 //	agent->buf_popcnt[0] = pos->bb[0];
@@ -159,7 +159,7 @@ agent_new(void)
 //}
 
 float
-position_eval_color(struct Position *pos, enum Color side)
+position_eval_color(struct Board *pos, enum Color side)
 {
 	return popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_PAWN]) +
 	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KNIGHT]) * 3 +
@@ -168,7 +168,7 @@ position_eval_color(struct Position *pos, enum Color side)
 }
 
 float
-position_eval(struct Position *pos)
+position_eval(struct Board *pos)
 {
 	return (position_eval_color(pos, COLOR_WHITE) - position_eval_color(pos, COLOR_BLACK)) *
 	       100;
@@ -204,13 +204,8 @@ engine_start_search(struct Engine *engine)
 	//	}
 	//}
 	move_to_string(moves[best_i], buf);
-	switch (engine->protocol) {
-		case PROTOCOL_UCI:
-			printf("info depth score cp %f\n", position_eval(&engine->position));
-			printf("bestmove %s\n", buf);
-		default:
-			break;
-	}
+	printf("info depth score cp %f\n", position_eval(&engine->position));
+	printf("bestmove %s\n", buf);
 }
 
 struct Move

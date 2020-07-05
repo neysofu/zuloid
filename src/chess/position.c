@@ -43,7 +43,7 @@ string_to_castling_rights(const char *str)
 }
 
 void
-position_init_960(struct Position *position)
+position_init_960(struct Board *position)
 {
 	*position = POSITION_INIT;
 	File available_files[FILES_COUNT] = { 0, 1, 2, 3, 4, 5, 6, 7 };
@@ -139,14 +139,14 @@ position_init_960(struct Position *position)
 }
 
 enum Color
-position_flip_side_to_move(struct Position *pos)
+position_flip_side_to_move(struct Board *pos)
 {
 	pos->side_to_move = color_other(pos->side_to_move);
 	return pos->side_to_move;
 }
 
 void
-position_set_piece_at_square(struct Position *position, Square square, struct Piece piece)
+position_set_piece_at_square(struct Board *position, Square square, struct Piece piece)
 {
 	Bitboard bb = square_to_bb(square);
 	for (size_t i = 0; i < POSITION_BB_COUNT; i++) {
@@ -167,7 +167,7 @@ position_set_piece_at_square(struct Position *position, Square square, struct Pi
 }
 
 struct Piece
-position_piece_at_square(const struct Position *position, Square square)
+position_piece_at_square(const struct Board *position, Square square)
 {
 	assert(position);
 	Bitboard bb = square_to_bb(square);
@@ -185,13 +185,13 @@ position_piece_at_square(const struct Position *position, Square square)
 }
 
 Bitboard
-position_occupancy(struct Position *pos)
+position_occupancy(struct Board *pos)
 {
 	return pos->bb[COLOR_WHITE] | pos->bb[COLOR_BLACK];
 }
 
 Bitboard
-position_castle_mask(struct Position *pos, int castling_right)
+position_castle_mask(struct Board *pos, int castling_right)
 {
 	Bitboard rank = rank_to_bb(color_home_rank(pos->side_to_move));
 	Bitboard source = pos->bb[PIECE_TYPE_KING] & rank;
@@ -210,10 +210,10 @@ position_castle_mask(struct Position *pos, int castling_right)
 }
 
 void
-position_empty(struct Position *position)
+position_empty(struct Board *position)
 {
 	assert(position);
-	*position = (struct Position){
+	*position = (struct Board){
 		.side_to_move = COLOR_WHITE,
 		.en_passant_target = SQUARE_NONE,
 		.castling_rights = CASTLING_RIGHTS_ALL,
@@ -222,7 +222,7 @@ position_empty(struct Position *position)
 	};
 }
 
-const struct Position POSITION_INIT = {
+const struct Board POSITION_INIT = {
 	.bb =
 	  {
 	    [COLOR_WHITE] = 0x0303030303030303,

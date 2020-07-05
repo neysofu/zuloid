@@ -47,20 +47,20 @@ size_t
 gen_queen_moves(struct Move moves[], Bitboard srcs, Bitboard mask, Bitboard all);
 
 size_t
-gen_pseudolegal_moves(struct Move moves[], struct Position *pos);
+gen_pseudolegal_moves(struct Move moves[], struct Board *pos);
 size_t
-gen_legal_moves(struct Move moves[], struct Position *pos);
+gen_legal_moves(struct Move moves[], struct Board *pos);
 size_t
 gen_attacks_against_from(struct Move moves[],
-                         struct Position *pos,
+                         struct Board *pos,
                          Bitboard victims,
                          enum Color attacker);
 bool
-position_is_illegal(struct Position *pos);
+position_is_illegal(struct Board *pos);
 bool
-position_is_stalemate(struct Position *pos);
+position_is_stalemate(struct Board *pos);
 
 size_t
-position_perft(struct Position *pos, size_t depth);
+position_perft(struct Board *pos, size_t depth);
 
 #endif

@@ -1,6 +1,7 @@
 #include "chess/bb.h"
 #include "engine.h"
 #include "globals.h"
+#include "protocols/uci.h"
 #include "utils.h"
 #include <plibsys.h>
 #include <stdio.h>
@@ -9,35 +10,23 @@
 int
 main(void)
 {
-	/* Initialize all subsystems. */
 	p_libsys_init();
 	bb_init();
-	/* Let's make sure that line buffering is turned on. */
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
-	/* Now printing a welcome message for terminal users...
-	 * The number sign ensures minimal possibility of accidental evaluation and it just
-	 * happens to use the same syntax as CECP's debug messages. */
-	printf("# Z64C/%s %s (%s)\n", ZORRO_BACKEND_NAME, ZORRO_VERSION, ZORRO_BUILD_DATE);
-	printf("# %s\n", ZORRO_COPYRIGHT);
-	printf("# This is free software; see 'LICENSE.txt' for copying conditions.\n");
-	printf("# There is NO warranty of any kind.\n");
+	// Now printing a welcome message for terminal users...
+	// The number sign ensures minimal possibility of accidental evaluation and it just
+	// happens to use the same syntax as CECP's debug messages.
+	printf("# Zorro/%s %s (%s)\n", ZORRO_BACKEND_NAME, ZORRO_VERSION, ZORRO_BUILD_DATE);
+	printf("# Copyright (c) 2018-2020 Filippo Costa\n");
 	printf("# Process ID: %d\n", p_process_get_current_pid());
 	struct Engine *engine = engine_new();
-	if (!engine) {
-		return EXIT_FAILURE;
+	while (engine->mode != MODE_EXIT) {
+		char *line = read_line();
+		protocol_uci_handle(engine, line);
+		free(line);
 	}
-	do {
-		char *line = NULL;
-		size_t foo = 0;
-		if (read_line(&line, &foo, stdin) == -1) {
-			free(line);
-			engine_delete(engine);
-			return EXIT_FAILURE;
-		} else {
-			engine_call(engine, line);
-		}
-	} while (engine->mode != MODE_EXIT);
 	p_libsys_shutdown();
-	return engine_delete(engine);
+	engine_delete(engine);
+	return EXIT_SUCCESS;
 }

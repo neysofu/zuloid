@@ -1,5 +1,4 @@
-#ifndef ZORRO_CHESS_COLOR_H
-#define ZORRO_CHESS_COLOR_H
+#pragma once
 
 #include "chess/coordinates.h"
 
@@ -31,5 +30,3 @@ color_double_push_rank(enum Color color);
 
 enum Color
 color_other(enum Color color);
-
-#endif

@@ -20,7 +20,7 @@
 #include <string.h>
 
 void
-engine_uci_call_eval(struct Engine *engine, char *cmd)
+uci_call_eval(struct Engine *engine, char *cmd)
 {
 	printf("wmaterial %f\n", position_eval_color(&engine->position, COLOR_WHITE));
 	printf("bmaterial %f\n", position_eval_color(&engine->position, COLOR_BLACK));
@@ -28,7 +28,7 @@ engine_uci_call_eval(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_go(struct Engine *engine, char *cmd)
+uci_call_go(struct Engine *engine, char *cmd)
 {
 	if (engine->mode == MODE_SEARCH) {
 		ENGINE_DEBUGF(engine, "[ERROR] The engine is already searching.\n");
@@ -38,6 +38,9 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 	while ((token = strtok_whitespace(NULL))) {
 		ENGINE_DEBUGF(engine, "[INFO] The next token is '%s'.\n", token);
 		switch (XXH64(token, strlen(token), 0)) {
+			case 0xf34bf7d8e647f9df: /* "perft" */
+				position_perft(&engine->position, atoi(strtok_whitespace(NULL)));
+				return;
 			case 0x2a8ef3657cf9a920: /* "wtime" */
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
@@ -70,16 +73,17 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 				engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
 				engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 				break;
-			case 0xe142606f37a3b175: /* "depth" */
-			case 0x3323f763484dfbd4: /* "mate" */
+			case 0xe142606f37a3b175: // "depth"
+				break;
+			case 0x3323f763484dfbd4: // "mate"
 				token = strtok_whitespace(NULL);
 				engine->max_depth = atoi(token);
 				break;
-			case 0xd6accb2d47332ac7: /* "nodes" */
+			case 0xd6accb2d47332ac7: // "nodes"
 				token = strtok_whitespace(NULL);
 				engine->max_nodes_count = atoi(token);
 				break;
-			case 0x653009b7ced43713: /* "movetime" */
+			case 0x653009b7ced43713: // "movetime"
 				token = strtok_whitespace(NULL);
 				engine->game_clocks[engine->position.side_to_move].time_left_in_seconds =
 				  atoi(token) * 1000;
@@ -92,7 +96,7 @@ engine_uci_call_go(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_islegal(struct Engine *engine, char *cmd)
+uci_call_islegal(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	struct Move moves[255] = { 0 };
@@ -113,7 +117,7 @@ engine_uci_call_islegal(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_legalmoves(struct Engine *engine, char *cmd)
+uci_call_legalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
 	/* FIXME */
@@ -128,30 +132,7 @@ engine_uci_call_legalmoves(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_openlichessanalysis(struct Engine *engine, char *cmd)
-{
-	char *command = malloc(64 + FEN_SIZE);
-	char *fen = fen_from_position(NULL, &engine->position, '_');
-#ifdef __APPLE__
-	sprintf(command, "open https://lichess.org/analysis/standard/%s\n", fen);
-	system(command);
-#elif __linux__
-	sprintf(command, "xdg-open https://lichess.org/analysis/standard/%s\n", fen);
-	system(command);
-#elif _WIN32
-	sprintf(command, "start https://lichess.org/analysis/standard/%s\n", fen);
-	system(command);
-#else
-	ENGINE_DEBUGF(engine,
-	              "[ERROR] This platform is not supported. Please file a bug report.");
-	engine->mode = MODE_EXIT;
-#endif
-	free(command);
-	free(fen);
-}
-
-void
-engine_uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
+uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
 	size_t count = gen_pseudolegal_moves(moves, &engine->position);
@@ -165,7 +146,7 @@ engine_uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_position(struct Engine *engine, char *cmd)
+uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
@@ -204,13 +185,43 @@ engine_uci_call_position(struct Engine *engine, char *cmd)
 }
 
 void
-engine_uci_call_setoption(struct Engine *engine, char *cmd)
+uci_call_d(struct Engine *engine, char *cmd) {
+	char *token = strtok_whitespace(NULL);
+	if (!token) {
+		position_print(&engine->position);
+		return;
+	}
+	switch (XXH64(token, strlen(token), 0)) {
+		case 0x7348d0088acc7c6c: // "lichess"
+			;
+			char *command = malloc(64 + FEN_SIZE);
+			char *fen = fen_from_position(NULL, &engine->position, '_');
+			printf("https://lichess.org/analysis/standard/%s\n", fen);
+			free(command);
+			free(fen);
+			break;
+		default:
+			uci_err_syntax();
+			break;
+	}
+}
+
+void uci_err_syntax(void) {
+	puts("[ERROR] Invalid syntax.");
+}
+
+void uci_err_unspecified(void) {
+	puts("[ERROR] Unspecified error.");
+}
+
+void
+uci_call_setoption(struct Engine *engine, char *cmd)
 {
 	if (engine->mode != MODE_IDLE) {
 		ENGINE_DEBUGF(engine, "[ERROR] UCI options can only be set during idle state.\n");
 		return;
 	}
-	uint64_t hash = 0;
+	XXH64_hash_t hash = 0;
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
 		if (strcmp(token, "value") == 0) {
@@ -225,16 +236,16 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 		/* XOR combine the hashes. Simple yet effective. */
 		hash ^= XXH64(token, strlen(token), 0);
 	}
-	/* Option support is quite hairy and messy. I don't want to break pre-existing scripts
-	 * and configs originally written for other engines.
-	 *
-	 * Please see:
-	 *  - https://komodochess.com/Komodo-11-README.html
-	 *  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
-	 *
-	 * No worries in case the links above die, just search for a list of UCI settings for
-	 * popular chess engines. I don't commit to 100% feature parity with any engine; I just
-	 * try and use my better judgement. */
+	// Option support is quite hairy and messy. I don't want to break pre-existing scripts
+	// and configs originally written for other engines.
+	//
+	// Please see:
+	//  - https://komodochess.com/Komodo-11-README.html
+	//  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+	//
+	// No worries in case the links above die, just search for a list of UCI settings for
+	// popular chess engines. I don't commit to 100% feature parity with any engine; I just
+	// try and use my better judgement.
 	switch (hash) {
 		case 0xd8cdd8e8314c4147: /* "hash" */
 			break;
@@ -242,126 +253,118 @@ engine_uci_call_setoption(struct Engine *engine, char *cmd)
 			break;
 		case 0xcfaf77aca1f8feaa: /* "nalimovcache" */
 			break;
-		case 0x0a6f394a3987568a: /* "ponder" */
+		case 0x0a6f394a3987568a: // "ponder"
 			engine->ponder = true;
 			break;
-		case 0x487e0e93e2c2bb18: /* "ownbook" */
+		case 0x487e0e93e2c2bb18: // "ownbook"
 			break;
-		case 0xc8922f8e470ffaee: /* "uci_showcurrline" */
+		case 0xc8922f8e470ffaee: // "uci_showcurrline"
 			break;
-		case 0xdf718624bc46e2ce: /* "uci_showrefutations" */
+		case 0xdf718624bc46e2ce: // "uci_showrefutations"
 			break;
-		case 0xf6253b92eb36d560: /* "uci_limitstrength" */
+		case 0xf6253b92eb36d560: // "uci_limitstrength"
 			break;
-		/* TODO: Many, many more. */
+		// TODO: many, many more.
 		default:
 			ENGINE_DEBUGF(engine, "[ERROR] No such option.\n");
 	}
 }
 
+XXH64_hash_t hash_of_tokens(void) {
+	XXH64_hash_t hash = 0;
+	char *token;
+	while ((token = strtok_whitespace(NULL))) {
+		hash ^= XXH64(token, strlen(token), 0);
+	}
+	return hash;
+}
+
 void
-engine_uci(struct Engine *engine, char *cmd)
+protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 {
-	assert(engine);
-	assert(cmd);
 	char *token = strtok_whitespace(cmd);
 	if (!token) {
-		/* Ignore empty lines. */
 		return;
 	}
 	switch (XXH64(token, strlen(token), 0)) {
-		case 0x01fd51a2a6f9cc2f: /* "debug" */
-			/* This command feels quite useless (in fact, Stockfish doesn't even recognize
-			 * it). Nevertheless, we shall offer the option to send additional evaluation
-			 * details with it. It does *not* control debugging information, which instead
-			 * gets compiled out with the NDEBUG macro. */
+		case 0x01fd51a2a6f9cc2f: // "debug"
+			// This command feels quite useless (in fact, Stockfish doesn't even recognize
+			// it). Nevertheless, we shall offer the option to send additional evaluation
+			// details with it. It does *not* control debugging information, which instead
+			// gets compiled out with the NDEBUG macro.
 			token = strtok_whitespace(NULL);
 			if (token && strcmp(token, "on") == 0) {
 				engine->debug = true;
 			} else if (token && strcmp(token, "off") == 0) {
 				engine->debug = false;
 			} else {
-				ENGINE_DEBUGF(engine, "[ERROR] 'on' | 'off' token expected.\n");
+				uci_err_syntax();
 			}
 			break;
-		case 0xd682e29388e0f4a3: /* "go" */
-			engine_uci_call_go(engine, cmd);
+		case 0xd682e29388e0f4a3: // "go"
+			uci_call_go(engine, cmd);
 			break;
-		case 0x33e37def10e5d195: /* "isready" */
-			printf("readyok\n");
+		case 0x33e37def10e5d195: // "isready"
+			puts("readyok");
 			break;
-		case 0x8a7ecc4137c6f2b0: /* "position" */
-			engine_uci_call_position(engine, cmd);
+		case 0x8a7ecc4137c6f2b0: // "position"
+			uci_call_position(engine, cmd);
 			break;
-		case 0x707db5f765aed6d8: /* "quit" */
+		case 0x707db5f765aed6d8: // "quit"
 			engine->mode = MODE_EXIT;
 			break;
-		case 0x26cc87cdbb3247ba: /* "setoption" */
-			engine_uci_call_setoption(engine, cmd);
+		case 0x26cc87cdbb3247ba: // "setoption"
+			uci_call_setoption(engine, cmd);
 			break;
-		case 0xd8d95334d91f61fc: /* "stop" */
+		case 0xd8d95334d91f61fc: // "stop"
 			engine_stop_search(engine);
 			break;
-		case 0xf80028c1113b2c9c: /* "uci" */
-			printf("id name Z64C/%s %s\n"
-			       "id author Filippo Costa\n"
-			       "option name Clear Hash type button\n"
-			       /* TODO: also implement Komodo's Drawscore option. */
-			       "option name Contempt type spin default 20 min -100 max 100\n"
-			       "option name Hash type spin default 64 min 0 max 131072\n"
-			       "option name Minimum Thinking Time type spin default 20 min 0 max 5000\n"
-			       "option name nodestime type spin default 0 min 0 max 10000\n"
-			       "option name Ponder type check default false\n"
-			       "option name Skill Level type spin default 20 min 0 max 20\n"
-			       /* See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308 */
-			       "option name Slow Mover type spin default 84 min 10 max 1000\n"
-			       "option name Threads type spin default 1 min 1 max 512\n"
-			       "option name Move Overhead type spin default 30 min 0 max 60000\n"
-			       "uciok\n",
-			       ZORRO_BACKEND_NAME,
-			       ZORRO_VERSION);
+		case 0xf80028c1113b2c9c: // "uci"
+			printf("id name Z64C/%s %s\n", ZORRO_BACKEND_NAME, ZORRO_VERSION);
+			puts("id author Filippo Costa");
+			puts("option name Clear Hash type button");
+			// TODO: also implement Komodo's Drawscore option.
+			puts("option name Contempt type spin default 20 min -100 max 100");
+			puts("option name Hash type spin default 64 min 0 max 131072");
+			puts("option name Minimum Thinking Time type spin default 20 min 0 max 5000");
+			puts("option name nodestime type spin default 0 min 0 max 10000");
+			puts("option name Ponder type check default false");
+			puts("option name Skill Level type spin default 20 min 0 max 20");
+			// See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308 */
+			puts("option name Slow Mover type spin default 84 min 10 max 1000");
+			puts("option name Threads type spin default 1 min 1 max 512");
+			puts("option name Move Overhead type spin default 30 min 0 max 60000");
+			puts("uciok");
 			break;
-		case 0xdfd89a3bb7b15ce5: /* "ucinewgame" */
+		case 0xf184f2ae1a578956: // "ucidoc"
+			puts("http://wbec-ridderkerk.nl/html/UCIProtocol.html");
+			break;
+		case 0xdfd89a3bb7b15ce5: // "ucinewgame"
 			cache_clear(engine->cache);
 			break;
-		/* The following are non-standard commands implemented in Stockfish. */
-		case 0x5000d8f2907d14e4: /* "d" */
-			position_print(&engine->position);
+		// The following are non-standard commands implemented in Stockfish.
+		case 0x5000d8f2907d14e4: // "d"
+			uci_call_d(engine, cmd);
 			break;
-		case 0x9d2bdc9fdea163d3: /* "flip" */
-			/* TODO */
+		case 0x9d2bdc9fdea163d3: // "flip"
+			// TODO
 			break;
-		/* ... and finally some custom commands for debugging. Unstable! */
-		case 0xf65cfd23d46bb592: /* "_bbbishop" */
-			bb_print(bb_bishop(atoi(strtok_whitespace(NULL)), 0));
-			break;
-		case 0x696062c20564a8f1: /* "_bbking" */
-			bb_print(BB_KING[atoi(strtok_whitespace(NULL))]);
-			break;
-		case 0xf11ac84fc0597028: /* "_bbknight" */
-			bb_print(BB_KNIGHT[atoi(strtok_whitespace(NULL))]);
-			break;
-		case 0xb674b56dfdfb11fc: /* "_bbrook" */
-			token = strtok_whitespace(NULL);
-			bb_print(bb_rook(atoi(token), atoi(strtok_whitespace(NULL))));
-			break;
+		// ... and finally some custom commands for debugging. Unstable!
 		case 0xb54897ad8727b265: /* "_eval" */
-			engine_uci_call_eval(engine, cmd);
+			uci_call_eval(engine, cmd);
 			break;
 		case 0xb0582e3fa59cef0a: /* "_islegal" */
-			engine_uci_call_islegal(engine, cmd);
+			uci_call_islegal(engine, cmd);
 			break;
 		case 0x96cbd35a489446bb: /* "_lm" */
-			engine_uci_call_legalmoves(engine, cmd);
+			uci_call_legalmoves(engine, cmd);
 			break;
-		case 0xf8137536e5c509a6: /* "_olia" (Open LIchess Analysis) */
-			engine_uci_call_openlichessanalysis(engine, cmd);
-			break;
-		case 0x887fbcafef04824d: /* "_perft" */
-			position_perft(&engine->position, atoi(strtok_whitespace(NULL)));
 			break;
 		case 0x54c29874021f8627: /* "_plm" (PseudoLegal Moves) */
-			engine_uci_call_pseudolegalmoves(engine, cmd);
+			uci_call_pseudolegalmoves(engine, cmd);
+			break;
+		case 0x32dd38952c4bc720: // "xxhash"
+			printf("0x%llx\n", hash_of_tokens());
 			break;
 		default:
 			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'.\n", token);

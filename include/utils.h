@@ -1,5 +1,4 @@
-#ifndef ZORRO_UTILS_H
-#define ZORRO_UTILS_H
+#pragma once
 
 #include <stdio.h>
 
@@ -14,12 +13,8 @@ enum ErrorCode
 	ERR_CODE_INVALID_FEN,
 };
 
-/* It reads an entire line from 'stream', similar to POSIX's 'getline'. */
-long
-read_line(char **lineptr, size_t *n, FILE *stream);
+char *
+read_line(void);
 
-/* TODO: make it thread-safe. */
 char *
 strtok_whitespace(char *str);
-
-#endif

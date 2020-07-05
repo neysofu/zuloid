@@ -25,21 +25,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-Bitboard BB_KNIGHT[64];
-Bitboard BB_KING[64];
+Bitboard BB_KNIGHT_ATTACKS[0100] = { 0 };
+Bitboard BB_KING_ATTACKS[0100] = { 0 };
 
 void
 bb_print(Bitboard value)
 {
-	for (int rank = 7; rank >= 0; rank--) {
-		for (int file = 0; file < 8; file++) {
+	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
+		for (File file = 0; file <= FILE_MAX; file++) {
 			putchar(value & square_to_bb(square_new(file, rank)) ? 'X' : '.');
 			putchar(' ');
 		}
-		putchar('\n');
+		puts("");
 	}
-	putchar('\n');
+	puts("");
 }
+
+Bitboard BB_BISHOP_MASK[0100] = { 0 };
+Bitboard BB_ROOK_MASK[0100] = { 0 };
+
+int64_t BB_BISHOP_MULTIPLIER[0100] = { 0 };
+int64_t BB_ROOK_MULTILIER[0100] = { 0 };
+
+int64_t BB_BISHOP_SHIFT[0100] = { 0 };
+int64_t BB_ROOK_SHIFT[0100] = { 0 };
 
 struct Magic
 {
@@ -49,10 +58,10 @@ struct Magic
 	Bitboard *offset;
 };
 
-struct Magic BishopTable[64];
-struct Magic RookTable[64];
+struct Magic BishopTable[SQUARES_COUNT];
+struct Magic RookTable[SQUARES_COUNT];
 
-const uint64_t RookMagics[64] = {
+const Bitboard RookMagics[64] = {
 	0xA180022080400230ull, 0x0040100040022000ull, 0x0080088020001002ull,
 	0x0080080280841000ull, 0x4200042010460008ull, 0x04800A0003040080ull,
 	0x0400110082041008ull, 0x008000A041000880ull, 0x10138001A080C010ull,
@@ -77,7 +86,7 @@ const uint64_t RookMagics[64] = {
 	0x7645FFFECBFEA79Eull,
 };
 
-const uint64_t BishopMagics[64] = {
+const Bitboard BishopMagics[64] = {
 	0xFFEDF9FD7CFCFFFFull, 0xFC0962854A77F576ull, 0x5822022042000000ull,
 	0x2CA804A100200020ull, 0x0204042200000900ull, 0x2002121024000002ull,
 	0xFC0A66C64A7EF576ull, 0x7FFDFDFCBD79FFFFull, 0xFC0846A64A34FFF6ull,
@@ -171,52 +180,50 @@ init_slider_attacks(Square sq,
 }
 
 void
-bb_init(void)
+bb_init_knight(void)
 {
 	const short knight_offsets[8][2] = {
 		{ -2, -1 }, { -2, 1 }, { 2, -1 }, { 2, 1 },
 		{ -1, -2 }, { -1, 2 }, { 1, -2 }, { 1, 2 },
 	};
+	for (Square square = 0; square <= SQUARE_MAX; square++) {
+		Bitboard bb = 0;
+		for (int i = 0; i < 8; i++) {
+			int f = square_file(square) + knight_offsets[i][0];
+			int r = square_rank(square) + knight_offsets[i][1];
+			if (r >= 0 && f >= 0 && r < 8 && f < 8) {
+				bb |= square_to_bb(square_new(f, r));
+			}
+		}
+		BB_KNIGHT_ATTACKS[square] = bb;
+	}
+}
+
+void
+bb_init_king(void)
+{
 	const short king_offsets[8][2] = {
 		{ -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 },
 		{ 1, 0 },   { -1, 1 }, { 0, 1 },  { 1, 1 },
 	};
+	for (Square square = 0; square <= SQUARE_MAX; square++) {
+		Bitboard bb = 0;
+		for (int i = 0; i < 8; i++) {
+			int f = square_file(square) + king_offsets[i][0];
+			int r = square_rank(square) + king_offsets[i][1];
+			if (r >= 0 && f >= 0 && r <= RANK_MAX && f <= FILE_MAX) {
+				bb |= square_to_bb(square_new(f, r));
+			}
+		}
+		BB_KING_ATTACKS[square] = bb;
+	}
+}
+
+void
+bb_init(void)
+{
 	const short bishop_offsets[4][2] = { { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 } };
 	const short rook_offsets[4][2] = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
-	/* BB_KNIGHT */
-	for (File file = 0; file <= FILE_MAX; file++) {
-		for (Rank rank = 0; rank <= RANK_MAX; rank++) {
-			Bitboard bb = 0;
-			for (int i = 0; i < 8; i++) {
-				int f = file + knight_offsets[i][0];
-				int r = rank + knight_offsets[i][1];
-				if (r >= 0 && f >= 0 && r < 8 && f < 8) {
-					bb |= square_to_bb(square_new(f, r));
-				}
-			}
-			BB_KNIGHT[square_new(file, rank)] = bb;
-		}
-	}
-	/* BB_KING */
-	for (File file = 0; file <= FILE_MAX; file++) {
-		for (Rank rank = 0; rank <= RANK_MAX; rank++) {
-			Bitboard bb = 0;
-			for (int i = 0; i < 8; i++) {
-				int r = rank + king_offsets[i][0];
-				int f = file + king_offsets[i][1];
-				if (r >= 0 && f >= 0 && r <= RANK_MAX && f <= FILE_MAX) {
-					bb |= square_to_bb(square_new(f, r));
-				}
-			}
-			BB_KING[square_new(file, rank)] = bb;
-		}
-	}
-	// Init attack tables for sliding pieces
-	// First square has initial offset
-	// BishopTable[0].offset = BishopAttacks;
-	// RookTable[0].offset = RookAttacks;
-	// for (Square i = 0; i <= SQUARE_MAX; i++) {
-	//	init_slider_attacks(i, BishopTable, BishopMagics[i], bishop_offsets);
-	//	init_slider_attacks(i, RookTable, RookMagics[i], rook_offsets);
-	//}
+	bb_init_knight();
+	bb_init_king();
 }

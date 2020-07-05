@@ -28,17 +28,17 @@ size_t
 string_to_move(const char *str, struct Move *mv);
 
 bool
-position_check_pseudolegality(struct Position *pos, struct Move *mv);
+position_check_pseudolegality(struct Board *pos, struct Move *mv);
 
 void
-position_do_move(struct Position *pos, struct Move *mv);
+position_do_move(struct Board *pos, struct Move *mv);
 void
-position_do_move_and_flip(struct Position *pos, struct Move *mv);
+position_do_move_and_flip(struct Board *pos, struct Move *mv);
 
 void
-position_undo_move(struct Position *pos, const struct Move *mv);
+position_undo_move(struct Board *pos, const struct Move *mv);
 void
-position_undo_move_and_flip(struct Position *pos, const struct Move *mv);
+position_undo_move_and_flip(struct Board *pos, const struct Move *mv);
 
 int
 move_file_diff(struct Move *mv);
