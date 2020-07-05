@@ -81,14 +81,18 @@ const SHIFT_ROOK: [u8; Square::count()] = [
     52, 53, 53, 53, 53, 53, 53, 52,
 ];
 
+static mut ROOK_MASK: [Bitboard; Square::count()] = [0; Square::count()];
 
-static mut ATTACK_ROOK: [Bitboard; 0] = {
+
+pub static mut ATTACK_ROOK: [Bitboard; 0] = {
     []
 };
 
 unsafe fn bb_init() {
     use crate::chess::tables::rook_attacks;
     for square in Square::iter() {
+        let borders = File::A.to_bb() | File::H.to_bb() | Rank::_1.to_bb() | Rank::_8.to_bb();
+        ROOK_MASK[square.i()] = (square.file().to_bb() | square.rank().to_bb()) & !borders;
         let n = 1 << bitintr::Popcnt::popcnt(square.to_bb());
         for i in 0..n {
             let occupancies = 0;
@@ -103,6 +107,12 @@ unsafe fn bb_init() {
     }
 }
 
+pub fn rook_attacks(from: Square, occupancy: Bitboard) -> Bitboard {
+    let index = ((occupancy * ROOK_MAGICS[from.i()]) >> SHIFT_ROOK[from.i()]) as usize;
+    unsafe {
+        ATTACK_ROOK[index]
+    }
+}
 
 #[derive(Debug, Copy, Clone)]
 pub struct Magic {

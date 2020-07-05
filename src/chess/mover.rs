@@ -1,4 +1,5 @@
 use super::tables;
+use super::magic;
 use super::*;
 use array_init::array_init;
 use std::fmt;
@@ -114,7 +115,7 @@ impl Board {
 
     fn gen_sliding_pieces(&self, move_list: &mut AvailableMoves) {
         for from in self.attackers_with_role(Role::Rook).squares() {
-            let possible_targets = tables::rook_attacks(from, self.bb_all())
+            let possible_targets = magic::rook_attacks(from, self.bb_all())
                 & !self.bb_colors[self.color_to_move];
             for to in possible_targets.squares() {
                 move_list.push(Move {
@@ -138,7 +139,7 @@ impl Board {
             }
         }
         for from in self.attackers_with_role(Role::Queen).squares() {
-            let possible_targets = (tables::rook_attacks(from, self.bb_all())
+            let possible_targets = (magic::rook_attacks(from, self.bb_all())
                 | tables::bishop_attacks(from, self.bb_all()))
                 & !self.bb_colors[self.color_to_move];
             for to in possible_targets.squares() {
