@@ -7,7 +7,7 @@ cmake_minimum_required (VERSION 3.4)
 set (CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 set (CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
-project (Z64C VERSION 1.6.0 LANGUAGES C)
+project (ZORRO VERSION 1.6.0 LANGUAGES C)
 
 set (CMAKE_C_FLAGS " \
     ${CMAKE_C_FLAGS} \
@@ -68,9 +68,9 @@ target_compile_definitions (ZORRO_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 
-# Z64C
-add_executable (Z64C "${SRC_DIR}/main.c")
-target_link_libraries (Z64C ZORRO_LIB)
+# Zorro
+add_executable (ZORRO "${SRC_DIR}/main.c")
+target_link_libraries (ZORRO ZORRO_LIB)
 
 # ZORRO_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
@@ -80,4 +80,4 @@ target_link_libraries (ZORRO_TEST ZORRO_LIB UNITY)
 target_compile_definitions (ZORRO_TEST PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
-add_test (NAME Z64C COMMAND ZORRO_TEST)
+add_test (NAME ZORRO COMMAND ZORRO_TEST)
