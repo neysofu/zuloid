@@ -2,8 +2,8 @@
  * Unauthorized copying of this file, via any medium is strictly prohibited
  * PROPRIETARY AND CONFIDENTIAL */
 
-#include "cache/cache.h"
 #include "Unity/src/unity.h"
+#include "cache/cache.h"
 
 void
 test_cache_single_key_retrieval(void)

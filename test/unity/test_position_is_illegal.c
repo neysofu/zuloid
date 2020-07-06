@@ -17,7 +17,7 @@ test_position_is_legal(void)
 	if (!file) {
 		return;
 	}
-	//while (read_line(&fen, &fen_size, file) >= 0) {
+	// while (read_line(&fen, &fen_size, file) >= 0) {
 	//	position_init_from_fen(&pos, fen);
 	//	TEST_ASSERT_FALSE_MESSAGE(position_is_illegal(&pos), fen);
 	//}
@@ -35,7 +35,7 @@ test_position_is_illegal(void)
 	if (!file) {
 		return;
 	}
-	//while (read_line(&fen, &fen_size, file) >= 0) {
+	// while (read_line(&fen, &fen_size, file) >= 0) {
 	//	position_init_from_fen(&pos, fen);
 	//	TEST_ASSERT_MESSAGE(position_is_illegal(&pos), fen);
 	//}

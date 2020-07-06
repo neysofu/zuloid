@@ -10,19 +10,19 @@
 void
 test_jsonrpc_compliance(void)
 {
-//	struct Engine *engine = engine_new();
-//	char *response = engine_call(engine, "spam");
-//	TEST_ASSERT(response && strstr(response, "error"));
-//	free(response);
-//	response = engine_call(engine, "{}");
-//	TEST_ASSERT(response && strstr(response, "error"));
-//	free(response);
-//	response = engine_call(engine, "{\"id\":42}");
-//	TEST_ASSERT(response && strstr(response, "42"));
-//	TEST_ASSERT(response && strstr(response, "error"));
-//	free(response);
-//	TEST_ASSERT_NULL(engine_call(engine, "{\"method\":\"abcxyz\",\"params\":[]}"));
-//	TEST_ASSERT_NULL(engine_call(engine, ""));
-//	TEST_ASSERT_NULL(engine_call(engine, "\t \r\n"));
-//	engine_delete(engine);
+	//	struct Engine *engine = engine_new();
+	//	char *response = engine_call(engine, "spam");
+	//	TEST_ASSERT(response && strstr(response, "error"));
+	//	free(response);
+	//	response = engine_call(engine, "{}");
+	//	TEST_ASSERT(response && strstr(response, "error"));
+	//	free(response);
+	//	response = engine_call(engine, "{\"id\":42}");
+	//	TEST_ASSERT(response && strstr(response, "42"));
+	//	TEST_ASSERT(response && strstr(response, "error"));
+	//	free(response);
+	//	TEST_ASSERT_NULL(engine_call(engine, "{\"method\":\"abcxyz\",\"params\":[]}"));
+	//	TEST_ASSERT_NULL(engine_call(engine, ""));
+	//	TEST_ASSERT_NULL(engine_call(engine, "\t \r\n"));
+	//	engine_delete(engine);
 }

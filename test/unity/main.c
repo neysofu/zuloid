@@ -1,7 +1,3 @@
-/* Copyright (c) Filippo Costa - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * PROPRIETARY AND CONFIDENTIAL */
-
 #include "Unity/src/unity.h"
 
 extern void
@@ -30,6 +26,8 @@ extern void
 test_position_is_illegal(void);
 extern void
 test_position_is_legal(void);
+extern void
+test_rating(void);
 
 int
 main(void)
@@ -48,5 +46,6 @@ main(void)
 	RUN_TEST(test_piece_to_char);
 	RUN_TEST(test_position_is_illegal);
 	RUN_TEST(test_position_is_legal);
+	RUN_TEST(test_rating);
 	return UNITY_END();
 }

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
 #include "chess/termination.h"
