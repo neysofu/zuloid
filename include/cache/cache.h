@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_CACHE_CACHE_H
+#define ZORRO_CACHE_CACHE_H
 
 #include "chess/position.h"
 #include <stdbool.h>
@@ -27,3 +28,5 @@ cache_clear(struct Cache *cache);
 
 void
 cache_delete(struct Cache *cache);
+
+#endif

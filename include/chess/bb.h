@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_CHESS_BB_H
+#define ZORRO_CHESS_BB_H
 
 #include "chess/coordinates.h"
 
@@ -35,3 +36,5 @@ Bitboard
 bb_bishop(Square sq, Bitboard obstacles);
 Bitboard
 bb_rook(Square sq, Bitboard obstacles);
+
+#endif

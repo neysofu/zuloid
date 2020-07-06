@@ -13,8 +13,8 @@ extern const char *const ZORRO_LICENSE;
 extern const char *const ZORRO_BUILD_DATE;
 extern const char *const ZORRO_URL;
 extern const char *const ZORRO_BACKEND_NAME;
-/* Software versioning as in MAJOR.MINOR.PATCH. */
 extern const char *const ZORRO_VERSION;
+extern const char *const ZORRO_VERSION_VERBOSE;
 
 #define MAX_DEPTH 20
 

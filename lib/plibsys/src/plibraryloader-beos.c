@@ -35,7 +35,7 @@ typedef image_id plibrary_handle;
 
 struct PLibraryLoader_ {
 	plibrary_handle	handle;
-	status_t	last_status;
+	mode_t	last_status;
 };
 
 static void pp_library_loader_clean_handle (plibrary_handle handle);
@@ -77,7 +77,7 @@ P_LIB_API PFuncAddr
 p_library_loader_get_symbol (PLibraryLoader *loader, const pchar *sym)
 {
 	ppointer	location = NULL;
-	status_t	status;
+	mode_t	status;
 
 	if (P_UNLIKELY (loader == NULL || sym == NULL))
 		return NULL;

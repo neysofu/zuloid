@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_ENGINE_H
+#define ZORRO_ENGINE_H
 
 #include "cache/cache.h"
 #include "chess/position.h"
@@ -10,16 +11,16 @@
 #define ENGINE_DEBUGF(engine, ...)                                                         \
 	engine_debugf(engine, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
-enum Mode
+enum Status
 {
 	// No background activity. The engine is just waiting for user input.
-	MODE_IDLE,
+	STATUS_IDLE,
 	// While still accepting user input, the engine is searching the game tree
 	// in the background.
-	MODE_SEARCH,
+	STATUS_SEARCH,
 	// The engine will not accept other user input. This mode is not
 	// recoverable.
-	MODE_EXIT,
+	STATUS_EXIT,
 };
 
 struct Engine
@@ -35,8 +36,8 @@ struct Engine
 	// A straightforward activity indicator. Both `main` and engine commands
 	// might want to know if the engine is doing background computation or
 	// what.
-	enum Mode mode;
-	// Can be set together with `mode = MODE_EXIT` to exit the program.
+	enum Status status;
+	// Can be set together with `mode = STATUS_EXIT` to exit the program.
 	int exit_status;
 	// -- Playing settings.
 	float move_selection_noise;
@@ -78,3 +79,5 @@ engine_debugf(struct Engine *engine,
 
 int
 engine_delete(struct Engine *engine);
+
+#endif

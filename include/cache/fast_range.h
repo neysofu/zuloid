@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_CACHE_FAST_RANGE_H
+#define ZORRO_CACHE_FAST_RANGE_H
 
 #include <stdint.h>
 #include <stdlib.h>
@@ -8,3 +9,5 @@ fast_range_32(uint32_t x, size_t range);
 
 size_t
 fast_range_64(uint64_t x, size_t range);
+
+#endif

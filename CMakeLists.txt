@@ -43,13 +43,15 @@ string (TIMESTAMP BUILD_DATE "%Y-%m-%d")
 add_library (BASE64 "${LIB_DIR}/base64/base64.c")
 set_property (TARGET BASE64 PROPERTY C_STANDARD 99)
 # cJSON
-set (ENABLE_CJSON_TEST OFF)
+set (ENABLE_CJSON_TEST OFF CACHE BOOL "" FORCE)
 add_subdirectory ("${LIB_DIR}/cJSON/")
 # Mersenne twister
 add_library (MT64 "${LIB_DIR}/mt-64/mt19937-64.c")
 set_property (TARGET MT64 PROPERTY C_STANDARD 99)
 # plibsys
-set (PLIBSYS_BUILD_DOC OFF)
+set (PLIBSYS_BUILD_DOC OFF CACHE BOOL "" FORCE)
+set (PLIBSYS_TESTS OFF CACHE BOOL "" FORCE)
+set (PLIBSYS_BUILD_STATIC OFF CACHE BOOL "" FORCE)
 add_subdirectory ("${LIB_DIR}/plibsys/")
 # xxHash
 add_library (XXHASH "${LIB_DIR}/xxHash/xxhash.c")

@@ -58,7 +58,7 @@ p_mutex_new (void)
 P_LIB_API pboolean
 p_mutex_lock (PMutex *mutex)
 {
-	status_t ret_status;
+	mode_t ret_status;
 
 	if (P_UNLIKELY (mutex == NULL))
 		return FALSE;

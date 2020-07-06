@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_CHESS_COORDINATES_H
+#define ZORRO_CHESS_COORDINATES_H
 
 #include <stdint.h>
 
@@ -68,3 +69,5 @@ msb_to_square(int msb);
 static const Bitboard BB_LIGHT_SQUARES = 0xaaaaaaaaaaaaaaaa;
 static const Bitboard BB_DARK_SQUARES = 0x5555555555555555;
 static const Bitboard BB_CENTER_SQUARES = 0x183c3c180000;
+
+#endif

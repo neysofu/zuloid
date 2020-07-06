@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_TIME_TIME_CONTROL_H
+#define ZORRO_TIME_TIME_CONTROL_H
 
 #include <stdint.h>
 
@@ -34,3 +35,5 @@ time_control_new_bullet(void);
 
 void
 time_control_delete(struct TimeControl *tc);
+
+#endif

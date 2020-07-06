@@ -282,7 +282,7 @@ p_uthread_exit_internal (void)
 void
 p_uthread_wait_internal (PUThread *thread)
 {
-	status_t exit_value;
+	mode_t exit_value;
 
 	wait_for_thread (thread->hdl, &exit_value);
 }

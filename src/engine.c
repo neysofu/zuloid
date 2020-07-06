@@ -26,7 +26,7 @@ engine_new(void)
 			.move_selection_noise = 0.005,
 			.contempt = 0.65,
 			.selectivity = 0.5,
-			.mode = MODE_IDLE,
+			.status = STATUS_IDLE,
 			.exit_status = EXIT_SUCCESS,
 		};
 	}

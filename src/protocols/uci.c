@@ -12,6 +12,7 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
+#include "rating.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <assert.h>
@@ -30,66 +31,62 @@ uci_call_eval(struct Engine *engine, char *cmd)
 void
 uci_call_go(struct Engine *engine, char *cmd)
 {
-	if (engine->mode == MODE_SEARCH) {
-		ENGINE_DEBUGF(engine, "[ERROR] The engine is already searching.\n");
+	if (engine->status == STATUS_SEARCH) {
 		return;
 	}
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
-		ENGINE_DEBUGF(engine, "[INFO] The next token is '%s'.\n", token);
-		switch (XXH64(token, strlen(token), 0)) {
-			case 0xf34bf7d8e647f9df: /* "perft" */
+		switch (djb_hash(token)) {
+			case 3430: // "perft"
 				position_perft(&engine->board, atoi(strtok_whitespace(NULL)));
 				return;
-			case 0x2a8ef3657cf9a920: /* "wtime" */
+			case 52523: // "wtime"
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
 				  atoi(token) * 1000;
 				break;
-			case 0xd3f6a6885c7c93a0: /* "btime" */
+			case 51862: // "btime"
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
 				  atoi(token) * 1000;
 				break;
-			case 0x71c2388517319e0c: /* "winc" */
+			case 7638: // "winc"
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_WHITE]->increment_in_seconds =
 				  atoi(token) * 1000;
 				break;
-			case 0xad513987341315ae: /* "binc" */
+			case 26541: // "binc"
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_BLACK]->increment_in_seconds =
 				  atoi(token) * 1000;
 				break;
-			case 0x18ebef875e97de86: /* "infinite" */
+			case 4603: // "infinite"
 				time_control_delete(engine->time_controls[COLOR_WHITE]);
 				time_control_delete(engine->time_controls[COLOR_BLACK]);
 				break;
-			case 0x0a6f394a3987568a: /* "ponder" */
+			case 29613: // "ponder"
 				engine->ponder = true;
 				break;
-			case 0xf95e9c242b5d7a1a: /* "movestogo" */
+			case 33256: // "movestogo"
 				token = strtok_whitespace(NULL);
 				engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
 				engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 				break;
-			case 0xe142606f37a3b175: // "depth"
+			case 57498: // "depth"
 				break;
-			case 0x3323f763484dfbd4: // "mate"
+			case 32972: // "mate"
 				token = strtok_whitespace(NULL);
 				engine->max_depth = atoi(token);
 				break;
-			case 0xd6accb2d47332ac7: // "nodes"
+			case 7294: // "nodes"
 				token = strtok_whitespace(NULL);
 				engine->max_nodes_count = atoi(token);
 				break;
-			case 0x653009b7ced43713: // "movetime"
+			case 5035: // "movetime"
 				token = strtok_whitespace(NULL);
 				engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
 				  atoi(token) * 1000;
 				break;
-			default:
-				ENGINE_DEBUGF(engine, "[WARN] Ignoring unknown token: '%s'\n", token);
 		}
 	}
 	engine_start_search(engine);
@@ -185,7 +182,8 @@ uci_call_position(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_d(struct Engine *engine, char *cmd) {
+uci_call_d(struct Engine *engine, char *cmd)
+{
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		position_print(&engine->board);
@@ -193,7 +191,7 @@ uci_call_d(struct Engine *engine, char *cmd) {
 	}
 	switch (XXH64(token, strlen(token), 0)) {
 		case 0x7348d0088acc7c6c: // "lichess"
-			;
+		  ;
 			char *command = malloc(64 + FEN_SIZE);
 			char *fen = fen_from_position(NULL, &engine->board, '_');
 			printf("https://lichess.org/analysis/standard/%s\n", fen);
@@ -206,18 +204,28 @@ uci_call_d(struct Engine *engine, char *cmd) {
 	}
 }
 
-void uci_err_syntax(void) {
+void
+uci_err_syntax(void)
+{
 	puts("[ERROR] Invalid syntax.");
 }
 
-void uci_err_unspecified(void) {
+void
+uci_err_unspecified(void)
+{
 	puts("[ERROR] Unspecified error.");
+}
+
+void
+uci_err_invalid_command(void)
+{
+	puts("[ERROR] Invalid command.");
 }
 
 void
 uci_call_setoption(struct Engine *engine, char *cmd)
 {
-	if (engine->mode != MODE_IDLE) {
+	if (engine->status != STATUS_IDLE) {
 		ENGINE_DEBUGF(engine, "[ERROR] UCI options can only be set during idle state.\n");
 		return;
 	}
@@ -270,7 +278,9 @@ uci_call_setoption(struct Engine *engine, char *cmd)
 	}
 }
 
-XXH64_hash_t hash_of_tokens(void) {
+XXH64_hash_t
+hash_of_tokens(void)
+{
 	XXH64_hash_t hash = 0;
 	char *token;
 	while ((token = strtok_whitespace(NULL))) {
@@ -286,8 +296,8 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 	if (!token) {
 		return;
 	}
-	switch (XXH64(token, strlen(token), 0)) {
-		case 0x01fd51a2a6f9cc2f: // "debug"
+	switch (djb_hash(token)) {
+		case 42284: // "debug"
 			// This command feels quite useless (in fact, Stockfish doesn't even recognize
 			// it). Nevertheless, we shall offer the option to send additional evaluation
 			// details with it. It does *not* control debugging information, which instead
@@ -301,27 +311,28 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 				uci_err_syntax();
 			}
 			break;
-		case 0xd682e29388e0f4a3: // "go"
+		case 30715: // "go"
 			uci_call_go(engine, cmd);
 			break;
-		case 0x33e37def10e5d195: // "isready"
+		case 48790: // "isready"
 			puts("readyok");
 			break;
-		case 0x8a7ecc4137c6f2b0: // "position"
+		case 31418: // "position"
 			uci_call_position(engine, cmd);
 			break;
-		case 0x707db5f765aed6d8: // "quit"
-			engine->mode = MODE_EXIT;
+		case 1544: // "quit"
+			engine->status = STATUS_EXIT;
 			break;
-		case 0x26cc87cdbb3247ba: // "setoption"
+		case 37354: // "setoption"
 			uci_call_setoption(engine, cmd);
 			break;
-		case 0xd8d95334d91f61fc: // "stop"
+		case 6987: // "stop"
 			engine_stop_search(engine);
 			break;
-		case 0xf80028c1113b2c9c: // "uci"
-			printf("id name Z64C/%s %s\n", ZORRO_BACKEND_NAME, ZORRO_VERSION);
+		case 45510: // "uci"
+			printf("id name Zorro %s\n", ZORRO_VERSION);
 			puts("id author Filippo Costa");
+			printf("id elo %u\n", CCRL_4015_RATING);
 			puts("option name Clear Hash type button");
 			// TODO: also implement Komodo's Drawscore option.
 			puts("option name Contempt type spin default 20 min -100 max 100");
@@ -336,37 +347,41 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			puts("option name Move Overhead type spin default 30 min 0 max 60000");
 			puts("uciok");
 			break;
-		case 0xf184f2ae1a578956: // "ucidoc"
-			puts("http://wbec-ridderkerk.nl/html/UCIProtocol.html");
-			break;
-		case 0xdfd89a3bb7b15ce5: // "ucinewgame"
+		case 58250: // "ucinewgame"
 			cache_clear(engine->cache);
 			break;
 		// The following are non-standard commands implemented in Stockfish.
-		case 0x5000d8f2907d14e4: // "d"
+		case 46601: // "d"
 			uci_call_d(engine, cmd);
 			break;
-		case 0x9d2bdc9fdea163d3: // "flip"
+		case 55184: // "flip"
 			// TODO
 			break;
 		// ... and finally some custom commands for debugging. Unstable!
-		case 0xb54897ad8727b265: /* "_eval" */
+		case 32044: // "_eval"
 			uci_call_eval(engine, cmd);
 			break;
-		case 0xb0582e3fa59cef0a: /* "_islegal" */
+		case 61637: // "_islegal"
 			uci_call_islegal(engine, cmd);
 			break;
-		case 0x96cbd35a489446bb: /* "_lm" */
+		case 21853: // "_lm"
 			uci_call_legalmoves(engine, cmd);
 			break;
-			break;
-		case 0x54c29874021f8627: /* "_plm" (PseudoLegal Moves) */
+		case 4685: // "_plm" (PseudoLegal Moves)
 			uci_call_pseudolegalmoves(engine, cmd);
 			break;
-		case 0x32dd38952c4bc720: // "xxhash"
+		case 16377: // "xxhash"
 			printf("0x%llx\n", hash_of_tokens());
 			break;
+		case 16409: // "djbhash"
+			;
+			uint16_t hash = 0;
+			while((token = strtok_whitespace(NULL))) {
+				hash ^= djb_hash(token);
+			}
+			printf("%u\n", hash);
+			break;
 		default:
-			ENGINE_DEBUGF(engine, "[ERROR] Unknown command: '%s'.\n", token);
+			uci_err_invalid_command();
 	}
 }

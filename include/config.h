@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_CONFIG_H
+#define ZORRO_CONFIG_H
 
 #include "agent.h"
 #include "cache/cache.h"
@@ -18,3 +19,5 @@ struct Config
 	size_t max_nodes_count;
 	size_t max_depth;
 };
+
+#endif

@@ -105,7 +105,7 @@
 P_BEGIN_DECLS
 
 /** Enum with semaphore creation modes. */
-typedef enum PSemaphoreAccessMode_ {
+typedef enum PSemaphoreAccessSTATUS_ {
 	P_SEM_ACCESS_OPEN	= 0,	/**< Opens an existing semaphore or creates one with a given value.	*/
 	P_SEM_ACCESS_CREATE	= 1	/**< Creates semaphore, resets to a given value if exists.		*/
 } PSemaphoreAccessMode;

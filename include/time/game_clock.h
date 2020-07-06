@@ -1,4 +1,5 @@
-#pragma once
+#ifndef ZORRO_TIME_GAME_CLOCK_H
+#define ZORRO_TIME_GAME_CLOCK_H
 
 #include "time/time_control.h"
 #include <plibsys.h>
@@ -20,3 +21,5 @@ game_clock_start(struct GameClock *gc);
 
 void
 game_clock_stop(struct GameClock *gc);
+
+#endif
