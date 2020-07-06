@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <stdint.h>
+#include <string.h>
 
 char *
 read_line(void)
