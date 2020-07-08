@@ -60,6 +60,8 @@ set_property (TARGET XXHASH PROPERTY C_STANDARD 99)
 add_library (UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property (TARGET UNITY PROPERTY C_STANDARD 90)
 
+set_target_properties (BASE64 cjson MT64 plibsys XXHASH PROPERTIES COMPILE_FLAGS "-w")
+
 # ZORRO_LIB
 file (GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list (REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
@@ -72,15 +74,15 @@ target_compile_definitions (ZORRO_LIB PRIVATE
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 
 # Zorro
-add_executable (ZORRO "${SRC_DIR}/main.c")
-target_link_libraries (ZORRO ZORRO_LIB)
+add_executable (zorro "${SRC_DIR}/main.c")
+target_link_libraries (zorro ZORRO_LIB)
 
 # ZORRO_TEST
 file (GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
-add_executable (ZORRO_TEST "${TEST_FILES}")
+add_executable (zorro_test "${TEST_FILES}")
 target_include_directories (ZORRO_LIB SYSTEM PRIVATE "${LIB_DIR}")
-target_link_libraries (ZORRO_TEST ZORRO_LIB UNITY)
-target_compile_definitions (ZORRO_TEST PRIVATE
+target_link_libraries (zorro_test ZORRO_LIB UNITY)
+target_compile_definitions (zorro_test PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
-add_test (NAME ZORRO COMMAND ZORRO_TEST)
+add_test (NAME ZORRO COMMAND zorro_test)
