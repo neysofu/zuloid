@@ -289,6 +289,30 @@ hash_of_tokens(void)
 	return hash;
 }
 
+const char *OPTIONS[] = {
+	"option name Analysis Contempt type combo default Both var Off var White var Black var "
+	"Both",
+	"option name Clear Hash type button",
+	"option name Contempt type spin default 24 min -100 max 100",
+	"option name Debug Log File type string default",
+	"option name Hash type spin default 64 min 0 max 131072",
+	"option name Minimum Thinking Time type spin default 20 min 0 max 5000",
+	"option name Move Overhead type spin default 30 min 0 max 60000",
+	"option name nodestime type spin default 0 min 0 max 10000",
+	"option name Ponder type check default false",
+	"option name Skill Level type spin default 20 min 0 max 2",
+	"option name Slow Mover type spin default 84 min 10 max 1000",
+	"option name SyzygyPath type string default <empty>",
+	"option name SyzygyProbeDepth type spin default 1 min 1 max 100",
+	"option name Syzygy50MoveRule type check default true",
+	"option name SyzygyProbeLimit type spin default 7 min 0 max 7",
+	"option name Threads type spin default 1 min 1 max 512",
+	"option name UCI_Chess960 type check default false",
+	"option name UCI_AnalyseMode type check default false",
+	"option name UCI_LimitStrength type check default false",
+	"option name UCI_Elo type spin default 1350 min 1350 max 2850",
+};
+
 void
 protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 {
@@ -330,21 +354,14 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			engine_stop_search(engine);
 			break;
 		case 45510: // "uci"
-			printf("id name Zorro %s\n", ZORRO_VERSION);
-			puts("id author Filippo Costa");
-			printf("id elo %u\n", CCRL_4015_RATING);
-			puts("option name Clear Hash type button");
-			// TODO: also implement Komodo's Drawscore option.
-			puts("option name Contempt type spin default 20 min -100 max 100");
-			puts("option name Hash type spin default 64 min 0 max 131072");
-			puts("option name Minimum Thinking Time type spin default 20 min 0 max 5000");
-			puts("option name nodestime type spin default 0 min 0 max 10000");
-			puts("option name Ponder type check default false");
-			puts("option name Skill Level type spin default 20 min 0 max 20");
-			// See http://www.talkchess.com/forum3/viewtopic.php?start=0&t=42308 */
-			puts("option name Slow Mover type spin default 84 min 10 max 1000");
-			puts("option name Threads type spin default 1 min 1 max 512");
-			puts("option name Move Overhead type spin default 30 min 0 max 60000");
+			printf("id name Zorro %s\n"
+			       "id author Filippo Costa\n"
+			       "id elo %u\n",
+			       ZORRO_VERSION,
+			       CCRL_4015_RATING);
+			for (size_t i = 0; i < sizeof(OPTIONS) / sizeof(OPTIONS[0]); i++) {
+				puts(OPTIONS[i]);
+			}
 			puts("uciok");
 			break;
 		case 58250: // "ucinewgame"
@@ -374,9 +391,9 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			printf("0x%llx\n", hash_of_tokens());
 			break;
 		case 16409: // "djbhash"
-			;
+		  ;
 			uint16_t hash = 0;
-			while((token = strtok_whitespace(NULL))) {
+			while ((token = strtok_whitespace(NULL))) {
 				hash ^= djb_hash(token);
 			}
 			printf("%u\n", hash);

@@ -6,7 +6,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 
-/* The evaluation report that Z64C generates after it's done searching. */
+/* The evaluation report that Zorro generates after it's done searching. */
 struct Eval
 {
 	float game_phase_indicator;

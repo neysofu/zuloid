@@ -1,6 +1,5 @@
 #include "time/game_clock.h"
 #include "time/time_control.h"
-#include <assert.h>
 #include <plibsys.h>
 #include <time.h>
 #include <stdlib.h>
@@ -8,8 +7,6 @@
 void
 game_clock_init(struct GameClock *gc, struct TimeControl *tc)
 {
-	assert(gc);
-	assert(tc);
 	*gc = (struct GameClock) {
 		.time_left_in_seconds = tc->time_limit_in_seconds,
 		.timer = p_time_profiler_new(),

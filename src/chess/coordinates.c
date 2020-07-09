@@ -52,7 +52,7 @@ bb_to_square(Bitboard bb)
 Bitboard
 file_to_bb(File f)
 {
-	return 0xff << (f << FILES_COUNT);
+	return 0xffULL << (f * 8);
 }
 
 Bitboard

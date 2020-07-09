@@ -17,8 +17,8 @@
 	b = MSB(x);                                                                            \
 	x &= ~BIT(b);
 
-extern Bitboard BB_KNIGHT_ATTACKS[64];
-extern Bitboard BB_KING_ATTACKS[64];
+extern Bitboard BB_ATTACKS_BY_KNIGHT[64];
+extern Bitboard BB_ATTACKS_BY_KING[64];
 extern const Bitboard MAGIC_BISHOP[64];
 extern const Bitboard MAGIC_ROOK[64];
 
@@ -29,8 +29,6 @@ void
 bb_init(void);
 void
 bb_print(Bitboard value);
-Bitboard
-bb_random();
 
 Bitboard
 bb_bishop(Square sq, Bitboard obstacles);

@@ -77,7 +77,7 @@ engine_debugf(struct Engine *engine,
               const char *function_name,
               ...);
 
-int
+void
 engine_delete(struct Engine *engine);
 
 #endif

@@ -12,11 +12,11 @@ main(void)
 {
 	p_libsys_init();
 	bb_init();
+	// UCI (and CECP as well, for that matter) is a line-oriented protocol; so
+	// we want to turn line buffering on.
 	setvbuf(stdin, NULL, _IOLBF, 0);
 	setvbuf(stdout, NULL, _IOLBF, 0);
-	// Now printing a welcome message for terminal users...
-	// The number sign ensures minimal possibility of accidental evaluation and it just
-	// happens to use the same syntax as CECP's debug messages.
+	// The number sign ensures minimal possibility of accidental evaluation.
 	printf("# Zorro %s (%s)\n", ZORRO_VERSION_VERBOSE, ZORRO_BUILD_DATE);
 	printf("# Copyright (c) 2018-2020 Filippo Costa\n");
 	printf("# Process ID: %d\n", p_process_get_current_pid());
@@ -26,7 +26,7 @@ main(void)
 		protocol_uci_handle(engine, line);
 		free(line);
 	}
-	p_libsys_shutdown();
 	engine_delete(engine);
+	p_libsys_shutdown();
 	return EXIT_SUCCESS;
 }

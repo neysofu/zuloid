@@ -421,7 +421,7 @@ def init_logger(log_file_path):
 
 def cli():
     parser = argparse.ArgumentParser()
-    default_output_dir = expanduser("~") + "/Z64C-training-output/"
+    default_output_dir = expanduser("~") + "/Zorro-training-output/"
     parser.add_argument("-o",
                         "--output-dir",
                         default=default_output_dir)

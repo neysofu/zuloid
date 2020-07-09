@@ -21,6 +21,9 @@ read_line(void);
 char *
 strtok_whitespace(char *str);
 
+void *
+exit_if_null(void *ptr);
+
 uint16_t
 djb_hash(const char *str);
 

@@ -1,5 +1,6 @@
 #include "utils.h"
 #include <stdint.h>
+#include <stdlib.h>
 #include <string.h>
 
 char *
@@ -30,14 +31,23 @@ djb_hash(const char *str)
 	return hash;
 }
 
-//struct UciStrIter
+void *
+exit_if_null(void *ptr) {
+	if (!ptr) {
+		puts("[ERROR] OOM condition.");
+		exit(1);
+	}
+	return ptr;
+}
+
+// struct UciStrIter
 //{
 //	char *string;
 //	char *state;
 //};
 
-//char *
-//uci_str_iter(struct UciStrIter *iter)
+// char *
+// uci_str_iter(struct UciStrIter *iter)
 //{
 //	strtok_whitespace(NULL);
 //	const char *whitespace = " \t\v\r\n";

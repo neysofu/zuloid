@@ -186,7 +186,7 @@ engine_start_search(struct Engine *engine)
 {
 	ENGINE_DEBUGF(engine, "[DEBUG] Search has started.\n");
 	/* The first step is to evaluate the position with the neural network. */
-	/* Now pick any of the suggested moves. In Z64C there is no best move found in the
+	/* Now pick any of the suggested moves. In Zorro there is no best move found in the
 	 * evaluation, only candidate moves. Moves are suggested by  square: */
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	struct Move moves[MAX_MOVES] = { 0 };

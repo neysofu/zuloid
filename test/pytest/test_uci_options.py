@@ -1,6 +1,6 @@
 def test_id_name(uci_engine):
     assert "name" in uci_engine.id
-    assert "Z64C" in uci_engine.id["name"]
+    assert "Zorro" in uci_engine.id["name"]
 
 
 def test_option_hash(uci_engine):

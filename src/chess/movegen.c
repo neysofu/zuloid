@@ -108,7 +108,7 @@ gen_knight_moves(struct Move moves[], Bitboard sources, Bitboard mask)
 	Square source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_KNIGHT_ATTACKS[source] & mask;
+		Bitboard targets = BB_ATTACKS_BY_KNIGHT[source] & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -156,7 +156,7 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_KING_ATTACKS[source] & mask;
+		Bitboard targets = BB_ATTACKS_BY_KING[source] & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
