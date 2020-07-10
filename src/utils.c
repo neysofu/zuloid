@@ -8,13 +8,13 @@ read_line(void)
 {
 	size_t i = 0;
 	size_t capacity = 8;
-	char *buffer = malloc(capacity);
+	char *buffer = exit_if_null(malloc(capacity));
 	char c;
 	while (!feof(stdin) && (c = getchar()) != '\n') {
 		buffer[i++] = c;
 		if (i == capacity) {
 			capacity *= 2;
-			buffer = realloc(buffer, capacity);
+			buffer = exit_if_null(realloc(buffer, capacity));
 		}
 	}
 	buffer[i] = '\0';
