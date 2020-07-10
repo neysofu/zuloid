@@ -1,4 +1,5 @@
 #include "chess/bb.h"
+#include "chess/find_magics.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
 #include <assert.h>
@@ -19,8 +20,10 @@ const short OFFSETS_KING[8][2] = {
 	{ -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, { 1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 },
 };
 
-Bitboard BB_ATTACKS_BISHOP[16 * 1024] = { 0 };
-Bitboard BB_ATTACKS_ROOK[64 * 1024] = { 0 };
+struct Magic MAGICS[SQUARES_COUNT] = { 0 };
+
+Bitboard BB_ATTACKS_BISHOP[64 * 4096] = { 0 };
+Bitboard BB_ATTACKS_ROOK[64 * 4096] = { 0 };
 
 Bitboard BB_MASK_BISHOP[SQUARES_COUNT] = { 0 };
 Bitboard BB_MASK_ROOK[SQUARES_COUNT] = { 0 };
@@ -59,10 +62,6 @@ Bitboard bb_random(void) {
   return u1 | (u2 << 16) | (u3 << 32) | (u4 << 48);
 }
 
-Bitboard bb_sparse_random() {
-  return bb_random() & bb_random() & bb_random();
-}
-
 
 Bitboard
 bb_attacks_bishop(Square sq, Bitboard obstacles)
@@ -79,38 +78,10 @@ bb_attacks_rook(Square sq, Bitboard obstacles)
 }
 
 Bitboard
-slider_attacks(Square sq, Bitboard occupancy, const short delta[4][2])
-{
-	Bitboard bb = 0;
-	for (int i = 0; i < 4; i++) {
-		int df = delta[i][0];
-		int dr = delta[i][1];
-		File file = square_file(sq) + df;
-		Rank rank = square_rank(sq) + dr;
-		while (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-			bb |= square_to_bb(square_new(file, rank));
-			if (square_to_bb(square_new(file, rank)) & occupancy) {
-				break;
-			}
-			rank += dr;
-			file += df;
-		}
-	}
-	return bb;
-}
-
-Bitboard
 bb_bishop(Square sq, Bitboard occupancy)
 {
 	const short bishop_offsets[4][2] = { { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 } };
 	return slider_attacks(sq, occupancy, bishop_offsets);
-}
-
-Bitboard
-bb_rook(Square sq, Bitboard occupancy)
-{
-	const short rook_offsets[4][2] = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
-	return slider_attacks(sq, occupancy, rook_offsets);
 }
 
 Bitboard
@@ -173,6 +144,15 @@ bb_init_rook(void)
 	}
 }
 
+size_t
+magics_size_in_kib(void) {
+	size_t total = 0;
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		total += (MAGICS[sq].end - MAGICS[sq].start) * sizeof(Bitboard);
+	}
+	return total / 1024;
+}
+
 void
 bb_init(void)
 {
@@ -180,6 +160,11 @@ bb_init(void)
 		BB_ATTACKS_BY_KNIGHT[sq] = bb_attacks_by_offsets(sq, OFFSETS_KNIGHT);
 		BB_ATTACKS_BY_KING[sq] = bb_attacks_by_offsets(sq, OFFSETS_KING);
 	}
-	bb_init_rook();
-	bb_init_bishop();
+	size_t offset = 0;
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
+		offset += MAGICS[sq].end - MAGICS[sq].start;
+	}
+	//bb_init_rook();
+	//bb_init_bishop();
 }

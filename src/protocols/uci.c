@@ -362,6 +362,7 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			for (size_t i = 0; i < sizeof(OPTIONS) / sizeof(OPTIONS[0]); i++) {
 				puts(OPTIONS[i]);
 			}
+			bb_init();
 			puts("uciok");
 			break;
 		case 58250: // "ucinewgame"
