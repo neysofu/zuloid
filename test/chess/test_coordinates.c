@@ -1,7 +1,3 @@
-/* Copyright (c) Filippo Costa - All Rights Reserved
- * Unauthorized copying of this file, via any medium is strictly prohibited
- * PROPRIETARY AND CONFIDENTIAL */
-
 #include "Unity/src/unity.h"
 #include "chess/coordinates.h"
 
