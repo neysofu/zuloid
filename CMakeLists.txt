@@ -59,9 +59,6 @@ set_property(TARGET XXHASH PROPERTY C_STANDARD 99)
 # munit
 add_library(munit "${LIB_DIR}/munit/munit.c")
 set_property(TARGET munit PROPERTY C_STANDARD 99)
-# Unity
-add_library(UNITY "${LIB_DIR}/Unity/src/unity.c")
-set_property(TARGET UNITY PROPERTY C_STANDARD 90)
 
 set_target_properties(BASE64 cjson MT64 plibsys XXHASH munit PROPERTIES COMPILE_FLAGS "-w")
 
@@ -71,7 +68,7 @@ list(REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library(ZORRO_LIB STATIC "${SRC_FILES}")
 target_include_directories(ZORRO_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories(ZORRO_LIB SYSTEM PUBLIC "${LIB_DIR}")
-target_link_libraries(ZORRO_LIB BASE64 cjson MT64 plibsys XXHASH munit)
+target_link_libraries(ZORRO_LIB BASE64 cjson MT64 plibsys XXHASH)
 target_compile_definitions(ZORRO_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
@@ -84,7 +81,7 @@ target_link_libraries(zorro ZORRO_LIB)
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable(zorro_test "${TEST_FILES}")
 target_include_directories(ZORRO_LIB SYSTEM PRIVATE "${LIB_DIR}")
-target_link_libraries(zorro_test ZORRO_LIB UNITY)
+target_link_libraries(zorro_test ZORRO_LIB munit)
 target_compile_definitions(zorro_test PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
