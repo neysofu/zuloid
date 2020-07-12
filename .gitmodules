@@ -4,3 +4,6 @@
 [submodule "lib/plibsys"]
 	path = lib/plibsys
 	url = https://github.com/saprykin/plibsys
+[submodule "lib/xxHash"]
+	path = lib/xxHash
+	url = https://github.com/Cyan4973/xxHash
