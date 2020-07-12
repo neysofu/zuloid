@@ -1,13 +1,13 @@
 #include "time/game_clock.h"
 #include "time/time_control.h"
 #include <plibsys.h>
-#include <time.h>
 #include <stdlib.h>
+#include <time.h>
 
 void
 game_clock_init(struct GameClock *gc, struct TimeControl *tc)
 {
-	*gc = (struct GameClock) {
+	*gc = (struct GameClock){
 		.time_left_in_seconds = tc->time_limit_in_seconds,
 		.timer = p_time_profiler_new(),
 		.moves_count = 0,
@@ -52,5 +52,6 @@ game_clock_stop_explicit(struct GameClock *gc, float time_elapsed_in_seconds)
 void
 game_clock_stop(struct GameClock *gc)
 {
-	game_clock_stop_explicit(gc, (float)p_time_profiler_elapsed_usecs(gc->timer) * 1000 * 1000);
+	game_clock_stop_explicit(gc,
+	                         (float)p_time_profiler_elapsed_usecs(gc->timer) * 1000 * 1000);
 }

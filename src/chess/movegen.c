@@ -262,25 +262,6 @@ gen_legal_moves(struct Move moves[], struct Board *pos)
 	return i;
 }
 
-// size_t
-// gen_black_pawn_attacks_against(struct Board *pos, struct Move *moves, Bitboard mask)
-//{
-//	struct Move *ptr = moves;
-//	Bitboard pawns = pos->black_pawns;
-//	Bitboard a1 = ((pawns & 0x7f7f7f7f7f7f7f7fL) >> 7) & mask;
-//	Bitboard a2 = ((pawns & 0xfefefefefefefefeL) >> 9) & mask;
-//	int sq;
-//	while (a1) {
-//		POP_LSB(sq, a1);
-//		EMIT_MOVE(moves, sq + 7, sq);
-//	}
-//	while (a2) {
-//		POP_LSB(sq, a2);
-//		EMIT_MOVE(moves, sq + 9, sq);
-//	}
-//	return moves - ptr;
-//}
-
 bool
 position_is_stalemate(struct Board *pos)
 {
@@ -312,7 +293,7 @@ size_t
 position_perft(struct Board *pos, size_t depth)
 {
 	if (depth == 0) {
-		printf("1\n");
+		puts("1");
 		return 1;
 	} else if (depth > MAX_DEPTH) {
 		printf("<depth limit exceeded>\n");
@@ -334,7 +315,7 @@ position_perft(struct Board *pos, size_t depth)
 			position_undo_move_and_flip(pos, &moves[i]);
 		}
 	}
-	/* Print user-friendly report for debugging. */
+	// Print user-friendly report for debugging.
 	char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	printf("%zu\n", result);
 	for (size_t i = 0; i < root_moves_count; i++) {

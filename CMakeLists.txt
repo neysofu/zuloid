@@ -56,11 +56,14 @@ add_subdirectory("${LIB_DIR}/plibsys/")
 # xxHash
 add_library(XXHASH "${LIB_DIR}/xxHash/xxhash.c")
 set_property(TARGET XXHASH PROPERTY C_STANDARD 99)
+# munit
+add_library(munit "${LIB_DIR}/munit/munit.c")
+set_property(TARGET munit PROPERTY C_STANDARD 99)
 # Unity
 add_library(UNITY "${LIB_DIR}/Unity/src/unity.c")
 set_property(TARGET UNITY PROPERTY C_STANDARD 90)
 
-set_target_properties(BASE64 cjson MT64 plibsys XXHASH PROPERTIES COMPILE_FLAGS "-w")
+set_target_properties(BASE64 cjson MT64 plibsys XXHASH munit PROPERTIES COMPILE_FLAGS "-w")
 
 # ZORRO_LIB
 file(GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
@@ -68,7 +71,7 @@ list(REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library(ZORRO_LIB STATIC "${SRC_FILES}")
 target_include_directories(ZORRO_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories(ZORRO_LIB SYSTEM PUBLIC "${LIB_DIR}")
-target_link_libraries(ZORRO_LIB BASE64 cjson MT64 plibsys XXHASH)
+target_link_libraries(ZORRO_LIB BASE64 cjson MT64 plibsys XXHASH munit)
 target_compile_definitions(ZORRO_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
@@ -86,3 +89,9 @@ target_compile_definitions(zorro_test PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 add_test(NAME ZORRO COMMAND zorro_test)
+
+add_custom_target(run
+    COMMAND zorro
+    DEPENDS zorro
+    WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
+)

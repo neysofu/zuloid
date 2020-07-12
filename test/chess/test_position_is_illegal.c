@@ -1,4 +1,3 @@
-#include "Unity/src/unity.h"
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "utils.h"

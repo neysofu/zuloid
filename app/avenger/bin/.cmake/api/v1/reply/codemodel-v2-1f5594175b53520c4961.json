@@ -1,0 +1,253 @@
+{
+	"configurations" : 
+	[
+		{
+			"directories" : 
+			[
+				{
+					"build" : ".",
+					"childIndexes" : 
+					[
+						1,
+						4
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "3.4"
+					},
+					"projectIndex" : 0,
+					"source" : ".",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						6,
+						8,
+						9,
+						10
+					]
+				},
+				{
+					"build" : "lib/cJSON",
+					"childIndexes" : 
+					[
+						2,
+						3
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.5"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 1,
+					"source" : "lib/cJSON",
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"build" : "lib/cJSON/tests",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.5"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "lib/cJSON/tests"
+				},
+				{
+					"build" : "lib/cJSON/fuzzing",
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.5"
+					},
+					"parentIndex" : 1,
+					"projectIndex" : 1,
+					"source" : "lib/cJSON/fuzzing"
+				},
+				{
+					"build" : "lib/plibsys",
+					"childIndexes" : 
+					[
+						5
+					],
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.0"
+					},
+					"parentIndex" : 0,
+					"projectIndex" : 2,
+					"source" : "lib/plibsys"
+				},
+				{
+					"build" : "lib/plibsys/src",
+					"hasInstallRule" : true,
+					"minimumCMakeVersion" : 
+					{
+						"string" : "2.8.0"
+					},
+					"parentIndex" : 4,
+					"projectIndex" : 2,
+					"source" : "lib/plibsys/src",
+					"targetIndexes" : 
+					[
+						7
+					]
+				}
+			],
+			"name" : "Debug",
+			"projects" : 
+			[
+				{
+					"childIndexes" : 
+					[
+						1,
+						2
+					],
+					"directoryIndexes" : 
+					[
+						0
+					],
+					"name" : "ZORRO",
+					"targetIndexes" : 
+					[
+						0,
+						1,
+						2,
+						3,
+						4,
+						6,
+						8,
+						9,
+						10
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						1,
+						2,
+						3
+					],
+					"name" : "cJSON",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						5
+					]
+				},
+				{
+					"directoryIndexes" : 
+					[
+						4,
+						5
+					],
+					"name" : "plibsys",
+					"parentIndex" : 0,
+					"targetIndexes" : 
+					[
+						7
+					]
+				}
+			],
+			"targets" : 
+			[
+				{
+					"directoryIndex" : 0,
+					"id" : "BASE64::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-BASE64-Debug-c6d4123cf017cbc3312e.json",
+					"name" : "BASE64",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "MT64::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-MT64-Debug-fafeaa096ee175b9dc5f.json",
+					"name" : "MT64",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "UNITY::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-UNITY-Debug-4095292052120439b369.json",
+					"name" : "UNITY",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "XXHASH::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-XXHASH-Debug-ba047320ba41cc43ec9f.json",
+					"name" : "XXHASH",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "ZORRO_LIB::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-ZORRO_LIB-Debug-93490f5f93e205f2547e.json",
+					"name" : "ZORRO_LIB",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 1,
+					"id" : "cjson::@8e3b69a964a22f86c4ad",
+					"jsonFile" : "target-cjson-Debug-a65cd251d3499cb677b9.json",
+					"name" : "cjson",
+					"projectIndex" : 1
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "munit::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-munit-Debug-8f5677aa413a2965229b.json",
+					"name" : "munit",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 5,
+					"id" : "plibsys::@7072ef6eab72793d200d",
+					"jsonFile" : "target-plibsys-Debug-f5c5c5780f68d78d579a.json",
+					"name" : "plibsys",
+					"projectIndex" : 2
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "run::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-run-Debug-f2f8b794bc28254a1b96.json",
+					"name" : "run",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "zorro::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-zorro-Debug-bcfd2938d31c844e3d2a.json",
+					"name" : "zorro",
+					"projectIndex" : 0
+				},
+				{
+					"directoryIndex" : 0,
+					"id" : "zorro_test::@6890427a1f51a3e7e1df",
+					"jsonFile" : "target-zorro_test-Debug-e245b15121b60fb5f046.json",
+					"name" : "zorro_test",
+					"projectIndex" : 0
+				}
+			]
+		}
+	],
+	"kind" : "codemodel",
+	"paths" : 
+	{
+		"build" : "/home/neysofu/Projects/zorro/app/avenger/bin",
+		"source" : "/home/neysofu/Projects/zorro"
+	},
+	"version" : 
+	{
+		"major" : 2,
+		"minor" : 0
+	}
+}

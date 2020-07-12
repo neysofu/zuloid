@@ -20,8 +20,6 @@ const short OFFSETS_KING[8][2] = {
 	{ -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, { 1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 },
 };
 
-struct Magic MAGICS[SQUARES_COUNT] = { 0 };
-
 Bitboard BB_ATTACKS_BISHOP[64 * 4096] = { 0 };
 Bitboard BB_ATTACKS_ROOK[64 * 4096] = { 0 };
 
@@ -55,13 +53,16 @@ bb_print(Bitboard bb)
 	puts("");
 }
 
-Bitboard bb_random(void) {
-  Bitboard u1, u2, u3, u4;
-  u1 = (Bitboard)(random()) & 0xFFFF; u2 = (Bitboard)(random()) & 0xFFFF;
-  u3 = (Bitboard)(random()) & 0xFFFF; u4 = (Bitboard)(random()) & 0xFFFF;
-  return u1 | (u2 << 16) | (u3 << 32) | (u4 << 48);
+Bitboard
+bb_random(void)
+{
+	Bitboard u1, u2, u3, u4;
+	u1 = (Bitboard)(random()) & 0xFFFF;
+	u2 = (Bitboard)(random()) & 0xFFFF;
+	u3 = (Bitboard)(random()) & 0xFFFF;
+	u4 = (Bitboard)(random()) & 0xFFFF;
+	return u1 | (u2 << 16) | (u3 << 32) | (u4 << 48);
 }
-
 
 Bitboard
 bb_attacks_bishop(Square sq, Bitboard obstacles)
@@ -122,7 +123,8 @@ bb_init_rook(void)
 			Bitboard key = 0;
 			BB_MAGICS_ROOK[sq] = bb_sparse_random();
 			BB_MASK_ROOK[sq] = bb_rays_rook(sq);
-			BB_POSTMASK_ROOK[sq] = file_to_bb(square_file(sq)) | rank_to_bb(square_rank(sq));
+			BB_POSTMASK_ROOK[sq] =
+			  file_to_bb(square_file(sq)) | rank_to_bb(square_rank(sq));
 			do {
 				size_t index = ((key & BB_MASK_ROOK[sq]) * BB_MASK_ROOK[sq]) >> 14;
 				Bitboard *val = BB_ATTACKS_ROOK + index + offset;
@@ -137,7 +139,7 @@ bb_init_rook(void)
 					*val |= bb_rook(sq, key);
 					bb_print(*val);
 				}
-			// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
+				// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
 			} while ((key = (key - BB_MASK_ROOK[sq]) & BB_MASK_ROOK[sq]));
 			offset += 1ULL << (64 - BB_SHIFTS_ROOK[sq]);
 		}
@@ -145,7 +147,8 @@ bb_init_rook(void)
 }
 
 size_t
-magics_size_in_kib(void) {
+magics_size_in_kib(void)
+{
 	size_t total = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		total += (MAGICS[sq].end - MAGICS[sq].start) * sizeof(Bitboard);
@@ -165,6 +168,6 @@ bb_init(void)
 		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
 		offset += MAGICS[sq].end - MAGICS[sq].start;
 	}
-	//bb_init_rook();
-	//bb_init_bishop();
+	// bb_init_rook();
+	// bb_init_bishop();
 }

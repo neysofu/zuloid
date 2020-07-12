@@ -33,6 +33,7 @@ struct Engine
 	struct Tablebase *tablebase;
 	int32_t seed;
 	bool debug;
+	FILE *output;
 	// A straightforward activity indicator. Both `main` and engine commands
 	// might want to know if the engine is doing background computation or
 	// what.
@@ -59,8 +60,14 @@ struct Engine
 	size_t max_depth;
 };
 
+void
+init_subsystems(void);
+
 struct Engine *
 engine_new(void);
+
+struct Engine *
+engine_new_tmp(void);
 
 void
 engine_call(struct Engine *engine, char *cmd);

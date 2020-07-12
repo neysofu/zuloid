@@ -1,12 +1,13 @@
-/* Resources:
- *  - http://wbec-ridderkerk.nl/html/UCIProtocol.html
- *  - https://www.chessprogramming.org/UCI
- *  - https://www.seungjaelee.com/projects/uci/ */
+// Resources:
+//  - http://wbec-ridderkerk.nl/html/UCIProtocol.html
+//  - https://www.chessprogramming.org/UCI
+//  - https://www.seungjaelee.com/projects/uci/
 
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
 #include "chess/fen.h"
+#include "chess/find_magics.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core.h"
@@ -23,9 +24,11 @@
 void
 uci_call_eval(struct Engine *engine, char *cmd)
 {
-	printf("wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
-	printf("bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
-	printf("totmaterial %f\n", position_eval(&engine->board));
+	fprintf(
+	  engine->output, "wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
+	fprintf(
+	  engine->output, "bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
+	fprintf(engine->output, "totmaterial %f\n", position_eval(&engine->board));
 }
 
 void
@@ -119,13 +122,13 @@ uci_call_legalmoves(struct Engine *engine, char *cmd)
 	struct Move moves[255] = { 0 };
 	/* FIXME */
 	size_t count = gen_legal_moves(moves, &engine->board);
-	printf("%zu", count);
+	fprintf(engine->output, "%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
 		move_to_string(moves[i], buf);
-		printf(" %s", buf);
+		fprintf(engine->output, " %s", buf);
 	}
-	printf("\n");
+	fprintf(engine->output, "\n");
 }
 
 void
@@ -133,13 +136,33 @@ uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 {
 	struct Move moves[255] = { 0 };
 	size_t count = gen_pseudolegal_moves(moves, &engine->board);
-	printf("%zu", count);
+	fprintf(engine->output, "%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
 		move_to_string(moves[i], buf);
-		printf(" %s", buf);
+		printf(engine->output, " %s", buf);
 	}
-	printf("\n");
+	putc('\n', engine->output);
+}
+
+void
+uci_call_export_magics(char *cmd)
+{
+	char *filename = strtok_whitespace(NULL);
+	if (!filename) {
+		uci_err_syntax();
+		return;
+	}
+	FILE *file = fopen(filename, "w");
+	if (!file) {
+		uci_err_unspecified();
+		return;
+	}
+	fprintf(file, "-- ROOK MAGICS:\n");
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		fprintf(file, "0x%zu:\n", MAGICS[sq].multiplier);
+	}
+	fclose(file);
 }
 
 void
@@ -147,7 +170,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
+		uci_err_syntax();
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->board = POSITION_INIT;
@@ -159,7 +182,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 				if (i >= 4) {
 					break;
 				} else {
-					ENGINE_DEBUGF(engine, "[ERROR] Not enough tokens in the FEN string.\n");
+					uci_err_syntax();
 					return;
 				}
 			}
@@ -171,7 +194,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 		 * for training. */
 		position_init_960(&engine->board);
 	} else {
-		ENGINE_DEBUGF(engine, "[ERROR] 'startpos' | 'fen' | '960' token expected.\n");
+		uci_err_syntax();
 	}
 	/* Now feed moves into the position. */
 	while ((token = strtok_whitespace(NULL))) {
@@ -194,7 +217,7 @@ uci_call_d(struct Engine *engine, char *cmd)
 		  ;
 			char *command = malloc(64 + FEN_SIZE);
 			char *fen = fen_from_position(NULL, &engine->board, '_');
-			printf("https://lichess.org/analysis/standard/%s\n", fen);
+			fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
 			free(command);
 			free(fen);
 			break;
@@ -339,7 +362,7 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			uci_call_go(engine, cmd);
 			break;
 		case 48790: // "isready"
-			puts("readyok");
+			fputs("readyok\n", engine->output);
 			break;
 		case 31418: // "position"
 			uci_call_position(engine, cmd);
@@ -354,16 +377,18 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			engine_stop_search(engine);
 			break;
 		case 45510: // "uci"
-			printf("id name Zorro %s\n"
-			       "id author Filippo Costa\n"
-			       "id elo %u\n",
-			       ZORRO_VERSION,
-			       CCRL_4015_RATING);
+			fprintf(engine->output,
+			        "id name Zorro %s\n"
+			        "id author Filippo Costa\n"
+			        "id elo %u\n",
+			        ZORRO_VERSION,
+			        CCRL_4015_RATING);
 			for (size_t i = 0; i < sizeof(OPTIONS) / sizeof(OPTIONS[0]); i++) {
-				puts(OPTIONS[i]);
+				fputs(OPTIONS[i], engine->output);
+				putc('\n', engine->output);
 			}
 			bb_init();
-			puts("uciok");
+			fputs("uciok\n", engine->output);
 			break;
 		case 58250: // "ucinewgame"
 			cache_clear(engine->cache);
@@ -376,6 +401,9 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			// TODO
 			break;
 		// ... and finally some custom commands for debugging. Unstable!
+		case 57625: // "magics"
+			uci_call_export_magics(cmd);
+			break;
 		case 32044: // "_eval"
 			uci_call_eval(engine, cmd);
 			break;
@@ -388,16 +416,13 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 		case 4685: // "_plm" (PseudoLegal Moves)
 			uci_call_pseudolegalmoves(engine, cmd);
 			break;
-		case 16377: // "xxhash"
-			printf("0x%llx\n", hash_of_tokens());
-			break;
 		case 16409: // "djbhash"
 		  ;
 			uint16_t hash = 0;
 			while ((token = strtok_whitespace(NULL))) {
 				hash ^= djb_hash(token);
 			}
-			printf("%u\n", hash);
+			fprintf(engine->output, "%u\n", hash);
 			break;
 		default:
 			uci_err_invalid_command();

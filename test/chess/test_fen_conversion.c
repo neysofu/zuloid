@@ -1,6 +1,6 @@
-#include "Unity/src/unity.h"
 #include "chess/fen.h"
 #include "chess/position.h"
+#include "munit/munit.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -41,6 +41,6 @@ test_fen_conversion(void)
 		strcpy(fen, VALID_FEN[i]);
 		position_init_from_fen(&position, fen);
 		char *f = fen_from_position(fen, &position, ' ');
-		TEST_ASSERT_EQUAL_STRING(VALID_FEN[i], f);
+		munit_assert_string_equal(VALID_FEN[i], f);
 	}
 }

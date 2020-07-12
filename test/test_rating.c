@@ -1,4 +1,4 @@
-#include "Unity/src/unity.h"
+#include "munit/munit.h"
 #include "rating.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -7,6 +7,8 @@
 void
 test_rating(void)
 {
-	TEST_ASSERT_EQUAL_FLOAT(expected_score(1800, 1800), 0.5);
-	TEST_ASSERT_EQUAL_FLOAT(expected_score(2500, 2300), 1.0 - expected_score(2300, 2500));
+	munit_assert_double_equal(expected_score(1800, 1800), 0.5, 4);
+	munit_assert_double_equal(expected_score(0, 0), 0.5, 4);
+	munit_assert_double_equal(expected_score(-500, -500), 0.5, 4);
+	munit_assert_double_equal(expected_score(2500, 2300), 1.0 - expected_score(2300, 2500), 4);
 }

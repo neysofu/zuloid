@@ -32,7 +32,8 @@ djb_hash(const char *str)
 }
 
 void *
-exit_if_null(void *ptr) {
+exit_if_null(void *ptr)
+{
 	if (!ptr) {
 		puts("[ERROR] OOM condition.");
 		exit(1);

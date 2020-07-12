@@ -1,0 +1,481 @@
+[
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DBASE64_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -std=gnu99 -o CMakeFiles/BASE64.dir/lib/base64/base64.c.o   -c /home/neysofu/Projects/zorro/lib/base64/base64.c",
+  "file": "/home/neysofu/Projects/zorro/lib/base64/base64.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DMT64_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -std=gnu99 -o CMakeFiles/MT64.dir/lib/mt-64/mt19937-64.c.o   -c /home/neysofu/Projects/zorro/lib/mt-64/mt19937-64.c",
+  "file": "/home/neysofu/Projects/zorro/lib/mt-64/mt19937-64.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc  -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro.dir/src/main.c.o   -c /home/neysofu/Projects/zorro/src/main.c",
+  "file": "/home/neysofu/Projects/zorro/src/main.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DXXHASH_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -std=gnu99 -o CMakeFiles/XXHASH.dir/lib/xxHash/xxhash.c.o   -c /home/neysofu/Projects/zorro/lib/xxHash/xxhash.c",
+  "file": "/home/neysofu/Projects/zorro/lib/xxHash/xxhash.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/color.c.o   -c /home/neysofu/Projects/zorro/test/chess/color.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/color.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_castling_mask.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_castling_mask.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_castling_mask.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_char_to_piece.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_char_to_piece.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_char_to_piece.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_coordinates.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_coordinates.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_coordinates.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_fen_conversion.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_fen_conversion.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_fen_conversion.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_fen_init.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_fen_init.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_fen_init.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_piece_to_char.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_piece_to_char.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_piece_to_char.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/chess/test_position_is_illegal.c.o   -c /home/neysofu/Projects/zorro/test/chess/test_position_is_illegal.c",
+  "file": "/home/neysofu/Projects/zorro/test/chess/test_position_is_illegal.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/main.c.o   -c /home/neysofu/Projects/zorro/test/main.c",
+  "file": "/home/neysofu/Projects/zorro/test/main.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/protocols/test_uci.c.o   -c /home/neysofu/Projects/zorro/test/protocols/test_uci.c",
+  "file": "/home/neysofu/Projects/zorro/test/protocols/test_uci.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/test_attacks.c.o   -c /home/neysofu/Projects/zorro/test/test_attacks.c",
+  "file": "/home/neysofu/Projects/zorro/test/test_attacks.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/test_cache.c.o   -c /home/neysofu/Projects/zorro/test/test_cache.c",
+  "file": "/home/neysofu/Projects/zorro/test/test_cache.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/test_perft.c.o   -c /home/neysofu/Projects/zorro/test/test_perft.c",
+  "file": "/home/neysofu/Projects/zorro/test/test_perft.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_VERSION=\\\"1.6.0\\\" -DTEST_RESOURCES=\\\"/home/neysofu/Projects/zorro/test//resources/\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/zorro_test.dir/test/test_rating.c.o   -c /home/neysofu/Projects/zorro/test/test_rating.c",
+  "file": "/home/neysofu/Projects/zorro/test/test_rating.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DUNITY_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -std=gnu90 -o CMakeFiles/UNITY.dir/lib/Unity/src/unity.c.o   -c /home/neysofu/Projects/zorro/lib/Unity/src/unity.c",
+  "file": "/home/neysofu/Projects/zorro/lib/Unity/src/unity.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/cache/cache.c.o   -c /home/neysofu/Projects/zorro/src/cache/cache.c",
+  "file": "/home/neysofu/Projects/zorro/src/cache/cache.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/cache/fast_range.c.o   -c /home/neysofu/Projects/zorro/src/cache/fast_range.c",
+  "file": "/home/neysofu/Projects/zorro/src/cache/fast_range.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/bb.c.o   -c /home/neysofu/Projects/zorro/src/chess/bb.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/bb.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/color.c.o   -c /home/neysofu/Projects/zorro/src/chess/color.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/color.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/coordinates.c.o   -c /home/neysofu/Projects/zorro/src/chess/coordinates.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/coordinates.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/fen.c.o   -c /home/neysofu/Projects/zorro/src/chess/fen.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/fen.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/find_magics.c.o   -c /home/neysofu/Projects/zorro/src/chess/find_magics.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/find_magics.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/move.c.o   -c /home/neysofu/Projects/zorro/src/chess/move.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/move.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/movegen.c.o   -c /home/neysofu/Projects/zorro/src/chess/movegen.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/movegen.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/pieces.c.o   -c /home/neysofu/Projects/zorro/src/chess/pieces.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/pieces.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/chess/position.c.o   -c /home/neysofu/Projects/zorro/src/chess/position.c",
+  "file": "/home/neysofu/Projects/zorro/src/chess/position.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/core/cpu.c.o   -c /home/neysofu/Projects/zorro/src/core/cpu.c",
+  "file": "/home/neysofu/Projects/zorro/src/core/cpu.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/engine.c.o   -c /home/neysofu/Projects/zorro/src/engine.c",
+  "file": "/home/neysofu/Projects/zorro/src/engine.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/globals.c.o   -c /home/neysofu/Projects/zorro/src/globals.c",
+  "file": "/home/neysofu/Projects/zorro/src/globals.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/protocols/uci.c.o   -c /home/neysofu/Projects/zorro/src/protocols/uci.c",
+  "file": "/home/neysofu/Projects/zorro/src/protocols/uci.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/rating.c.o   -c /home/neysofu/Projects/zorro/src/rating.c",
+  "file": "/home/neysofu/Projects/zorro/src/rating.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/time/game_clock.c.o   -c /home/neysofu/Projects/zorro/src/time/game_clock.c",
+  "file": "/home/neysofu/Projects/zorro/src/time/game_clock.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/time/time_control.c.o   -c /home/neysofu/Projects/zorro/src/time/time_control.c",
+  "file": "/home/neysofu/Projects/zorro/src/time/time_control.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/time/time_manager.c.o   -c /home/neysofu/Projects/zorro/src/time/time_manager.c",
+  "file": "/home/neysofu/Projects/zorro/src/time/time_manager.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPROJECT_BUILD_DATE=\\\"2020-07-12\\\" -DPROJECT_VERSION=\\\"1.6.0\\\" -I../../../include -I../../../lib/plibsys/src -I. -isystem ../../../lib          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g   -o CMakeFiles/ZORRO_LIB.dir/src/utils.c.o   -c /home/neysofu/Projects/zorro/src/utils.c",
+  "file": "/home/neysofu/Projects/zorro/src/utils.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -Dmunit_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -std=gnu99 -o CMakeFiles/munit.dir/lib/munit/munit.c.o   -c /home/neysofu/Projects/zorro/lib/munit/munit.c",
+  "file": "/home/neysofu/Projects/zorro/lib/munit/munit.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DCJSON_API_VISIBILITY -DCJSON_EXPORT_SYMBOLS -DENABLE_LOCALES -Dcjson_EXPORTS          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -pedantic -Wall -Wextra -Werror -Wstrict-prototypes -Wwrite-strings -Wshadow -Winit-self -Wcast-align -Wformat=2 -Wmissing-prototypes -Wstrict-overflow=2 -Wcast-qual -Wundef -Wswitch-default -Wconversion -Wc++-compat -fstack-protector-strong -Wdouble-promotion -Wparentheses -Wformat-overflow -Wunused-macros -Wswitch-enum -fvisibility=hidden  -g -fPIC   -w -o lib/cJSON/CMakeFiles/cjson.dir/cJSON.c.o   -c /home/neysofu/Projects/zorro/lib/cJSON/cJSON.c",
+  "file": "/home/neysofu/Projects/zorro/lib/cJSON/cJSON.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-gost3411.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-gost3411.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-gost3411.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-md5.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-md5.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-md5.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-sha1.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha1.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha1.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-sha2-256.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha2-256.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha2-256.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-sha2-512.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha2-512.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha2-512.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcryptohash-sha3.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha3.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcryptohash-sha3.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pdir.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pdir.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pdir.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/perror.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/perror.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/perror.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pfile.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pfile.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pfile.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/phashtable.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/phashtable.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/phashtable.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pinifile.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pinifile.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pinifile.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/plist.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/plist.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/plist.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pmain.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pmain.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pmain.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pmem.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pmem.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pmem.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pprocess.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pprocess.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pprocess.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pshmbuffer.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pshmbuffer.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pshmbuffer.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/psocket.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/psocket.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/psocket.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/psocketaddress.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/psocketaddress.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/psocketaddress.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pstring.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pstring.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pstring.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptimeprofiler.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptimeprofiler.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptimeprofiler.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptree.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptree.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptree.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptree-avl.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptree-avl.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptree-avl.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptree-bst.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptree-bst.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptree-bst.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptree-rb.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptree-rb.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptree-rb.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/puthread.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/puthread.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/puthread.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pipc.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pipc.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pipc.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/patomic-c11.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/patomic-c11.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/patomic-c11.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pspinlock-c11.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pspinlock-c11.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pspinlock-c11.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pcondvariable-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pcondvariable-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pcondvariable-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pmutex-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pmutex-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pmutex-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/psemaphore-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/psemaphore-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/psemaphore-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pshm-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pshm-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pshm-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/psysclose-unix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/psysclose-unix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/psysclose-unix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/puthread-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/puthread-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/puthread-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/ptimeprofiler-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/ptimeprofiler-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/ptimeprofiler-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/pdir-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/pdir-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/pdir-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/plibraryloader-posix.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/plibraryloader-posix.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/plibraryloader-posix.c"
+},
+
+{
+  "directory": "/home/neysofu/Projects/zorro/app/avenger/bin",
+  "command": "/bin/c99-gcc -DPLIBSYS_COMPILATION -DPLIBSYS_HAS_CLOCKNANOSLEEP -DPLIBSYS_HAS_GETADDRINFO -DPLIBSYS_HAS_LLDIV -DPLIBSYS_HAS_NANOSLEEP -DPLIBSYS_HAS_POSIX_SCHEDULING -DPLIBSYS_HAS_POSIX_STACKSIZE -DPLIBSYS_HAS_SOCKADDR_STORAGE -DPLIBSYS_HAS_SOCKLEN_T -DPLIBSYS_SOCKADDR_IN6_HAS_FLOWINFO -DPLIBSYS_SOCKADDR_IN6_HAS_SCOPEID -D_REENTRANT -Dplibsys_EXPORTS -I../../../lib/plibsys/src -I.          -fverbose-asm    -Wall    -Wpedantic    -Wextra    -Wshadow    -Wcomment    -Wno-missing-braces    -Wno-missing-field-initializers    -Wswitch-default    -Wcast-align    -Wpointer-arith    -Wundef    -Wuninitialized    -Wredundant-decls    -Wold-style-definition    -Wunreachable-code    -Wunused-macros -g -fPIC   -w -o lib/plibsys/src/CMakeFiles/plibsys.dir/prwlock-general.c.o   -c /home/neysofu/Projects/zorro/lib/plibsys/src/prwlock-general.c",
+  "file": "/home/neysofu/Projects/zorro/lib/plibsys/src/prwlock-general.c"
+}
+]

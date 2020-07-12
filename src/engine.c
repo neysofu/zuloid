@@ -8,6 +8,17 @@
 #include <stdio.h>
 #include <string.h>
 
+void
+init_subsystems(void)
+{
+	init_genrand64(0xd895643full);
+	p_libsys_init();
+	// UCI (and CECP as well, for that matter) is a line-oriented protocol; so
+	// we want to turn line buffering on.
+	setvbuf(stdin, NULL, _IOLBF, 0);
+	setvbuf(stdout, NULL, _IOLBF, 0);
+}
+
 struct Engine *
 engine_new(void)
 {
@@ -18,6 +29,7 @@ engine_new(void)
 		.cache = NULL,
 		.agent = agent_new(),
 		.seed = 0xcfca130b,
+		.output = stdout,
 		.debug = false,
 		.move_selection_noise = 0.005,
 		.contempt = 0.65,
@@ -25,6 +37,13 @@ engine_new(void)
 		.status = STATUS_IDLE,
 		.exit_status = EXIT_SUCCESS,
 	};
+	return engine;
+}
+
+struct Engine *
+engine_new_tmp(void) {
+	struct Engine *engine = engine_new();
+	engine->output = tmpfile();
 	return engine;
 }
 
