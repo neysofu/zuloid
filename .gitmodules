@@ -1,3 +1,6 @@
 [submodule "lib/munit"]
 	path = lib/munit
 	url = https://github.com/nemequ/munit
+[submodule "lib/plibsys"]
+	path = lib/plibsys
+	url = https://github.com/saprykin/plibsys
