@@ -19,24 +19,22 @@ extern void test_rating(void);
 extern void test_perft_results(struct Engine *);
 extern void test_uci(struct Engine *);
 extern void test_uci_cmd_d(struct Engine *);
+extern void test_uci_cmd_position(struct Engine *);
+extern void test_uci_unknown_cmd(struct Engine *);
 extern void test_utils(void);
 // clang-format on
 
 void
 call_test(void (*test)(void))
 {
-	printf("[INFO] Starting test.\n");
 	test();
-	printf("[INFO] Test completed successfully.\n");
 }
 
 void
 call_test_with_tmp_engine(void (*test)(struct Engine *))
 {
 	struct Engine *engine = engine_new_tmp();
-	printf("[INFO] Starting test.\n");
 	test(engine);
-	printf("[INFO] Test completed successfully.\n");
 	engine_delete(engine);
 }
 
@@ -61,7 +59,8 @@ main(void)
 	call_test_with_tmp_engine(test_perft_results);
 	call_test_with_tmp_engine(test_uci);
 	call_test_with_tmp_engine(test_uci_cmd_d);
-	puts("-----------------");
+	call_test_with_tmp_engine(test_uci_cmd_position);
+	call_test_with_tmp_engine(test_uci_unknown_cmd);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

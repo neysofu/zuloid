@@ -22,9 +22,9 @@
 #include <string.h>
 
 void
-uci_err_syntax(void)
+uci_err_syntax(FILE *stream)
 {
-	puts("[ERROR] Invalid syntax.");
+	fputs("[ERROR] Invalid syntax.\n", stream);
 }
 
 void
@@ -158,17 +158,17 @@ uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
 		move_to_string(moves[i], buf);
-		printf(engine->output, " %s", buf);
+		fprintf(engine->output, " %s", buf);
 	}
 	putc('\n', engine->output);
 }
 
 void
-uci_call_export_magics(char *cmd)
+uci_call_export_magics(struct Engine *engine, char *cmd)
 {
 	char *filename = strtok_whitespace(NULL);
 	if (!filename) {
-		uci_err_syntax();
+		uci_err_syntax(engine->output);
 		return;
 	}
 	FILE *file = fopen(filename, "w");
@@ -188,10 +188,12 @@ uci_call_position(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		uci_err_syntax();
+		uci_err_syntax(engine->output);
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->board = POSITION_INIT;
+	} else if (strcmp(token, "current") == 0) {
+		;
 	} else if (strcmp(token, "fen") == 0) {
 		char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
@@ -200,7 +202,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 				if (i >= 4) {
 					break;
 				} else {
-					uci_err_syntax();
+					uci_err_syntax(engine->output);
 					return;
 				}
 			}
@@ -212,7 +214,7 @@ uci_call_position(struct Engine *engine, char *cmd)
 		 * for training. */
 		position_init_960(&engine->board);
 	} else {
-		uci_err_syntax();
+		uci_err_syntax(engine->output);
 	}
 	/* Now feed moves into the position. */
 	while ((token = strtok_whitespace(NULL))) {
@@ -240,7 +242,7 @@ uci_call_d(struct Engine *engine, char *cmd)
 			free(fen);
 			break;
 		default:
-			uci_err_syntax();
+			uci_err_syntax(engine->output);
 			break;
 	}
 }
@@ -355,7 +357,7 @@ protocol_uci_handle(struct Engine *engine, char *cmd)
 			} else if (token && strcmp(token, "off") == 0) {
 				engine->debug = false;
 			} else {
-				uci_err_syntax();
+				uci_err_syntax(engine->output);
 			}
 			break;
 		case 30715: // "go"
@@ -402,7 +404,7 @@ protocol_uci_handle(struct Engine *engine, char *cmd)
 			break;
 		// ... and finally some custom commands for debugging. Unstable!
 		case 57625: // "magics"
-			uci_call_export_magics(cmd);
+			uci_call_export_magics(engine, cmd);
 			break;
 		case 32044: // "_eval"
 			uci_call_eval(engine, cmd);
