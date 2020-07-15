@@ -1,5 +1,6 @@
 #include "engine.h"
 #include <stdio.h>
+#include <stdarg.h>
 
 // clang-format off
 extern void test_attacks(void);
@@ -17,14 +18,25 @@ extern void test_position_is_legal(void);
 extern void test_rating(void);
 extern void test_perft_results(struct Engine *);
 extern void test_uci(struct Engine *);
+extern void test_uci_cmd_d(struct Engine *);
 extern void test_utils(void);
 // clang-format on
 
 void
-call_with_tmp_engine(void (*test)(struct Engine *))
+call_test(void (*test)(void))
+{
+	printf("[INFO] Starting test.\n");
+	test();
+	printf("[INFO] Test completed successfully.\n");
+}
+
+void
+call_test_with_tmp_engine(void (*test)(struct Engine *))
 {
 	struct Engine *engine = engine_new_tmp();
+	printf("[INFO] Starting test.\n");
 	test(engine);
+	printf("[INFO] Test completed successfully.\n");
 	engine_delete(engine);
 }
 
@@ -32,21 +44,24 @@ int
 main(void)
 {
 	init_subsystems();
-	test_utils();
-	test_attacks();
-	test_castling_mask();
-	test_cache_single_key_retrieval();
-	test_char_to_file();
-	test_char_to_piece();
-	test_color_other();
-	test_fen_conversion();
-	test_fen_init();
-	test_file_to_char();
-	test_piece_to_char();
-	test_position_is_illegal();
-	test_position_is_legal();
-	test_rating();
-	call_with_tmp_engine(test_perft_results);
-	call_with_tmp_engine(test_uci);
+	call_test(test_utils);
+	call_test(test_attacks);
+	call_test(test_castling_mask);
+	call_test(test_cache_single_key_retrieval);
+	call_test(test_char_to_file);
+	call_test(test_char_to_piece);
+	call_test(test_color_other);
+	call_test(test_fen_conversion);
+	call_test(test_fen_init);
+	call_test(test_file_to_char);
+	call_test(test_piece_to_char);
+	call_test(test_position_is_illegal);
+	call_test(test_position_is_legal);
+	call_test(test_rating);
+	call_test_with_tmp_engine(test_perft_results);
+	call_test_with_tmp_engine(test_uci);
+	call_test_with_tmp_engine(test_uci_cmd_d);
+	puts("-----------------");
+	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

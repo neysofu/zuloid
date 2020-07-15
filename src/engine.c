@@ -5,8 +5,8 @@
 #include "utils.h"
 #include <assert.h>
 #include <stdarg.h>
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 void
@@ -42,7 +42,8 @@ engine_new(void)
 }
 
 struct Engine *
-engine_new_tmp(void) {
+engine_new_tmp(void)
+{
 	struct Engine *engine = engine_new();
 	char template[] = "/tmp/fileXXXXXX";
 	int fd = mkstemp(template);

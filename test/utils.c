@@ -10,11 +10,17 @@ struct Lines {
 	size_t capacity;
 };
 
+size_t
+lines_count(struct Lines *lines) {
+	return lines->length;
+}
+
 char *
-lines_nth(struct Lines *lines, long long i) {
+lines_nth(struct Lines *lines, long long int i) {
 	if (i < 0) {
 		i += lines->length;
-	} else if ((size_t)i >= lines->length) {
+	}
+	if ((size_t)i >= lines->length || i < 0) {
 		return NULL;
 	}
 	return lines->data[i];
@@ -36,7 +42,7 @@ set_null_lines(struct Lines *lines) {
 }
 
 struct Lines *
-read_last_lines(FILE *stream, size_t count)
+read_last_lines(FILE *stream)
 {
 	long position = ftell(stream);
 	rewind(stream);

@@ -138,22 +138,22 @@ position_init_from_fen(struct Board *pos, char *fen)
 }
 
 void
-position_print(struct Board *position)
+position_print(FILE *stream, struct Board *position)
 {
-	printf("     A B C D E F G H\n"
+	fprintf(stream, "     A B C D E F G H\n"
 	       "   +-----------------+\n");
 	Rank rank = RANK_MAX;
 	do {
-		printf(" %c | ", rank_to_char(rank));
+		fprintf(stream, " %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
 			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
-			printf("%c ", piece_to_char(piece));
+			fprintf(stream, "%c ", piece_to_char(piece));
 		}
-		printf("| %c\n", rank_to_char(rank));
+		fprintf(stream, "| %c\n", rank_to_char(rank));
 	} while (rank-- > 0);
-	printf("   +-----------------+\n"
+	fprintf(stream, "   +-----------------+\n"
 	       "     A B C D E F G H\n");
 	char *fen = fen_from_position(NULL, position, ' ');
-	printf("FEN: %s\n", fen);
+	fprintf(stream, "FEN: %s\n", fen);
 	free(fen);
 }

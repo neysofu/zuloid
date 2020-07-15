@@ -9,10 +9,13 @@ struct Lines;
 char *
 lines_nth(struct Lines *lines, long long i);
 
+size_t
+lines_count(struct Lines *lines);
+
 void
 lines_delete(struct Lines *lines);
 
 struct Lines *
-read_last_lines(FILE *stream, size_t n);
+read_last_lines(FILE *stream);
 
 #endif

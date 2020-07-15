@@ -22,6 +22,24 @@
 #include <string.h>
 
 void
+uci_err_syntax(void)
+{
+	puts("[ERROR] Invalid syntax.");
+}
+
+void
+uci_err_unspecified(void)
+{
+	puts("[ERROR] Unspecified error.");
+}
+
+void
+uci_err_invalid_command(FILE *stream)
+{
+	fputs("[ERROR] Invalid command.\n", stream);
+}
+
+void
 uci_call_eval(struct Engine *engine, char *cmd)
 {
 	fprintf(
@@ -209,7 +227,7 @@ uci_call_d(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		position_print(&engine->board);
+		position_print(engine->output, &engine->board);
 		return;
 	}
 	switch (XXH64(token, strlen(token), 0)) {
@@ -225,24 +243,6 @@ uci_call_d(struct Engine *engine, char *cmd)
 			uci_err_syntax();
 			break;
 	}
-}
-
-void
-uci_err_syntax(void)
-{
-	puts("[ERROR] Invalid syntax.");
-}
-
-void
-uci_err_unspecified(void)
-{
-	puts("[ERROR] Unspecified error.");
-}
-
-void
-uci_err_invalid_command(FILE *stream)
-{
-	fputs("[ERROR] Invalid command.\n", stream);
 }
 
 void

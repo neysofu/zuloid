@@ -2,6 +2,7 @@
 #define ZORRO_CHESS_FEN_H
 
 #include "chess/position.h"
+#include <stdio.h>
 
 /*  64 + | pieces
  *   7 + | slashes
@@ -35,6 +36,6 @@ position_init_from_fen(struct Board *pos, char *fen);
 
 /* Pretty printing to stdout for debug purposes. */
 void
-position_print(struct Board *pos);
+position_print(FILE *stream, struct Board *pos);
 
 #endif
