@@ -1,11 +1,14 @@
-#include "chess/bb.h"
 #include "engine.h"
+#include "munit/munit.h"
 #include "protocols/uci.h"
+#include "test/utils.h"
+#include "utils.h"
 
 void
-test_uci(void)
+test_uci(struct Engine *engine)
 {
-	struct Engine *engine = engine_new_tmp();
-	// TEST_ASSERT_EQUAL_UINT(engine->status, STATUS_EXIT);
-	engine_delete(engine);
+	char cmd[] = "isredy";
+	protocol_uci_handle(engine, cmd);
+	//struct Lines *lines = read_last_lines(engine->output, 1);
+	//munit_assert_string_equal(lines_nth(lines, -1), "readyok");
 }

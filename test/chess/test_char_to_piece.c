@@ -1,5 +1,5 @@
-#include "munit/munit.h"
 #include "chess/pieces.h"
+#include "munit/munit.h"
 
 void
 test_char_to_piece(void)

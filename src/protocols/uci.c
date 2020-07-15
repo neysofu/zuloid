@@ -240,9 +240,9 @@ uci_err_unspecified(void)
 }
 
 void
-uci_err_invalid_command(void)
+uci_err_invalid_command(FILE *stream)
 {
-	puts("[ERROR] Invalid command.");
+	fputs("[ERROR] Invalid command.\n", stream);
 }
 
 void
@@ -337,7 +337,7 @@ const char *OPTIONS[] = {
 };
 
 void
-protocol_uci_handle(struct Engine *restrict engine, char *cmd)
+protocol_uci_handle(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(cmd);
 	if (!token) {
@@ -425,6 +425,6 @@ protocol_uci_handle(struct Engine *restrict engine, char *cmd)
 			fprintf(engine->output, "%u\n", hash);
 			break;
 		default:
-			uci_err_invalid_command();
+			uci_err_invalid_command(engine->output);
 	}
 }

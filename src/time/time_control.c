@@ -19,6 +19,9 @@ time_control_new_bullet(void)
 void
 time_control_delete(struct TimeControl *tc)
 {
+	if (!tc) {
+		return;
+	}
 	while (tc->next_time_control) {
 		tc = tc->next_time_control;
 	}

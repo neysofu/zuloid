@@ -5,6 +5,7 @@
 #include "utils.h"
 #include <assert.h>
 #include <stdarg.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
@@ -43,7 +44,13 @@ engine_new(void)
 struct Engine *
 engine_new_tmp(void) {
 	struct Engine *engine = engine_new();
-	engine->output = tmpfile();
+	char template[] = "/tmp/fileXXXXXX";
+	int fd = mkstemp(template);
+	if (fd == -1) {
+		puts("bad");
+		exit(1);
+	}
+	engine->output = fdopen(fd, "w+");
 	return engine;
 }
 

@@ -16,7 +16,7 @@ enum ErrorCode
 };
 
 char *
-read_line(void);
+read_line(FILE *stream);
 
 char *
 strtok_whitespace(char *str);

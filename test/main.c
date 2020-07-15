@@ -15,13 +15,24 @@ extern void test_piece_to_char(void);
 extern void test_position_is_illegal(void);
 extern void test_position_is_legal(void);
 extern void test_rating(void);
-extern void test_uci(void);
+extern void test_perft_results(struct Engine *);
+extern void test_uci(struct Engine *);
+extern void test_utils(void);
 // clang-format on
+
+void
+call_with_tmp_engine(void (*test)(struct Engine *))
+{
+	struct Engine *engine = engine_new_tmp();
+	test(engine);
+	engine_delete(engine);
+}
 
 int
 main(void)
 {
 	init_subsystems();
+	test_utils();
 	test_attacks();
 	test_castling_mask();
 	test_cache_single_key_retrieval();
@@ -35,5 +46,7 @@ main(void)
 	test_position_is_illegal();
 	test_position_is_legal();
 	test_rating();
+	call_with_tmp_engine(test_perft_results);
+	call_with_tmp_engine(test_uci);
 	return EXIT_SUCCESS;
 }

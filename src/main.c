@@ -18,7 +18,7 @@ main(void)
 	printf("# Process ID: %d\n", p_process_get_current_pid());
 	struct Engine *engine = engine_new();
 	while (engine->status != STATUS_EXIT) {
-		char *line = read_line();
+		char *line = read_line(stdin);
 		protocol_uci_handle(engine, line);
 		free(line);
 	}

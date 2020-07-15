@@ -4,18 +4,22 @@
 #include <string.h>
 
 char *
-read_line(void)
+read_line(FILE *stream)
 {
 	size_t i = 0;
 	size_t capacity = 8;
 	char *buffer = exit_if_null(malloc(capacity));
-	char c;
-	while (!feof(stdin) && (c = getchar()) != '\n') {
+	int c;
+	while (!feof(stream) && (c = getc(stream)) != '\n' && c != EOF) {
 		buffer[i++] = c;
 		if (i == capacity) {
 			capacity *= 2;
 			buffer = exit_if_null(realloc(buffer, capacity));
 		}
+	}
+	if (i == 0) {
+		free(buffer);
+		return NULL;
 	}
 	buffer[i] = '\0';
 	return buffer;

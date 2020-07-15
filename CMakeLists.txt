@@ -79,13 +79,13 @@ target_link_libraries(zorro ZORRO_LIB)
 
 # ZORRO_TEST
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
-add_executable(zorro_test "${TEST_FILES}")
+add_executable(test_zorro "${TEST_FILES}")
 target_include_directories(ZORRO_LIB SYSTEM PRIVATE "${LIB_DIR}")
-target_link_libraries(zorro_test ZORRO_LIB munit)
-target_compile_definitions(zorro_test PRIVATE
+target_link_libraries(test_zorro ZORRO_LIB munit)
+target_compile_definitions(test_zorro PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
-add_test(NAME ZORRO COMMAND zorro_test)
+add_test(NAME ZORRO COMMAND test_zorro)
 
 add_custom_target(run
     COMMAND zorro

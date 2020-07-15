@@ -1,5 +1,5 @@
-#include "munit/munit.h"
 #include "cache/cache.h"
+#include "munit/munit.h"
 
 void
 test_cache_single_key_retrieval(void)
