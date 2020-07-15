@@ -59,7 +59,7 @@ uci_call_go(struct Engine *engine, char *cmd)
 	while ((token = strtok_whitespace(NULL))) {
 		switch (djb_hash(token)) {
 			case 3430: // "perft"
-				position_perft(&engine->board, atoi(strtok_whitespace(NULL)));
+				position_perft(engine->output, &engine->board, atoi(strtok_whitespace(NULL)));
 				return;
 			case 52523: // "wtime"
 				token = strtok_whitespace(NULL);

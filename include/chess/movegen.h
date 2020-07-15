@@ -23,6 +23,7 @@
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/position.h"
+#include <stdio.h>
 
 enum
 {
@@ -61,6 +62,6 @@ bool
 position_is_stalemate(struct Board *pos);
 
 size_t
-position_perft(struct Board *pos, size_t depth);
+position_perft(FILE *stream, struct Board *pos, size_t depth);
 
 #endif

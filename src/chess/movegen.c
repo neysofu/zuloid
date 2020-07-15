@@ -290,13 +290,13 @@ position_perft_inner(struct Board *pos, size_t depth)
 }
 
 size_t
-position_perft(struct Board *pos, size_t depth)
+position_perft(FILE *stream, struct Board *pos, size_t depth)
 {
 	if (depth == 0) {
-		puts("1");
+		fputs("1\n", stream);
 		return 1;
 	} else if (depth > MAX_DEPTH) {
-		printf("<depth limit exceeded>\n");
+		fprintf(stream, "<depth limit exceeded>\n");
 		return 0;
 	}
 	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
@@ -317,10 +317,10 @@ position_perft(struct Board *pos, size_t depth)
 	}
 	// Print user-friendly report for debugging.
 	char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
-	printf("%zu\n", result);
+	fprintf(stream, "%zu\n", result);
 	for (size_t i = 0; i < root_moves_count; i++) {
 		move_to_string(moves[i], mv_as_str);
-		printf("%s\t%zu\n", mv_as_str, moves_count_by_move[i]);
+		fprintf(stream, "%s\t%zu\n", mv_as_str, moves_count_by_move[i]);
 	}
 	free(moves);
 	return result;
