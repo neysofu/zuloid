@@ -50,16 +50,18 @@ uci_call_eval(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_go(struct Engine *engine, char *cmd)
+uci_call_go(struct Engine *engine, char *s)
 {
 	if (engine->status == STATUS_SEARCH) {
 		return;
 	}
+	char *cmd = exit_if_null(malloc(strlen(s) + 1));
+	strcpy(cmd, s);
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
 		switch (djb_hash(token)) {
 			case 3430: // "perft"
-				position_perft(engine->output, &engine->board, atoi(strtok_whitespace(NULL)));
+				position_improved_perft(engine->output, &engine->board, atoi(strtok_whitespace(NULL)));
 				return;
 			case 52523: // "wtime"
 				token = strtok_whitespace(NULL);
@@ -192,8 +194,6 @@ uci_call_position(struct Engine *engine, char *cmd)
 		return;
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->board = POSITION_INIT;
-	} else if (strcmp(token, "current") == 0) {
-		;
 	} else if (strcmp(token, "fen") == 0) {
 		char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
@@ -213,10 +213,13 @@ uci_call_position(struct Engine *engine, char *cmd)
 		/* The "960" command is a custom addition the standard. I figured it could be useful
 		 * for training. */
 		position_init_960(&engine->board);
-	} else {
+	} else if (strcmp(token, "current") != 0) {
 		uci_err_syntax(engine->output);
 	}
-	/* Now feed moves into the position. */
+	if ((token = strtok_whitespace(NULL)) && strcmp(token, "moves")) {
+		uci_err_syntax(engine->output);
+	}
+	// Now feed moves into the position.
 	while ((token = strtok_whitespace(NULL))) {
 		struct Move mv;
 		string_to_move(token, &mv);
@@ -338,9 +341,21 @@ const char *OPTIONS[] = {
 	"option name UCI_Elo type spin default 1350 min 1350 max 2850",
 };
 
+uint16_t
+compound_hash_of_tokens(void) {
+	uint16_t hash = 0;
+	char *token = NULL;
+	while ((token = strtok_whitespace(NULL))) {
+		hash ^= djb_hash(token);
+	}
+	return hash;
+}
+
 void
-protocol_uci_handle(struct Engine *engine, char *cmd)
+protocol_uci_handle(struct Engine *engine, const char *s)
 {
+	char *cmd = exit_if_null(malloc(strlen(s) + 1));
+	strcpy(cmd, s);
 	char *token = strtok_whitespace(cmd);
 	if (!token) {
 		return;
@@ -419,14 +434,10 @@ protocol_uci_handle(struct Engine *engine, char *cmd)
 			uci_call_pseudolegalmoves(engine, cmd);
 			break;
 		case 16409: // "djbhash"
-		  ;
-			uint16_t hash = 0;
-			while ((token = strtok_whitespace(NULL))) {
-				hash ^= djb_hash(token);
-			}
-			fprintf(engine->output, "%u\n", hash);
+			fprintf(engine->output, "%u\n", compound_hash_of_tokens());
 			break;
 		default:
 			uci_err_invalid_command(engine->output);
 	}
+	free(cmd);
 }

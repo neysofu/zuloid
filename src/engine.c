@@ -36,7 +36,6 @@ engine_new(void)
 		.contempt = 0.65,
 		.selectivity = 0.5,
 		.status = STATUS_IDLE,
-		.exit_status = EXIT_SUCCESS,
 	};
 	return engine;
 }

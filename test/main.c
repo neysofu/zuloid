@@ -17,9 +17,12 @@ extern void test_position_is_illegal(void);
 extern void test_position_is_legal(void);
 extern void test_rating(void);
 extern void test_perft_results(struct Engine *);
-extern void test_uci(struct Engine *);
 extern void test_uci_cmd_d(struct Engine *);
+extern void test_uci_cmd_djbhash(struct Engine *);
+extern void test_uci_cmd_isready(struct Engine *);
 extern void test_uci_cmd_position(struct Engine *);
+extern void test_uci_cmd_quit(struct Engine *);
+extern void test_uci_cmd_uci(struct Engine *);
 extern void test_uci_unknown_cmd(struct Engine *);
 extern void test_utils(void);
 // clang-format on
@@ -56,11 +59,14 @@ main(void)
 	call_test(test_position_is_illegal);
 	call_test(test_position_is_legal);
 	call_test(test_rating);
-	call_test_with_tmp_engine(test_perft_results);
-	call_test_with_tmp_engine(test_uci);
 	call_test_with_tmp_engine(test_uci_cmd_d);
+	call_test_with_tmp_engine(test_uci_cmd_djbhash);
+	call_test_with_tmp_engine(test_uci_cmd_isready);
 	call_test_with_tmp_engine(test_uci_cmd_position);
+	call_test_with_tmp_engine(test_uci_cmd_quit);
+	call_test_with_tmp_engine(test_uci_cmd_uci);
 	call_test_with_tmp_engine(test_uci_unknown_cmd);
+	//call_test_with_tmp_engine(test_perft_results);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

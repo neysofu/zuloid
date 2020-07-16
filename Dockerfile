@@ -1,13 +1,17 @@
-FROM frolvlad/alpine-glibc
+FROM debian:10-slim
 
-RUN apk --no-cache add cmake clang clang-dev make gcc libc-dev linux-headers
- 
+RUN apt-get update && \
+    apt-get -y install cmake make clang gcc
+
+# https://stackoverflow.com/questions/62780558/
+WORKDIR /zorro
+
 COPY . .
  
 RUN rm -rf build/ && \
     mkdir build/ && \
     cd build/ && \
-    cmake .. && \
+    cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make && \
     ./test_zorro
 

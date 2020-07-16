@@ -116,34 +116,27 @@ bb_init_bishop(void)
 void
 bb_init_rook(void)
 {
-	size_t offset = 0;
-	for (Square sq = 0; sq <= SQUARES_COUNT; sq++) {
-		bool magic_was_found = false;
-		while (!magic_was_found) {
-			Bitboard key = 0;
-			BB_MAGICS_ROOK[sq] = bb_sparse_random();
-			BB_MASK_ROOK[sq] = bb_rays_rook(sq);
-			BB_POSTMASK_ROOK[sq] =
-			  file_to_bb(square_file(sq)) | rank_to_bb(square_rank(sq));
-			do {
-				size_t index = ((key & BB_MASK_ROOK[sq]) * BB_MASK_ROOK[sq]) >> 14;
-				Bitboard *val = BB_ATTACKS_ROOK + index + offset;
-				if (index >= 16384) {
-					break;
-				} else if (*val && *val != bb_rook(sq, key)) {
-					bb_print(*val);
-					puts("[BUG] Invalid magics.");
-					exit(1);
-				} else if (!*val) {
-					bb_print(*val);
-					*val |= bb_rook(sq, key);
-					bb_print(*val);
-				}
-				// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
-			} while ((key = (key - BB_MASK_ROOK[sq]) & BB_MASK_ROOK[sq]));
-			offset += 1ULL << (64 - BB_SHIFTS_ROOK[sq]);
-		}
-	}
+	//size_t offset = 0;
+	//for (Square sq = 0; sq <= SQUARES_COUNT; sq++) {
+	//	struct Magic *magic = MAGICS + sq;
+	//	Bitboard *subset = NULL;
+	//	struct BitboardSubsetIter subset_iter = {
+	//		.original = magic->premask,
+	//		.subset = 0,
+	//	};
+	//	while ((subset = bb_subset_iter(&subset_iter))) {
+	//		size_t i = (*subset * magic->multiplier) >> magic->rshift;
+	//		Bitboard *val = attacks_table + i;
+	//		Bitboard attacks = bb_rook(sq, *subset);
+	//		if (*val && *val != attacks) {
+	//			bb_print(*val);
+	//			puts("[BUG] Invalid magics.");
+	//			exit(1);
+	//		} else {
+	//			*val = attacks;
+	//		}
+	//	}
+	//}
 }
 
 size_t
@@ -168,6 +161,6 @@ bb_init(void)
 		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
 		offset += MAGICS[sq].end - MAGICS[sq].start;
 	}
-	// bb_init_rook();
+	bb_init_rook();
 	// bb_init_bishop();
 }

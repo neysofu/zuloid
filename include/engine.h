@@ -38,8 +38,6 @@ struct Engine
 	// might want to know if the engine is doing background computation or
 	// what.
 	enum Status status;
-	// Can be set together with `mode = STATUS_EXIT` to exit the program.
-	int exit_status;
 	// -- Playing settings.
 	float move_selection_noise;
 	// Must be in the range [0,1]. It measures the engine's sense of

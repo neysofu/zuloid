@@ -18,6 +18,7 @@
 
 #include "chess/movegen.h"
 #include "chess/bb.h"
+#include "chess/position.h"
 #include "chess/color.h"
 #include "globals.h"
 #include <assert.h>
@@ -324,4 +325,67 @@ position_perft(FILE *stream, struct Board *pos, size_t depth)
 	}
 	free(moves);
 	return result;
+}
+
+struct SearchStack {
+	struct SearchStackLevel *levels;
+	int depth;
+	struct Board current_board;
+	int i;
+};
+
+struct SearchStackLevel {
+	struct Move generator;
+	struct Move *moves;
+	int capacity;
+	int i;
+};
+
+struct SearchStack
+search_stack_new(size_t depth) {
+	struct SearchStack stack;
+	stack.levels = exit_if_null(malloc(depth * sizeof(struct SearchStackLevel)));
+	stack.depth = depth;
+	for (int i = 0; i < depth; i++) {
+		stack.levels[i].capacity = 0;
+		stack.levels[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+	}
+	return stack;
+}
+
+void
+search_stack_delete(struct SearchStack *stack) {
+	for (int i = 0; i < stack->depth; i++) {
+		free(stack->levels[i].moves);
+	}
+	free(stack->levels);
+}
+
+size_t
+position_improved_perft(FILE *stream, struct Board *pos, int depth)
+{
+	struct SearchStack stack = search_stack_new(depth);
+	stack.current_board = *pos;
+	stack.i = 0;
+	size_t count = 0;
+	stack.levels[stack.i].capacity = gen_legal_moves(stack.levels[stack.i].moves, &stack.current_board);
+	do {
+		struct SearchStackLevel top_level = stack.levels[stack.i];
+		if (stack.i == stack.depth || top_level.i == top_level.capacity) {
+			puts("pop");
+			position_undo_move_and_flip(&stack.current_board, &top_level.generator);
+			stack.i--;
+		} else {
+			puts("push");
+			struct Move generator = top_level.moves[top_level.i++];
+			stack.i++;
+			top_level = stack.levels[stack.i];
+			size_t moves_count = gen_legal_moves(top_level.moves, &stack.current_board);
+			top_level.capacity = moves_count;
+			position_do_move_and_flip(&stack.current_board, top_level.moves);
+			count += moves_count;
+		}
+	} while (stack.i >= depth);
+	fprintf(stream, "%zu\n", count);
+	return count;
 }

@@ -87,14 +87,32 @@ square_rshitf(Square square)
 	}
 }
 
+size_t
+find_start_of_attacks_table(Bitboard attacks_table[]) {
+	for (size_t i = 0; i < 4096; i++) {
+		if (attacks_table[i]) {
+			return i;
+		}
+	}
+	return 4095;
+}
+
+size_t
+find_end_of_attacks_table(Bitboard attacks_table[]) {
+	for (size_t i = 4095; i > 0; i--) {
+		if (attacks_table[i]) {
+			return i;
+		}
+	}
+	return 0;
+}
+
 void
 magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
 	magic->premask = bb_premask_rook(square);
 	magic->rshift = square_rshitf(square);
-	magic->start = 4095;
-	magic->end = 0;
 	while (true) {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
@@ -119,16 +137,6 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 			break;
 		}
 	}
-	for (size_t i = 0; i < 4096; i++) {
-		if (attacks_table[i]) {
-			magic->start = i;
-			break;
-		}
-	}
-	for (size_t i = 4095; i > 0; i--) {
-		if (attacks_table[i]) {
-			magic->end = i;
-			break;
-		}
-	}
+	magic->start = find_start_of_attacks_table(attacks_table);
+	magic->end = find_end_of_attacks_table(attacks_table);
 }

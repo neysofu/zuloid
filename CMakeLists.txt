@@ -39,6 +39,8 @@ set(TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/")
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
+# Dependencies:
+# -----------------
 # base64
 add_library(BASE64 "${LIB_DIR}/base64/base64.c")
 set_property(TARGET BASE64 PROPERTY C_STANDARD 99)
@@ -77,7 +79,7 @@ target_compile_definitions(ZORRO_LIB PRIVATE
 add_executable(zorro "${SRC_DIR}/main.c")
 target_link_libraries(zorro ZORRO_LIB)
 
-# ZORRO_TEST
+# Tests
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable(test_zorro "${TEST_FILES}")
 target_include_directories(ZORRO_LIB SYSTEM PRIVATE "${LIB_DIR}")
