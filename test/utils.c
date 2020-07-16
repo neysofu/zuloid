@@ -42,7 +42,7 @@ set_null_lines(struct Lines *lines) {
 }
 
 struct Lines *
-read_last_lines(FILE *stream)
+file_line_by_line(FILE *stream)
 {
 	long position = ftell(stream);
 	rewind(stream);

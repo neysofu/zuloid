@@ -16,6 +16,6 @@ void
 lines_delete(struct Lines *lines);
 
 struct Lines *
-read_last_lines(FILE *stream);
+file_line_by_line(FILE *stream);
 
 #endif

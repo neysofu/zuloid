@@ -10,7 +10,7 @@ test_uci_cmd_d(struct Engine *engine)
 {
 	protocol_uci_handle(engine, "d lichess");
 	protocol_uci_handle(engine, "d");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	size_t n_lines = lines_count(lines);
 	char *fen = exit_if_null(malloc(FEN_SIZE));
 	fen_from_position(fen, &POSITION_INIT, ' ');
@@ -31,7 +31,7 @@ test_uci_cmd_djbhash(struct Engine *engine)
 	protocol_uci_handle(engine, "djbhash");
 	protocol_uci_handle(engine, "djbhash foobar foobar");
 	protocol_uci_handle(engine, "djbhash foobar position foobar");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	munit_assert_uint(atoi(lines_nth(lines, 0)), ==, 31418);
 	munit_assert_uint(atoi(lines_nth(lines, 1)), ==, 0);
 	munit_assert_uint(atoi(lines_nth(lines, 2)), ==, 0);
@@ -43,7 +43,7 @@ void
 test_uci_cmd_isready(struct Engine *engine)
 {
 	protocol_uci_handle(engine, "isready");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	munit_assert_string_equal(lines_nth(lines, 0), "readyok");
 	lines_delete(lines);
 }
@@ -56,13 +56,13 @@ test_uci_cmd_position(struct Engine *engine)
 	munit_assert_uint(piece_at_e4.type, !=, PIECE_TYPE_PAWN);
 
 	protocol_uci_handle(engine, "position current moves e2e4");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	munit_assert_uint(lines_count(lines), ==, 0);
 	piece_at_e4 = position_piece_at_square(&engine->board, e4);
 	munit_assert_uint(piece_at_e4.type, ==, PIECE_TYPE_PAWN);
 
 	protocol_uci_handle(engine, "position startpos");
-	lines = read_last_lines(engine->output);
+	lines = file_line_by_line(engine->output);
 	piece_at_e4 = position_piece_at_square(&engine->board, e4);
 	munit_assert_uint(piece_at_e4.type, ==, PIECE_TYPE_NONE);
 
@@ -81,7 +81,7 @@ void
 test_uci_cmd_uci(struct Engine *engine)
 {
 	protocol_uci_handle(engine, "uci");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	for (size_t i = 0; i < lines_count(lines) - 1; i++) {
 		char *first_token = strtok_whitespace(lines_nth(lines, i));
 		munit_assert_true(strcmp(first_token, "id") == 0 || strcmp(first_token, "option") == 0);
@@ -94,7 +94,7 @@ void
 test_uci_unknown_cmd(struct Engine *engine)
 {
 	protocol_uci_handle(engine, "foobar");
-	struct Lines *lines = read_last_lines(engine->output);
+	struct Lines *lines = file_line_by_line(engine->output);
 	munit_assert_uint(lines_count(lines), ==, 1);
 	munit_assert_true(strstr(lines_nth(lines, 0), "ERROR") != NULL);
 	lines_delete(lines);
