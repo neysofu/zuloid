@@ -116,8 +116,8 @@ bb_init_bishop(void)
 void
 bb_init_rook(void)
 {
-	//size_t offset = 0;
-	//for (Square sq = 0; sq <= SQUARES_COUNT; sq++) {
+	// size_t offset = 0;
+	// for (Square sq = 0; sq <= SQUARES_COUNT; sq++) {
 	//	struct Magic *magic = MAGICS + sq;
 	//	Bitboard *subset = NULL;
 	//	struct BitboardSubsetIter subset_iter = {

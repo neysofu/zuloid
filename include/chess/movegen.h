@@ -47,6 +47,6 @@ size_t
 position_perft(FILE *stream, struct Board *pos, size_t depth);
 
 size_t
-position_improved_perft(FILE *stream, struct Board *pos, int depth);
+position_improved_perft(struct Board *pos, int depth);
 
 #endif

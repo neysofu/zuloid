@@ -52,7 +52,7 @@ uci_call_eval(struct Engine *engine, char *cmd)
 void
 uci_call_go(struct Engine *engine, char *s)
 {
-	if (engine->status == STATUS_SEARCH) {
+	if (engine->status != STATUS_IDLE) {
 		return;
 	}
 	char *cmd = exit_if_null(malloc(strlen(s) + 1));
@@ -61,7 +61,12 @@ uci_call_go(struct Engine *engine, char *s)
 	while ((token = strtok_whitespace(NULL))) {
 		switch (djb_hash(token)) {
 			case 3430: // "perft"
-				position_improved_perft(engine->output, &engine->board, atoi(strtok_whitespace(NULL)));
+				token = strtok_whitespace(NULL);
+				if (token) {
+					position_perft(engine->output, &engine->board, atoi(token));
+				} else {
+					uci_err_syntax(engine->output);
+				}
 				return;
 			case 52523: // "wtime"
 				token = strtok_whitespace(NULL);
@@ -235,13 +240,16 @@ uci_call_d(struct Engine *engine, char *cmd)
 		position_print(engine->output, &engine->board);
 		return;
 	}
-	switch (XXH64(token, strlen(token), 0)) {
-		case 0x7348d0088acc7c6c: // "lichess"
-		  ;
-			char *command = malloc(64 + FEN_SIZE);
-			char *fen = fen_from_position(NULL, &engine->board, '_');
+	char *fen = NULL;
+	switch (djb_hash(token)) {
+		case 29246: // "fen"
+			fen = fen_from_position(NULL, &engine->board, ' ');
+			fprintf(engine->output, "%s\n", fen);
+			free(fen);
+			break;
+		case 10000: // "lichess"
+			fen = fen_from_position(NULL, &engine->board, '_');
 			fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
-			free(command);
 			free(fen);
 			break;
 		default:
@@ -269,7 +277,7 @@ uci_call_setoption(struct Engine *engine, char *cmd)
 		for (char *ptr = token; *ptr; ptr++) {
 			*ptr = tolower(*ptr);
 		}
-		/* XOR combine the hashes. Simple yet effective. */
+		// XOR combine the hashes. Simple yet effective.
 		hash ^= XXH64(token, strlen(token), 0);
 	}
 	// Option support is quite hairy and messy. I don't want to break pre-existing scripts
@@ -283,22 +291,22 @@ uci_call_setoption(struct Engine *engine, char *cmd)
 	// popular chess engines. I don't commit to 100% feature parity with any engine; I just
 	// try and use my better judgement.
 	switch (hash) {
-		case 0xd8cdd8e8314c4147: /* "hash" */
+		case 49865: // "hash"
 			break;
-		case 0xc057a61296095806: /* "nalimovpath" */
+		case 33256: // "nalimovpath"
 			break;
-		case 0xcfaf77aca1f8feaa: /* "nalimovcache" */
+		case 14447: // "nalimovcache"
 			break;
-		case 0x0a6f394a3987568a: // "ponder"
+		case 29613: // "ponder"
 			engine->ponder = true;
 			break;
-		case 0x487e0e93e2c2bb18: // "ownbook"
+		case 868: // "ownbook"
 			break;
-		case 0xc8922f8e470ffaee: // "uci_showcurrline"
+		case 37547: // "uci_showcurrline"
 			break;
-		case 0xdf718624bc46e2ce: // "uci_showrefutations"
+		case 38426: // "uci_showrefutations"
 			break;
-		case 0xf6253b92eb36d560: // "uci_limitstrength"
+		case 61491: // "uci_limitstrength"
 			break;
 		// TODO: many, many more.
 		default:

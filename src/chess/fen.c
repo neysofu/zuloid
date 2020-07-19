@@ -86,10 +86,10 @@ position_init_from_fen_fields(struct Board *pos, char **fieldsptr)
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
-			Square square = square_new(file, rank);
 			if (isdigit(*token)) {
 				file += *token - '1';
 			} else {
+				Square square = square_new(file, rank);
 				position_set_piece_at_square(pos, square, char_to_piece(*token));
 			}
 		}
@@ -140,19 +140,18 @@ position_init_from_fen(struct Board *pos, char *fen)
 void
 position_print(FILE *stream, struct Board *position)
 {
-	fprintf(stream, "     A B C D E F G H\n"
-	       "   +-----------------+\n");
-	Rank rank = RANK_MAX;
-	do {
+	fprintf(stream, "     A B C D E F G H\n");
+	fprintf(stream, "   +-----------------+\n");
+	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		fprintf(stream, " %c | ", rank_to_char(rank));
 		for (File file = 0; file <= FILE_MAX; file++) {
 			struct Piece piece = position_piece_at_square(position, square_new(file, rank));
 			fprintf(stream, "%c ", piece_to_char(piece));
 		}
 		fprintf(stream, "| %c\n", rank_to_char(rank));
-	} while (rank-- > 0);
-	fprintf(stream, "   +-----------------+\n"
-	       "     A B C D E F G H\n");
+	}
+	fprintf(stream, "   +-----------------+\n");
+	fprintf(stream, "     A B C D E F G H\n");
 	char *fen = fen_from_position(NULL, position, ' ');
 	fprintf(stream, "FEN: %s\n", fen);
 	free(fen);

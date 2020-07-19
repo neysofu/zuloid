@@ -9,6 +9,13 @@
 #include <stdlib.h>
 #include <string.h>
 
+const struct Move MOVE_IDENTITY = {
+	.source = 42,
+	.target = 42,
+	.promotion = PIECE_TYPE_PAWN,
+	.capture = PIECE_TYPE_NONE,
+};
+
 size_t
 move_to_string(struct Move mv, char *buf)
 {

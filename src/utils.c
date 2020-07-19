@@ -39,8 +39,7 @@ void *
 exit_if_null(void *ptr)
 {
 	if (!ptr) {
-		// OOM: Out Of Memory.
-		puts("[ERROR] OOM condition.");
+		puts("[ERROR] Out-of-memory condition.");
 		exit(1);
 	}
 	return ptr;

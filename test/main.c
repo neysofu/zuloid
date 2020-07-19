@@ -3,6 +3,7 @@
 #include <stdarg.h>
 
 // clang-format off
+extern void test_960(void);
 extern void test_attacks(void);
 extern void test_cache_single_key_retrieval(void);
 extern void test_castling_mask(void);
@@ -12,6 +13,7 @@ extern void test_color_other(void);
 extern void test_fen_conversion(void);
 extern void test_fen_init(void);
 extern void test_file_to_char(void);
+extern void test_init(void);
 extern void test_piece_to_char(void);
 extern void test_position_is_illegal(void);
 extern void test_position_is_legal(void);
@@ -46,6 +48,7 @@ main(void)
 {
 	init_subsystems();
 	call_test(test_utils);
+	call_test(test_960);
 	call_test(test_attacks);
 	call_test(test_castling_mask);
 	call_test(test_cache_single_key_retrieval);
@@ -55,6 +58,7 @@ main(void)
 	call_test(test_fen_conversion);
 	call_test(test_fen_init);
 	call_test(test_file_to_char);
+	call_test(test_init);
 	call_test(test_piece_to_char);
 	call_test(test_position_is_illegal);
 	call_test(test_position_is_legal);

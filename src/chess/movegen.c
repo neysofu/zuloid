@@ -18,9 +18,11 @@
 
 #include "chess/movegen.h"
 #include "chess/bb.h"
-#include "chess/position.h"
 #include "chess/color.h"
+#include "chess/fen.h"
+#include "chess/position.h"
 #include "globals.h"
+#include "utils.h"
 #include <assert.h>
 #include <stdio.h>
 #include <string.h>
@@ -219,9 +221,9 @@ gen_attacks_against_from(struct Move moves[],
 	  moves, pieces & pos->bb[PIECE_TYPE_PAWN], victims, position_occupancy(pos), attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(
-	  moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
+	 moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
 	moves += gen_rook_moves(
-	  moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
+	 moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
 	moves += gen_king_castles(moves, pos);
 	return moves - ptr;
@@ -288,104 +290,4 @@ position_perft_inner(struct Board *pos, size_t depth)
 	}
 	free(moves);
 	return result;
-}
-
-size_t
-position_perft(FILE *stream, struct Board *pos, size_t depth)
-{
-	if (depth == 0) {
-		fputs("1\n", stream);
-		return 1;
-	} else if (depth > MAX_DEPTH) {
-		fprintf(stream, "<depth limit exceeded>\n");
-		return 0;
-	}
-	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
-	size_t moves_count_by_move[MAX_MOVES];
-	for (size_t i = 0; i < MAX_MOVES; moves_count_by_move[i++] = 1)
-		;
-	size_t root_moves_count = gen_legal_moves(moves, pos);
-	size_t result = 0;
-	if (depth == 1) {
-		result = root_moves_count;
-	} else {
-		for (size_t i = 0; i < root_moves_count; i++) {
-			position_do_move_and_flip(pos, &moves[i]);
-			moves_count_by_move[i] = position_perft_inner(pos, depth - 1);
-			result += moves_count_by_move[i];
-			position_undo_move_and_flip(pos, &moves[i]);
-		}
-	}
-	// Print user-friendly report for debugging.
-	char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
-	fprintf(stream, "%zu\n", result);
-	for (size_t i = 0; i < root_moves_count; i++) {
-		move_to_string(moves[i], mv_as_str);
-		fprintf(stream, "%s\t%zu\n", mv_as_str, moves_count_by_move[i]);
-	}
-	free(moves);
-	return result;
-}
-
-struct SearchStack {
-	struct SearchStackLevel *levels;
-	int depth;
-	struct Board current_board;
-	int i;
-};
-
-struct SearchStackLevel {
-	struct Move generator;
-	struct Move *moves;
-	int capacity;
-	int i;
-};
-
-struct SearchStack
-search_stack_new(size_t depth) {
-	struct SearchStack stack;
-	stack.levels = exit_if_null(malloc(depth * sizeof(struct SearchStackLevel)));
-	stack.depth = depth;
-	for (int i = 0; i < depth; i++) {
-		stack.levels[i].capacity = 0;
-		stack.levels[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
-	}
-	return stack;
-}
-
-void
-search_stack_delete(struct SearchStack *stack) {
-	for (int i = 0; i < stack->depth; i++) {
-		free(stack->levels[i].moves);
-	}
-	free(stack->levels);
-}
-
-size_t
-position_improved_perft(FILE *stream, struct Board *pos, int depth)
-{
-	struct SearchStack stack = search_stack_new(depth);
-	stack.current_board = *pos;
-	stack.i = 0;
-	size_t count = 0;
-	stack.levels[stack.i].capacity = gen_legal_moves(stack.levels[stack.i].moves, &stack.current_board);
-	do {
-		struct SearchStackLevel top_level = stack.levels[stack.i];
-		if (stack.i == stack.depth || top_level.i == top_level.capacity) {
-			puts("pop");
-			position_undo_move_and_flip(&stack.current_board, &top_level.generator);
-			stack.i--;
-		} else {
-			puts("push");
-			struct Move generator = top_level.moves[top_level.i++];
-			stack.i++;
-			top_level = stack.levels[stack.i];
-			size_t moves_count = gen_legal_moves(top_level.moves, &stack.current_board);
-			top_level.capacity = moves_count;
-			position_do_move_and_flip(&stack.current_board, top_level.moves);
-			count += moves_count;
-		}
-	} while (stack.i >= depth);
-	fprintf(stream, "%zu\n", count);
-	return count;
 }

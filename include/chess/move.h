@@ -21,6 +21,8 @@ struct Move
 	enum PieceType capture;
 };
 
+const struct Move MOVE_IDENTITY;
+
 size_t
 move_to_string(struct Move mv, char *buf);
 

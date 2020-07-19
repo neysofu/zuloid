@@ -88,7 +88,8 @@ square_rshitf(Square square)
 }
 
 size_t
-find_start_of_attacks_table(Bitboard attacks_table[]) {
+find_start_of_attacks_table(Bitboard attacks_table[])
+{
 	for (size_t i = 0; i < 4096; i++) {
 		if (attacks_table[i]) {
 			return i;
@@ -98,7 +99,8 @@ find_start_of_attacks_table(Bitboard attacks_table[]) {
 }
 
 size_t
-find_end_of_attacks_table(Bitboard attacks_table[]) {
+find_end_of_attacks_table(Bitboard attacks_table[])
+{
 	for (size_t i = 4095; i > 0; i--) {
 		if (attacks_table[i]) {
 			return i;
