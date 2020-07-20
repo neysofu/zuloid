@@ -21,18 +21,15 @@ position_perft(FILE *stream, struct Board *pos, size_t depth)
 	struct Move *moves = exit_if_null(malloc(sizeof(struct Move) * MAX_MOVES));
 	size_t root_moves_count = gen_legal_moves(moves, pos);
 	size_t result = 0;
-	if (depth == 1) {
-		result = root_moves_count;
-	} else
-		for (size_t i = 0; i < root_moves_count; i++) {
-			struct Board board = *pos;
-			position_do_move_and_flip(&board, moves + i);
-			size_t children_count = position_improved_perft(&board, depth - 1);
-			result += children_count;
-			char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
-			move_to_string(moves[i], mv_as_str);
-			fprintf(stream, "%s: %zu\n", mv_as_str, children_count);
-		}
+	for (size_t i = 0; i < root_moves_count; i++) {
+		struct Board board = *pos;
+		position_do_move_and_flip(&board, moves + i);
+		size_t children_count = position_improved_perft(&board, depth - 1);
+		result += children_count;
+		char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
+		move_to_string(moves[i], mv_as_str);
+		fprintf(stream, "%s: %zu\n", mv_as_str, children_count);
+	}
 	fprintf(stream, "\nNodes searched: %zu\n\n", result);
 	// FIXME
 	// free(moves);
@@ -116,6 +113,10 @@ search_stack_push(struct SearchStack *stack)
 size_t
 position_improved_perft(struct Board *pos, int depth)
 {
+	if (depth == 0) {
+		return 1;
+	}
+	depth--;
 	size_t nodes_count = 0;
 	struct SearchStack stack = search_stack_new(depth);
 	stack.board = *pos;
@@ -131,7 +132,7 @@ position_improved_perft(struct Board *pos, int depth)
 			}
 		} else if (stack.current_depth == stack.desired_depth) {
 			last_plie->child_i++;
-			nodes_count += 1;
+			nodes_count++;
 		} else {
 			search_stack_push(&stack);
 		}

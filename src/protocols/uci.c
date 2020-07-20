@@ -3,6 +3,7 @@
 //  - https://www.chessprogramming.org/UCI
 //  - https://www.seungjaelee.com/projects/uci/
 
+#include "protocols/uci.h"
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
@@ -16,7 +17,6 @@
 #include "rating.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
-#include <assert.h>
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
@@ -28,15 +28,50 @@ uci_err_syntax(FILE *stream)
 }
 
 void
-uci_err_unspecified(void)
+uci_err_unspecified(FILE *stream)
 {
-	puts("[ERROR] Unspecified error.");
+	fputs("[ERROR] Unspecified error.\n", stream);
 }
 
 void
 uci_err_invalid_command(FILE *stream)
 {
 	fputs("[ERROR] Invalid command.\n", stream);
+}
+
+int
+uci_command_cmp(const void *cmd1, const void *cmd2)
+{
+	const char *s1 = ((struct UciCommand *)cmd1)->name;
+	const char *s2 = ((struct UciCommand *)cmd2)->name;
+	return strcmp(s1, s2);
+}
+
+struct UciCommand *
+uci_identify_command(const char *token)
+{
+	struct UciCommand key = {
+		.name = token,
+		.handler = NULL,
+	};
+	return bsearch(
+	  &key, UCI_COMMANDS, UCI_COMMANDS_COUNT, sizeof(struct UciCommand), uci_command_cmp);
+}
+
+void
+protocol_uci_handle(struct Engine *engine, const char *s_const)
+{
+	char *s = exit_if_null(malloc(strlen(s_const) + 1));
+	strcpy(s, s_const);
+	char *token = strtok_whitespace(s);
+	struct UciCommand *cmd = NULL;
+	if (token && (cmd = uci_identify_command(token))) {
+		ENGINE_DEBUGF(engine, "Accepted UCI command.\n");
+		cmd->handler(engine, s);
+	} else if (token) {
+		uci_err_invalid_command(engine->output);
+	}
+	free(s);
 }
 
 void
@@ -180,7 +215,7 @@ uci_call_export_magics(struct Engine *engine, char *cmd)
 	}
 	FILE *file = fopen(filename, "w");
 	if (!file) {
-		uci_err_unspecified();
+		uci_err_unspecified(engine->output);
 		return;
 	}
 	fprintf(file, "-- ROOK MAGICS:\n");
@@ -236,25 +271,19 @@ void
 uci_call_d(struct Engine *engine, char *cmd)
 {
 	char *token = strtok_whitespace(NULL);
+	char *fen = NULL;
 	if (!token) {
 		position_print(engine->output, &engine->board);
-		return;
-	}
-	char *fen = NULL;
-	switch (djb_hash(token)) {
-		case 29246: // "fen"
-			fen = fen_from_position(NULL, &engine->board, ' ');
-			fprintf(engine->output, "%s\n", fen);
-			free(fen);
-			break;
-		case 10000: // "lichess"
-			fen = fen_from_position(NULL, &engine->board, '_');
-			fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
-			free(fen);
-			break;
-		default:
-			uci_err_syntax(engine->output);
-			break;
+	} else if (streq(token, "fen")) {
+		fen = fen_from_position(NULL, &engine->board, ' ');
+		fprintf(engine->output, "%s\n", fen);
+		free(fen);
+	} else if (streq(token, "lichess")) {
+		fen = fen_from_position(NULL, &engine->board, '_');
+		fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
+		free(fen);
+	} else {
+		uci_err_syntax(engine->output);
 	}
 }
 
@@ -314,18 +343,97 @@ uci_call_setoption(struct Engine *engine, char *cmd)
 	}
 }
 
-XXH64_hash_t
-hash_of_tokens(void)
+void
+uci_call_isready(struct Engine *engine)
 {
-	XXH64_hash_t hash = 0;
-	char *token;
-	while ((token = strtok_whitespace(NULL))) {
-		hash ^= XXH64(token, strlen(token), 0);
-	}
-	return hash;
+	fputs("readyok\n", engine->output);
 }
 
-const char *OPTIONS[] = {
+void
+uci_call_quit(struct Engine *engine)
+{
+	engine->status = STATUS_EXIT;
+}
+
+void
+uci_call_stop(struct Engine *engine)
+{
+	// TODO
+}
+
+void
+uci_call_uci(struct Engine *engine)
+{
+	fprintf(engine->output,
+	        "id name Zorro %s\n"
+	        "id author Filippo Costa\n"
+	        "id elo %u\n",
+	        ZORRO_VERSION,
+	        CCRL_4015_RATING);
+	for (size_t i = 0; i < UCI_OPTIONS_COUNT; i++) {
+		fputs(UCI_OPTIONS[i], engine->output);
+		putc('\n', engine->output);
+	}
+	bb_init();
+	fputs("uciok\n", engine->output);
+}
+
+void
+uci_call_ucinewgame(struct Engine *engine)
+{
+	// TODO
+}
+
+void
+uci_call_djbhash(struct Engine *engine)
+{
+	uint16_t hash = 0;
+	char *token = NULL;
+	while ((token = strtok_whitespace(NULL))) {
+		hash ^= djb_hash(token);
+	}
+	fprintf(engine->output, "%u\n", hash);
+}
+
+void
+uci_call_debug(struct Engine *engine, char *cmd)
+{
+	// This command feels quite useless (in fact, Stockfish doesn't even recognize
+	// it). Nevertheless, we shall offer the option to send additional evaluation
+	// details with it. It does *not* control debugging information, which instead
+	// gets compiled out with the NDEBUG macro.
+	char *token = strtok_whitespace(NULL);
+	if (token && strcmp(token, "on") == 0) {
+		engine->debug = true;
+	} else if (token && strcmp(token, "off") == 0) {
+		engine->debug = false;
+	} else {
+		uci_err_syntax(engine->output);
+	}
+}
+
+const struct UciCommand UCI_COMMANDS[] = {
+	{ "_eval", uci_call_eval },
+	{ "_islegal", uci_call_islegal },
+	{ "_lm", uci_call_legalmoves },
+	{ "_plm", uci_call_pseudolegalmoves },
+	{ "d", uci_call_d },
+	{ "debug", uci_call_debug },
+	{ "djbhash", uci_call_djbhash },
+	{ "go", uci_call_go },
+	{ "isready", uci_call_isready },
+	{ "magics", uci_call_export_magics },
+	{ "position", uci_call_position },
+	{ "quit", uci_call_quit },
+	{ "setoption", uci_call_setoption },
+	{ "stop", uci_call_stop },
+	{ "uci", uci_call_uci },
+	{ "ucinewgame", uci_call_ucinewgame },
+};
+
+const size_t UCI_COMMANDS_COUNT = sizeof(UCI_COMMANDS) / sizeof(UCI_COMMANDS[0]);
+
+const char *UCI_OPTIONS[] = {
 	"option name Analysis Contempt type combo default Both var Off var White var Black var "
 	"Both",
 	"option name Clear Hash type button",
@@ -336,7 +444,7 @@ const char *OPTIONS[] = {
 	"option name Move Overhead type spin default 30 min 0 max 60000",
 	"option name nodestime type spin default 0 min 0 max 10000",
 	"option name Ponder type check default false",
-	"option name Skill Level type spin default 20 min 0 max 2",
+	"option name Skill Level type spin default 20 min 0 max 20",
 	"option name Slow Mover type spin default 84 min 10 max 1000",
 	"option name SyzygyPath type string default <empty>",
 	"option name SyzygyProbeDepth type spin default 1 min 1 max 100",
@@ -349,103 +457,4 @@ const char *OPTIONS[] = {
 	"option name UCI_Elo type spin default 1350 min 1350 max 2850",
 };
 
-uint16_t
-compound_hash_of_tokens(void) {
-	uint16_t hash = 0;
-	char *token = NULL;
-	while ((token = strtok_whitespace(NULL))) {
-		hash ^= djb_hash(token);
-	}
-	return hash;
-}
-
-void
-protocol_uci_handle(struct Engine *engine, const char *s)
-{
-	char *cmd = exit_if_null(malloc(strlen(s) + 1));
-	strcpy(cmd, s);
-	char *token = strtok_whitespace(cmd);
-	if (!token) {
-		return;
-	}
-	switch (djb_hash(token)) {
-		case 42284: // "debug"
-			// This command feels quite useless (in fact, Stockfish doesn't even recognize
-			// it). Nevertheless, we shall offer the option to send additional evaluation
-			// details with it. It does *not* control debugging information, which instead
-			// gets compiled out with the NDEBUG macro.
-			token = strtok_whitespace(NULL);
-			if (token && strcmp(token, "on") == 0) {
-				engine->debug = true;
-			} else if (token && strcmp(token, "off") == 0) {
-				engine->debug = false;
-			} else {
-				uci_err_syntax(engine->output);
-			}
-			break;
-		case 30715: // "go"
-			uci_call_go(engine, cmd);
-			break;
-		case 48790: // "isready"
-			fputs("readyok\n", engine->output);
-			break;
-		case 31418: // "position"
-			uci_call_position(engine, cmd);
-			break;
-		case 1544: // "quit"
-			engine->status = STATUS_EXIT;
-			break;
-		case 37354: // "setoption"
-			uci_call_setoption(engine, cmd);
-			break;
-		case 6987: // "stop"
-			engine_stop_search(engine);
-			break;
-		case 45510: // "uci"
-			fprintf(engine->output,
-			        "id name Zorro %s\n"
-			        "id author Filippo Costa\n"
-			        "id elo %u\n",
-			        ZORRO_VERSION,
-			        CCRL_4015_RATING);
-			for (size_t i = 0; i < sizeof(OPTIONS) / sizeof(OPTIONS[0]); i++) {
-				fputs(OPTIONS[i], engine->output);
-				putc('\n', engine->output);
-			}
-			bb_init();
-			fputs("uciok\n", engine->output);
-			break;
-		case 58250: // "ucinewgame"
-			cache_clear(engine->cache);
-			break;
-		// The following are non-standard commands implemented in Stockfish.
-		case 46601: // "d"
-			uci_call_d(engine, cmd);
-			break;
-		case 55184: // "flip"
-			// TODO
-			break;
-		// ... and finally some custom commands for debugging. Unstable!
-		case 57625: // "magics"
-			uci_call_export_magics(engine, cmd);
-			break;
-		case 32044: // "_eval"
-			uci_call_eval(engine, cmd);
-			break;
-		case 61637: // "_islegal"
-			uci_call_islegal(engine, cmd);
-			break;
-		case 21853: // "_lm"
-			uci_call_legalmoves(engine, cmd);
-			break;
-		case 4685: // "_plm" (PseudoLegal Moves)
-			uci_call_pseudolegalmoves(engine, cmd);
-			break;
-		case 16409: // "djbhash"
-			fprintf(engine->output, "%u\n", compound_hash_of_tokens());
-			break;
-		default:
-			uci_err_invalid_command(engine->output);
-	}
-	free(cmd);
-}
+const size_t UCI_OPTIONS_COUNT = sizeof(UCI_OPTIONS) / sizeof(UCI_OPTIONS[0]);

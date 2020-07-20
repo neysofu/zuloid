@@ -8,6 +8,7 @@ project(ZORRO VERSION 1.6.0 LANGUAGES C)
 set(CMAKE_C_FLAGS " \
    ${CMAKE_C_FLAGS} \
    -fverbose-asm \
+   -save-temps \
    -Wall \
    -Wpedantic \
    -Wextra \

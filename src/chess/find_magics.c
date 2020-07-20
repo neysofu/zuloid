@@ -2,6 +2,7 @@
 #include "chess/bb.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
+#include "debug.h"
 #include <assert.h>
 #include <libpopcnt/libpopcnt.h>
 #include <stdbool.h>
@@ -53,6 +54,12 @@ bb_premask_rook(Square sq)
 	return (x ^ y) & ~square_to_bb(sq);
 }
 
+Bitboard
+bb_premask_bishop(Square sq)
+{
+	return (square_a1h8_diagonal(sq) | square_a8h1_diagonal(sq)) & ~0xff818181818181ffull;
+}
+
 struct BitboardSubsetIter
 {
 	Bitboard original;
@@ -68,22 +75,6 @@ bb_subset_iter(struct BitboardSubsetIter *iter)
 		return NULL;
 	} else {
 		return &(iter->subset);
-	}
-}
-
-short
-square_rshitf(Square square)
-{
-	File f = square_file(square);
-	Rank r = square_rank(square);
-	bool is_file_border = f == 0 || f == FILE_MAX;
-	bool is_rank_border = r == 0 || r == RANK_MAX;
-	if (is_file_border && is_rank_border) {
-		return 52;
-	} else if (is_file_border || is_rank_border) {
-		return 53;
-	} else {
-		return 54;
 	}
 }
 
@@ -114,7 +105,7 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
 	magic->premask = bb_premask_rook(square);
-	magic->rshift = square_rshitf(square);
+	magic->rshift = 64 - popcount64(magic->premask);
 	while (true) {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
@@ -136,6 +127,42 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 			}
 		}
 		if (!found_collisions) {
+			break;
+		}
+	}
+	magic->start = find_start_of_attacks_table(attacks_table);
+	magic->end = find_end_of_attacks_table(attacks_table);
+}
+
+void
+magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
+{
+	size_t attacks_table_size = sizeof(Bitboard) * 4096;
+	magic->premask = bb_premask_bishop(square);
+	bb_print(magic->premask);
+	magic->rshift = 64 - popcount64(magic->premask);
+	while (true) {
+		memset(attacks_table, 0, attacks_table_size);
+		magic->multiplier = bb_sparse_random();
+		struct BitboardSubsetIter subset_iter = {
+			.original = magic->premask,
+			.subset = 0,
+		};
+		bool found_collisions = false;
+		Bitboard *subset = NULL;
+		while ((subset = bb_subset_iter(&subset_iter))) {
+			size_t i = (*subset * magic->multiplier) >> magic->rshift;
+			Bitboard *val = attacks_table + i;
+			Bitboard attacks = bb_bishop(square, *subset);
+			if (*val && *val != attacks) {
+				found_collisions = true;
+				break;
+			} else {
+				*val = attacks;
+			}
+		}
+		if (!found_collisions) {
+			debug_printf("finished bishop\n");
 			break;
 		}
 	}

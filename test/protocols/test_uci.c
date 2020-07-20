@@ -6,6 +6,23 @@
 #include "utils.h"
 
 void
+test_uci_commands_are_sorted(void) {
+	for (size_t i = 0; i < UCI_COMMANDS_COUNT - 1; i++) {
+		int result = uci_command_cmp(UCI_COMMANDS + i, UCI_COMMANDS + i + 1);
+		munit_assert_int(result, <, 0);
+	}
+}
+
+void
+test_uci_empty(struct Engine *engine) {
+	protocol_uci_handle(engine, "   ");
+	protocol_uci_handle(engine, "");
+	protocol_uci_handle(engine, "\n \t ");
+	struct Lines *lines = file_line_by_line(engine->output);
+	munit_assert_uint(lines_count(lines), ==, 0);
+}
+
+void
 test_uci_cmd_d(struct Engine *engine)
 {
 	protocol_uci_handle(engine, "d lichess");
@@ -22,6 +39,15 @@ test_uci_cmd_d(struct Engine *engine)
 	}
 	munit_assert_true(fen_was_found);
 	free(fen);
+}
+
+void
+test_uci_cmd_go_perft(struct Engine *engine)
+{
+	protocol_uci_handle(engine, "go perft");
+	struct Lines *lines = file_line_by_line(engine->output);
+	munit_assert_not_null(strstr(lines_nth(lines, 0), "ERROR"));
+	lines_delete(lines);
 }
 
 void

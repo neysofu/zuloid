@@ -1,0 +1,53 @@
+#include "chess/coordinates.h"
+#include "chess/bb.h"
+#include "chess/color.h"
+
+const Bitboard DIAGONALS_A1H8[] = {
+	0x0100000000000000,
+	0x0201000000000000,
+	0x0402010000000000,
+	0x0804020100000000,
+	0x1008040201000000,
+	0x2010080402010000,
+	0x4020100804020100,
+
+	0x8040201008040201,
+
+	0x80402010080402,
+	0x804020100804,
+	0x8040201008,
+	0x80402010,
+	0x804020,
+	0x8040,
+	0x80,
+};
+
+const Bitboard DIAGONALS_A8H1[] = {
+	0x0100000000000000,
+	0x0201000000000000,
+	0x0402010000000000,
+	0x0804020100000000,
+	0x1008040201000000,
+	0x2010080402010000,
+	0x4020100804020100,
+
+	0x102040810204080,
+
+	0x80402010080402,
+	0x804020100804,
+	0x8040201008,
+	0x80402010,
+	0x804020,
+	0x8040,
+	0x80,
+};
+
+Bitboard
+square_a1h8_diagonal(Square sq) {
+	return DIAGONALS_A1H8[7 + square_rank(sq) - square_file(sq)];
+}
+
+Bitboard
+square_a8h1_diagonal(Square sq) {
+	return DIAGONALS_A8H1[square_rank(sq) - square_file(sq)];
+}

@@ -60,6 +60,11 @@ file_to_bb(File file);
 Bitboard
 rank_to_bb(Rank rank);
 
+Bitboard
+square_a1h8_diagonal(Square sq);
+Bitboard
+square_a8h1_diagonal(Square sq);
+
 Square
 lsb_to_square(int lsb);
 

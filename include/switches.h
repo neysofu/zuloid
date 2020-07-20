@@ -1,6 +1,7 @@
 #ifndef ZORRO_SWITCHES_H
 #define ZORRO_SWITCHES_H
 
-#define SWITCH_OPENMP
+#define SWITCH_OPENMP  1
+#define DEBUG_MESSAGES 1
 
 #endif

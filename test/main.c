@@ -1,6 +1,6 @@
 #include "engine.h"
-#include <stdio.h>
 #include <stdarg.h>
+#include <stdio.h>
 
 // clang-format off
 extern void test_960(void);
@@ -19,8 +19,11 @@ extern void test_position_is_illegal(void);
 extern void test_position_is_legal(void);
 extern void test_rating(void);
 extern void test_perft_results(struct Engine *);
+extern void test_uci_commands_are_sorted(void);
+extern void test_uci_empty(struct Engine *);
 extern void test_uci_cmd_d(struct Engine *);
 extern void test_uci_cmd_djbhash(struct Engine *);
+extern void test_uci_cmd_go_perft(struct Engine *);
 extern void test_uci_cmd_isready(struct Engine *);
 extern void test_uci_cmd_position(struct Engine *);
 extern void test_uci_cmd_quit(struct Engine *);
@@ -58,19 +61,22 @@ main(void)
 	call_test(test_fen_conversion);
 	call_test(test_fen_init);
 	call_test(test_file_to_char);
-	call_test(test_init);
+	// call_test(test_init);
 	call_test(test_piece_to_char);
 	call_test(test_position_is_illegal);
 	call_test(test_position_is_legal);
 	call_test(test_rating);
+	call_test(test_uci_commands_are_sorted);
+	call_test_with_tmp_engine(test_uci_empty);
 	call_test_with_tmp_engine(test_uci_cmd_d);
 	call_test_with_tmp_engine(test_uci_cmd_djbhash);
+	call_test_with_tmp_engine(test_uci_cmd_go_perft);
 	call_test_with_tmp_engine(test_uci_cmd_isready);
 	call_test_with_tmp_engine(test_uci_cmd_position);
 	call_test_with_tmp_engine(test_uci_cmd_quit);
 	call_test_with_tmp_engine(test_uci_cmd_uci);
 	call_test_with_tmp_engine(test_uci_unknown_cmd);
-	//call_test_with_tmp_engine(test_perft_results);
+	call_test_with_tmp_engine(test_perft_results);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

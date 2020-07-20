@@ -13,6 +13,7 @@ RUN rm -rf build/ && \
     cd build/ && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make && \
+    strip zorro && \
     ./test_zorro
 
 ENTRYPOINT [ "build/zorro" ]

@@ -27,4 +27,7 @@ exit_if_null(void *ptr);
 uint16_t
 djb_hash(const char *str);
 
+int
+streq(const char *s1, const char *s2);
+
 #endif

@@ -16,8 +16,12 @@ struct Magic
 };
 
 struct Magic MAGICS[SQUARES_COUNT];
+struct Magic MAGICS_BISHOP[SQUARES_COUNT];
 
 void
 magic_find(struct Magic *magic, Square square, Bitboard *attacks_table);
+
+void
+magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table);
 
 #endif

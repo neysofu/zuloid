@@ -45,6 +45,11 @@ exit_if_null(void *ptr)
 	return ptr;
 }
 
+int
+streq(const char *s1, const char *s2) {
+	return strcmp(s1, s2) == 0;
+}
+
 // struct UciStrIter
 //{
 //	char *string;

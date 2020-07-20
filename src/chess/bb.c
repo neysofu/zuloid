@@ -2,6 +2,7 @@
 #include "chess/find_magics.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
+#include "debug.h"
 #include <assert.h>
 #include <libpopcnt/libpopcnt.h>
 #include <stdbool.h>
@@ -157,9 +158,16 @@ bb_init(void)
 		BB_ATTACKS_BY_KING[sq] = bb_attacks_by_offsets(sq, OFFSETS_KING);
 	}
 	size_t offset = 0;
+	debug_printf("Now doing rooks.\n");
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
 		offset += MAGICS[sq].end - MAGICS[sq].start;
+	}
+	debug_printf("ROOKS DONE\n");
+	offset = 0;
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		magic_find_bishop(MAGICS_BISHOP + sq, sq, BB_ATTACKS_BISHOP + offset);
+		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start;
 	}
 	bb_init_rook();
 	// bb_init_bishop();

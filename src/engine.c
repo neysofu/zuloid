@@ -77,8 +77,8 @@ engine_debugf(struct Engine *engine,
 	if (!engine->debug) {
 		return;
 	}
-	printf("info string ");
 #ifndef NDEBUG
+	printf("info string ");
 	printf("%s:%zu @ %s -- ", filename, line_num, function_name);
 #endif
 	va_list args;
