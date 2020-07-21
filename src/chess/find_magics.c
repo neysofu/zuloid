@@ -57,7 +57,9 @@ bb_premask_rook(Square sq)
 Bitboard
 bb_premask_bishop(Square sq)
 {
-	return (square_a1h8_diagonal(sq) | square_a8h1_diagonal(sq)) & ~0xff818181818181ffull;
+	Bitboard diagonal1 = square_a1h8_diagonal(sq);
+	Bitboard diagonal2 = square_a8h1_diagonal(sq);
+	return (diagonal1 | diagonal2) & ~0xff818181818181ffull;
 }
 
 struct BitboardSubsetIter
@@ -118,11 +120,11 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 		while ((subset = bb_subset_iter(&subset_iter))) {
 			size_t i = (*subset * magic->multiplier) >> magic->rshift;
 			Bitboard *val = attacks_table + i;
-			Bitboard attacks = bb_rook(square, *subset);
-			if (*val && *val != attacks) {
+			if (*val) {
 				found_collisions = true;
 				break;
 			} else {
+				Bitboard attacks = bb_rook(square, *subset);
 				*val = attacks;
 			}
 		}
@@ -139,7 +141,6 @@ magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
 	magic->premask = bb_premask_bishop(square);
-	bb_print(magic->premask);
 	magic->rshift = 64 - popcount64(magic->premask);
 	while (true) {
 		memset(attacks_table, 0, attacks_table_size);
@@ -162,7 +163,6 @@ magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
 			}
 		}
 		if (!found_collisions) {
-			debug_printf("finished bishop\n");
 			break;
 		}
 	}

@@ -153,17 +153,19 @@ magics_size_in_kib(void)
 void
 bb_init(void)
 {
+	static bool done = false;
+	if (done) {
+		return;
+	}
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		BB_ATTACKS_BY_KNIGHT[sq] = bb_attacks_by_offsets(sq, OFFSETS_KNIGHT);
 		BB_ATTACKS_BY_KING[sq] = bb_attacks_by_offsets(sq, OFFSETS_KING);
 	}
 	size_t offset = 0;
-	debug_printf("Now doing rooks.\n");
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
 		offset += MAGICS[sq].end - MAGICS[sq].start;
 	}
-	debug_printf("ROOKS DONE\n");
 	offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		magic_find_bishop(MAGICS_BISHOP + sq, sq, BB_ATTACKS_BISHOP + offset);
@@ -171,4 +173,5 @@ bb_init(void)
 	}
 	bb_init_rook();
 	// bb_init_bishop();
+	done = true;
 }
