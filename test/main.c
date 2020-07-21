@@ -22,6 +22,7 @@ extern void test_perft_results(struct Engine *);
 extern void test_uci_commands_are_sorted(void);
 extern void test_uci_empty(struct Engine *);
 extern void test_uci_cmd_d(struct Engine *);
+extern void test_uci_cmd_debug(struct Engine *);
 extern void test_uci_cmd_djbhash(struct Engine *);
 extern void test_uci_cmd_go_perft(struct Engine *);
 extern void test_uci_cmd_isready(struct Engine *);
@@ -69,6 +70,7 @@ main(void)
 	call_test(test_uci_commands_are_sorted);
 	call_test_with_tmp_engine(test_uci_empty);
 	call_test_with_tmp_engine(test_uci_cmd_d);
+	call_test_with_tmp_engine(test_uci_cmd_debug);
 	call_test_with_tmp_engine(test_uci_cmd_djbhash);
 	call_test_with_tmp_engine(test_uci_cmd_go_perft);
 	call_test_with_tmp_engine(test_uci_cmd_isready);

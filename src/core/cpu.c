@@ -147,9 +147,9 @@ agent_new(void)
 //		  popcnt(agent->buffer, AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t));
 //		if (popcount > AGENT_L0_WIDTH / 4) {
 //			agent->layer_bravo[out_i] |= out_mask;
-//			ENGINE_DEBUGF(engine, "[TRACE] This neuron will activate.\n");
+//			ENGINE_LOGF(engine, "[TRACE] This neuron will activate.\n");
 //		} else {
-//			ENGINE_DEBUGF(engine, "[TRACE] This neuron won't activate.\n");
+//			ENGINE_LOGF(engine, "[TRACE] This neuron won't activate.\n");
 //		}
 //		if (!(out_mask <<= 1)) {
 //			out_mask = 0x1ULL << 63;
@@ -184,7 +184,7 @@ struct SearchResults
 void
 engine_start_search(struct Engine *engine)
 {
-	ENGINE_DEBUGF(engine, "[DEBUG] Search has started.\n");
+	ENGINE_LOGF(engine, "[DEBUG] Search has started.\n");
 	/* The first step is to evaluate the position with the neural network. */
 	/* Now pick any of the suggested moves. In Zorro there is no best move found in the
 	 * evaluation, only candidate moves. Moves are suggested by  square: */
@@ -219,7 +219,7 @@ void
 engine_stop_search(struct Engine *engine)
 {
 	assert(engine);
-	ENGINE_DEBUGF(engine, "[INFO] Interrupting search.\n");
+	ENGINE_LOGF(engine, "[INFO] Interrupting search.\n");
 }
 
 void

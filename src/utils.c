@@ -46,44 +46,10 @@ exit_if_null(void *ptr)
 }
 
 int
-streq(const char *s1, const char *s2) {
+streq(const char *s1, const char *s2)
+{
 	return strcmp(s1, s2) == 0;
 }
-
-// struct UciStrIter
-//{
-//	char *string;
-//	char *state;
-//};
-
-// char *
-// uci_str_iter(struct UciStrIter *iter)
-//{
-//	strtok_whitespace(NULL);
-//	const char *whitespace = " \t\v\r\n";
-//	char *end;
-//
-//	if (!*string) {
-//		iter->state = string;
-//		return NULL;
-//	}
-//
-//	iter->string += strspn(s, whitespace);
-//
-//	if (*s == '\0') {
-//		iter->state = string;
-//		return NULL;
-//	}
-//
-//	end = string + strcspn(s, whitespace);
-//	if (*end == '\0') {
-//		iter->state = end;
-//		return s;
-//	}
-//	*end = '\0';
-//	iter->state = end + 1;
-//	return start;
-//}
 
 char *
 strtok_whitespace(char *str)

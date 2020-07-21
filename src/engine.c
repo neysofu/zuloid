@@ -65,7 +65,7 @@ engine_delete(struct Engine *engine)
 }
 
 void
-engine_debugf(struct Engine *engine,
+engine_logf(struct Engine *engine,
               const char *filename,
               size_t line_num,
               const char *function_name,
@@ -77,12 +77,10 @@ engine_debugf(struct Engine *engine,
 	if (!engine->debug) {
 		return;
 	}
-#ifndef NDEBUG
-	printf("info string ");
-	printf("%s:%zu @ %s -- ", filename, line_num, function_name);
-#endif
+	fprintf(engine->output, "info string ");
+	fprintf(engine->output, "%s:%zu @ %s -- ", filename, line_num, function_name);
 	va_list args;
 	va_start(args, function_name);
-	vprintf(va_arg(args, const char *), args);
+	vfprintf(engine->output, va_arg(args, const char *), args);
 	va_end(args);
 }

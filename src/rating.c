@@ -3,8 +3,7 @@
 const unsigned CCRL_4015_RATING = 1400;
 
 float
-expected_score(unsigned elo_w, unsigned elo_b)
+expected_score(float elo_w, float elo_b)
 {
-	float elo_delta = (float)elo_b - (float)elo_w;
-	return 1.0 / (1.0 + powf(10.0, elo_delta / 400.0));
+	return 1.0 / (1.0 + powf(10.0, (elo_b - elo_w) / 400.0));
 }

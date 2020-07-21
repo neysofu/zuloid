@@ -6,6 +6,6 @@
 extern const unsigned CCRL_4015_RATING;
 
 float
-expected_score(unsigned elo_w, unsigned elo_b);
+expected_score(float elo_w, float elo_b);
 
 #endif

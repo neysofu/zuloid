@@ -21,19 +21,19 @@
 #include <stdio.h>
 #include <string.h>
 
-void
+static void
 uci_err_syntax(FILE *stream)
 {
 	fputs("[ERROR] Invalid syntax.\n", stream);
 }
 
-void
+static void
 uci_err_unspecified(FILE *stream)
 {
 	fputs("[ERROR] Unspecified error.\n", stream);
 }
 
-void
+static void
 uci_err_invalid_command(FILE *stream)
 {
 	fputs("[ERROR] Invalid command.\n", stream);
@@ -47,7 +47,7 @@ uci_command_cmp(const void *cmd1, const void *cmd2)
 	return strcmp(s1, s2);
 }
 
-struct UciCommand *
+static struct UciCommand *
 uci_identify_command(const char *token)
 {
 	struct UciCommand key = {
@@ -66,8 +66,8 @@ protocol_uci_handle(struct Engine *engine, const char *s_const)
 	char *token = strtok_whitespace(s);
 	struct UciCommand *cmd = NULL;
 	if (token && (cmd = uci_identify_command(token))) {
-		ENGINE_DEBUGF(engine, "Accepted UCI command.\n");
-		cmd->handler(engine, s);
+		ENGINE_LOGF(engine, "Accepted UCI command.\n");
+		cmd->handler(engine);
 	} else if (token) {
 		uci_err_invalid_command(engine->output);
 	}
@@ -75,7 +75,7 @@ protocol_uci_handle(struct Engine *engine, const char *s_const)
 }
 
 void
-uci_call_eval(struct Engine *engine, char *cmd)
+uci_call_eval(struct Engine *engine)
 {
 	fprintf(
 	  engine->output, "wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
@@ -85,13 +85,11 @@ uci_call_eval(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_go(struct Engine *engine, char *s)
+uci_call_go(struct Engine *engine)
 {
 	if (engine->status != STATUS_IDLE) {
 		return;
 	}
-	char *cmd = exit_if_null(malloc(strlen(s) + 1));
-	strcpy(cmd, s);
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
 		switch (djb_hash(token)) {
@@ -156,17 +154,17 @@ uci_call_go(struct Engine *engine, char *s)
 }
 
 void
-uci_call_islegal(struct Engine *engine, char *cmd)
+uci_call_islegal(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	struct Move moves[255] = { 0 };
 	struct Move mv;
 	if (!token || string_to_move(token, &mv) == 0) {
-		ENGINE_DEBUGF(engine, "[ERROR] Expected token with a chess move.\n");
+		ENGINE_LOGF(engine, "[ERROR] Expected token with a chess move.\n");
 		return;
 	}
 	size_t count = gen_pseudolegal_moves(moves, &engine->board);
-	ENGINE_DEBUGF(engine, "[TRACE] Examining %zu legal moves...\n", count);
+	ENGINE_LOGF(engine, "[TRACE] Examining %zu legal moves...\n", count);
 	for (size_t i = 0; i < count; i++) {
 		if (moves[i].source == mv.source && moves[i].target == mv.target) {
 			printf("1\n");
@@ -177,7 +175,7 @@ uci_call_islegal(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_legalmoves(struct Engine *engine, char *cmd)
+uci_call_legalmoves(struct Engine *engine)
 {
 	struct Move moves[255] = { 0 };
 	/* FIXME */
@@ -192,7 +190,7 @@ uci_call_legalmoves(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
+uci_call_pseudolegalmoves(struct Engine *engine)
 {
 	struct Move moves[255] = { 0 };
 	size_t count = gen_pseudolegal_moves(moves, &engine->board);
@@ -206,7 +204,7 @@ uci_call_pseudolegalmoves(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_export_magics(struct Engine *engine, char *cmd)
+uci_call_export_magics(struct Engine *engine)
 {
 	char *filename = strtok_whitespace(NULL);
 	if (!filename) {
@@ -226,15 +224,15 @@ uci_call_export_magics(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_position(struct Engine *engine, char *cmd)
+uci_call_position(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		uci_err_syntax(engine->output);
 		return;
-	} else if (strcmp(token, "startpos") == 0) {
+	} else if (streq(token, "startpos")) {
 		engine->board = POSITION_INIT;
-	} else if (strcmp(token, "fen") == 0) {
+	} else if (streq(token, "fen")) {
 		char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
 			token = strtok_whitespace(NULL);
@@ -249,15 +247,16 @@ uci_call_position(struct Engine *engine, char *cmd)
 			fen_fields[i] = token;
 		}
 		position_init_from_fen_fields(&engine->board, fen_fields);
-	} else if (strcmp(token, "960") == 0) {
+	} else if (streq(token, "960")) {
 		/* The "960" command is a custom addition the standard. I figured it could be useful
 		 * for training. */
 		position_init_960(&engine->board);
-	} else if (strcmp(token, "current") != 0) {
+	} else if (!streq(token, "current")) {
 		uci_err_syntax(engine->output);
 	}
-	if ((token = strtok_whitespace(NULL)) && strcmp(token, "moves")) {
+	if (!(token = strtok_whitespace(NULL)) || !streq(token, "moves")) {
 		uci_err_syntax(engine->output);
+		return;
 	}
 	// Now feed moves into the position.
 	while ((token = strtok_whitespace(NULL))) {
@@ -268,18 +267,17 @@ uci_call_position(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_d(struct Engine *engine, char *cmd)
+uci_call_d(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
-	char *fen = NULL;
 	if (!token) {
 		position_print(engine->output, &engine->board);
 	} else if (streq(token, "fen")) {
-		fen = fen_from_position(NULL, &engine->board, ' ');
+		char *fen = fen_from_position(NULL, &engine->board, ' ');
 		fprintf(engine->output, "%s\n", fen);
 		free(fen);
 	} else if (streq(token, "lichess")) {
-		fen = fen_from_position(NULL, &engine->board, '_');
+		char *fen = fen_from_position(NULL, &engine->board, '_');
 		fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
 		free(fen);
 	} else {
@@ -288,10 +286,10 @@ uci_call_d(struct Engine *engine, char *cmd)
 }
 
 void
-uci_call_setoption(struct Engine *engine, char *cmd)
+uci_call_setoption(struct Engine *engine)
 {
 	if (engine->status != STATUS_IDLE) {
-		ENGINE_DEBUGF(engine, "[ERROR] UCI options can only be set during idle state.\n");
+		uci_err_unspecified(engine->output);
 		return;
 	}
 	XXH64_hash_t hash = 0;
@@ -339,7 +337,7 @@ uci_call_setoption(struct Engine *engine, char *cmd)
 			break;
 		// TODO: many, many more.
 		default:
-			ENGINE_DEBUGF(engine, "[ERROR] No such option.\n");
+			ENGINE_LOGF(engine, "[ERROR] No such option.\n");
 	}
 }
 
@@ -358,7 +356,7 @@ uci_call_quit(struct Engine *engine)
 void
 uci_call_stop(struct Engine *engine)
 {
-	// TODO
+	UNUSED(engine);
 }
 
 void
@@ -381,7 +379,7 @@ uci_call_uci(struct Engine *engine)
 void
 uci_call_ucinewgame(struct Engine *engine)
 {
-	// TODO
+	UNUSED(engine);
 }
 
 void
@@ -396,16 +394,16 @@ uci_call_djbhash(struct Engine *engine)
 }
 
 void
-uci_call_debug(struct Engine *engine, char *cmd)
+uci_call_debug(struct Engine *engine)
 {
 	// This command feels quite useless (in fact, Stockfish doesn't even recognize
 	// it). Nevertheless, we shall offer the option to send additional evaluation
 	// details with it. It does *not* control debugging information, which instead
 	// gets compiled out with the NDEBUG macro.
 	char *token = strtok_whitespace(NULL);
-	if (token && strcmp(token, "on") == 0) {
+	if (token && streq(token, "on")) {
 		engine->debug = true;
-	} else if (token && strcmp(token, "off") == 0) {
+	} else if (token && strcmp(token, "off")) {
 		engine->debug = false;
 	} else {
 		uci_err_syntax(engine->output);

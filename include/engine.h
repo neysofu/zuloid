@@ -8,8 +8,8 @@
 #include "time/game_clock.h"
 #include <stdio.h>
 
-#define ENGINE_DEBUGF(engine, ...)                                                         \
-	engine_debugf(engine, __FILE__, __LINE__, __func__, __VA_ARGS__)
+#define ENGINE_LOGF(engine, ...)                                                         \
+	engine_logf(engine, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 enum Status
 {
@@ -25,7 +25,7 @@ enum Status
 
 struct Engine
 {
-	/* Only one position at the time. */
+	// Only one position at the time.
 	struct Board board;
 	struct Cache *cache;
 	struct Agent *agent;
@@ -76,7 +76,7 @@ void
 engine_stop_search(struct Engine *engine);
 
 void
-engine_debugf(struct Engine *engine,
+engine_logf(struct Engine *engine,
               const char *filename,
               size_t line_num,
               const char *function_name,

@@ -4,6 +4,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#define UNUSED(x) (void)(x)
+
 /* Catch-all error codes for the whole codebase. Add new cases as you please. You should
  * probably restrain from showing it to the end user though. */
 enum ErrorCode

@@ -6,7 +6,7 @@
 struct UciCommand
 {
 	const char *name;
-	void (*handler)(struct Engine *, const char *);
+	void (*handler)(struct Engine *);
 };
 
 extern const struct UciCommand UCI_COMMANDS[];
