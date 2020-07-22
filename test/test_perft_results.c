@@ -24,13 +24,11 @@ const struct PerftTestCase TEST_CASES[] = {
 	{ POSITION_2, 5, 674624 },
 };
 
-const size_t TEST_CASES_COUNT = sizeof(TEST_CASES) / sizeof(TEST_CASES[0]);
-
 void
 test_perft_results(struct Engine *engine)
 {
 	bb_init();
-	for (size_t i = 0; i < TEST_CASES_COUNT; i++) {
+	for (size_t i = 0; i < ARRAY_SIZE(TEST_CASES); i++) {
 		char *fen = exit_if_null(malloc(FEN_SIZE));
 		strcpy(fen, TEST_CASES[i].fen);
 		position_init_from_fen(&engine->board, fen);

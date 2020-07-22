@@ -1,9 +1,9 @@
-#include "chess/position.h"
 #include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/pieces.h"
+#include "chess/position.h"
 #include "utils.h"
 #include <assert.h>
 #include <ctype.h>
@@ -58,9 +58,9 @@ struct Chess960InitializationState
 
 void
 position_960_init_file(struct Board *position,
-                        struct Chess960InitializationState *state,
-                        int i,
-                        enum PieceType ptype)
+                       struct Chess960InitializationState *state,
+                       int i,
+                       enum PieceType ptype)
 {
 	set_pieces_at_home_rank(position, state->available_files[i], ptype);
 	state->available_files[i] = state->available_files[state->i--];

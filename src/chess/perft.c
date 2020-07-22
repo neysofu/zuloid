@@ -1,7 +1,7 @@
-#include "chess/movegen.h"
 #include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/fen.h"
+#include "chess/movegen.h"
 #include "chess/position.h"
 #include "globals.h"
 #include "utils.h"
@@ -126,7 +126,7 @@ position_improved_perft(struct Board *pos, int depth)
 		struct SearchStackPlie *last_plie = search_stack_last(&stack);
 		if (last_plie->child_i == last_plie->children_count) {
 			if (stack.current_depth == 0) {
-				break;
+				return nodes_count;
 			} else {
 				search_stack_pop(&stack);
 			}
@@ -137,5 +137,4 @@ position_improved_perft(struct Board *pos, int depth)
 			search_stack_push(&stack);
 		}
 	}
-	return nodes_count;
 }

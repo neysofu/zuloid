@@ -1,8 +1,8 @@
 #include "chess/find_magics.h"
 #include "chess/bb.h"
+#include "debug.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
-#include "debug.h"
 #include <assert.h>
 #include <libpopcnt/libpopcnt.h>
 #include <stdbool.h>
@@ -11,34 +11,6 @@
 #include <string.h>
 
 struct Magic MAGICS[SQUARES_COUNT] = { 0 };
-
-Bitboard
-slider_attacks(Square sq, Bitboard occupancy, const short delta[4][2])
-{
-	Bitboard bb = 0;
-	for (int i = 0; i < 4; i++) {
-		int df = delta[i][0];
-		int dr = delta[i][1];
-		File file = square_file(sq) + df;
-		Rank rank = square_rank(sq) + dr;
-		while (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
-			bb |= square_to_bb(square_new(file, rank));
-			if (square_to_bb(square_new(file, rank)) & occupancy) {
-				break;
-			}
-			rank += dr;
-			file += df;
-		}
-	}
-	return bb;
-}
-
-Bitboard
-bb_rook(Square sq, Bitboard occupancy)
-{
-	const short rook_offsets[4][2] = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
-	return slider_attacks(sq, occupancy, rook_offsets);
-}
 
 Bitboard
 bb_sparse_random(void)
@@ -59,14 +31,8 @@ bb_premask_bishop(Square sq)
 {
 	Bitboard diagonal1 = square_a1h8_diagonal(sq);
 	Bitboard diagonal2 = square_a8h1_diagonal(sq);
-	return (diagonal1 | diagonal2) & ~0xff818181818181ffull;
+	return (diagonal1 ^ diagonal2) & ~0xff818181818181ffull;
 }
-
-struct BitboardSubsetIter
-{
-	Bitboard original;
-	Bitboard subset;
-};
 
 Bitboard *
 bb_subset_iter(struct BitboardSubsetIter *iter)
@@ -116,15 +82,14 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 			.subset = 0,
 		};
 		bool found_collisions = false;
-		Bitboard *subset = NULL;
-		while ((subset = bb_subset_iter(&subset_iter))) {
-			size_t i = (*subset * magic->multiplier) >> magic->rshift;
+		while (bb_subset_iter(&subset_iter)) {
+			size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
 			Bitboard *val = attacks_table + i;
-			if (*val) {
+			Bitboard attacks = bb_rook(square, subset_iter.subset);
+			if (*val && *val != attacks) {
 				found_collisions = true;
 				break;
 			} else {
-				Bitboard attacks = bb_rook(square, *subset);
 				*val = attacks;
 			}
 		}

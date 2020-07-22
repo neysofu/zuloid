@@ -1,8 +1,8 @@
 #include "chess/bb.h"
 #include "chess/find_magics.h"
+#include "debug.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
-#include "debug.h"
 #include <assert.h>
 #include <libpopcnt/libpopcnt.h>
 #include <stdbool.h>
@@ -11,6 +11,27 @@
 
 Bitboard BB_ATTACKS_BY_KNIGHT[SQUARES_COUNT] = { 0 };
 Bitboard BB_ATTACKS_BY_KING[SQUARES_COUNT] = { 0 };
+
+Bitboard
+slider_attacks(Square sq, Bitboard occupancy, const short delta[4][2])
+{
+	Bitboard bb = 0;
+	for (int i = 0; i < 4; i++) {
+		const int df = delta[i][0];
+		const int dr = delta[i][1];
+		File file = square_file(sq) + df;
+		Rank rank = square_rank(sq) + dr;
+		while (file >= 0 && file < 8 && rank >= 0 && rank < 8) {
+			bb |= square_to_bb(square_new(file, rank));
+			if (square_to_bb(square_new(file, rank)) & occupancy) {
+				break;
+			}
+			rank += dr;
+			file += df;
+		}
+	}
+	return bb;
+}
 
 // Keep in mind that both knights and kings can move in 8 different directions.
 const short OFFSETS_KNIGHT[8][2] = {
@@ -66,24 +87,33 @@ bb_random(void)
 }
 
 Bitboard
-bb_attacks_bishop(Square sq, Bitboard obstacles)
-{
-	size_t i = (BB_MAGICS_BISHOP[sq] * BB_MULTIPLIERS_BISHOP[sq]) >> BB_SHIFTS_BISHOP[sq];
-	return BB_ATTACKS_BISHOP[i];
-}
-
-Bitboard
-bb_attacks_rook(Square sq, Bitboard obstacles)
-{
-	size_t i = (BB_MAGICS_ROOK[sq] * BB_MULTIPLIERS_ROOK[sq]) >> BB_SHIFTS_ROOK[sq];
-	return BB_ATTACKS_ROOK[i];
-}
-
-Bitboard
 bb_bishop(Square sq, Bitboard occupancy)
 {
 	const short bishop_offsets[4][2] = { { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 } };
 	return slider_attacks(sq, occupancy, bishop_offsets);
+}
+
+Bitboard
+bb_bishop_magic(Square sq, Bitboard occupancy)
+{
+	Bitboard mask = BB_MASK_BISHOP[sq] & occupancy;
+	size_t i = (mask * BB_MULTIPLIERS_BISHOP[sq]) >> BB_SHIFTS_BISHOP[sq];
+	return BB_ATTACKS_BISHOP[i + BB_OFFSETS_BISHOP[sq]];
+}
+
+Bitboard
+bb_rook_magic(Square sq, Bitboard occupancy)
+{
+	Bitboard mask = BB_MASK_ROOK[sq] & occupancy;
+	size_t i = (mask * BB_MULTIPLIERS_ROOK[sq]) >> BB_SHIFTS_ROOK[sq];
+	return BB_ATTACKS_ROOK[i + BB_OFFSETS_ROOK[sq]];
+}
+
+Bitboard
+bb_rook(Square sq, Bitboard occupancy)
+{
+	const short rook_offsets[4][2] = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
+	return slider_attacks(sq, occupancy, rook_offsets);
 }
 
 Bitboard
@@ -111,33 +141,31 @@ bb_rays_rook(Square sq)
 void
 bb_init_bishop(void)
 {
-	return;
+	size_t offset = 0;
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		magic_find_bishop(MAGICS_BISHOP + sq, sq, BB_ATTACKS_BISHOP + offset);
+		BB_OFFSETS_BISHOP[sq] = offset;
+		BB_MASK_BISHOP[sq] = MAGICS_BISHOP[sq].premask;
+		BB_SHIFTS_BISHOP[sq] = MAGICS_BISHOP[sq].rshift;
+		BB_MULTIPLIERS_BISHOP[sq] = MAGICS_BISHOP[sq].multiplier;
+		BB_POSTMASK_BISHOP[sq] = MAGICS_BISHOP[sq].postmask;
+		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start;
+	}
 }
 
 void
 bb_init_rook(void)
 {
-	// size_t offset = 0;
-	// for (Square sq = 0; sq <= SQUARES_COUNT; sq++) {
-	//	struct Magic *magic = MAGICS + sq;
-	//	Bitboard *subset = NULL;
-	//	struct BitboardSubsetIter subset_iter = {
-	//		.original = magic->premask,
-	//		.subset = 0,
-	//	};
-	//	while ((subset = bb_subset_iter(&subset_iter))) {
-	//		size_t i = (*subset * magic->multiplier) >> magic->rshift;
-	//		Bitboard *val = attacks_table + i;
-	//		Bitboard attacks = bb_rook(sq, *subset);
-	//		if (*val && *val != attacks) {
-	//			bb_print(*val);
-	//			puts("[BUG] Invalid magics.");
-	//			exit(1);
-	//		} else {
-	//			*val = attacks;
-	//		}
-	//	}
-	//}
+	size_t offset = 0;
+	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
+		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
+		BB_OFFSETS_ROOK[sq] = offset;
+		BB_MASK_ROOK[sq] = MAGICS[sq].premask;
+		BB_SHIFTS_ROOK[sq] = MAGICS[sq].rshift;
+		BB_MULTIPLIERS_ROOK[sq] = MAGICS[sq].multiplier;
+		BB_POSTMASK_ROOK[sq] = MAGICS[sq].postmask;
+		offset += MAGICS[sq].end - MAGICS[sq].start;
+	}
 }
 
 size_t
@@ -161,17 +189,7 @@ bb_init(void)
 		BB_ATTACKS_BY_KNIGHT[sq] = bb_attacks_by_offsets(sq, OFFSETS_KNIGHT);
 		BB_ATTACKS_BY_KING[sq] = bb_attacks_by_offsets(sq, OFFSETS_KING);
 	}
-	size_t offset = 0;
-	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
-		offset += MAGICS[sq].end - MAGICS[sq].start;
-	}
-	offset = 0;
-	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		magic_find_bishop(MAGICS_BISHOP + sq, sq, BB_ATTACKS_BISHOP + offset);
-		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start;
-	}
 	bb_init_rook();
-	// bb_init_bishop();
+	bb_init_bishop();
 	done = true;
 }

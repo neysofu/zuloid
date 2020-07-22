@@ -27,6 +27,11 @@
 #include <stdio.h>
 #include <string.h>
 
+extern Bitboard
+bb_rook_magic(Square sq, Bitboard occupancy);
+extern Bitboard
+bb_bishop_magic(Square sq, Bitboard occupancy);
+
 #define EMIT_MOVE(m, a, b)                                                                 \
 	(m)->source = (a);                                                                     \
 	(m)->target = (b);                                                                     \
@@ -127,7 +132,7 @@ gen_bishop_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard 
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = bb_bishop(source, occupancy) & mask;
+		Bitboard targets = bb_bishop_magic(source, occupancy) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -143,7 +148,7 @@ gen_rook_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard al
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = bb_rook(source, all) & mask;
+		Bitboard targets = bb_rook_magic(source, all) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -221,9 +226,9 @@ gen_attacks_against_from(struct Move moves[],
 	  moves, pieces & pos->bb[PIECE_TYPE_PAWN], victims, position_occupancy(pos), attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(
-	 moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
+	  moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
 	moves += gen_rook_moves(
-	 moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
+	  moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
 	moves += gen_king_castles(moves, pos);
 	return moves - ptr;

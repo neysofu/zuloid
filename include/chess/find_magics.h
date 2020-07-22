@@ -24,4 +24,13 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table);
 void
 magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table);
 
+struct BitboardSubsetIter
+{
+	Bitboard original;
+	Bitboard subset;
+};
+
+Bitboard *
+bb_subset_iter(struct BitboardSubsetIter *iter);
+
 #endif

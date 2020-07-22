@@ -1,6 +1,6 @@
-#include "chess/coordinates.h"
 #include "chess/bb.h"
 #include "chess/color.h"
+#include "chess/coordinates.h"
 
 const Bitboard DIAGONALS_A1H8[] = {
 	0x0100000000000000,
@@ -43,11 +43,13 @@ const Bitboard DIAGONALS_A8H1[] = {
 };
 
 Bitboard
-square_a1h8_diagonal(Square sq) {
+square_a1h8_diagonal(Square sq)
+{
 	return DIAGONALS_A1H8[7 + square_rank(sq) - square_file(sq)];
 }
 
 Bitboard
-square_a8h1_diagonal(Square sq) {
+square_a8h1_diagonal(Square sq)
+{
 	return DIAGONALS_A8H1[square_rank(sq) + square_file(sq)];
 }

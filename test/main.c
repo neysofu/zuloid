@@ -4,6 +4,7 @@
 
 // clang-format off
 extern void test_960(void);
+extern void test_bb_subset(void);
 extern void test_attacks(void);
 extern void test_cache_single_key_retrieval(void);
 extern void test_castling_mask(void);
@@ -54,6 +55,7 @@ main(void)
 	call_test(test_utils);
 	call_test(test_960);
 	call_test(test_attacks);
+	call_test(test_bb_subset);
 	call_test(test_castling_mask);
 	call_test(test_cache_single_key_retrieval);
 	call_test(test_char_to_file);
@@ -78,7 +80,7 @@ main(void)
 	call_test_with_tmp_engine(test_uci_cmd_uci);
 	call_test_with_tmp_engine(test_uci_unknown_cmd);
 	call_test_with_tmp_engine(test_cecp);
-	//call_test_with_tmp_engine(test_perft_results);
+	// call_test_with_tmp_engine(test_perft_results);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

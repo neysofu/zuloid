@@ -47,6 +47,7 @@ const char *CECP_FEATURES[] = {
 	"ping=1",
 	"playother=1",
 	"debug=1",
+	"exclude=1",
 	"pause=1",
 	"memory=1",
 	"smp=1",
@@ -54,6 +55,9 @@ const char *CECP_FEATURES[] = {
 	"exclude=1",
 	"sigint=0",
 	"sigterm=0",
+	"setboard=1",
+	"reuse=0",
+	"done=1",
 };
 
 void
