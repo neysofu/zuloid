@@ -4,7 +4,6 @@
 #include "chess/position.h"
 #include "engine.h"
 #include "munit/munit.h"
-#include "protocols/uci.h"
 #include "test/utils.h"
 #include "utils.h"
 

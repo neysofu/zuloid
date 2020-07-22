@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define UNUSED(x) (void)(x)
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 
 /* Catch-all error codes for the whole codebase. Add new cases as you please. You should
  * probably restrain from showing it to the end user though. */

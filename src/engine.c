@@ -2,6 +2,7 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
+#include "protocols/protocols.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdarg.h>
@@ -30,6 +31,7 @@ engine_new(void)
 		.cache = NULL,
 		.agent = agent_new(),
 		.seed = 0xcfca130b,
+		.protocol = protocol_handshake,
 		.output = stdout,
 		.debug = false,
 		.move_selection_noise = 0.005,

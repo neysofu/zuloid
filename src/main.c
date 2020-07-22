@@ -2,7 +2,6 @@
 #include "engine.h"
 #include "globals.h"
 #include "mt-64/mt-64.h"
-#include "protocols/uci.h"
 #include "utils.h"
 #include <plibsys.h>
 #include <stdio.h>
@@ -20,7 +19,7 @@ main(void)
 	struct Engine *engine = engine_new();
 	while (engine->status != STATUS_EXIT) {
 		char *line = read_line(stdin);
-		protocol_uci_handle(engine, line);
+		engine->protocol(engine, line);
 		free(line);
 	}
 	engine_delete(engine);

@@ -34,6 +34,7 @@ struct Engine
 	int32_t seed;
 	bool debug;
 	FILE *output;
+	void (*protocol)(struct Engine *, const char *);
 	// A straightforward activity indicator. Both `main` and engine commands
 	// might want to know if the engine is doing background computation or
 	// what.

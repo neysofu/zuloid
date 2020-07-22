@@ -1,25 +1,16 @@
 #include "chess/fen.h"
 #include "engine.h"
 #include "munit/munit.h"
-#include "protocols/uci.h"
+#include "protocols/protocols.h"
 #include "test/utils.h"
 #include "utils.h"
 
 void
-test_uci_commands_are_sorted(void)
-{
-	for (size_t i = 0; i < UCI_COMMANDS_COUNT - 1; i++) {
-		int result = uci_command_cmp(UCI_COMMANDS + i, UCI_COMMANDS + i + 1);
-		munit_assert_int(result, <, 0);
-	}
-}
-
-void
 test_uci_empty(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "   ");
-	protocol_uci_handle(engine, "");
-	protocol_uci_handle(engine, "\n \t ");
+	protocol_uci(engine, "   ");
+	protocol_uci(engine, "");
+	protocol_uci(engine, "\n \t ");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_uint(lines_count(lines), ==, 0);
@@ -29,8 +20,8 @@ test_uci_empty(struct Engine *engine)
 void
 test_uci_cmd_d(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "d lichess");
-	protocol_uci_handle(engine, "d");
+	protocol_uci(engine, "d lichess");
+	protocol_uci(engine, "d");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		size_t n_lines = lines_count(lines);
@@ -50,7 +41,7 @@ test_uci_cmd_d(struct Engine *engine)
 void
 test_uci_cmd_go_perft(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "go perft");
+	protocol_uci(engine, "go perft");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_not_null(strstr(lines_nth(lines, 0), "ERROR"));
@@ -61,10 +52,10 @@ test_uci_cmd_go_perft(struct Engine *engine)
 void
 test_uci_cmd_djbhash(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "djbhash position");
-	protocol_uci_handle(engine, "djbhash");
-	protocol_uci_handle(engine, "djbhash foobar foobar");
-	protocol_uci_handle(engine, "djbhash foobar position foobar");
+	protocol_uci(engine, "djbhash position");
+	protocol_uci(engine, "djbhash");
+	protocol_uci(engine, "djbhash foobar foobar");
+	protocol_uci(engine, "djbhash foobar position foobar");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_uint(lines_count(lines), ==, 4);
@@ -79,7 +70,7 @@ test_uci_cmd_djbhash(struct Engine *engine)
 void
 test_uci_cmd_isready(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "isready");
+	protocol_uci(engine, "isready");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_uint(lines_count(lines), ==, 1);
@@ -96,7 +87,7 @@ test_uci_cmd_position(struct Engine *engine)
 		struct Piece piece_at_e4 = position_piece_at_square(&engine->board, e4);
 		munit_assert_uint(piece_at_e4.type, !=, PIECE_TYPE_PAWN);
 	}
-	protocol_uci_handle(engine, "position current moves e2e4");
+	protocol_uci(engine, "position current moves e2e4");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_uint(lines_count(lines), ==, 0);
@@ -104,7 +95,7 @@ test_uci_cmd_position(struct Engine *engine)
 		munit_assert_uint(piece_at_e4.type, ==, PIECE_TYPE_PAWN);
 		lines_delete(lines);
 	}
-	protocol_uci_handle(engine, "position startpos");
+	protocol_uci(engine, "position startpos");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		struct Piece piece_at_e4 = position_piece_at_square(&engine->board, e4);
@@ -119,7 +110,7 @@ test_uci_cmd_quit(struct Engine *engine)
 	{
 		munit_assert_uint(engine->status, !=, STATUS_EXIT);
 	}
-	protocol_uci_handle(engine, "quit");
+	protocol_uci(engine, "quit");
 	{
 		munit_assert_uint(engine->status, ==, STATUS_EXIT);
 	}
@@ -128,7 +119,7 @@ test_uci_cmd_quit(struct Engine *engine)
 void
 test_uci_cmd_uci(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "uci");
+	protocol_uci(engine, "uci");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		for (size_t i = 0; i < lines_count(lines) - 1; i++) {
@@ -150,7 +141,7 @@ test_uci_cmd_debug(struct Engine *engine)
 		munit_assert_uint(lines_count(lines), ==, 0);
 		lines_delete(lines);
 	}
-	protocol_uci_handle(engine, "debug on");
+	protocol_uci(engine, "debug on");
 	{
 		ENGINE_LOGF(engine, "VALERIA\n");
 		struct Lines *lines = file_line_by_line(engine->output);
@@ -162,7 +153,7 @@ test_uci_cmd_debug(struct Engine *engine)
 void
 test_uci_unknown_cmd(struct Engine *engine)
 {
-	protocol_uci_handle(engine, "foobar");
+	protocol_uci(engine, "foobar");
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_uint(lines_count(lines), ==, 1);
