@@ -44,20 +44,22 @@ cecp_call_xboard(struct Engine *engine) {
 }
 
 const char *CECP_FEATURES[] = {
-	"ping",
-	"playother",
-	"debug",
-	"pause",
-	"memory",
-	"smp",
-	"usermove",
-	"exclude",
+	"ping=1",
+	"playother=1",
+	"debug=1",
+	"pause=1",
+	"memory=1",
+	"smp=1",
+	"usermove=1",
+	"exclude=1",
+	"sigint=0",
+	"sigterm=0",
 };
 
 void
 cecp_call_protover(struct Engine *engine) {
 	for (size_t i = 0; i < ARRAY_SIZE(CECP_FEATURES); i++) {
-		fprintf(engine->output, "feature %s=1\n", CECP_FEATURES[i]);
+		fprintf(engine->output, "feature %s\n", CECP_FEATURES[i]);
 	}
 }
 
