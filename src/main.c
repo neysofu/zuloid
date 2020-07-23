@@ -1,7 +1,5 @@
-#include "chess/bb.h"
 #include "engine.h"
 #include "globals.h"
-#include "mt-64/mt-64.h"
 #include "utils.h"
 #include <plibsys.h>
 #include <stdio.h>
