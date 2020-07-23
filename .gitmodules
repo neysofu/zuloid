@@ -7,3 +7,6 @@
 [submodule "lib/xxHash"]
 	path = lib/xxHash
 	url = https://github.com/Cyan4973/xxHash
+[submodule "lib/base64"]
+	path = lib/base64
+	url = git@github.com:joedf/base64.c.git
