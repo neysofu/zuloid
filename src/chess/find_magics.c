@@ -73,7 +73,7 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
 	magic->premask = bb_premask_rook(square);
-	magic->rshift = 64 - popcount64(magic->premask);
+	magic->rshift = 52; // temp for init times
 	while (true) {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();

@@ -46,6 +46,8 @@ char_to_rank(char c);
 
 Square
 square_new(File f, Rank r);
+Square
+square_from_str(const char *str);
 File
 square_file(Square sq);
 Rank

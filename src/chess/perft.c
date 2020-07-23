@@ -7,6 +7,7 @@
 #include "utils.h"
 #include <stdio.h>
 #include <string.h>
+#include <assert.h>
 
 size_t
 position_perft(FILE *stream, struct Board *pos, size_t depth)
@@ -31,8 +32,7 @@ position_perft(FILE *stream, struct Board *pos, size_t depth)
 		fprintf(stream, "%s: %zu\n", mv_as_str, children_count);
 	}
 	fprintf(stream, "\nNodes searched: %zu\n\n", result);
-	// FIXME
-	// free(moves);
+	free(moves);
 	return result;
 }
 
@@ -52,31 +52,18 @@ struct SearchStackPlie
 	int child_i;
 };
 
-void
-search_stack_plie_init(struct SearchStackPlie *plie)
-{
-	plie->children_count = 0;
-	plie->child_i = 0;
-	plie->moves = exit_if_null(malloc(220 * sizeof(struct Move)));
-}
-
 struct SearchStack
 search_stack_new(size_t depth)
 {
 	struct SearchStack stack;
-	stack.plies = exit_if_null(malloc((depth + 3) * sizeof(struct SearchStackPlie)));
+	stack.plies = exit_if_null(malloc((depth + 1) * sizeof(struct SearchStackPlie)));
 	stack.desired_depth = depth;
-	stack.current_depth = 0;
-	for (int i = 0; i < (int)(depth + 3); i++) {
-		search_stack_plie_init(stack.plies + i);
+	stack.current_depth = 1;
+	for (size_t i = 0; i < depth + 1; i++) {
+		struct SearchStackPlie *plie = stack.plies + i;
+		plie->moves = exit_if_null(malloc(220 * sizeof(struct Move)));
 	}
 	return stack;
-}
-
-struct SearchStackPlie *
-search_stack_last(struct SearchStack *stack)
-{
-	return stack->plies + stack->current_depth;
 }
 
 void
@@ -88,44 +75,51 @@ search_stack_delete(struct SearchStack *stack)
 	free(stack->plies);
 }
 
+struct SearchStackPlie *
+search_stack_last(struct SearchStack *stack)
+{
+	return stack->plies + stack->current_depth;
+}
+
 void
 search_stack_pop(struct SearchStack *stack)
 {
 	struct SearchStackPlie *last_plie = search_stack_last(stack);
-	stack->current_depth--;
+	assert(stack->current_depth > 0);
+	assert(last_plie->child_i == last_plie->children_count);
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
+	stack->current_depth--;
 }
 
 void
 search_stack_push(struct SearchStack *stack)
 {
 	struct SearchStackPlie *last_plie = search_stack_last(stack);
+	assert(last_plie->child_i < last_plie->children_count);
 	struct Move generator = last_plie->moves[last_plie->child_i++];
 	stack->current_depth++;
-	position_do_move_and_flip(&stack->board, last_plie->moves);
-	last_plie = search_stack_last(stack);
-	size_t moves_count = gen_legal_moves(last_plie->moves, &stack->board);
-	last_plie->generator = generator;
-	last_plie->children_count = moves_count;
+	last_plie++;
 	last_plie->child_i = 0;
+	last_plie->generator = generator;
+	position_do_move_and_flip(&stack->board, &last_plie->generator);
+	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
 }
 
 size_t
 position_improved_perft(struct Board *pos, int depth)
 {
-	if (depth == 0) {
+	if (depth <= 0) {
 		return 1;
 	}
-	depth--;
 	size_t nodes_count = 0;
 	struct SearchStack stack = search_stack_new(depth);
 	stack.board = *pos;
-	stack.plies[0].generator = MOVE_IDENTITY;
-	stack.plies[0].children_count = gen_legal_moves(stack.plies[0].moves, pos);
+	stack.plies[1].child_i = 0;
+	stack.plies[1].children_count = gen_legal_moves(stack.plies[1].moves, &stack.board);
 	while (true) {
 		struct SearchStackPlie *last_plie = search_stack_last(&stack);
 		if (last_plie->child_i == last_plie->children_count) {
-			if (stack.current_depth == 0) {
+			if (stack.current_depth == 1) {
 				return nodes_count;
 			} else {
 				search_stack_pop(&stack);

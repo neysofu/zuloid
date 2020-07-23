@@ -68,6 +68,11 @@ square_new(File file, Rank rank)
 }
 
 Square
+square_from_str(const char *str) {
+	return square_new(char_to_file(str[0]), char_to_rank(str[1]));
+}
+
+Square
 lsb_to_square(int lsb)
 {
 	return lsb;
