@@ -219,7 +219,7 @@ uci_call_position(struct Engine *engine)
 	} else if (!streq(token, "current")) {
 		uci_err_syntax(engine->output);
 	}
-	if (!(token = strtok_whitespace(NULL)) || !streq(token, "moves")) {
+	if ((token = strtok_whitespace(NULL)) && !streq(token, "moves")) {
 		uci_err_syntax(engine->output);
 		return;
 	}
