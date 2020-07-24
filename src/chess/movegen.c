@@ -57,54 +57,42 @@ gen_pawn_moves(struct Move moves[],
 	single_pushes &= targets;
 	Bitboard captures_a = sources & ~file_to_bb(0);
 	Bitboard captures_h = sources & ~file_to_bb(7);
+	const int color_params[4][COLORS_COUNT] = {
+		{-1, 1 },
+		{-2, 2},
+		{7, -9},
+		{-7, 9},
+	};
 	Square square;
 	switch (side_to_move) {
 		case COLOR_WHITE:
 			captures_a >>= 7;
 			captures_h <<= 7;
-			captures_a &= targets & all;
-			captures_h &= targets & all;
-			while (single_pushes) {
-				POP_LSB(square, single_pushes);
-				EMIT_MOVE(moves, square - 1, square);
-			}
-			while (double_pushes) {
-				POP_LSB(square, double_pushes);
-				EMIT_MOVE(moves, square - 2, square);
-			}
-			while (captures_a) {
-				POP_LSB(square, captures_a);
-				EMIT_MOVE(moves, square + 7, square);
-			}
-			while (captures_h) {
-				POP_LSB(square, captures_h);
-				EMIT_MOVE(moves, square - 7, square);
-			}
 			break;
 		case COLOR_BLACK:
 			captures_a <<= 7;
 			captures_h >>= 7;
-			captures_a &= targets & all;
-			captures_h &= targets & all;
-			while (single_pushes) {
-				POP_LSB(square, single_pushes);
-				EMIT_MOVE(moves, square + 1, square);
-			}
-			while (double_pushes) {
-				POP_LSB(square, double_pushes);
-				EMIT_MOVE(moves, square + 2, square);
-			}
-			while (captures_a) {
-				POP_LSB(square, captures_a);
-				EMIT_MOVE(moves, square - 9, square);
-			}
-			while (captures_h) {
-				POP_LSB(square, captures_h);
-				EMIT_MOVE(moves, square + 9, square);
-			}
 			break;
 		default:
 			assert(0);
+	}
+	captures_a &= targets & all;
+	captures_h &= targets & all;
+	while (single_pushes) {
+		POP_LSB(square, single_pushes);
+		EMIT_MOVE(moves, square + color_params[0][side_to_move], square);
+	}
+	while (double_pushes) {
+		POP_LSB(square, double_pushes);
+		EMIT_MOVE(moves, square + color_params[1][side_to_move], square);
+	}
+	while (captures_a) {
+		POP_LSB(square, captures_a);
+		EMIT_MOVE(moves, square + color_params[2][side_to_move], square);
+	}
+	while (captures_h) {
+		POP_LSB(square, captures_h);
+		EMIT_MOVE(moves, square +color_params[3][side_to_move], square);
 	}
 	return moves - ptr;
 }
