@@ -112,9 +112,7 @@ position_init_from_fen_fields(struct Board *pos, char **fieldsptr)
 	pos->castling_rights = string_to_castling_rights(token);
 	token = fieldsptr[3];
 	if (strlen(token) >= 2) {
-		File file = char_to_file(token[0]);
-		Rank rank = char_to_rank(token[1]);
-		pos->en_passant_target = square_new(file, rank);
+		pos->en_passant_target = square_from_str(token);
 	}
 	if ((token = fieldsptr[4])) {
 		pos->reversible_moves_count = strtol(token, NULL, 10);

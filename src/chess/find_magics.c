@@ -32,7 +32,8 @@ bb_premask_bishop(Square sq)
 {
 	Bitboard diagonal1 = square_a1h8_diagonal(sq);
 	Bitboard diagonal2 = square_a8h1_diagonal(sq);
-	return (diagonal1 ^ diagonal2) & ~0xff818181818181ffull;
+	Bitboard borders = file_to_bb(0) | file_to_bb(7) | rank_to_bb(0) | rank_to_bb(7);
+	return (diagonal1 ^ diagonal2) & ~borders;
 }
 
 Bitboard *
@@ -83,17 +84,17 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 			.subset = 0,
 		};
 		bool found_collisions = false;
-		while (bb_subset_iter(&subset_iter)) {
+		do {
 			size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
 			Bitboard *val = attacks_table + i;
 			Bitboard attacks = bb_rook(square, subset_iter.subset);
-			if (*val && *val != attacks) {
+			if (*val) {
 				found_collisions = true;
 				break;
 			} else {
 				*val = attacks;
 			}
-		}
+		} while (bb_subset_iter(&subset_iter));
 		if (!found_collisions) {
 			break;
 		}
@@ -116,18 +117,17 @@ magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
 			.subset = 0,
 		};
 		bool found_collisions = false;
-		Bitboard *subset = NULL;
-		while ((subset = bb_subset_iter(&subset_iter))) {
-			size_t i = (*subset * magic->multiplier) >> magic->rshift;
+		do {
+			size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
 			Bitboard *val = attacks_table + i;
-			Bitboard attacks = bb_bishop(square, *subset);
-			if (*val && *val != attacks) {
+			Bitboard attacks = bb_bishop(square, subset_iter.subset);
+			if (*val) {
 				found_collisions = true;
 				break;
 			} else {
 				*val = attacks;
 			}
-		}
+		} while (bb_subset_iter(&subset_iter));
 		if (!found_collisions) {
 			break;
 		}

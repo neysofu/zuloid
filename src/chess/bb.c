@@ -149,7 +149,7 @@ bb_init_bishop(void)
 		BB_SHIFTS_BISHOP[sq] = MAGICS_BISHOP[sq].rshift;
 		BB_MULTIPLIERS_BISHOP[sq] = MAGICS_BISHOP[sq].multiplier;
 		BB_POSTMASK_BISHOP[sq] = MAGICS_BISHOP[sq].postmask;
-		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start;
+		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start + 3;
 	}
 }
 
@@ -158,13 +158,13 @@ bb_init_rook(void)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		magic_find(&(MAGICS[sq]), sq, BB_ATTACKS_ROOK + offset);
+		magic_find(MAGICS + sq, sq, BB_ATTACKS_ROOK + offset);
 		BB_OFFSETS_ROOK[sq] = offset;
 		BB_MASK_ROOK[sq] = MAGICS[sq].premask;
 		BB_SHIFTS_ROOK[sq] = MAGICS[sq].rshift;
 		BB_MULTIPLIERS_ROOK[sq] = MAGICS[sq].multiplier;
 		BB_POSTMASK_ROOK[sq] = MAGICS[sq].postmask;
-		offset += MAGICS[sq].end - MAGICS[sq].start;
+		offset += MAGICS[sq].end - MAGICS[sq].start + 3;
 	}
 }
 

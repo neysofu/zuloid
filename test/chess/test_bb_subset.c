@@ -17,7 +17,7 @@ test_magic_generation(void) {
 	bb_init();
 	for (size_t i = 0; i < 5000; i++) {
 		Square from = rand() % 64;
-		Bitboard mask = genrand64_int64();
+		Bitboard mask = genrand64_int64() & genrand64_int64();
 		munit_assert_uint(bb_rook(from, mask), ==, bb_rook_magic(from, mask));
 		munit_assert_uint(bb_bishop(from, mask), ==, bb_bishop_magic(from, mask));
 	}

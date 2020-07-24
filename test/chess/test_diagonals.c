@@ -3,7 +3,9 @@
 #include "munit/munit.h"
 #include "utils.h"
 
-const size_t DIAGONALS_COUNT = ARRAY_SIZE(DIAGONALS_A8H1);
+enum {
+	DIAGONALS_COUNT = ARRAY_SIZE(DIAGONALS_A8H1),
+};
 
 void
 test_diagonals_dont_overlap(const Bitboard diagonals[DIAGONALS_COUNT]) {
