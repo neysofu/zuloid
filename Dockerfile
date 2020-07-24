@@ -12,7 +12,7 @@ RUN rm -rf build/ && \
     mkdir build/ && \
     cd build/ && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
-    make && \
+    make -j$((2 * $(nproc))) && \
     strip zorro && \
     ./test_zorro
 
