@@ -1,4 +1,5 @@
 #include "engine.h"
+#include "chess/diagonals.h"
 #include <stdarg.h>
 #include <stdio.h>
 
@@ -11,10 +12,12 @@ extern void test_castling_mask(void);
 extern void test_char_to_file(void);
 extern void test_char_to_piece(void);
 extern void test_color_other(void);
+extern void test_diagonals_dont_overlap(const Bitboard diagonals[15]);
 extern void test_fen_conversion(void);
 extern void test_fen_init(void);
 extern void test_file_to_char(void);
 extern void test_init(void);
+extern void test_magic_generation(void);
 extern void test_piece_to_char(void);
 extern void test_position_is_illegal(void);
 extern void test_position_is_legal(void);
@@ -61,10 +64,13 @@ main(void)
 	call_test(test_char_to_file);
 	call_test(test_char_to_piece);
 	call_test(test_color_other);
+	test_diagonals_dont_overlap(DIAGONALS_A1H8);
+	test_diagonals_dont_overlap(DIAGONALS_A8H1);
 	call_test(test_fen_conversion);
 	call_test(test_fen_init);
 	call_test(test_file_to_char);
-	// call_test(test_init);
+	call_test(test_init);
+	call_test(test_magic_generation);
 	call_test(test_piece_to_char);
 	call_test(test_position_is_illegal);
 	call_test(test_position_is_legal);
@@ -80,7 +86,7 @@ main(void)
 	call_test_with_tmp_engine(test_uci_cmd_uci);
 	call_test_with_tmp_engine(test_uci_unknown_cmd);
 	call_test_with_tmp_engine(test_cecp);
-	// call_test_with_tmp_engine(test_perft_results);
+	call_test_with_tmp_engine(test_perft_results);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

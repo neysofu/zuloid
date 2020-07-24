@@ -192,7 +192,9 @@ position_check_pawn_pseudolegality(struct Board *pos, struct Move *mv)
 
 bool
 position_check_knights_pseudolegality(struct Board *pos, struct Move *mv)
-{}
+{
+	return true;
+}
 
 bool
 position_check_rook_pseudolegality(struct Board *pos, struct Move *mv)

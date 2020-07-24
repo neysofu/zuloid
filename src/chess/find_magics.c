@@ -1,4 +1,5 @@
 #include "chess/find_magics.h"
+#include "chess/diagonals.h"
 #include "chess/bb.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"

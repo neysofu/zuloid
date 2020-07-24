@@ -1,6 +1,7 @@
 #include "chess/bb.h"
 #include "chess/find_magics.h"
 #include "munit/munit.h"
+#include "utils.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
 #include <time.h>
@@ -14,7 +15,7 @@ void
 test_magic_generation(void) {
 	srand(time(NULL));
 	bb_init();
-	for (size_t i = 0; i < 1000; i++) {
+	for (size_t i = 0; i < 5000; i++) {
 		Square from = rand() % 64;
 		Bitboard mask = genrand64_int64();
 		munit_assert_uint(bb_rook(from, mask), ==, bb_rook_magic(from, mask));
@@ -34,5 +35,4 @@ test_bb_subset(void)
 		i++;
 	}
 	munit_assert_uint(i + 1, ==, 1ULL << popcount64(iter.original));
-	test_magic_generation();
 }

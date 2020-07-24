@@ -38,6 +38,13 @@ bb_bishop_magic(Square sq, Bitboard occupancy);
 	(m)->promotion = 0;                                                                    \
 	(m)++;
 
+void
+emit_move(struct Move *move, Square source, Square target) {
+	move->source = source;
+	move->target = target;
+	move->promotion = 0;
+}
+
 /* Generates all pseudolegal moves by pawns located on 'sources' to 'targets' target
  * squares. 'all' gives information regarding piece occupancy for determining pawn pushes
  * and captures. Finally, 'side_to_move' determines in which direction pawn moves happen. */
@@ -67,11 +74,11 @@ gen_pawn_moves(struct Move moves[],
 	switch (side_to_move) {
 		case COLOR_WHITE:
 			captures_a >>= 7;
-			captures_h <<= 7;
+			captures_h <<= 9;
 			break;
 		case COLOR_BLACK:
-			captures_a <<= 7;
-			captures_h >>= 7;
+			captures_a >>= 9;
+			captures_h <<= 7;
 			break;
 		default:
 			assert(0);
@@ -80,19 +87,19 @@ gen_pawn_moves(struct Move moves[],
 	captures_h &= targets & all;
 	while (single_pushes) {
 		POP_LSB(square, single_pushes);
-		EMIT_MOVE(moves, square + color_params[0][side_to_move], square);
+		emit_move(moves++, square + color_params[0][side_to_move], square);
 	}
 	while (double_pushes) {
 		POP_LSB(square, double_pushes);
-		EMIT_MOVE(moves, square + color_params[1][side_to_move], square);
+		emit_move(moves++, square + color_params[1][side_to_move], square);
 	}
 	while (captures_a) {
 		POP_LSB(square, captures_a);
-		EMIT_MOVE(moves, square + color_params[2][side_to_move], square);
+		emit_move(moves++, square + color_params[2][side_to_move], square);
 	}
 	while (captures_h) {
 		POP_LSB(square, captures_h);
-		EMIT_MOVE(moves, square + color_params[3][side_to_move], square);
+		emit_move(moves++, square + color_params[3][side_to_move], square);
 	}
 	return moves - ptr;
 }
