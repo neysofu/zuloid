@@ -122,22 +122,21 @@ uci_call_go(struct Engine *engine)
 void
 uci_call_islegal(struct Engine *engine)
 {
-	char *token = strtok_whitespace(NULL);
 	struct Move moves[255] = { 0 };
 	struct Move mv;
+	char *token = strtok_whitespace(NULL);
 	if (!token || string_to_move(token, &mv) == 0) {
-		ENGINE_LOGF(engine, "[ERROR] Expected token with a chess move.\n");
+		uci_err_syntax(engine->output);
 		return;
 	}
-	size_t count = gen_pseudolegal_moves(moves, &engine->board);
-	ENGINE_LOGF(engine, "[TRACE] Examining %zu legal moves...\n", count);
+	size_t count = gen_legal_moves(moves, &engine->board);
 	for (size_t i = 0; i < count; i++) {
 		if (moves[i].source == mv.source && moves[i].target == mv.target) {
-			printf("1\n");
+			fputs("1\n", engine->output);
 			return;
 		}
 	}
-	printf("0\n");
+	fputs("0\n", engine->output);
 }
 
 void
@@ -401,10 +400,10 @@ uci_call_debug(struct Engine *engine)
 }
 
 const struct Command UCI_COMMANDS[] = {
-	{ "_eval", uci_call_eval },
-	{ "_islegal", uci_call_islegal },
-	{ "_lm", uci_call_legalmoves },
-	{ "_plm", uci_call_pseudolegalmoves },
+	{ "%eval", uci_call_eval },
+	{ "%islegal", uci_call_islegal },
+	{ "%lm", uci_call_legalmoves },
+	{ "%plm", uci_call_pseudolegalmoves },
 	{ "d", uci_call_d },
 	{ "debug", uci_call_debug },
 	{ "djbhash", uci_call_djbhash },
