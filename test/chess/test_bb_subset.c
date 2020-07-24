@@ -1,9 +1,9 @@
 #include "chess/bb.h"
 #include "chess/find_magics.h"
-#include "munit/munit.h"
-#include "utils.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
+#include "munit/munit.h"
+#include "utils.h"
 #include <time.h>
 
 extern Bitboard
@@ -12,7 +12,8 @@ extern Bitboard
 bb_bishop_magic(Square sq, Bitboard occupancy);
 
 void
-test_magic_generation(void) {
+test_magic_generation(void)
+{
 	srand(time(NULL));
 	bb_init();
 	for (size_t i = 0; i < 5000; i++) {

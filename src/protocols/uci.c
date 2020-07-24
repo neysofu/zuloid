@@ -3,8 +3,6 @@
 //  - https://www.chessprogramming.org/UCI
 //  - https://www.seungjaelee.com/projects/uci/
 
-#include "protocols/protocols.h"
-#include "protocols/utils.h"
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
@@ -15,12 +13,17 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
+#include "protocols/protocols.h"
+#include "protocols/utils.h"
 #include "rating.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+
+extern void
+cecp_call_xboard(struct Engine *engine);
 
 void
 uci_call_eval(struct Engine *engine)
@@ -333,6 +336,7 @@ const char *UCI_OPTIONS[] = {
 void
 uci_call_uci(struct Engine *engine)
 {
+	engine->protocol = protocol_uci;
 	fprintf(engine->output,
 	        "id name Zorro %s\n"
 	        "id author Filippo Costa\n"
@@ -398,6 +402,7 @@ const struct Command UCI_COMMANDS[] = {
 	{ "stop", uci_call_stop },
 	{ "uci", uci_call_uci },
 	{ "ucinewgame", uci_call_ucinewgame },
+	{ "xboard", cecp_call_xboard },
 };
 
 void

@@ -9,7 +9,8 @@ enum Color
 	COLOR_BLACK = 1,
 };
 
-enum {
+enum
+{
 	COLORS_COUNT = 2,
 };
 

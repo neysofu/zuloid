@@ -10,11 +10,7 @@ identify_command(const char *token, const struct Command commands[], size_t coun
 		.name = token,
 		.handler = NULL,
 	};
-	return bsearch(&key,
-	               commands,
-	               count,
-	               sizeof(struct Command),
-	               command_cmp);
+	return bsearch(&key, commands, count, sizeof(struct Command), command_cmp);
 }
 
 int

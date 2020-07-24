@@ -1,8 +1,8 @@
 #ifndef ZORRO_UTILS_H
 #define ZORRO_UTILS_H
 
-#include <stdio.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define UNUSED(x) (void)(x)
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))

@@ -31,7 +31,7 @@ engine_new(void)
 		.cache = NULL,
 		.agent = agent_new(),
 		.seed = 0xcfca130b,
-		.protocol = protocol_handshake,
+		.protocol = protocol_uci,
 		.output = stdout,
 		.debug = false,
 		.move_selection_noise = 0.005,
@@ -68,10 +68,10 @@ engine_delete(struct Engine *engine)
 
 void
 engine_logf(struct Engine *engine,
-              const char *filename,
-              size_t line_num,
-              const char *function_name,
-              ...)
+            const char *filename,
+            size_t line_num,
+            const char *function_name,
+            ...)
 {
 	assert(engine);
 	assert(filename);

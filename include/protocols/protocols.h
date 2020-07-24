@@ -7,7 +7,5 @@ void
 protocol_cecp(struct Engine *restrict engine, const char *cmd);
 void
 protocol_uci(struct Engine *restrict engine, const char *cmd);
-void
-protocol_handshake(struct Engine *restrict engine, const char *cmd);
 
 #endif

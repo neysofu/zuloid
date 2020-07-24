@@ -8,7 +8,7 @@
 #include "time/game_clock.h"
 #include <stdio.h>
 
-#define ENGINE_LOGF(engine, ...)                                                         \
+#define ENGINE_LOGF(engine, ...)                                                           \
 	engine_logf(engine, __FILE__, __LINE__, __func__, __VA_ARGS__)
 
 enum Status
@@ -78,10 +78,10 @@ engine_stop_search(struct Engine *engine);
 
 void
 engine_logf(struct Engine *engine,
-              const char *filename,
-              size_t line_num,
-              const char *function_name,
-              ...);
+            const char *filename,
+            size_t line_num,
+            const char *function_name,
+            ...);
 
 void
 engine_delete(struct Engine *engine);

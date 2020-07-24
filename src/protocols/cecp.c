@@ -1,8 +1,6 @@
 // Resources:
 //  - http://hgm.nubati.net/CECP.html
 
-#include "protocols/protocols.h"
-#include "protocols/utils.h"
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
@@ -13,6 +11,8 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
+#include "protocols/protocols.h"
+#include "protocols/utils.h"
 #include "rating.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
@@ -20,53 +20,51 @@
 #include <stdio.h>
 #include <string.h>
 
-void
-cecp_call_xboard(struct Engine *engine) {
+extern void
+uci_call_uci(struct Engine *engine);
 
+void
+cecp_call_xboard(struct Engine *engine)
+{
+	engine->protocol = protocol_cecp;
 }
 
 const char *CECP_FEATURES[] = {
-	"ping=1",
-	"playother=1",
-	"debug=1",
-	"exclude=1",
-	"pause=1",
-	"memory=1",
-	"smp=1",
-	"usermove=1",
-	"exclude=1",
-	"sigint=0",
-	"sigterm=0",
-	"setboard=1",
-	"reuse=0",
-	"done=1",
+	"ping=1",    "playother=1", "debug=1",    "exclude=1", "pause=1",
+	"memory=1",  "smp=1",       "usermove=1", "exclude=1", "sigint=0",
+	"sigterm=0", "setboard=1",  "reuse=0",    "done=1",
 };
 
 void
-cecp_call_protover(struct Engine *engine) {
+cecp_call_protover(struct Engine *engine)
+{
 	for (size_t i = 0; i < ARRAY_SIZE(CECP_FEATURES); i++) {
 		fprintf(engine->output, "feature %s\n", CECP_FEATURES[i]);
 	}
 }
 
 void
-cecp_call_ping(struct Engine *engine) {
+cecp_call_ping(struct Engine *engine)
+{
 	char *token = strtok_whitespace(NULL);
 	fprintf(engine->output, "pong %d\n", atoi(token));
 }
 
 void
-cecp_call_quit(struct Engine *engine) {
+cecp_call_quit(struct Engine *engine)
+{
 	engine->status = STATUS_EXIT;
 }
 
 void
-cecp_call_playother(struct Engine *engine) {
+cecp_call_playother(struct Engine *engine)
+{
 	engine->board.side_to_move = color_other(engine->board.side_to_move);
 }
 
 void
-cecp_call_setboard(struct Engine *engine) {
+cecp_call_setboard(struct Engine *engine)
+{
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		display_err_syntax(engine->output);
@@ -89,121 +87,141 @@ cecp_call_setboard(struct Engine *engine) {
 }
 
 void
-cecp_call_draw(struct Engine *engine) {
+cecp_call_draw(struct Engine *engine)
+{
 	fputs("offer draw\n", engine->output);
 }
 
 void
-cecp_call_result(struct Engine *engine) {
+cecp_call_result(struct Engine *engine)
+{
 	engine->status = STATUS_IDLE;
 }
 
 void
-cecp_call_new(struct Engine *engine) {
+cecp_call_new(struct Engine *engine)
+{
 	engine->board = POSITION_INIT;
 }
 
 void
-cecp_call_post(struct Engine *engine) {
+cecp_call_post(struct Engine *engine)
+{
 	engine->debug = true;
 }
 
 void
-cecp_call_nopost(struct Engine *engine) {
+cecp_call_nopost(struct Engine *engine)
+{
 	engine->debug = false;
 }
 
 void
-cecp_call_hard(struct Engine *engine) {
+cecp_call_hard(struct Engine *engine)
+{
 	engine->ponder = true;
 }
 
 void
-cecp_call_easy(struct Engine *engine) {
+cecp_call_easy(struct Engine *engine)
+{
 	engine->ponder = false;
 }
 
 void
-cecp_call_ratings(struct Engine *engine) {
+cecp_call_ratings(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_pause(struct Engine *engine) {
+cecp_call_pause(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_resume(struct Engine *engine) {
+cecp_call_resume(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_usermove(struct Engine *engine) {
-	char * token = strtok_whitespace(NULL);
+cecp_call_usermove(struct Engine *engine)
+{
+	char *token = strtok_whitespace(NULL);
 	struct Move mv;
 	string_to_move(token, &mv);
 	position_do_move_and_flip(&engine->board, &mv);
 }
 
 void
-cecp_call_question_mark(struct Engine *engine) {
+cecp_call_question_mark(struct Engine *engine)
+{
 	// TODO: find and print a move.
 }
 
 void
-cecp_call_time(struct Engine *engine) {
-	
-}
+cecp_call_time(struct Engine *engine)
+{}
 
 void
-cecp_call_otim(struct Engine *engine) {
+cecp_call_otim(struct Engine *engine)
+{
 	char *token = strtok_whitespace(NULL);
 	float time_in_secs = (float)(atoi(token)) / 100.0;
 }
 
 void
-cecp_call_sd(struct Engine *engine) {
+cecp_call_sd(struct Engine *engine)
+{
 	char *token = strtok_whitespace(NULL);
 	int quantity = atoi(token);
 	engine->max_depth = quantity;
 }
 
 void
-cecp_call_nps(struct Engine *engine) {
+cecp_call_nps(struct Engine *engine)
+{
 	char *token = strtok_whitespace(NULL);
 	int quantity = atoi(token);
 	// TODO
 }
 
 void
-cecp_call_exit(struct Engine *engine) {
+cecp_call_exit(struct Engine *engine)
+{
 	engine->status = STATUS_IDLE;
 	engine_stop_search(engine);
 }
 
 void
-cecp_call_analyze(struct Engine *engine) {
+cecp_call_analyze(struct Engine *engine)
+{
 	engine_start_search(engine);
 }
 
 void
-cecp_call_cores(struct Engine *engine) {
+cecp_call_cores(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_exclude(struct Engine *engine) {
+cecp_call_exclude(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_include(struct Engine *engine) {
+cecp_call_include(struct Engine *engine)
+{
 	// TODO
 }
 
 void
-cecp_call_memory(struct Engine *engine) {
+cecp_call_memory(struct Engine *engine)
+{
 	cache_delete(engine->cache);
 	char *token = strtok_whitespace(NULL);
 	size_t memory_in_bytes = atoi(token) * 1024;
@@ -211,7 +229,8 @@ cecp_call_memory(struct Engine *engine) {
 }
 
 void
-cecp_call_random(struct Engine *engine) {
+cecp_call_random(struct Engine *engine)
+{
 	engine->move_selection_noise = 0.5;
 }
 
@@ -243,6 +262,7 @@ const struct Command CECP_COMMANDS[] = {
 	{ "sd", cecp_call_sd },
 	{ "setboard", cecp_call_setboard },
 	{ "time", cecp_call_time },
+	{ "uci", uci_call_uci },
 	{ "xboard", cecp_call_xboard },
 };
 
@@ -253,7 +273,8 @@ protocol_cecp(struct Engine *engine, const char *s_const)
 	strcpy(s, s_const);
 	const char *token = strtok_whitespace(s);
 	const struct Command *cmd = NULL;
-	if (token && (cmd = identify_command(token, CECP_COMMANDS, ARRAY_SIZE(CECP_COMMANDS)))) {
+	if (token &&
+	    (cmd = identify_command(token, CECP_COMMANDS, ARRAY_SIZE(CECP_COMMANDS)))) {
 		ENGINE_LOGF(engine, "Accepted CECP command.\n");
 		cmd->handler(engine);
 	} else if (token && strlen(token) > 3 && isdigit(token[1])) {

@@ -3,12 +3,14 @@
 #include "munit/munit.h"
 #include "utils.h"
 
-enum {
+enum
+{
 	DIAGONALS_COUNT = ARRAY_SIZE(DIAGONALS_A8H1),
 };
 
 void
-test_diagonals_dont_overlap(const Bitboard diagonals[DIAGONALS_COUNT]) {
+test_diagonals_dont_overlap(const Bitboard diagonals[DIAGONALS_COUNT])
+{
 	Bitboard bb = 0;
 	for (size_t i = 0; i < DIAGONALS_COUNT; i++) {
 		munit_assert_uint64(bb & diagonals[i], ==, 0);

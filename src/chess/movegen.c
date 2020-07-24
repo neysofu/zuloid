@@ -39,7 +39,8 @@ bb_bishop_magic(Square sq, Bitboard occupancy);
 	(m)++;
 
 void
-emit_move(struct Move *move, Square source, Square target) {
+emit_move(struct Move *move, Square source, Square target)
+{
 	move->source = source;
 	move->target = target;
 	move->promotion = 0;
