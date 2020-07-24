@@ -9,16 +9,17 @@
 enum PieceType
 {
 	PIECE_TYPE_NONE = 0,
-	// Enum variants starting at 2 make the code a bit more readable in Position: arrays of
-	// bitboads can then be indexed by PieceType and Color without hassles.
+	// Enum variants starting at 2 make the code a bit more readable in Position:
+	// arrays of bitboads can then be indexed by PieceType and Color without
+	// hassles.
 	PIECE_TYPE_PAWN = 2,
 	PIECE_TYPE_KNIGHT = 3,
 	PIECE_TYPE_BISHOP = 4,
 	PIECE_TYPE_ROOK = 5,
 	PIECE_TYPE_KING = 6,
 	// I tried many approaches where 'PIECE_TYPE_QUEEN = PIECE_TYPE_ROOK |
-	// PIECE_TYPE_BISHOP', but bit field piece capabilities didn't play well with each
-	// other.
+	// PIECE_TYPE_BISHOP', but bit field piece capabilities didn't play well with
+	// each other.
 	PIECE_TYPE_QUEEN = PIECE_TYPE_ROOK + PIECE_TYPE_BISHOP,
 	// Primitive piece types simply don't include the queen.
 	PIECE_TYPE_FIRST_PRIMITIVE = PIECE_TYPE_PAWN,

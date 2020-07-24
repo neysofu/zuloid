@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-// A unilateral (i.e. for one player only) time control with support for increments,
-// delays, and transition to a different time control after a certain amount of
-// moves. All timestamps have millisecond precision.
+// A unilateral (i.e. for one player only) time control with support for
+// increments, delays, and transition to a different time control after a
+// certain amount of moves. All timestamps have millisecond precision.
 //
 // # On latency
 // The `time_control` structure does *not* take latency into consideration. The

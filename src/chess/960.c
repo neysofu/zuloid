@@ -15,21 +15,21 @@
 #include <string.h>
 
 const struct Board POSITION_INIT_WITH_ONLY_PAWNS = {
-	.bb =
-	  {
-	    [COLOR_WHITE] = 0x0202020202020202,
-	    [COLOR_BLACK] = 0x4040404040404040,
-	    [PIECE_TYPE_PAWN] = 0x4242424242424242,
-	    [PIECE_TYPE_KNIGHT] = 0,
-	    [PIECE_TYPE_BISHOP] = 0,
-	    [PIECE_TYPE_ROOK] = 0,
-	    [PIECE_TYPE_KING] = 0,
-	  },
-	.side_to_move = COLOR_WHITE,
-	.en_passant_target = SQUARE_NONE,
-	.castling_rights = CASTLING_RIGHTS_ALL,
-	.reversible_moves_count = 0,
-	.moves_count = 1,
+  .bb =
+    {
+      [COLOR_WHITE] = 0x0202020202020202,
+      [COLOR_BLACK] = 0x4040404040404040,
+      [PIECE_TYPE_PAWN] = 0x4242424242424242,
+      [PIECE_TYPE_KNIGHT] = 0,
+      [PIECE_TYPE_BISHOP] = 0,
+      [PIECE_TYPE_ROOK] = 0,
+      [PIECE_TYPE_KING] = 0,
+    },
+  .side_to_move = COLOR_WHITE,
+  .en_passant_target = SQUARE_NONE,
+  .castling_rights = CASTLING_RIGHTS_ALL,
+  .reversible_moves_count = 0,
+  .moves_count = 1,
 };
 
 void

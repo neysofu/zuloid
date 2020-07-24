@@ -1,19 +1,21 @@
 /* Copyright (C) 2014 Michael Fogleman
  *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of this
- * software and associated documentation files (the "Software"), to deal in the Software
- * without restriction, including without limitation the rights to use, copy, modify, merge,
- * publish, distribute, sublicense, and/or sell copies of the Software, and to permit
- * persons to whom the Software is furnished to do so, subject to the following conditions:
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
  *
- * The above copyright notice and this permission notice shall be included in all copies or
- * substantial portions of the Software.
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
  *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
- * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR
- * PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE
- * FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR
- * OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
  * DEALINGS IN THE SOFTWARE. */
 
 #include "chess/movegen.h"
@@ -46,9 +48,10 @@ emit_move(struct Move *move, Square source, Square target)
 	move->promotion = 0;
 }
 
-/* Generates all pseudolegal moves by pawns located on 'sources' to 'targets' target
- * squares. 'all' gives information regarding piece occupancy for determining pawn pushes
- * and captures. Finally, 'side_to_move' determines in which direction pawn moves happen. */
+/* Generates all pseudolegal moves by pawns located on 'sources' to 'targets'
+ * target squares. 'all' gives information regarding piece occupancy for
+ * determining pawn pushes and captures. Finally, 'side_to_move' determines in
+ * which direction pawn moves happen. */
 size_t
 gen_pawn_moves(struct Move moves[],
                Bitboard sources,
@@ -175,7 +178,8 @@ gen_king_castles(struct Move moves[], struct Board *pos)
 	struct Move *ptr = moves;
 	// Bitboard mask, maskk, foo;
 	///* TODO */
-	// if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move)) {
+	// if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move))
+	// {
 	//	mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
 	//	position_flip_side_to_move(pos);
 	//	maskk = mask;
@@ -185,13 +189,15 @@ gen_king_castles(struct Move moves[], struct Board *pos)
 	//		// struct Move dummy[255];
 	//		// if (!gen_attacks_against(dummy, pos, mask)) {
 	//		EMIT_MOVE(moves,
-	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
-	//		          square_new(6, color_home_rank(pos->side_to_move)));
+	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] &
+	// pos->bb[pos->side_to_move]), 		          square_new(6,
+	// color_home_rank(pos->side_to_move)));
 	//		//}
 	//	}
 	//	position_flip_side_to_move(pos);
 	//}
-	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
+	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move))
+	// {
 	//	position_flip_side_to_move(pos);
 	//	mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
 	//	maskk = mask;
@@ -201,8 +207,9 @@ gen_king_castles(struct Move moves[], struct Board *pos)
 	//		// struct Move dummy[255];
 	//		// if (!gen_attacks_against(dummy, pos, mask)) {
 	//		EMIT_MOVE(moves,
-	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
-	//		          square_new(2, color_home_rank(pos->side_to_move)));
+	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] &
+	// pos->bb[pos->side_to_move]), 		          square_new(2,
+	// color_home_rank(pos->side_to_move)));
 	//		//}
 	//	}
 	//	position_flip_side_to_move(pos);

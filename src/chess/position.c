@@ -127,19 +127,19 @@ position_empty(struct Board *position)
 }
 
 const struct Board POSITION_INIT = {
-	.bb =
-	  {
-	    [COLOR_WHITE] = 0x0303030303030303,
-	    [COLOR_BLACK] = 0xc0c0c0c0c0c0c0c0,
-	    [PIECE_TYPE_PAWN] = 0x4242424242424242,
-	    [PIECE_TYPE_KNIGHT] = 0x0081000000008100,
-	    [PIECE_TYPE_BISHOP] = 0x0000810081810000,
-	    [PIECE_TYPE_ROOK] = 0x8100000081000081,
-	    [PIECE_TYPE_KING] = 0x0000008100000000,
-	  },
-	.side_to_move = COLOR_WHITE,
-	.en_passant_target = SQUARE_NONE,
-	.castling_rights = CASTLING_RIGHTS_ALL,
-	.reversible_moves_count = 0,
-	.moves_count = 1,
+  .bb =
+    {
+      [COLOR_WHITE] = 0x0303030303030303,
+      [COLOR_BLACK] = 0xc0c0c0c0c0c0c0c0,
+      [PIECE_TYPE_PAWN] = 0x4242424242424242,
+      [PIECE_TYPE_KNIGHT] = 0x0081000000008100,
+      [PIECE_TYPE_BISHOP] = 0x0000810081810000,
+      [PIECE_TYPE_ROOK] = 0x8100000081000081,
+      [PIECE_TYPE_KING] = 0x0000008100000000,
+    },
+  .side_to_move = COLOR_WHITE,
+  .en_passant_target = SQUARE_NONE,
+  .castling_rights = CASTLING_RIGHTS_ALL,
+  .reversible_moves_count = 0,
+  .moves_count = 1,
 };

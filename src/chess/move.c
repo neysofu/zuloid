@@ -103,9 +103,9 @@ move_ray(struct Move *mv)
 //{
 //	int file_diff = move_file_diff(mv);
 //	if (file_diff > 0) {
-//		return pos->castling_rights[pos->side_to_move] & CASTLING_RIGHT_KINGSIDE;
-//	} else {
-//		return pos->castling_rights[pos->side_to_move] & CASTLING_RIGHT_QUEENSIDE;
+//		return pos->castling_rights[pos->side_to_move] &
+// CASTLING_RIGHT_KINGSIDE; 	} else { 		return
+// pos->castling_rights[pos->side_to_move] & CASTLING_RIGHT_QUEENSIDE;
 //	}
 //	/* TODO: Check for threats and checks. */
 //}
@@ -120,16 +120,17 @@ move_ray(struct Move *mv)
 //		position->reversible_moves_count = 0;
 //	}
 //	bool is_king_capture = position->bb_pieces[PIECE_KING] &
-// bb_coord(move_target(move)); 	if (is_king_capture) { 		return (struct Result){
-// .winner = active_color, 			.termination = TERMINATION_CHECKMATE,
+// bb_coord(move_target(move)); 	if (is_king_capture) { 		return
+// (struct Result){ .winner = active_color, 			.termination =
+// TERMINATION_CHECKMATE,
 //		};
 //	}
 //	if (false) {
 //		// position->bb_occupancy &= position->target;
 //		// position->bb_pieces[PIECE_PAWN] &= position->target;
 //	} else if (piece == PIECE_PAWN) {
-//		// position->bb_pieces[position->promotion] |= bb_coord(position->target);
-//	} else if (false) { // TODO
+//		// position->bb_pieces[position->promotion] |=
+// bb_coord(position->target); 	} else if (false) { // TODO
 //		                //	File rook_source_file;
 //		                //	File rook_target_file;
 //		                //	if (coord_file(position->source) == 2) {
@@ -140,10 +141,14 @@ move_ray(struct Move *mv)
 //		                //		rook_target_file = 5;
 //		                //	}
 //		                //	Coord rook = coord_new(rook_source_file,
-//		                // move_source(move).rank); 	*position_square(position, rook)
-//		                // = SQUARE_NONE; 	rook.file = rook_target_file;
-//		                //	position_square(position->position, rook)->piece =
-//		                // PIECE_ROOK; 	position_square(position, rook)->color =
+//		                // move_source(move).rank);
+//*position_square(position, rook)
+//		                // = SQUARE_NONE; 	rook.file =
+// rook_target_file;
+//		                //	position_square(position->position,
+// rook)->piece =
+//		                // PIECE_ROOK; 	position_square(position,
+// rook)->color =
 //		                // position->active_color;
 //	}
 //	uint64_t source_mask = ~square_to_bb(mv->source);
@@ -153,12 +158,10 @@ move_ray(struct Move *mv)
 //	position->bb_occupancy &= source_mask;
 //	position->bb_occupancy |= target_mask;
 //	position->bb_colors = (position->bb_colors & ~target_mask) |
-//	                      ((uint64_t)(active_color) << (uint64_t)(move_target(move)));
-//	position_toggle_active_color(position);
-//	if (pos->reversible_moves_count >= 75) {
-//		return (struct Result){
-//			.winner = COLOR_NONE,
-//			.termination = TERMINATION_NO_CAPTURE,
+//	                      ((uint64_t)(active_color) <<
+//(uint64_t)(move_target(move))); 	position_toggle_active_color(position); 	if
+//(pos->reversible_moves_count >= 75) { 		return (struct Result){ 			.winner
+//= COLOR_NONE, 			.termination = TERMINATION_NO_CAPTURE,
 //		};
 //	}
 //	return RESULT_NONE;

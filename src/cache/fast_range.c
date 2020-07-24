@@ -1,5 +1,6 @@
 /* Fair maps to intervals without division.
- * Reference: http://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/
+ * Reference:
+ * http://lemire.me/blog/2016/06/27/a-fast-alternative-to-the-modulo-reduction/
  *
  * (c) Daniel Lemire
  * Apache License 2.0

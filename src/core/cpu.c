@@ -70,26 +70,29 @@ enum
 	INDICATOR_SHARPNESS = 3,
 };
 
-///* TODO: Training via simple error backpropagation. Then I should try a very simple
+///* TODO: Training via simple error backpropagation. Then I should try a very
+/// simple
 /// network
 // * that rewards capture.
 // *
-// * Neuron model: each neuron takes in inputs from the previous layer (most likely through
+// * Neuron model: each neuron takes in inputs from the previous layer (most
+// likely through
 // a
-// * filter) and outputs a single bit via population count threshold - then some are
-// inverted.
+// * filter) and outputs a single bit via population count threshold - then some
+// are inverted.
 // *
-// * The output layer has no bitboards. That would require much more learning for no
-// advantage
+// * The output layer has no bitboards. That would require much more learning
+// for no advantage
 // * at all. Also, the output layer should NOT be in bits but rather in bytes.
 // * - Piece placement.
 // * - Floating point indicators.
 // *
 // *
 // * Board2Vec:
-// * Builds a through understanding of chess rules by the network by creating a neural
-// * embedding of boards. The input layer is a bitboard-based binarized encoding of the
-// board.
+// * Builds a through understanding of chess rules by the network by creating a
+// neural
+// * embedding of boards. The input layer is a bitboard-based binarized encoding
+// of the board.
 // * */
 struct Agent
 {
@@ -140,16 +143,15 @@ agent_new(void)
 //	uint64_t out_mask = 1;
 //	for (size_t i = 0; i < AGENT_L1_WIDTH; i++) {
 //		for (size_t j = 0; j < AGENT_L0_COMPRESSED_WIDTH; j++) {
-//			agent->buf_popcnt[j] = agent->layer_alpha[j] & agent->weights_0_1[i][j];
+//			agent->buf_popcnt[j] = agent->layer_alpha[j] &
+// agent->weights_0_1[i][j];
 //		}
-//		/* The activation point is fixed at half the number of incoming connections. */
-//		size_t popcount =
-//		  popcnt(agent->buffer, AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t));
-//		if (popcount > AGENT_L0_WIDTH / 4) {
-//			agent->layer_bravo[out_i] |= out_mask;
-//			ENGINE_LOGF(engine, "[TRACE] This neuron will activate.\n");
-//		} else {
-//			ENGINE_LOGF(engine, "[TRACE] This neuron won't activate.\n");
+//		/* The activation point is fixed at half the number of incoming
+// connections. */ 		size_t popcount = 		  popcnt(agent->buffer,
+// AGENT_L1_COMPRESSED_WIDTH * sizeof(int64_t)); 		if (popcount > AGENT_L0_WIDTH /
+// 4) { 			agent->layer_bravo[out_i] |= out_mask; 			ENGINE_LOGF(engine,
+// "[TRACE] This neuron will activate.\n"); 		} else { 			ENGINE_LOGF(engine,
+// "[TRACE] This neuron won't activate.\n");
 //		}
 //		if (!(out_mask <<= 1)) {
 //			out_mask = 0x1ULL << 63;
@@ -186,8 +188,8 @@ engine_start_search(struct Engine *engine)
 {
 	ENGINE_LOGF(engine, "[DEBUG] Search has started.\n");
 	/* The first step is to evaluate the position with the neural network. */
-	/* Now pick any of the suggested moves. In Zorro there is no best move found in the
-	 * evaluation, only candidate moves. Moves are suggested by  square: */
+	/* Now pick any of the suggested moves. In Zorro there is no best move found
+	 * in the evaluation, only candidate moves. Moves are suggested by  square: */
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	struct Move moves[MAX_MOVES] = { 0 };
 	size_t count = gen_legal_moves(moves, &engine->board);

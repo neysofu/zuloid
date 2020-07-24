@@ -198,8 +198,8 @@ uci_call_position(struct Engine *engine)
 		}
 		position_init_from_fen_fields(&engine->board, fen_fields);
 	} else if (streq(token, "960")) {
-		/* The "960" command is a custom addition the standard. I figured it could be useful
-		 * for training. */
+		/* The "960" command is a custom addition the standard. I figured it could
+		 * be useful for training. */
 		position_init_960(&engine->board);
 	} else if (!streq(token, "current")) {
 		display_err_syntax(engine->output);
@@ -249,24 +249,24 @@ uci_call_setoption(struct Engine *engine)
 			return;
 		}
 		/* From the UCI protocol specification (April 2004):
-		 * > The name of the option in  should not be case sensitive and can inludes spaces
-		 * > like also the value. */
+		 * > The name of the option in  should not be case sensitive and can inludes
+		 * spaces > like also the value. */
 		for (char *ptr = token; *ptr; ptr++) {
 			*ptr = tolower(*ptr);
 		}
 		// XOR combine the hashes. Simple yet effective.
 		hash ^= XXH64(token, strlen(token), 0);
 	}
-	// Option support is quite hairy and messy. I don't want to break pre-existing scripts
-	// and configs originally written for other engines.
+	// Option support is quite hairy and messy. I don't want to break pre-existing
+	// scripts and configs originally written for other engines.
 	//
 	// Please see:
 	//  - https://komodochess.com/Komodo-11-README.html
 	//  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
 	//
-	// No worries in case the links above die, just search for a list of UCI settings for
-	// popular chess engines. I don't commit to 100% feature parity with any engine; I just
-	// try and use my better judgement.
+	// No worries in case the links above die, just search for a list of UCI
+	// settings for popular chess engines. I don't commit to 100% feature parity
+	// with any engine; I just try and use my better judgement.
 	switch (hash) {
 		case 49865: // "hash"
 			break;
@@ -310,7 +310,8 @@ uci_call_stop(struct Engine *engine)
 }
 
 const char *UCI_OPTIONS[] = {
-	"option name Analysis Contempt type combo default Both var Off var White var Black var "
+	"option name Analysis Contempt type combo default Both var Off var White "
+	"var Black var "
 	"Both",
 	"option name Clear Hash type button",
 	"option name Contempt type spin default 24 min -100 max 100",

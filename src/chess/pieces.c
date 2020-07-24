@@ -47,7 +47,8 @@ const struct Piece PIECE_NONE = { .type = PIECE_TYPE_NONE, .color = COLOR_WHITE 
 // Bitboard
 // rook_threats(Square sq)
 //{
-//	return FILE_TO_BITBOARD(SQUARE_RANK(sq)) ^ RANK_TO_BITBOARD(SQUARE_RANK(sq));
+//	return FILE_TO_BITBOARD(SQUARE_RANK(sq)) ^
+// RANK_TO_BITBOARD(SQUARE_RANK(sq));
 //}
 //
 // Bitboard
@@ -61,7 +62,8 @@ const struct Piece PIECE_NONE = { .type = PIECE_TYPE_NONE, .color = COLOR_WHITE 
 //{
 //	File file = SQUARE_FILE(sq);
 //	Rank rank = SQUARE_RANK(sq);
-//	return BITBOARDS_DIAGONALS[7 + rank - file] ^ BITBOARDS_ANTI_DIAGONALS[rank + file];
+//	return BITBOARDS_DIAGONALS[7 + rank - file] ^
+// BITBOARDS_ANTI_DIAGONALS[rank + file];
 //}
 //
 // Bitboard

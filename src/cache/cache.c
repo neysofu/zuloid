@@ -68,8 +68,8 @@ struct CacheEntry *
 cache_get(struct Cache *cache, const struct Board *position)
 {
 	/* 1. Get the correct index based on the position hash.
-	 * 2. Iterate in the cell until you find an item that has the same signature and
-	 * probe_count.
+	 * 2. Iterate in the cell until you find an item that has the same signature
+	 * and probe_count.
 	 * 3. If found, return it.
 	 * 4. Else, the item is not found.
 	 * 5. Since it wasn't found, we need to find some space for it.
@@ -100,6 +100,7 @@ cache_get(struct Cache *cache, const struct Board *position)
 		} else if (slot->signature) {
 		}
 	}
-	/* The whole bucket is filled up. Do some clean up and find it a spot. TODO. */
+	/* The whole bucket is filled up. Do some clean up and find it a spot. TODO.
+	 */
 	return NULL;
 }
