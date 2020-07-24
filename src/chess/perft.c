@@ -5,9 +5,9 @@
 #include "chess/position.h"
 #include "globals.h"
 #include "utils.h"
+#include <assert.h>
 #include <stdio.h>
 #include <string.h>
-#include <assert.h>
 
 size_t
 position_perft(FILE *stream, struct Board *pos, size_t depth)

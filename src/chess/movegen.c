@@ -58,10 +58,10 @@ gen_pawn_moves(struct Move moves[],
 	Bitboard captures_a = sources & ~file_to_bb(0);
 	Bitboard captures_h = sources & ~file_to_bb(7);
 	const int color_params[4][COLORS_COUNT] = {
-		{-1, 1 },
-		{-2, 2},
-		{7, -9},
-		{-7, 9},
+		{ -1, 1 },
+		{ -2, 2 },
+		{ 7, -9 },
+		{ -7, 9 },
 	};
 	Square square;
 	switch (side_to_move) {
@@ -92,7 +92,7 @@ gen_pawn_moves(struct Move moves[],
 	}
 	while (captures_h) {
 		POP_LSB(square, captures_h);
-		EMIT_MOVE(moves, square +color_params[3][side_to_move], square);
+		EMIT_MOVE(moves, square + color_params[3][side_to_move], square);
 	}
 	return moves - ptr;
 }
