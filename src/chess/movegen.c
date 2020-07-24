@@ -255,17 +255,16 @@ size_t
 gen_legal_moves(struct Move moves[], struct Board *pos)
 {
 	int i = 0;
-	int j = gen_pseudolegal_moves(moves, pos) - 1;
-	while (i <= j) {
+	int count = gen_pseudolegal_moves(moves, pos) - 1;
+	while (i <= count) {
 		struct Move move = moves[i];
-		position_do_move(pos, &move);
-		char buf[6];
-		move_to_string(move, buf);
+		position_do_move_and_flip(pos, &move);
 		if (position_is_illegal(pos)) {
-			moves[i] = moves[j--];
+			moves[i] = moves[--count];
+		} else {
+			i++;
 		}
-		position_undo_move(pos, &move);
-		i++;
+		position_undo_move_and_flip(pos, &move);
 	}
 	return i;
 }

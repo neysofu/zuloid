@@ -60,8 +60,7 @@ search_stack_new(size_t depth)
 	stack.desired_depth = depth;
 	stack.current_depth = 1;
 	for (size_t i = 0; i < depth + 1; i++) {
-		struct SearchStackPlie *plie = stack.plies + i;
-		plie->moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+		stack.plies[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
 	}
 	return stack;
 }
@@ -105,12 +104,24 @@ search_stack_push(struct SearchStack *stack)
 	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
 }
 
+void
+search_stack_print_status(struct SearchStack *stack, size_t nodes_count) {
+	printf("\t%zu\t", nodes_count + 1);
+	for (int i = 1; i <= stack->current_depth; i++) {
+		char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
+		move_to_string(stack->plies[i].moves[stack->plies[i].child_i - 1], mv_as_str);
+		fprintf(stdout, "%s %d ", mv_as_str, stack->plies[i].child_i - 1);
+	}
+	puts("");
+}
+
 size_t
 position_improved_perft(struct Board *pos, int depth)
 {
 	if (depth <= 0) {
 		return 1;
 	}
+	bool d3 = position_piece_at_square(pos, square_from_str("d3")).type == PIECE_TYPE_PAWN;
 	size_t nodes_count = 0;
 	struct SearchStack stack = search_stack_new(depth);
 	stack.board = *pos;
@@ -126,6 +137,9 @@ position_improved_perft(struct Board *pos, int depth)
 			}
 		} else if (stack.current_depth == stack.desired_depth) {
 			last_plie->child_i++;
+			if (d3) {
+				search_stack_print_status(&stack, nodes_count);
+			}
 			nodes_count++;
 		} else {
 			search_stack_push(&stack);
