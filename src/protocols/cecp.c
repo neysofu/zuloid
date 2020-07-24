@@ -20,24 +20,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static void
-uci_err_syntax(FILE *stream)
-{
-	fputs("[ERROR] Invalid syntax.\n", stream);
-}
-
-static void
-uci_err_unspecified(FILE *stream)
-{
-	fputs("[ERROR] Unspecified error.\n", stream);
-}
-
-static void
-uci_err_invalid_command(FILE *stream)
-{
-	fputs("[ERROR] Invalid command.\n", stream);
-}
-
 void
 cecp_call_xboard(struct Engine *engine) {
 
@@ -87,7 +69,7 @@ void
 cecp_call_setboard(struct Engine *engine) {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 		return;
 	}
 	char *fen_fields[6] = { NULL };
@@ -97,7 +79,7 @@ cecp_call_setboard(struct Engine *engine) {
 			if (i >= 4) {
 				break;
 			} else {
-				uci_err_syntax(engine->output);
+				display_err_syntax(engine->output);
 				return;
 			}
 		}
@@ -277,7 +259,7 @@ protocol_cecp(struct Engine *engine, const char *s_const)
 	} else if (token && strlen(token) > 3 && isdigit(token[1])) {
 		// It's a move!
 	} else if (token) {
-		uci_err_invalid_command(engine->output);
+		display_err_invalid_command(engine->output);
 	}
 	free(s);
 }

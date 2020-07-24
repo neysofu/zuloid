@@ -24,3 +24,21 @@ command_cmp(const void *cmd1, const void *cmd2)
 	const char *s2 = ((struct Command *)cmd2)->name;
 	return strcmp(s1, s2);
 }
+
+void
+display_err_syntax(FILE *stream)
+{
+	fputs("[ERROR] Invalid syntax.\n", stream);
+}
+
+void
+display_err_unspecified(FILE *stream)
+{
+	fputs("[ERROR] Unspecified error.\n", stream);
+}
+
+void
+display_err_invalid_command(FILE *stream)
+{
+	fputs("[ERROR] Invalid command.\n", stream);
+}

@@ -22,24 +22,6 @@
 #include <stdio.h>
 #include <string.h>
 
-static void
-uci_err_syntax(FILE *stream)
-{
-	fputs("[ERROR] Invalid syntax.\n", stream);
-}
-
-static void
-uci_err_unspecified(FILE *stream)
-{
-	fputs("[ERROR] Unspecified error.\n", stream);
-}
-
-static void
-uci_err_invalid_command(FILE *stream)
-{
-	fputs("[ERROR] Invalid command.\n", stream);
-}
-
 void
 uci_call_eval(struct Engine *engine)
 {
@@ -64,7 +46,7 @@ uci_call_go(struct Engine *engine)
 				if (token) {
 					position_perft(engine->output, &engine->board, atoi(token));
 				} else {
-					uci_err_syntax(engine->output);
+					display_err_syntax(engine->output);
 				}
 				return;
 			case 52523: // "wtime"
@@ -126,7 +108,7 @@ uci_call_islegal(struct Engine *engine)
 	struct Move mv;
 	char *token = strtok_whitespace(NULL);
 	if (!token || string_to_move(token, &mv) == 0) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 		return;
 	}
 	size_t count = gen_legal_moves(moves, &engine->board);
@@ -173,12 +155,12 @@ uci_call_export_magics(struct Engine *engine)
 {
 	char *filename = strtok_whitespace(NULL);
 	if (!filename) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 		return;
 	}
 	FILE *file = fopen(filename, "w");
 	if (!file) {
-		uci_err_unspecified(engine->output);
+		display_err_unspecified(engine->output);
 		return;
 	}
 	fprintf(file, "-- ROOK MAGICS:\n");
@@ -193,7 +175,7 @@ uci_call_position(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 		return;
 	} else if (streq(token, "startpos")) {
 		engine->board = POSITION_INIT;
@@ -205,7 +187,7 @@ uci_call_position(struct Engine *engine)
 				if (i >= 4) {
 					break;
 				} else {
-					uci_err_syntax(engine->output);
+					display_err_syntax(engine->output);
 					return;
 				}
 			}
@@ -217,10 +199,10 @@ uci_call_position(struct Engine *engine)
 		 * for training. */
 		position_init_960(&engine->board);
 	} else if (!streq(token, "current")) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 	}
 	if ((token = strtok_whitespace(NULL)) && !streq(token, "moves")) {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 		return;
 	}
 	// Now feed moves into the position.
@@ -246,7 +228,7 @@ uci_call_d(struct Engine *engine)
 		fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
 		free(fen);
 	} else {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 	}
 }
 
@@ -254,7 +236,7 @@ void
 uci_call_setoption(struct Engine *engine)
 {
 	if (engine->status != STATUS_IDLE) {
-		uci_err_unspecified(engine->output);
+		display_err_unspecified(engine->output);
 		return;
 	}
 	XXH64_hash_t hash = 0;
@@ -395,7 +377,7 @@ uci_call_debug(struct Engine *engine)
 	} else if (token && strcmp(token, "off")) {
 		engine->debug = false;
 	} else {
-		uci_err_syntax(engine->output);
+		display_err_syntax(engine->output);
 	}
 }
 
@@ -429,7 +411,7 @@ protocol_uci(struct Engine *engine, const char *s_const)
 		ENGINE_LOGF(engine, "Accepted UCI command.\n");
 		cmd->handler(engine);
 	} else if (token) {
-		uci_err_invalid_command(engine->output);
+		display_err_invalid_command(engine->output);
 	}
 	free(s);
 }

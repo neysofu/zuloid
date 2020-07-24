@@ -16,4 +16,11 @@ identify_command(const char *token, const struct Command commands[], size_t coun
 int
 command_cmp(const void *cmd1, const void *cmd2);
 
+void
+display_err_syntax(FILE *stream);
+void
+display_err_unspecified(FILE *stream);
+void
+display_err_invalid_command(FILE *stream);
+
 #endif
