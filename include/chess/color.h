@@ -7,7 +7,9 @@ enum Color
 {
 	COLOR_WHITE = 0,
 	COLOR_BLACK = 1,
+};
 
+enum {
 	COLORS_COUNT = 2,
 };
 
