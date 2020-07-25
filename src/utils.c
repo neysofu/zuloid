@@ -17,10 +17,6 @@ read_line(FILE *stream)
 			buffer = exit_if_null(realloc(buffer, capacity));
 		}
 	}
-	if (i == 0) {
-		free(buffer);
-		return NULL;
-	}
 	buffer[i] = '\0';
 	return buffer;
 }
