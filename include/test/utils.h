@@ -2,12 +2,11 @@
 #define ZORRO_TEST_UTILS_H
 
 #include <stdio.h>
-#include <stdlib.h>
 
 struct Lines;
 
 char *
-lines_nth(struct Lines *lines, size_t i);
+lines_nth(struct Lines *lines, long long i);
 
 size_t
 lines_count(struct Lines *lines);

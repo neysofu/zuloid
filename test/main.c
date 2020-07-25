@@ -76,8 +76,6 @@ main(void)
 	call_test(test_position_is_illegal);
 	call_test(test_position_is_legal);
 	call_test(test_rating);
-	call_test_with_tmp_engine(test_protocol_cecp);
-	call_test_with_tmp_engine(test_protocol_switch);
 	call_test_with_tmp_engine(test_protocol_uci_empty);
 	call_test_with_tmp_engine(test_protocol_uci_cmd_d);
 	call_test_with_tmp_engine(test_protocol_uci_cmd_debug);

@@ -17,7 +17,7 @@ lines_count(struct Lines *lines)
 }
 
 char *
-lines_nth(struct Lines *lines, size_t i)
+lines_nth(struct Lines *lines, long long i)
 {
 	if (i < 0) {
 		i += lines->length;
