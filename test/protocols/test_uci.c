@@ -6,7 +6,7 @@
 #include "utils.h"
 
 void
-test_uci_empty(struct Engine *engine)
+test_protocol_uci_empty(struct Engine *engine)
 {
 	protocol_uci(engine, "   ");
 	protocol_uci(engine, "");
@@ -18,7 +18,7 @@ test_uci_empty(struct Engine *engine)
 }
 
 void
-test_uci_cmd_d(struct Engine *engine)
+test_protocol_uci_cmd_d(struct Engine *engine)
 {
 	protocol_uci(engine, "d lichess");
 	protocol_uci(engine, "d");
@@ -39,7 +39,7 @@ test_uci_cmd_d(struct Engine *engine)
 }
 
 void
-test_uci_cmd_go_perft(struct Engine *engine)
+test_protocol_uci_cmd_go_perft(struct Engine *engine)
 {
 	protocol_uci(engine, "go perft");
 	{
@@ -50,7 +50,7 @@ test_uci_cmd_go_perft(struct Engine *engine)
 }
 
 void
-test_uci_cmd_djbhash(struct Engine *engine)
+test_protocol_uci_cmd_djbhash(struct Engine *engine)
 {
 	protocol_uci(engine, "djbhash position");
 	protocol_uci(engine, "djbhash");
@@ -68,7 +68,7 @@ test_uci_cmd_djbhash(struct Engine *engine)
 }
 
 void
-test_uci_cmd_isready(struct Engine *engine)
+test_protocol_uci_cmd_isready(struct Engine *engine)
 {
 	protocol_uci(engine, "isready");
 	{
@@ -80,7 +80,7 @@ test_uci_cmd_isready(struct Engine *engine)
 }
 
 void
-test_uci_cmd_position(struct Engine *engine)
+test_protocol_uci_cmd_position(struct Engine *engine)
 {
 	const Square e4 = square_new(char_to_file('e'), char_to_rank('4'));
 	{
@@ -106,7 +106,7 @@ test_uci_cmd_position(struct Engine *engine)
 }
 
 void
-test_uci_cmd_quit(struct Engine *engine)
+test_protocol_uci_cmd_quit(struct Engine *engine)
 {
 	{
 		munit_assert_uint(engine->status, !=, STATUS_EXIT);
@@ -118,7 +118,7 @@ test_uci_cmd_quit(struct Engine *engine)
 }
 
 void
-test_uci_cmd_uci(struct Engine *engine)
+test_protocol_uci_cmd_uci(struct Engine *engine)
 {
 	protocol_uci(engine, "uci");
 	{
@@ -134,7 +134,7 @@ test_uci_cmd_uci(struct Engine *engine)
 }
 
 void
-test_uci_cmd_debug(struct Engine *engine)
+test_protocol_uci_cmd_debug(struct Engine *engine)
 {
 	{
 		ENGINE_LOGF(engine, "VALENTINA\n");
@@ -152,7 +152,7 @@ test_uci_cmd_debug(struct Engine *engine)
 }
 
 void
-test_uci_unknown_cmd(struct Engine *engine)
+test_protocol_uci_unknown_cmd(struct Engine *engine)
 {
 	protocol_uci(engine, "foobar");
 	{

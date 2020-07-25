@@ -5,7 +5,7 @@
 #include "utils.h"
 
 void
-test_cecp(struct Engine *engine)
+test_protocol_cecp(struct Engine *engine)
 {
 	protocol_cecp(engine, "xboard");
 	protocol_cecp(engine, "protover 2");
@@ -19,7 +19,7 @@ test_cecp(struct Engine *engine)
 }
 
 void
-test_cecp_ping(struct Engine *engine)
+test_protocol_cecp_ping(struct Engine *engine)
 {
 	protocol_cecp(engine, "ping 0");
 	protocol_cecp(engine, "ping -1");
@@ -36,7 +36,7 @@ test_cecp_ping(struct Engine *engine)
 }
 
 void
-test_cecp_quit(struct Engine *engine)
+test_protocol_cecp_quit(struct Engine *engine)
 {
 	{
 		munit_assert_uint(engine->status, !=, STATUS_EXIT);

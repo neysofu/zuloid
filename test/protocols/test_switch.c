@@ -3,7 +3,7 @@
 #include "protocols/protocols.h"
 
 void
-test_switching_protocols(struct Engine *engine)
+test_protocol_switch(struct Engine *engine)
 {
 	{
 		munit_assert_ptr_equal(engine->protocol, protocol_uci);

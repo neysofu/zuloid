@@ -1,5 +1,6 @@
 #include "munit/munit.h"
 #include "test/utils.h"
+#include <limits.h>
 
 void
 test_utils(void)

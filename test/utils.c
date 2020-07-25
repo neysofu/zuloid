@@ -1,5 +1,4 @@
 #include "test/utils.h"
-#include "engine.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
@@ -18,7 +17,7 @@ lines_count(struct Lines *lines)
 }
 
 char *
-lines_nth(struct Lines *lines, long long int i)
+lines_nth(struct Lines *lines, size_t i)
 {
 	if (i < 0) {
 		i += lines->length;
