@@ -14,6 +14,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <float.h>
 
 size_t
 buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
@@ -160,6 +161,83 @@ agent_new(void)
 //	}
 //}
 
+struct SSearchStack
+{
+	struct SSearchStackPlie *plies;
+	int desired_depth;
+	int current_depth;
+	struct Board board;
+};
+
+struct SSearchStackPlie
+{
+	struct Move generator;
+	struct Move *moves;
+	int children_count;
+	int child_i;
+	int best_child_i_so_far;
+	float best_eval_so_far;
+};
+
+struct SSearchStack
+ssearch_stack_new(size_t depth)
+{
+	struct SSearchStack stack;
+	stack.plies = exit_if_null(malloc((depth + 1) * sizeof(struct SSearchStackPlie)));
+	stack.desired_depth = depth;
+	stack.current_depth = 1;
+	for (size_t i = 0; i < depth + 1; i++) {
+		stack.plies[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+	}
+	return stack;
+}
+
+void
+ssearch_stack_delete(struct SSearchStack *stack)
+{
+	for (int i = 0; i < stack->desired_depth; i++) {
+		free(stack->plies[i].moves);
+	}
+	free(stack->plies);
+}
+
+struct SSearchStackPlie *
+ssearch_stack_last(struct SSearchStack *stack)
+{
+	return stack->plies + stack->current_depth;
+}
+
+void
+ssearch_stack_pop(struct SSearchStack *stack)
+{
+	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
+	float eval = last_plie->best_eval_so_far;
+	assert(stack->current_depth > 0);
+	assert(last_plie->child_i == last_plie->children_count);
+	position_undo_move_and_flip(&stack->board, &last_plie->generator);
+	stack->current_depth--;
+	last_plie--;
+	if (eval > last_plie->best_eval_so_far) {
+		last_plie->best_eval_so_far = eval;
+	}
+}
+
+void
+ssearch_stack_push(struct SSearchStack *stack)
+{
+	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
+	assert(last_plie->child_i < last_plie->children_count);
+	struct Move generator = last_plie->moves[last_plie->child_i++];
+	stack->current_depth++;
+	last_plie++;
+	last_plie->child_i = 0;
+	last_plie->best_child_i_so_far = -1;
+	last_plie->best_eval_so_far = FLT_MIN;
+	last_plie->generator = generator;
+	position_do_move_and_flip(&stack->board, &last_plie->generator);
+	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
+}
+
 float
 position_eval_color(struct Board *pos, enum Color side)
 {
@@ -186,27 +264,38 @@ struct SearchResults
 void
 engine_start_search(struct Engine *engine)
 {
-	ENGINE_LOGF(engine, "[DEBUG] Search has started.\n");
-	/* The first step is to evaluate the position with the neural network. */
-	/* Now pick any of the suggested moves. In Zorro there is no best move found
-	 * in the evaluation, only candidate moves. Moves are suggested by  square: */
-	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
-	struct Move moves[MAX_MOVES] = { 0 };
-	size_t count = gen_legal_moves(moves, &engine->board);
-	size_t best_i = count - 1;
-	// size_t best_centipawns = 0;
-	// int multiplier = engine->board.side_to_move == COLOR_WHITE ? +1 : -1;
-	// for (size_t i = count - 1; i > 0; i--) {
-	//	if ((engine->board.side_to_move == COLOR_WHITE &&
-	//	     position_eval(&engine->board) > best_centipawns) ||
-	//	    (engine->board.side_to_move == COLOR_WHITE &&
-	//	     position_eval(&engine->board) < best_centipawns)) {
-	//		best_i = i;
-	//		best_centipawns = position_eval(&engine->board);
-	//	}
-	//}
-	move_to_string(moves[best_i], buf);
 	printf("info depth score cp %f\n", position_eval(&engine->board));
+	struct SSearchStack stack = ssearch_stack_new((size_t)3);
+	stack.board = engine->board;
+	stack.plies[1].child_i = 0;
+	stack.plies[1].best_child_i_so_far = 0;
+	stack.plies[1].children_count = gen_legal_moves(stack.plies[1].moves, &stack.board);
+	stack.plies[1].best_eval_so_far = FLT_MIN;
+	while (true) {
+		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);
+		if (last_plie->child_i == last_plie->children_count) {
+			if (stack.current_depth == 1) {
+				break;
+			} else {
+				ssearch_stack_pop(&stack);
+			}
+		} else if (stack.current_depth == stack.desired_depth) {
+			last_plie->child_i++;
+			float eval = position_eval(&stack.board);
+			if (eval > last_plie->best_eval_so_far) {
+				last_plie->best_eval_so_far = eval;
+			}
+		} else {
+			ssearch_stack_push(&stack);
+		}
+	}
+	struct SearchResults result = {
+		.best_move = stack.plies[1].moves[stack.plies[1].best_child_i_so_far],
+		.ponder_move = stack.plies[2].best_child_i_so_far,
+		.centipawns = stack.plies[1].best_eval_so_far,
+	};
+	char buf[MOVE_STRING_MAX_LENGTH] = {'\0'};
+	move_to_string(result.best_move, buf);
 	printf("bestmove %s\n", buf);
 }
 
