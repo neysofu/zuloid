@@ -10,11 +10,11 @@
 #include "mt-64/mt-64.h"
 #include "utils.h"
 #include <assert.h>
+#include <float.h>
 #include <math.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <float.h>
 
 size_t
 buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
@@ -294,7 +294,7 @@ engine_start_search(struct Engine *engine)
 		.ponder_move = stack.plies[2].best_child_i_so_far,
 		.centipawns = stack.plies[1].best_eval_so_far,
 	};
-	char buf[MOVE_STRING_MAX_LENGTH] = {'\0'};
+	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	move_to_string(result.best_move, buf);
 	printf("bestmove %s\n", buf);
 }
