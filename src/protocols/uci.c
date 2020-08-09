@@ -413,10 +413,12 @@ protocol_uci(struct Engine *engine, const char *s_const)
 	strcpy(s, s_const);
 	const char *token = strtok_whitespace(s);
 	const struct Command *cmd = NULL;
-	if (token && (cmd = identify_command(token, UCI_COMMANDS, ARRAY_SIZE(UCI_COMMANDS)))) {
+	if (!token) {
+		;
+	} else if ((cmd = identify_command(token, UCI_COMMANDS, ARRAY_SIZE(UCI_COMMANDS)))) {
 		ENGINE_LOGF(engine, "Accepted UCI command.\n");
 		cmd->handler(engine);
-	} else if (token) {
+	} else {
 		display_err_invalid_command(engine->output);
 	}
 	free(s);

@@ -23,6 +23,9 @@ struct Move
 
 const struct Move MOVE_IDENTITY;
 
+bool
+string_represents_coordinate_notation_move(const char *str);
+
 size_t
 move_to_string(struct Move mv, char *buf);
 

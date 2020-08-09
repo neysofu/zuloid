@@ -276,12 +276,15 @@ protocol_cecp(struct Engine *engine, const char *s_const)
 	strcpy(s, s_const);
 	const char *token = strtok_whitespace(s);
 	const struct Command *cmd = NULL;
-	if (token &&
-	    (cmd = identify_command(token, CECP_COMMANDS, ARRAY_SIZE(CECP_COMMANDS)))) {
+	if (!token) {
+		;
+	} else if ((cmd = identify_command(token, CECP_COMMANDS, ARRAY_SIZE(CECP_COMMANDS)))) {
 		ENGINE_LOGF(engine, "Accepted CECP command.\n");
 		cmd->handler(engine);
-	} else if (token && strlen(token) > 3 && isdigit(token[1])) {
-		// It's a move!
+	} else if (string_represents_coordinate_notation_move(token)) {
+		struct Move move;
+		string_to_move(token, &move);
+		position_do_move_and_flip(&engine->board, &move);
 	} else if (token) {
 		display_err_invalid_command(engine->output);
 	}

@@ -2,6 +2,7 @@
 #include "chess/coordinates.h"
 #include "chess/pieces.h"
 #include "chess/position.h"
+#include "utils.h"
 #include <assert.h>
 #include <ctype.h>
 #include <stdbool.h>
@@ -29,6 +30,14 @@ move_to_string(struct Move mv, char *buf)
 		buf[i++] = piece_to_char((struct Piece){ .type = mv.promotion });
 	}
 	return i;
+}
+
+bool
+string_represents_coordinate_notation_move(const char *str) {
+	size_t len = strlen(str);
+	bool is_castling = streq(str, "O-O") || streq(str, "O-O-O");
+	bool is_normal_move = (len > 3) && isdigit(str[1]);
+	return is_castling || is_normal_move;
 }
 
 size_t
