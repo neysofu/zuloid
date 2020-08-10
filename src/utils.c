@@ -9,13 +9,15 @@ read_line(FILE *stream)
 {
 	size_t i = 0;
 	size_t capacity = 8;
-	char *buffer = exit_if_null(malloc(capacity));
+	char *buffer = malloc(capacity);
+	exit_if_null(buffer);
 	int c;
-	while (!feof(stream) && (c = getc(stream)) != '\n' && c != EOF) {
+	while (!feof(stream) && ((c = getc(stream)) != '\n') && c != EOF) {
 		buffer[i++] = c;
 		if (i == capacity) {
 			capacity *= 2;
-			buffer = exit_if_null(realloc(buffer, capacity));
+			buffer = realloc(buffer, capacity);
+			exit_if_null(buffer);
 		}
 	}
 	buffer[i] = '\0';

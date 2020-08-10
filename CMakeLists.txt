@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
-project(ZULOID VERSION 1.7.0 LANGUAGES C)
+project(ZULOID VERSION 0.1 LANGUAGES C)
 
 set(CMAKE_C_FLAGS " \
    ${CMAKE_C_FLAGS} \
@@ -29,10 +29,10 @@ set(CMAKE_C_FLAGS " \
 set(default_build_type "Debug")
 set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -fdata-sections -ffunction-sections -Wl,--gc-sections")
 
-set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include/")
-set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib/")
-set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src/")
-set(TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test/")
+set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
+set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
+set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
+set(TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
 
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 

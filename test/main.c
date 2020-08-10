@@ -3,6 +3,41 @@
 #include <stdarg.h>
 #include <stdio.h>
 
+#define STRINGIFY(x) #x
+
+#define CALL_TEST(f) \
+	do { \
+		test_pre(STRINGIFY(f)); \
+		(f)(); \
+		test_post(); \
+	} while (0)
+
+#define CALL_TEST_WITH_ARGS(f, ...) \
+	do { \
+		test_pre(STRINGIFY(f)); \
+		(f)(__VA_ARGS__); \
+		test_post(); \
+	} while (0)
+
+#define CALL_TEST_WITH_TMP_ENGINE(f) \
+	do { \
+		test_pre(STRINGIFY(f)); \
+		struct Engine *engine = engine_new_tmp(); \
+		(f)(engine); \
+		test_post(); \
+		engine_delete(engine); \
+	} while (0)
+
+void
+test_pre(const char *function_name) {
+	printf("-- Running %s\n", function_name);
+}
+
+void
+test_post(void) {
+	puts("   OK");
+}
+
 // clang-format off
 extern void test_960(void);
 extern void test_bb_subset(void);
@@ -38,55 +73,42 @@ extern void test_protocol_uci_unknown_cmd(struct Engine *);
 extern void test_utils(void);
 // clang-format on
 
-void
-call_test(void (*test)(void))
-{
-	test();
-}
-
-void
-call_test_with_tmp_engine(void (*test)(struct Engine *))
-{
-	struct Engine *engine = engine_new_tmp();
-	test(engine);
-	engine_delete(engine);
-}
-
 int
 main(void)
 {
 	init_subsystems();
-	call_test(test_utils);
-	call_test(test_960);
-	call_test(test_attacks);
-	call_test(test_bb_subset);
-	call_test(test_castling_mask);
-	call_test(test_cache_single_key_retrieval);
-	call_test(test_char_to_file);
-	call_test(test_char_to_piece);
-	call_test(test_color_other);
-	test_diagonals_dont_overlap(DIAGONALS_A1H8);
-	test_diagonals_dont_overlap(DIAGONALS_A8H1);
-	call_test(test_fen_conversion);
-	call_test(test_fen_init);
-	call_test(test_file_to_char);
-	call_test(test_init);
-	call_test(test_magic_generation);
-	call_test(test_piece_to_char);
-	call_test(test_position_is_illegal);
-	call_test(test_position_is_legal);
-	call_test(test_rating);
-	call_test_with_tmp_engine(test_protocol_uci_empty);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_d);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_debug);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_djbhash);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_go_perft);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_isready);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_position);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_quit);
-	call_test_with_tmp_engine(test_protocol_uci_cmd_uci);
-	call_test_with_tmp_engine(test_protocol_uci_unknown_cmd);
-	call_test_with_tmp_engine(test_perft_results);
+	CALL_TEST(test_utils);
+	CALL_TEST(test_960);
+	CALL_TEST(test_attacks);
+	CALL_TEST(test_bb_subset);
+	CALL_TEST(test_castling_mask);
+	CALL_TEST(test_cache_single_key_retrieval);
+	CALL_TEST(test_char_to_file);
+	CALL_TEST(test_char_to_piece);
+	CALL_TEST(test_color_other);
+	CALL_TEST_WITH_ARGS(test_diagonals_dont_overlap, DIAGONALS_A1H8);
+	CALL_TEST_WITH_ARGS(test_diagonals_dont_overlap, DIAGONALS_A8H1);
+	CALL_TEST(test_fen_conversion);
+	CALL_TEST(test_fen_init);
+	CALL_TEST(test_file_to_char);
+	CALL_TEST(test_init);
+	CALL_TEST(test_magic_generation);
+	CALL_TEST(test_piece_to_char);
+	CALL_TEST(test_position_is_illegal);
+	CALL_TEST(test_position_is_legal);
+	CALL_TEST(test_rating);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_empty);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_d);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_debug);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_djbhash);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_go_perft);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_isready);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_position);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_quit);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_uci);
+	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_unknown_cmd);
+	//CALL_TEST_WITH_TMP_ENGINE(test_perft_results);
+	puts("");
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

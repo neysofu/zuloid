@@ -50,15 +50,17 @@ file_line_by_line(FILE *stream)
 {
 	long position = ftell(stream);
 	rewind(stream);
-	struct Lines *lines = exit_if_null(malloc(sizeof(struct Lines)));
+	struct Lines *lines = malloc(sizeof(struct Lines));
+	exit_if_null(lines);
 	*lines = (struct Lines){
-		.data = exit_if_null(malloc(8 * sizeof(char *))),
+		.data = malloc(8 * sizeof(char *)),
 		.length = 0,
 		.capacity = 8,
 	};
+	exit_if_null(lines->data);
 	set_null_lines(lines);
 	char *buffer = NULL;
-	while ((buffer = read_line(stream))) {
+	while ((buffer = read_line(stream)) && (strlen(buffer) > 0)) {
 		lines->data[(lines->length)++] = buffer;
 		if (lines->length == lines->capacity) {
 			lines->capacity *= 2;
