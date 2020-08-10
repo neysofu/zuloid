@@ -57,37 +57,44 @@ find_end_of_attacks_table(Bitboard attacks_table[])
 	return 0;
 }
 
+bool
+verify_magic_candidate(const struct Magic *magic,
+                       Square sq,
+                       Bitboard buffer[],
+                       Bitboard (*attacker)(Square, Bitboard))
+{
+	struct BitboardSubsetIter subset_iter = {
+		.original = magic->premask,
+		.subset = 0,
+	};
+	do {
+		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
+		Bitboard *val = buffer + i;
+		Bitboard attacks = attacker(sq, subset_iter.subset);
+		if (*val) {
+			return false;
+		} else {
+			*val = attacks;
+		}
+	} while (bb_subset_iter(&subset_iter));
+	return true;
+}
+
 void
-magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
+magic_find_rook(struct Magic *magic, Square square)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
+	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
+	exit_if_null(attacks_table);
 	magic->premask = bb_premask_rook(square);
-	magic->rshift = 52; // temp for init times
-	while (true) {
+	magic->rshift = 52;
+	do {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
-		struct BitboardSubsetIter subset_iter = {
-			.original = magic->premask,
-			.subset = 0,
-		};
-		bool found_collisions = false;
-		do {
-			size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
-			Bitboard *val = attacks_table + i;
-			Bitboard attacks = bb_rook(square, subset_iter.subset);
-			if (*val) {
-				found_collisions = true;
-				break;
-			} else {
-				*val = attacks;
-			}
-		} while (bb_subset_iter(&subset_iter));
-		if (!found_collisions) {
-			break;
-		}
-	}
+	} while (!verify_magic_candidate(magic, square, attacks_table, bb_rook));
 	magic->start = find_start_of_attacks_table(attacks_table);
 	magic->end = find_end_of_attacks_table(attacks_table);
+	free(attacks_table);
 }
 
 void
@@ -98,29 +105,10 @@ magic_find_bishop(struct Magic *magic, Square square)
 	exit_if_null(attacks_table);
 	magic->premask = bb_premask_bishop(square);
 	magic->rshift = 64 - popcount64(magic->premask);
-	while (true) {
+	do {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
-		struct BitboardSubsetIter subset_iter = {
-			.original = magic->premask,
-			.subset = 0,
-		};
-		bool found_collisions = false;
-		do {
-			size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
-			Bitboard *val = attacks_table + i;
-			Bitboard attacks = bb_bishop(square, subset_iter.subset);
-			if (*val) {
-				found_collisions = true;
-				break;
-			} else {
-				*val = attacks;
-			}
-		} while (bb_subset_iter(&subset_iter));
-		if (!found_collisions) {
-			break;
-		}
-	}
+	} while (!verify_magic_candidate(magic, square, attacks_table, bb_bishop));
 	magic->start = 0;
 	magic->end = find_end_of_attacks_table(attacks_table);
 	free(attacks_table);

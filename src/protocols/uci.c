@@ -8,6 +8,7 @@
 #include "chess/bb.h"
 #include "chess/fen.h"
 #include "chess/find_magics.h"
+#include "chess/export_magics.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core.h"
@@ -356,34 +357,24 @@ uci_call_uci(struct Engine *engine)
 void
 uci_call_magics(struct Engine *engine)
 {
-	UNUSED(engine);
 	char *token = strtok_whitespace(NULL);
-	const struct Magic *magics;
 	const char *identifier = NULL;
+	void (*finder)(struct Magic *, Square);
 	if (streq(token, "bishop")) {
 		identifier = "MAGICS_BISHOP";
-		magics = MAGICS;
+		finder = magic_find_bishop;
 	} else if (streq(token, "rook")) {
 		identifier = "MAGICS_ROOK";
-		magics = MAGICS_BISHOP;
+		finder = magic_find_rook;
+	} else {
+		display_err_syntax(engine->output);
+		return;
 	}
-	fprintf(engine->output, "const struct Magic %s[SQUARES_COUNT] = {\n", identifier);
+	struct Magic magics[64];
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
-		struct Magic magic;
-		magic_find_bishop(&magic, sq);
-		fprintf(engine->output,
-		        "\t[0%o] = { .premask = 0x%llxULL, .multiplier = 0x%llxULL, .rshift = %d, "
-		        ".postmask = "
-		        "0x%llxULL, .start = %zu, .end = %zu },\n",
-		        sq,
-		        magic.premask,
-		        magic.multiplier,
-		        magic.rshift,
-		        magic.postmask,
-		        magic.start,
-		        magic.end);
+		finder(magics + sq, sq);
 	}
-	fprintf(engine->output, "};\n");
+	export_magics(engine->output, magics, identifier);
 }
 
 void

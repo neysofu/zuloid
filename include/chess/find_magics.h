@@ -19,7 +19,7 @@ const struct Magic MAGICS[SQUARES_COUNT];
 const struct Magic MAGICS_BISHOP[SQUARES_COUNT];
 
 void
-magic_find(struct Magic *magic, Square square, Bitboard *attacks_table);
+magic_find_rook(struct Magic *magic, Square square);
 
 void
 magic_find_bishop(struct Magic *magic, Square square);

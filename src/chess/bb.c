@@ -142,7 +142,6 @@ init_attack_table(Square sq,
                   Bitboard attacks_table[],
                   Bitboard (*slider)(Square, Bitboard))
 {
-	bb_pprint(magic->premask);
 	struct BitboardSubsetIter subset_iter = {
 		.original = magic->premask,
 		.subset = 0,
