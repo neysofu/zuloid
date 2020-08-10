@@ -1,6 +1,7 @@
 #include "chess/coordinates.h"
 
-enum {
+enum
+{
 	SQ_A1,
 	SQ_A2,
 	SQ_A3,

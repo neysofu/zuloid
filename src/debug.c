@@ -5,7 +5,7 @@
 void
 debug_printf(const char *format, ...)
 {
-#if DEBUG_MESSAGES
+#if SWITCH_DEBUG_MESSAGES
 	va_list args;
 	va_start(args, format);
 	fprintf(stdout, "[DEBUG] ");

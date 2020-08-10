@@ -1,4 +1,5 @@
 #include "chess/bb.h"
+#include "chess/bb_subset_iter.h"
 #include "chess/find_magics.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"
@@ -58,9 +59,6 @@ size_t BB_OFFSETS_BISHOP[64] = { 0 };
 
 int64_t BB_SHIFTS_ROOK[64] = { 52, 52 };
 int64_t BB_SHIFTS_BISHOP[64] = { 0 };
-
-Bitboard BB_MAGICS_ROOK[SQUARES_COUNT] = { 0 };
-Bitboard BB_MAGICS_BISHOP[SQUARES_COUNT] = { 0 };
 
 void
 bb_pprint(Bitboard bb)
@@ -139,11 +137,28 @@ bb_rays_rook(Square sq)
 }
 
 void
+init_attack_table(Square sq,
+                  const struct Magic *magic,
+                  Bitboard attacks_table[],
+                  Bitboard (*slider)(Square, Bitboard))
+{
+	bb_pprint(magic->premask);
+	struct BitboardSubsetIter subset_iter = {
+		.original = magic->premask,
+		.subset = 0,
+	};
+	do {
+		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
+		attacks_table[i] = slider(sq, subset_iter.subset);
+	} while (bb_subset_iter(&subset_iter));
+}
+
+void
 bb_init_bishop(void)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		magic_find_bishop(MAGICS_BISHOP + sq, sq, BB_ATTACKS_BISHOP + offset);
+		init_attack_table(sq, MAGICS_BISHOP + sq, BB_ATTACKS_BISHOP + offset, bb_bishop);
 		BB_OFFSETS_BISHOP[sq] = offset;
 		BB_MASK_BISHOP[sq] = MAGICS_BISHOP[sq].premask;
 		BB_SHIFTS_BISHOP[sq] = MAGICS_BISHOP[sq].rshift;
@@ -154,24 +169,11 @@ bb_init_bishop(void)
 }
 
 void
-init_rook_attack_table(Square sq, const struct Magic *magic, Bitboard attacks_table[]) {
-	struct BitboardSubsetIter subset_iter = {
-		.original = magic->premask,
-		.subset = 0,
-	};
-	do {
-		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
-		Bitboard attacks = bb_rook(sq, subset_iter.subset);
-		attacks_table[i] = attacks;
-	} while (bb_subset_iter(&subset_iter));
-}
-
-void
 bb_init_rook(void)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		init_rook_attack_table(sq, MAGICS + sq, BB_ATTACKS_ROOK + offset);
+		init_attack_table(sq, MAGICS + sq, BB_ATTACKS_ROOK + offset, bb_rook);
 		BB_OFFSETS_ROOK[sq] = offset;
 		BB_MASK_ROOK[sq] = MAGICS[sq].premask;
 		BB_SHIFTS_ROOK[sq] = MAGICS[sq].rshift;
@@ -198,11 +200,11 @@ bb_init(void)
 	if (done) {
 		return;
 	}
+	done = true;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
 		BB_ATTACKS_BY_KNIGHT[sq] = bb_attacks_by_offsets(sq, OFFSETS_KNIGHT);
 		BB_ATTACKS_BY_KING[sq] = bb_attacks_by_offsets(sq, OFFSETS_KING);
 	}
 	bb_init_rook();
 	bb_init_bishop();
-	done = true;
 }

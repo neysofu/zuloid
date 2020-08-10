@@ -1,5 +1,6 @@
 #include "chess/find_magics.h"
 #include "chess/bb.h"
+#include "chess/bb_subset_iter.h"
 #include "chess/diagonals.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"
@@ -32,18 +33,6 @@ bb_premask_bishop(Square sq)
 	Bitboard diagonal2 = square_a8h1_diagonal(sq);
 	Bitboard borders = file_to_bb(0) | file_to_bb(7) | rank_to_bb(0) | rank_to_bb(7);
 	return (diagonal1 ^ diagonal2) & ~borders;
-}
-
-Bitboard *
-bb_subset_iter(struct BitboardSubsetIter *iter)
-{
-	// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
-	iter->subset = (iter->subset - iter->original) & iter->original;
-	if (iter->subset == 0) {
-		return NULL;
-	} else {
-		return &(iter->subset);
-	}
 }
 
 size_t
@@ -102,9 +91,11 @@ magic_find(struct Magic *magic, Square square, Bitboard *attacks_table)
 }
 
 void
-magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
+magic_find_bishop(struct Magic *magic, Square square)
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
+	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
+	exit_if_null(attacks_table);
 	magic->premask = bb_premask_bishop(square);
 	magic->rshift = 64 - popcount64(magic->premask);
 	while (true) {
@@ -130,6 +121,7 @@ magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table)
 			break;
 		}
 	}
-	magic->start = find_start_of_attacks_table(attacks_table);
+	magic->start = 0;
 	magic->end = find_end_of_attacks_table(attacks_table);
+	free(attacks_table);
 }

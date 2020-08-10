@@ -16,21 +16,12 @@ struct Magic
 };
 
 const struct Magic MAGICS[SQUARES_COUNT];
-struct Magic MAGICS_BISHOP[SQUARES_COUNT];
+const struct Magic MAGICS_BISHOP[SQUARES_COUNT];
 
 void
 magic_find(struct Magic *magic, Square square, Bitboard *attacks_table);
 
 void
-magic_find_bishop(struct Magic *magic, Square square, Bitboard *attacks_table);
-
-struct BitboardSubsetIter
-{
-	Bitboard original;
-	Bitboard subset;
-};
-
-Bitboard *
-bb_subset_iter(struct BitboardSubsetIter *iter);
+magic_find_bishop(struct Magic *magic, Square square);
 
 #endif

@@ -16,6 +16,7 @@
 #include "protocols/protocols.h"
 #include "protocols/utils.h"
 #include "rating.h"
+#include "switches.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <ctype.h>
@@ -356,11 +357,22 @@ void
 uci_call_magics(struct Engine *engine)
 {
 	UNUSED(engine);
-	fprintf(engine->output, "const struct Magic MAGICS_ROOK[SQUARES_COUNT] = {\n");
+	char *token = strtok_whitespace(NULL);
+	const struct Magic *magics;
+	const char *identifier = NULL;
+	if (streq(token, "bishop")) {
+		identifier = "MAGICS_BISHOP";
+		magics = MAGICS;
+	} else if (streq(token, "rook")) {
+		identifier = "MAGICS_ROOK";
+		magics = MAGICS_BISHOP;
+	}
+	fprintf(engine->output, "const struct Magic %s[SQUARES_COUNT] = {\n", identifier);
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
-		struct Magic magic = MAGICS[sq];
+		struct Magic magic;
+		magic_find_bishop(&magic, sq);
 		fprintf(engine->output,
-		        "\t[0o%o] = { .premask = 0x%llxULL, .multiplier = 0x%llxULL, .rshift = %d, "
+		        "\t[0%o] = { .premask = 0x%llxULL, .multiplier = 0x%llxULL, .rshift = %d, "
 		        ".postmask = "
 		        "0x%llxULL, .start = %zu, .end = %zu },\n",
 		        sq,

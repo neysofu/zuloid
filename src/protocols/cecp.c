@@ -134,18 +134,21 @@ cecp_call_easy(struct Engine *engine)
 void
 cecp_call_ratings(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
 void
 cecp_call_pause(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
 void
 cecp_call_resume(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
@@ -161,16 +164,20 @@ cecp_call_usermove(struct Engine *engine)
 void
 cecp_call_question_mark(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO: find and print a move.
 }
 
 void
 cecp_call_time(struct Engine *engine)
-{}
+{
+	UNUSED(engine);
+}
 
 void
 cecp_call_otim(struct Engine *engine)
 {
+	UNUSED(engine);
 	char *token = strtok_whitespace(NULL);
 	float time_in_secs = (float)(atoi(token)) / 100.0;
 }
@@ -186,6 +193,7 @@ cecp_call_sd(struct Engine *engine)
 void
 cecp_call_nps(struct Engine *engine)
 {
+	UNUSED(engine);
 	char *token = strtok_whitespace(NULL);
 	int quantity = atoi(token);
 	// TODO
@@ -207,18 +215,21 @@ cecp_call_analyze(struct Engine *engine)
 void
 cecp_call_cores(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
 void
 cecp_call_exclude(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
 void
 cecp_call_include(struct Engine *engine)
 {
+	UNUSED(engine);
 	// TODO
 }
 
@@ -285,7 +296,7 @@ protocol_cecp(struct Engine *engine, const char *s_const)
 		struct Move move;
 		string_to_move(token, &move);
 		position_do_move_and_flip(&engine->board, &move);
-	} else if (token) {
+	} else {
 		display_err_invalid_command(engine->output);
 	}
 	free(s);
