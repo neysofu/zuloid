@@ -28,7 +28,7 @@ extern Bitboard ATTACK_ROOK[10240];
 void
 bb_init(void);
 void
-bb_print(Bitboard value);
+bb_pprint(Bitboard value);
 
 Bitboard
 bb_bishop(Square sq, Bitboard obstacles);

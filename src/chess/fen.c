@@ -136,7 +136,7 @@ position_init_from_fen(struct Board *pos, char *fen)
 }
 
 void
-position_print(FILE *stream, struct Board *position)
+position_pprint(FILE *stream, struct Board *position)
 {
 	fprintf(stream, "     A B C D E F G H\n");
 	fprintf(stream, "   +-----------------+\n");

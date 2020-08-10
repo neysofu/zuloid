@@ -221,7 +221,7 @@ uci_call_d(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		position_print(engine->output, &engine->board);
+		position_pprint(engine->output, &engine->board);
 	} else if (streq(token, "fen")) {
 		char *fen = fen_from_position(NULL, &engine->board, ' ');
 		fprintf(engine->output, "%s\n", fen);
@@ -353,6 +353,28 @@ uci_call_uci(struct Engine *engine)
 }
 
 void
+uci_call_magics(struct Engine *engine)
+{
+	UNUSED(engine);
+	fprintf(engine->output, "const struct Magic MAGICS_ROOK[SQUARES_COUNT] = {\n");
+	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
+		struct Magic magic = MAGICS[sq];
+		fprintf(engine->output,
+		        "\t[0o%o] = { .premask = 0x%llxULL, .multiplier = 0x%llxULL, .rshift = %d, "
+		        ".postmask = "
+		        "0x%llxULL, .start = %zu, .end = %zu },\n",
+		        sq,
+		        magic.premask,
+		        magic.multiplier,
+		        magic.rshift,
+		        magic.postmask,
+		        magic.start,
+		        magic.end);
+	}
+	fprintf(engine->output, "};\n");
+}
+
+void
 uci_call_ucinewgame(struct Engine *engine)
 {
 	UNUSED(engine);
@@ -390,6 +412,7 @@ const struct Command UCI_COMMANDS[] = {
 	{ "%eval", uci_call_eval },
 	{ "%islegal", uci_call_islegal },
 	{ "%lm", uci_call_legalmoves },
+	{ "%magics", uci_call_magics },
 	{ "%plm", uci_call_pseudolegalmoves },
 	{ "d", uci_call_d },
 	{ "debug", uci_call_debug },

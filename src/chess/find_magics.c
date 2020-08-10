@@ -11,8 +11,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Magic MAGICS[SQUARES_COUNT] = { 0 };
-
 Bitboard
 bb_sparse_random(void)
 {

@@ -33,7 +33,8 @@ move_to_string(struct Move mv, char *buf)
 }
 
 bool
-string_represents_coordinate_notation_move(const char *str) {
+string_represents_coordinate_notation_move(const char *str)
+{
 	size_t len = strlen(str);
 	bool is_castling = streq(str, "O-O") || streq(str, "O-O-O");
 	bool is_normal_move = (len > 3) && isdigit(str[1]);

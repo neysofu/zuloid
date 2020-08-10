@@ -15,7 +15,7 @@ struct Magic
 	size_t end;
 };
 
-struct Magic MAGICS[SQUARES_COUNT];
+const struct Magic MAGICS[SQUARES_COUNT];
 struct Magic MAGICS_BISHOP[SQUARES_COUNT];
 
 void

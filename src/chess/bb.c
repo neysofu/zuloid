@@ -63,7 +63,7 @@ Bitboard BB_MAGICS_ROOK[SQUARES_COUNT] = { 0 };
 Bitboard BB_MAGICS_BISHOP[SQUARES_COUNT] = { 0 };
 
 void
-bb_print(Bitboard bb)
+bb_pprint(Bitboard bb)
 {
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; file <= FILE_MAX; file++) {
@@ -154,11 +154,24 @@ bb_init_bishop(void)
 }
 
 void
+init_rook_attack_table(Square sq, const struct Magic *magic, Bitboard attacks_table[]) {
+	struct BitboardSubsetIter subset_iter = {
+		.original = magic->premask,
+		.subset = 0,
+	};
+	do {
+		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
+		Bitboard attacks = bb_rook(sq, subset_iter.subset);
+		attacks_table[i] = attacks;
+	} while (bb_subset_iter(&subset_iter));
+}
+
+void
 bb_init_rook(void)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		magic_find(MAGICS + sq, sq, BB_ATTACKS_ROOK + offset);
+		init_rook_attack_table(sq, MAGICS + sq, BB_ATTACKS_ROOK + offset);
 		BB_OFFSETS_ROOK[sq] = offset;
 		BB_MASK_ROOK[sq] = MAGICS[sq].premask;
 		BB_SHIFTS_ROOK[sq] = MAGICS[sq].rshift;
