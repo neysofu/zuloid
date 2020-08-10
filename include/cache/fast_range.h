@@ -1,5 +1,5 @@
-#ifndef ZORRO_CACHE_FAST_RANGE_H
-#define ZORRO_CACHE_FAST_RANGE_H
+#ifndef ZULOID_CACHE_FAST_RANGE_H
+#define ZULOID_CACHE_FAST_RANGE_H
 
 #include <stdint.h>
 #include <stdlib.h>

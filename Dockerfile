@@ -4,7 +4,7 @@ RUN apt-get update && \
     apt-get -y install cmake make clang gcc
 
 # https://stackoverflow.com/questions/62780558/
-WORKDIR /zorro
+WORKDIR /zuloid
 
 COPY . .
  
@@ -13,7 +13,7 @@ RUN rm -rf build/ && \
     cd build/ && \
     cmake -DCMAKE_BUILD_TYPE=Release .. && \
     make && \
-    strip zorro && \
-    ./test_zorro
+    strip zuloid && \
+    ./test_zuloid
 
-ENTRYPOINT [ "build/zorro" ]
+ENTRYPOINT [ "build/zuloid" ]

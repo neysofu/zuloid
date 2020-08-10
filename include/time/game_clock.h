@@ -1,5 +1,5 @@
-#ifndef ZORRO_TIME_GAME_CLOCK_H
-#define ZORRO_TIME_GAME_CLOCK_H
+#ifndef ZULOID_TIME_GAME_CLOCK_H
+#define ZULOID_TIME_GAME_CLOCK_H
 
 #include "time/time_control.h"
 #include <plibsys.h>

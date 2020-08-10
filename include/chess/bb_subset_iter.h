@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_BB_SUBSET_ITER_H
-#define ZORRO_CHESS_BB_SUBSET_ITER_H
+#ifndef ZULOID_CHESS_BB_SUBSET_ITER_H
+#define ZULOID_CHESS_BB_SUBSET_ITER_H
 
 #include "chess/coordinates.h"
 

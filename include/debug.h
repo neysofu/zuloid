@@ -1,5 +1,5 @@
-#ifndef ZORRO_DEBUG_H
-#define ZORRO_DEBUG_H
+#ifndef ZULOID_DEBUG_H
+#define ZULOID_DEBUG_H
 
 #include <stdarg.h>
 #include <stdio.h>

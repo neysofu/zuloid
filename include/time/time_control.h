@@ -1,5 +1,5 @@
-#ifndef ZORRO_TIME_TIME_CONTROL_H
-#define ZORRO_TIME_TIME_CONTROL_H
+#ifndef ZULOID_TIME_TIME_CONTROL_H
+#define ZULOID_TIME_TIME_CONTROL_H
 
 #include <stdint.h>
 

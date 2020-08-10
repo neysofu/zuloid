@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_FIND_MAGICS_H
-#define ZORRO_CHESS_FIND_MAGICS_H
+#ifndef ZULOID_CHESS_FIND_MAGICS_H
+#define ZULOID_CHESS_FIND_MAGICS_H
 
 #include "chess/coordinates.h"
 #include <stdint.h>

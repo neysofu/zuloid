@@ -11,7 +11,7 @@ main(void)
 	init_subsystems();
 	// The number sign ensures minimal possibility of accidental evaluation by
 	// the client.
-	printf("# Zorro %s (%s)\n", ZORRO_VERSION_VERBOSE, ZORRO_BUILD_DATE);
+	printf("# Zuloid %s (%s)\n", ZULOID_VERSION_VERBOSE, ZULOID_BUILD_DATE);
 	printf("# Copyright (c) 2018-2020 Filippo Costa\n");
 	printf("# Process ID: %d\n", p_process_get_current_pid());
 	struct Engine *engine = engine_new();

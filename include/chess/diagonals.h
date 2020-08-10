@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_DIAGONALS_H
-#define ZORRO_CHESS_DIAGONALS_H
+#ifndef ZULOID_CHESS_DIAGONALS_H
+#define ZULOID_CHESS_DIAGONALS_H
 
 #include "chess/coordinates.h"
 

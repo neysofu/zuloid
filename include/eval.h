@@ -1,12 +1,12 @@
-#ifndef ZORRO_EVAL_H
-#define ZORRO_EVAL_H
+#ifndef ZULOID_EVAL_H
+#define ZULOID_EVAL_H
 
 #include "chess/move.h"
 #include "chess/position.h"
 #include <stdint.h>
 #include <stdlib.h>
 
-/* The evaluation report that Zorro generates after it's done searching. */
+/* The evaluation report that Zuloid generates after it's done searching. */
 struct Eval
 {
 	float game_phase_indicator;

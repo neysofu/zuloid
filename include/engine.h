@@ -1,5 +1,5 @@
-#ifndef ZORRO_ENGINE_H
-#define ZORRO_ENGINE_H
+#ifndef ZULOID_ENGINE_H
+#define ZULOID_ENGINE_H
 
 #include "cache/cache.h"
 #include "chess/position.h"

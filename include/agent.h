@@ -1,5 +1,5 @@
-#ifndef ZORRO_AGENT_H
-#define ZORRO_AGENT_H
+#ifndef ZULOID_AGENT_H
+#define ZULOID_AGENT_H
 
 struct Agent;
 

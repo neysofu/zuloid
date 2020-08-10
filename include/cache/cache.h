@@ -1,5 +1,5 @@
-#ifndef ZORRO_CACHE_CACHE_H
-#define ZORRO_CACHE_CACHE_H
+#ifndef ZULOID_CACHE_CACHE_H
+#define ZULOID_CACHE_CACHE_H
 
 #include "chess/position.h"
 #include <stdbool.h>

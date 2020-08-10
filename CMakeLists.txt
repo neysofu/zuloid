@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.4)
 set(CMAKE_POLICY_DEFAULT_CMP0048 NEW)
 set(CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
-project(ZORRO VERSION 1.7.0 LANGUAGES C)
+project(ZULOID VERSION 1.7.0 LANGUAGES C)
 
 set(CMAKE_C_FLAGS " \
    ${CMAKE_C_FLAGS} \
@@ -61,33 +61,33 @@ set_property(TARGET munit PROPERTY C_STANDARD 99)
 
 set_target_properties(BASE64 cjson MT64 plibsys XXHASH munit PROPERTIES COMPILE_FLAGS "-w")
 
-# ZORRO_LIB
+# ZULOID_LIB
 file(GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
 list(REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
-add_library(ZORRO_LIB STATIC "${SRC_FILES}")
-target_include_directories(ZORRO_LIB PUBLIC "${INCLUDE_DIR}")
-target_include_directories(ZORRO_LIB SYSTEM PUBLIC "${LIB_DIR}")
-target_link_libraries(ZORRO_LIB BASE64 cjson MT64 plibsys XXHASH)
-target_compile_definitions(ZORRO_LIB PRIVATE
+add_library(ZULOID_LIB STATIC "${SRC_FILES}")
+target_include_directories(ZULOID_LIB PUBLIC "${INCLUDE_DIR}")
+target_include_directories(ZULOID_LIB SYSTEM PUBLIC "${LIB_DIR}")
+target_link_libraries(ZULOID_LIB BASE64 cjson MT64 plibsys XXHASH)
+target_compile_definitions(ZULOID_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 
-# Zorro
-add_executable(zorro "${SRC_DIR}/main.c")
-target_link_libraries(zorro ZORRO_LIB)
+# Zuloid
+add_executable(zuloid "${SRC_DIR}/main.c")
+target_link_libraries(zuloid ZULOID_LIB)
 
 # Tests
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
-add_executable(test_zorro "${TEST_FILES}")
-target_include_directories(ZORRO_LIB SYSTEM PRIVATE "${LIB_DIR}")
-target_link_libraries(test_zorro ZORRO_LIB munit)
-target_compile_definitions(test_zorro PRIVATE
+add_executable(test_zuloid "${TEST_FILES}")
+target_include_directories(ZULOID_LIB SYSTEM PRIVATE "${LIB_DIR}")
+target_link_libraries(test_zuloid ZULOID_LIB munit)
+target_compile_definitions(test_zuloid PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources/\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
-add_test(NAME ZORRO COMMAND test_zorro)
+add_test(NAME ZULOID COMMAND test_zuloid)
 
 add_custom_target(run
-    COMMAND zorro
-    DEPENDS zorro
+    COMMAND zuloid
+    DEPENDS zuloid
     WORKING_DIRECTORY ${CMAKE_PROJECT_DIR}
 )

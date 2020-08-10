@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_MOVE_H
-#define ZORRO_CHESS_MOVE_H
+#ifndef ZULOID_CHESS_MOVE_H
+#define ZULOID_CHESS_MOVE_H
 
 #include "chess/coordinates.h"
 #include "chess/pieces.h"

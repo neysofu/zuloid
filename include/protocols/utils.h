@@ -1,5 +1,5 @@
-#ifndef ZORRO_PROTOCOLS_UTILS_H
-#define ZORRO_PROTOCOLS_UTILS_H
+#ifndef ZULOID_PROTOCOLS_UTILS_H
+#define ZULOID_PROTOCOLS_UTILS_H
 
 #include "engine.h"
 #include <stdlib.h>

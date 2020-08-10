@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_TERMINATION_H
-#define ZORRO_CHESS_TERMINATION_H
+#ifndef ZULOID_CHESS_TERMINATION_H
+#define ZULOID_CHESS_TERMINATION_H
 
 /* See https://en.wikipedia.org/wiki/Rules_of_chess#End_of_the_game. */
 enum Termination

@@ -1,5 +1,5 @@
-#ifndef ZORRO_UTILS_H
-#define ZORRO_UTILS_H
+#ifndef ZULOID_UTILS_H
+#define ZULOID_UTILS_H
 
 #include <stdint.h>
 #include <stdio.h>

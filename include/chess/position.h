@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_POSITION_H
-#define ZORRO_CHESS_POSITION_H
+#ifndef ZULOID_CHESS_POSITION_H
+#define ZULOID_CHESS_POSITION_H
 
 #include "chess/color.h"
 #include "chess/coordinates.h"

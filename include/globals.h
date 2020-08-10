@@ -1,5 +1,5 @@
-#ifndef ZORRO_GLOBALS_H
-#define ZORRO_GLOBALS_H
+#ifndef ZULOID_GLOBALS_H
+#define ZULOID_GLOBALS_H
 
 #include <stdlib.h>
 
@@ -7,14 +7,14 @@
  * details. */
 extern const int ADDRESS_SIZE;
 
-extern const char *const ZORRO_COPYRIGHT;
-extern const char *const ZORRO_LICENSE;
+extern const char *const ZULOID_COPYRIGHT;
+extern const char *const ZULOID_LICENSE;
 /* Compiler build timestamp in YYYY-MM-DD format. */
-extern const char *const ZORRO_BUILD_DATE;
-extern const char *const ZORRO_URL;
-extern const char *const ZORRO_BACKEND_NAME;
-extern const char *const ZORRO_VERSION;
-extern const char *const ZORRO_VERSION_VERBOSE;
+extern const char *const ZULOID_BUILD_DATE;
+extern const char *const ZULOID_URL;
+extern const char *const ZULOID_BACKEND_NAME;
+extern const char *const ZULOID_VERSION;
+extern const char *const ZULOID_VERSION_VERBOSE;
 
 #define MAX_DEPTH 20
 

@@ -1,5 +1,5 @@
-#ifndef ZORRO_CHESS_FEN_H
-#define ZORRO_CHESS_FEN_H
+#ifndef ZULOID_CHESS_FEN_H
+#define ZULOID_CHESS_FEN_H
 
 #include "chess/position.h"
 #include <stdio.h>
