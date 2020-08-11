@@ -342,8 +342,7 @@ uci_call_uci(struct Engine *engine)
 	engine->protocol = protocol_uci;
 	fprintf(engine->output,
 	        "id name Zuloid %s\n"
-	        "id author Filippo Costa\n"
-	        "id elo %u\n",
+	        "id author Filippo Costa\n",
 	        ZULOID_VERSION,
 	        CCRL_4015_RATING);
 	for (size_t i = 0; i < ARRAY_SIZE(UCI_OPTIONS); i++) {
