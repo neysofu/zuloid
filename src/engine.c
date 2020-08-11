@@ -46,7 +46,7 @@ struct Engine *
 engine_new_tmp(void)
 {
 	struct Engine *engine = engine_new();
-	char template[] = "/tmp/fileXXXXXX";
+	char template[] = "/tmp/zuloid-XXXXXX";
 	int fd = mkstemp(template);
 	if (fd == -1) {
 		puts("bad");
