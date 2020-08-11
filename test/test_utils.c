@@ -5,7 +5,7 @@
 void
 test_utils(void)
 {
-	FILE *file = fopen(TEST_RESOURCES "lines/empty.txt", "r");
+	FILE *file = fopen(TEST_RESOURCES "/lines/empty.txt", "r");
 	{
 		struct Lines *lines = file_line_by_line(file);
 		munit_assert_uint(lines_count(lines), ==, 0);

@@ -28,9 +28,9 @@ test_protocol_cecp_ping(struct Engine *engine)
 	{
 		struct Lines *lines = file_line_by_line(engine->output);
 		munit_assert_string_equal(lines_nth(lines, 0), "pong 0");
-		munit_assert_string_equal(lines_nth(lines, 0), "pong -1");
-		munit_assert_string_equal(lines_nth(lines, 0), "pong 128");
-		munit_assert_string_equal(lines_nth(lines, 0), "pong -1025");
+		munit_assert_string_equal(lines_nth(lines, 1), "pong -1");
+		munit_assert_string_equal(lines_nth(lines, 2), "pong 128");
+		munit_assert_string_equal(lines_nth(lines, 3), "pong -1025");
 		lines_delete(lines);
 	}
 }

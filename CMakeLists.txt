@@ -43,7 +43,7 @@ add_library(BASE64 "${LIB_DIR}/base64/base64.c")
 set_property(TARGET BASE64 PROPERTY C_STANDARD 99)
 # cJSON
 set(ENABLE_CJSON_TEST OFF CACHE BOOL "" FORCE)
-add_subdirectory("${LIB_DIR}/cJSON/")
+add_subdirectory("${LIB_DIR}/cJSON")
 # Mersenne twister
 add_library(MT64 "${LIB_DIR}/mt-64/mt19937-64.c")
 set_property(TARGET MT64 PROPERTY C_STANDARD 99)
@@ -51,7 +51,7 @@ set_property(TARGET MT64 PROPERTY C_STANDARD 99)
 set(PLIBSYS_BUILD_DOC OFF CACHE BOOL "" FORCE)
 set(PLIBSYS_TESTS OFF CACHE BOOL "" FORCE)
 set(PLIBSYS_BUILD_STATIC OFF CACHE BOOL "" FORCE)
-add_subdirectory("${LIB_DIR}/plibsys/")
+add_subdirectory("${LIB_DIR}/plibsys")
 # xxHash
 add_library(XXHASH "${LIB_DIR}/xxHash/xxhash.c")
 set_property(TARGET XXHASH PROPERTY C_STANDARD 99)
@@ -79,10 +79,11 @@ target_link_libraries(zuloid ZULOID_LIB)
 # Tests
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable(test_zuloid "${TEST_FILES}")
+target_include_directories(ZULOID_LIB PUBLIC "${TEST_DIR}")
 target_include_directories(ZULOID_LIB SYSTEM PRIVATE "${LIB_DIR}")
 target_link_libraries(test_zuloid ZULOID_LIB munit)
 target_compile_definitions(test_zuloid PRIVATE
-    TEST_RESOURCES=\"${TEST_DIR}/resources/\"
+    TEST_RESOURCES=\"${TEST_DIR}/resources\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
 add_test(NAME ZULOID COMMAND test_zuloid)
 
