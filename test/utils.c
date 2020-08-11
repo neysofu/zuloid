@@ -75,15 +75,9 @@ file_line_by_line(FILE *stream)
 }
 
 struct Engine *
-engine_new_tmp(const char *dir) {
+engine_new_tmp(const char *filename) {
 	struct Engine *engine = engine_new();
-	char *path = malloc(strlen(dir) + 16);
-	*path = '\0';
-	char *postfix = "/filename";
-	strcpy(path, dir);
-	strcat(path, postfix);
-	exit_if_null(path);
-	engine->output = fopen(path, "w+");
+	engine->output = fopen(filename, "w+");
 	if (!engine->output) {
 		exit(1);
 	}

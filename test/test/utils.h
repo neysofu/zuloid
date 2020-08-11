@@ -19,6 +19,6 @@ struct Lines *
 file_line_by_line(FILE *stream);
 
 struct Engine *
-engine_new_tmp(const char *dir);
+engine_new_tmp(const char *filename);
 
 #endif

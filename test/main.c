@@ -22,7 +22,7 @@
 #define CALL_TEST_WITH_TMP_ENGINE(f) \
 	do { \
 		test_pre(STRINGIFY(f)); \
-		struct Engine *engine = engine_new_tmp(TEST_TMP_DIR); \
+		struct Engine *engine = engine_new_tmp(TEST_TMP_DIR "/tmp"); \
 		(f)(engine); \
 		test_post(); \
 		engine_delete(engine); \
