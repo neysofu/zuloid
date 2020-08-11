@@ -6,7 +6,7 @@
 
 enum
 {
-	FEN_SIZE = 128
+	FEN_SIZE = 110
 };
 
 /*  */

@@ -223,7 +223,7 @@ uci_call_d(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		position_pprint(engine->output, &engine->board);
+		position_pprint(&engine->board, engine->output);
 	} else if (streq(token, "fen")) {
 		char *fen = fen_from_position(NULL, &engine->board, ' ');
 		fprintf(engine->output, "%s\n", fen);
@@ -343,8 +343,7 @@ uci_call_uci(struct Engine *engine)
 	fprintf(engine->output,
 	        "id name Zuloid %s\n"
 	        "id author Filippo Costa\n",
-	        ZULOID_VERSION,
-	        CCRL_4015_RATING);
+	        ZULOID_VERSION);
 	for (size_t i = 0; i < ARRAY_SIZE(UCI_OPTIONS); i++) {
 		fputs(UCI_OPTIONS[i], engine->output);
 		putc('\n', engine->output);

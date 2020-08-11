@@ -127,7 +127,7 @@ position_empty(struct Board *position)
 }
 
 void
-position_pprint(FILE *stream, struct Board *position)
+position_pprint(struct Board *position, FILE *stream)
 {
 	fprintf(stream, "     A B C D E F G H\n");
 	fprintf(stream, "   +-----------------+\n");
