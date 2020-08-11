@@ -1,6 +1,14 @@
 #include "chess/bb_subset_iter.h"
 #include <stdlib.h>
 
+struct BitboardSubsetIter
+bb_subset_iter_from_mask(Bitboard mask) {
+	return (struct BitboardSubsetIter) {
+		.original = mask,
+		.subset = 0,
+	};
+}
+
 Bitboard *
 bb_subset_iter(struct BitboardSubsetIter *iter)
 {

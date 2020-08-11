@@ -9,6 +9,9 @@ struct BitboardSubsetIter
 	Bitboard subset;
 };
 
+struct BitboardSubsetIter
+bb_subset_iter_from_mask(Bitboard mask);
+
 Bitboard *
 bb_subset_iter(struct BitboardSubsetIter *iter);
 

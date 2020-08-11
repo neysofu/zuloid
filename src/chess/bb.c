@@ -142,10 +142,8 @@ init_attack_table(Square sq,
                   Bitboard attacks_table[],
                   Bitboard (*slider)(Square, Bitboard))
 {
-	struct BitboardSubsetIter subset_iter = {
-		.original = magic->premask,
-		.subset = 0,
-	};
+
+	struct BitboardSubsetIter subset_iter = bb_subset_iter_from_mask(magic->premask);
 	do {
 		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
 		attacks_table[i] = slider(sq, subset_iter.subset);

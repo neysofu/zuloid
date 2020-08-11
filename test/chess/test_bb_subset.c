@@ -28,10 +28,7 @@ test_magic_generation(void)
 void
 test_bb_subset(void)
 {
-	struct BitboardSubsetIter iter = {
-		.original = 0x808080830080000ull,
-		.subset = 0,
-	};
+	struct BitboardSubsetIter iter = bb_subset_iter_from_mask(0x808080830080000ull);
 	size_t i = 0;
 	while (bb_subset_iter(&iter)) {
 		i++;

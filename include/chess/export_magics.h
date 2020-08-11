@@ -5,6 +5,6 @@
 #include <stdio.h>
 
 int
-magics_export(FILE *stream, const struct Magic *magics, const char *identifier);
+magics_export(const struct Magic *magics, const char *identifier, FILE *stream);
 
 #endif

@@ -373,7 +373,7 @@ uci_call_magics(struct Engine *engine)
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		finder(magics + sq, sq);
 	}
-	magics_export(engine->output, magics, identifier);
+	magics_export(magics, identifier, engine->output);
 }
 
 void
