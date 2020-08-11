@@ -66,7 +66,7 @@ struct Engine *
 engine_new(void);
 
 struct Engine *
-engine_new_tmp(void);
+engine_new_tmp(const char *dir);
 
 void
 engine_call(struct Engine *engine, char *cmd);

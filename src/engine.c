@@ -43,16 +43,18 @@ engine_new(void)
 }
 
 struct Engine *
-engine_new_tmp(void)
-{
+engine_new_tmp(const char *dir) {
 	struct Engine *engine = engine_new();
-	char template[] = "/tmp/zuloid-XXXXXX";
-	int fd = mkstemp(template);
-	if (fd == -1) {
-		puts("bad");
+	char *path = malloc(strlen(dir) + 16);
+	*path = '\0';
+	char *postfix = "/filename";
+	strcpy(path, dir);
+	strcat(path, postfix);
+	exit_if_null(path);
+	engine->output = fopen(path, "w+");
+	if (!engine->output) {
 		exit(1);
 	}
-	engine->output = fdopen(fd, "w+");
 	return engine;
 }
 

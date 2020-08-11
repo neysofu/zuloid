@@ -22,7 +22,7 @@
 #define CALL_TEST_WITH_TMP_ENGINE(f) \
 	do { \
 		test_pre(STRINGIFY(f)); \
-		struct Engine *engine = engine_new_tmp(); \
+		struct Engine *engine = engine_new_tmp(TEST_TMP_DIR); \
 		(f)(engine); \
 		test_post(); \
 		engine_delete(engine); \
@@ -114,7 +114,6 @@ main(void)
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_uci);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_unknown_cmd);
 	CALL_TEST_WITH_TMP_ENGINE(test_perft_results);
-	puts("");
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
 }

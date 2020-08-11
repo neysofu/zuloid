@@ -33,7 +33,9 @@ set(INCLUDE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/include")
 set(LIB_DIR "${CMAKE_CURRENT_SOURCE_DIR}/lib")
 set(SRC_DIR "${CMAKE_CURRENT_SOURCE_DIR}/src")
 set(TEST_DIR "${CMAKE_CURRENT_SOURCE_DIR}/test")
+set(TEST_TMP_DIR "${CMAKE_CURRENT_BINARY_DIR}/test-tmp")
 
+file(MAKE_DIRECTORY "${TEST_TMP_DIR}")
 string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 
 # Dependencies:
@@ -84,7 +86,8 @@ target_include_directories(ZULOID_LIB SYSTEM PRIVATE "${LIB_DIR}")
 target_link_libraries(test_zuloid ZULOID_LIB munit)
 target_compile_definitions(test_zuloid PRIVATE
     TEST_RESOURCES=\"${TEST_DIR}/resources\"
-    PROJECT_VERSION=\"${PROJECT_VERSION}\")
+    PROJECT_VERSION=\"${PROJECT_VERSION}\"
+    TEST_TMP_DIR=\"${TEST_TMP_DIR}\")
 add_test(NAME ZULOID COMMAND test_zuloid)
 
 add_custom_target(run
