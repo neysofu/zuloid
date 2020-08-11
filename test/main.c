@@ -113,7 +113,7 @@ main(void)
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_quit);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_uci);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_unknown_cmd);
-	//CALL_TEST_WITH_TMP_ENGINE(test_perft_results);
+	CALL_TEST_WITH_TMP_ENGINE(test_perft_results);
 	puts("");
 	puts("All tests passed.");
 	return EXIT_SUCCESS;
