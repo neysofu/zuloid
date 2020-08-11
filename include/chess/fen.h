@@ -19,8 +19,4 @@ position_init_from_fen_fields(struct Board *pos, char **fieldsptr);
 int
 position_init_from_fen(struct Board *pos, char *fen);
 
-// Pretty printing to FILE stream for debug purposes.
-void
-position_pprint(FILE *stream, struct Board *pos);
-
 #endif

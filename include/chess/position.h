@@ -6,6 +6,7 @@
 #include "chess/pieces.h"
 #include <stdbool.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 enum
 {
@@ -54,6 +55,10 @@ position_piece_at_square(const struct Board *position, Square square);
 
 void
 position_empty(struct Board *position);
+
+// Pretty printing to FILE stream for debug purposes.
+void
+position_pprint(FILE *stream, struct Board *pos);
 
 extern const struct Board POSITION_INIT;
 
