@@ -156,7 +156,7 @@ uci_call_pseudolegalmoves(struct Engine *engine)
 }
 
 void
-uci_call_export_magics(struct Engine *engine)
+uci_call_magics_export(struct Engine *engine)
 {
 	char *filename = strtok_whitespace(NULL);
 	if (!filename) {
@@ -373,7 +373,7 @@ uci_call_magics(struct Engine *engine)
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		finder(magics + sq, sq);
 	}
-	export_magics(engine->output, magics, identifier);
+	magics_export(engine->output, magics, identifier);
 }
 
 void
@@ -421,7 +421,7 @@ const struct Command UCI_COMMANDS[] = {
 	{ "djbhash", uci_call_djbhash },
 	{ "go", uci_call_go },
 	{ "isready", uci_call_isready },
-	{ "magics", uci_call_export_magics },
+	{ "magics", uci_call_magics_export },
 	{ "position", uci_call_position },
 	{ "quit", uci_call_quit },
 	{ "setoption", uci_call_setoption },

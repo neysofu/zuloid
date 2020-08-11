@@ -12,7 +12,7 @@
 #define HANDLE_ERR(err) do { if (err < 0) { return -1; } } while (0)
 
 int
-export_magics(FILE *stream, const struct Magic *magics, const char *identifier)
+magics_export(FILE *stream, const struct Magic *magics, const char *identifier)
 {
 	int err;
 	err = fprintf(stream,
