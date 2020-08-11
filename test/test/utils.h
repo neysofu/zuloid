@@ -2,6 +2,7 @@
 #define ZULOID_TEST_UTILS_H
 
 #include <stdio.h>
+#include "engine.h"
 
 struct Lines;
 
@@ -16,5 +17,8 @@ lines_delete(struct Lines *lines);
 
 struct Lines *
 file_line_by_line(FILE *stream);
+
+struct Engine *
+engine_new_tmp(const char *dir);
 
 #endif

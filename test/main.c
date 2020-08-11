@@ -1,5 +1,5 @@
 #include "chess/diagonals.h"
-#include "engine.h"
+#include "test/utils.h"
 #include <stdarg.h>
 #include <stdio.h>
 

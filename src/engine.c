@@ -42,22 +42,6 @@ engine_new(void)
 	return engine;
 }
 
-struct Engine *
-engine_new_tmp(const char *dir) {
-	struct Engine *engine = engine_new();
-	char *path = malloc(strlen(dir) + 16);
-	*path = '\0';
-	char *postfix = "/filename";
-	strcpy(path, dir);
-	strcat(path, postfix);
-	exit_if_null(path);
-	engine->output = fopen(path, "w+");
-	if (!engine->output) {
-		exit(1);
-	}
-	return engine;
-}
-
 void
 engine_delete(struct Engine *engine)
 {

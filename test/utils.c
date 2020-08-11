@@ -1,5 +1,6 @@
 #include "test/utils.h"
 #include "utils.h"
+#include "engine.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -71,4 +72,20 @@ file_line_by_line(FILE *stream)
 	}
 	fseek(stream, position, SEEK_SET);
 	return lines;
+}
+
+struct Engine *
+engine_new_tmp(const char *dir) {
+	struct Engine *engine = engine_new();
+	char *path = malloc(strlen(dir) + 16);
+	*path = '\0';
+	char *postfix = "/filename";
+	strcpy(path, dir);
+	strcat(path, postfix);
+	exit_if_null(path);
+	engine->output = fopen(path, "w+");
+	if (!engine->output) {
+		exit(1);
+	}
+	return engine;
 }
