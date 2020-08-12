@@ -1,7 +1,6 @@
-#include "chess/coordinates.h"
-#include "chess/find_magics.h"
+#include "chess/generated/magics_rook.h"
 
-const struct Magic MAGICS[SQUARES_COUNT] = {
+const struct Magic MAGICS_ROOK[SQUARES_COUNT] = {
 	[00] = { .premask = 0x101010101017eULL,
 	         .multiplier = 0x4880053040002280ULL,
 	         .rshift = 52,

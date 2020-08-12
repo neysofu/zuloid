@@ -1,10 +1,7 @@
 #include "chess/bb.h"
-#include "chess/find_magics.h"
-#include "debug.h"
-#include "mt-64/mt-64.h"
-#include "utils.h"
-#include <assert.h>
-#include <libpopcnt/libpopcnt.h>
+#include "chess/magic.h"
+#include "chess/generated/magics_bishop.h"
+#include "chess/generated/magics_rook.h"
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -89,18 +86,6 @@ bb_init_rook(const struct Magic *magics)
 	}
 }
 
-void
-magic_init(void)
-{
-	static bool done = false;
-	if (done) {
-		return;
-	}
-	done = true;
-	bb_init_rook(MAGICS);
-	bb_init_bishop(MAGICS_BISHOP);
-}
-
 int
 magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 {
@@ -131,4 +116,16 @@ magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 	fprintf(stream, "};\n");
 	HANDLE_ERR(err);
 	return 0;
+}
+
+void
+magic_init(void)
+{
+	static bool done = false;
+	if (done) {
+		return;
+	}
+	done = true;
+	bb_init_rook(MAGICS_ROOK);
+	bb_init_bishop(MAGICS_BISHOP);
 }

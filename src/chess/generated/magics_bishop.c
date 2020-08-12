@@ -1,5 +1,4 @@
-#include "chess/coordinates.h"
-#include "chess/find_magics.h"
+#include "chess/generated/magics_bishop.h"
 
 const struct Magic MAGICS_BISHOP[SQUARES_COUNT] = {
 	[00] = { .premask = 0x40201008040200ULL,
