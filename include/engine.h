@@ -66,6 +66,9 @@ struct Engine *
 engine_new(void);
 
 void
+engine_init(struct Engine *engine);
+
+void
 engine_call(struct Engine *engine, char *cmd);
 
 void

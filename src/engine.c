@@ -25,6 +25,12 @@ struct Engine *
 engine_new(void)
 {
 	struct Engine *engine = exit_if_null(malloc(sizeof(struct Engine)));
+	engine_init(engine);
+	return engine;
+}
+
+void
+engine_init(struct Engine *engine) {
 	*engine = (struct Engine){
 		.board = POSITION_INIT,
 		.time_controls = { NULL, NULL },
@@ -39,7 +45,6 @@ engine_new(void)
 		.selectivity = 0.5,
 		.status = STATUS_IDLE,
 	};
-	return engine;
 }
 
 void
