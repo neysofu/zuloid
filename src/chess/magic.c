@@ -114,8 +114,7 @@ magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 		              " .premask = 0x%" PRIx64 "ULL,"
 		              " .multiplier = 0x%" PRIx64 "ULL,"
 		              " .rshift = %d,"
-		              " .postmask = 0x%" PRIx64 "ULL,"
-		              " },\n",
+		              " .postmask = 0x%" PRIx64 "ULL },\n",
 		              sq,
 		              magic.premask,
 		              magic.multiplier,
