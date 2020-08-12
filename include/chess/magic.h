@@ -4,6 +4,7 @@
 #include "chess/coordinates.h"
 #include <stdint.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 struct Magic
 {
@@ -22,5 +23,8 @@ Bitboard
 bb_bishop_magic(Square sq, Bitboard obstacles);
 Bitboard
 bb_rook_magic(Square sq, Bitboard obstacles);
+
+int
+magics_export(const struct Magic *magics, const char *identifier, FILE *stream);
 
 #endif

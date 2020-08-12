@@ -8,6 +8,9 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <inttypes.h>
+
+#define HANDLE_ERR(err) do { if (err < 0) { return -1; } } while (0)
 
 Bitboard BB_ATTACKS_BISHOP[64 * 4096] = { 0 };
 Bitboard BB_ATTACKS_ROOK[64 * 4096] = { 0 };
@@ -98,3 +101,34 @@ magic_init(void)
 	bb_init_bishop();
 }
 
+int
+magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
+{
+	int err;
+	err = fprintf(stream,
+	        "#include \"chess/coordinates.h\"\n"
+	        "#include \"chess/find_magics.h\"\n"
+	        "\n"
+	        "const struct Magic %s[SQUARES_COUNT] = {\n",
+	        identifier);
+	HANDLE_ERR(err);
+	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
+		struct Magic magic = magics[sq];
+		err = fprintf(stream,
+		        "\t[0%o] = { .premask = 0x%" PRIx64 "ULL, .multiplier = 0x%" PRIx64
+		        "ULL, .rshift = %d, "
+		        ".postmask = "
+		        "0x%" PRIx64 "ULL, .start = %zu, .end = %zu },\n",
+		        sq,
+		        magic.premask,
+		        magic.multiplier,
+		        magic.rshift,
+		        magic.postmask,
+		        magic.start,
+		        magic.end);
+		HANDLE_ERR(err);
+	}
+	fprintf(stream, "};\n");
+	HANDLE_ERR(err);
+	return 0;
+}
