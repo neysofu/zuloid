@@ -1,8 +1,8 @@
 #ifndef ZULOID_TEST_UTILS_H
 #define ZULOID_TEST_UTILS_H
 
-#include <stdio.h>
 #include "engine.h"
+#include <stdio.h>
 
 struct Lines;
 

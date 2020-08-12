@@ -9,7 +9,8 @@
 #include <stdlib.h>
 
 Bitboard
-bb_next_subset(Bitboard mask, Bitboard previous_subset) {
+bb_next_subset(Bitboard mask, Bitboard previous_subset)
+{
 	// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
 	return (previous_subset - mask) & mask;
 }

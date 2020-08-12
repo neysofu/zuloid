@@ -1,6 +1,6 @@
 #include "test/utils.h"
-#include "utils.h"
 #include "engine.h"
+#include "utils.h"
 #include <stdlib.h>
 #include <string.h>
 
@@ -75,7 +75,8 @@ file_line_by_line(FILE *stream)
 }
 
 struct Engine *
-engine_new_tmp(const char *filename) {
+engine_new_tmp(const char *filename)
+{
 	struct Engine *engine = engine_new();
 	engine->output = fopen(filename, "w+");
 	if (!engine->output) {

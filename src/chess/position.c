@@ -146,8 +146,6 @@ position_pprint(struct Board *position, FILE *stream)
 	free(fen);
 }
 
-
-
 const struct Board POSITION_INIT = {
   .bb =
     {

@@ -1,6 +1,7 @@
 // Resources:
 //  - http://hgm.nubati.net/CECP.html
 
+#include "protocols/cecp.h"
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
@@ -11,7 +12,6 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
-#include "protocols/cecp.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "utils.h"
@@ -30,9 +30,9 @@ cecp_call_xboard(struct Engine *engine)
 }
 
 const char *CECP_FEATURES[] = {
-	"done=0",   "ping=1",    "playother=1", "debug=1",    "exclude=1",
-	"pause=1",  "memory=1",  "smp=1",       "usermove=1", "exclude=1",
-	"sigint=0", "sigterm=0", "setboard=1",  "reuse=0",
+	"done=0",    "ping=1",   "playother=1", "debug=1",    "exclude=1",
+	"nps=0",     "pause=1",  "memory=1",    "smp=1",      "usermove=1",
+	"exclude=1", "sigint=0", "sigterm=0",   "setboard=1", "reuse=0",
 };
 
 void
@@ -177,9 +177,9 @@ cecp_call_time(struct Engine *engine)
 void
 cecp_call_otim(struct Engine *engine)
 {
-	UNUSED(engine);
 	char *token = strtok_whitespace(NULL);
 	float time_in_secs = (float)(atoi(token)) / 100.0;
+	engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time_in_secs;
 }
 
 void
@@ -188,15 +188,6 @@ cecp_call_sd(struct Engine *engine)
 	char *token = strtok_whitespace(NULL);
 	int quantity = atoi(token);
 	engine->max_depth = quantity;
-}
-
-void
-cecp_call_nps(struct Engine *engine)
-{
-	UNUSED(engine);
-	char *token = strtok_whitespace(NULL);
-	int quantity = atoi(token);
-	// TODO
 }
 
 void
@@ -261,7 +252,6 @@ const struct Command CECP_COMMANDS[] = {
 	{ "memory", cecp_call_memory },
 	{ "new", cecp_call_new },
 	{ "nopost", cecp_call_nopost },
-	{ "nps", cecp_call_nps },
 	{ "otim", cecp_call_otim },
 	{ "pause", cecp_call_pause },
 	{ "ping", cecp_call_ping },

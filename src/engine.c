@@ -30,7 +30,8 @@ engine_new(void)
 }
 
 void
-engine_init(struct Engine *engine) {
+engine_init(struct Engine *engine)
+{
 	*engine = (struct Engine){
 		.board = POSITION_INIT,
 		.time_controls = { NULL, NULL },

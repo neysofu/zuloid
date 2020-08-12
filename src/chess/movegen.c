@@ -250,7 +250,8 @@ position_is_illegal(struct Board *pos)
 	struct Move moves[MAX_MOVES];
 	return gen_attacks_against_from(moves,
 	                                pos,
-	                                pos->bb[color_other(pos->side_to_move)] & pos->bb[PIECE_TYPE_KING],
+	                                pos->bb[color_other(pos->side_to_move)] &
+	                                  pos->bb[PIECE_TYPE_KING],
 	                                pos->side_to_move);
 }
 

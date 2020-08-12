@@ -3,18 +3,17 @@
 //  - https://www.chessprogramming.org/UCI
 //  - https://www.seungjaelee.com/projects/uci/
 
+#include "protocols/uci.h"
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
 #include "chess/fen.h"
-#include "chess/magic.h"
 #include "chess/magic.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
-#include "protocols/uci.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "switches.h"
