@@ -1,5 +1,4 @@
 #include "chess/bb.h"
-#include "chess/bb_subset_iter.h"
 #include "chess/find_magics.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"
@@ -50,11 +49,11 @@ init_attack_table(Square sq,
                   Bitboard (*slider)(Square, Bitboard))
 {
 
-	struct BitboardSubsetIter subset_iter = bb_subset_iter_from_mask(magic->premask);
+	Bitboard subset = 0;
 	do {
-		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
-		attacks_table[i] = slider(sq, subset_iter.subset);
-	} while (bb_subset_iter(&subset_iter));
+		size_t i = (subset * magic->multiplier) >> magic->rshift;
+		attacks_table[i] = slider(sq, subset);
+	} while ((subset = bb_next_subset(magic->premask, subset)));
 }
 
 void

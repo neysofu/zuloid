@@ -1,5 +1,4 @@
 #include "chess/bb.h"
-#include "chess/bb_subset_iter.h"
 #include "chess/find_magics.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"
@@ -9,6 +8,12 @@
 #include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
+
+Bitboard
+bb_next_subset(Bitboard mask, Bitboard previous_subset) {
+	// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
+	return (previous_subset - mask) & mask;
+}
 
 Bitboard BB_ATTACKS_BY_KNIGHT[SQUARES_COUNT] = { 0 };
 Bitboard BB_ATTACKS_BY_KING[SQUARES_COUNT] = { 0 };

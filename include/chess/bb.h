@@ -20,6 +20,9 @@
 extern Bitboard BB_ATTACKS_BY_KNIGHT[64];
 extern Bitboard BB_ATTACKS_BY_KING[64];
 
+Bitboard
+bb_next_subset(Bitboard mask, Bitboard previous_subset);
+
 void
 bb_init(void);
 void

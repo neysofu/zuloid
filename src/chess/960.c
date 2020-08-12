@@ -14,7 +14,13 @@
 #include <stdlib.h>
 #include <string.h>
 
-const struct Board POSITION_INIT_WITH_ONLY_PAWNS = {
+struct Chess960InitializationState
+{
+	File available_files[FILES_COUNT];
+	size_t i;
+};
+
+static const struct Board POSITION_INIT_WITH_ONLY_PAWNS = {
   .bb =
     {
       [COLOR_WHITE] = 0x0202020202020202,
@@ -32,7 +38,7 @@ const struct Board POSITION_INIT_WITH_ONLY_PAWNS = {
   .moves_count = 1,
 };
 
-void
+static void
 set_pieces_at_home_rank(struct Board *position, File file, enum PieceType ptype)
 {
 	char piece = piece_to_char((struct Piece){ .type = ptype, .color = COLOR_WHITE });
@@ -44,19 +50,13 @@ set_pieces_at_home_rank(struct Board *position, File file, enum PieceType ptype)
 	                             char_to_piece(tolower(piece)));
 }
 
-int
+static int
 files_compare(const void *f1, const void *f2)
 {
 	return *(File *)f1 - *(File *)f2;
 }
 
-struct Chess960InitializationState
-{
-	File available_files[FILES_COUNT];
-	size_t i;
-};
-
-void
+static void
 position_960_init_file(struct Board *position,
                        struct Chess960InitializationState *state,
                        int i,

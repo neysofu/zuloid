@@ -1,6 +1,5 @@
 #include "chess/bb.h"
 #include "chess/magic.h"
-#include "chess/bb_subset_iter.h"
 #include "chess/find_magics.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
@@ -29,10 +28,11 @@ test_magic_generation(void)
 void
 test_bb_subset(void)
 {
-	struct BitboardSubsetIter iter = bb_subset_iter_from_mask(0x808080830080000ull);
+	Bitboard mask = 0x808080830080000ull;
+	Bitboard subset = 0;
 	size_t i = 0;
-	while (bb_subset_iter(&iter)) {
+	while ((subset = bb_next_subset(mask, subset))) {
 		i++;
 	}
-	munit_assert_uint(i + 1, ==, 1ULL << popcount64(iter.original));
+	munit_assert_uint(i + 1, ==, 1ULL << popcount64(mask));
 }

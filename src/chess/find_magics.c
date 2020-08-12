@@ -1,6 +1,5 @@
 #include "chess/find_magics.h"
 #include "chess/bb.h"
-#include "chess/bb_subset_iter.h"
 #include "chess/diagonals.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"
@@ -63,17 +62,17 @@ verify_magic_candidate(const struct Magic *magic,
                        Bitboard buffer[],
                        Bitboard (*attacker)(Square, Bitboard))
 {
-	struct BitboardSubsetIter subset_iter = bb_subset_iter_from_mask(magic->premask);
+	Bitboard subset = 0;
 	do {
-		size_t i = (subset_iter.subset * magic->multiplier) >> magic->rshift;
+		size_t i = (subset * magic->multiplier) >> magic->rshift;
 		Bitboard *val = buffer + i;
-		Bitboard attacks = attacker(sq, subset_iter.subset);
+		Bitboard attacks = attacker(sq, subset);
 		if (*val) {
 			return false;
 		} else {
 			*val = attacks;
 		}
-	} while (bb_subset_iter(&subset_iter));
+	} while ((subset = bb_next_subset(magic->premask, subset)));
 	return true;
 }
 
