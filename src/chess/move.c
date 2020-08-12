@@ -62,7 +62,11 @@ position_do_move(struct Board *pos, struct Move *mv)
 	position_set_piece_at_square(
 	  pos, mv->target, position_piece_at_square(pos, mv->source));
 	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
-	/* TODO: Castling, en passant. */
+	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(mv->source);
+	if (is_pawn && abs(mv->target - mv->source) == 2) {
+		pos->en_passant_target = (mv->target + mv->source) / 2;
+	}
+	/* TODO: Castling */
 }
 
 void
