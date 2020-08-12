@@ -211,6 +211,7 @@ magic_find_rook(struct Magic *magic, Square square)
 	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
 	exit_if_null(attacks_table);
 	magic->premask = bb_premask_rook(square);
+	magic->postmask = UINT64_MAX;
 	magic->rshift = 64 - popcnt64(magic->premask);
 	do {
 		memset(attacks_table, 0, attacks_table_size);
@@ -226,6 +227,7 @@ magic_find_bishop(struct Magic *magic, Square square)
 	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
 	exit_if_null(attacks_table);
 	magic->premask = bb_premask_bishop(square);
+	magic->postmask = UINT64_MAX;
 	magic->rshift = 64 - popcount64(magic->premask);
 	do {
 		memset(attacks_table, 0, attacks_table_size);
