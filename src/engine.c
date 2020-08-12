@@ -2,7 +2,7 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
-#include "protocols/protocols.h"
+#include "protocols/uci.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdarg.h>

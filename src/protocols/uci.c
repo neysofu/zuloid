@@ -15,7 +15,7 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
-#include "protocols/protocols.h"
+#include "protocols/uci.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "switches.h"

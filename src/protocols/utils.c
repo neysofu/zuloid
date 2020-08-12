@@ -3,6 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+static int
+command_cmp(const void *cmd1, const void *cmd2)
+{
+	const char *s1 = ((struct Command *)cmd1)->name;
+	const char *s2 = ((struct Command *)cmd2)->name;
+	return strcmp(s1, s2);
+}
+
 const struct Command *
 identify_command(const char *token, const struct Command commands[], size_t count)
 {
@@ -11,14 +19,6 @@ identify_command(const char *token, const struct Command commands[], size_t coun
 		.handler = NULL,
 	};
 	return bsearch(&key, commands, count, sizeof(struct Command), command_cmp);
-}
-
-int
-command_cmp(const void *cmd1, const void *cmd2)
-{
-	const char *s1 = ((struct Command *)cmd1)->name;
-	const char *s2 = ((struct Command *)cmd2)->name;
-	return strcmp(s1, s2);
 }
 
 void

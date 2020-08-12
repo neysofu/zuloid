@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "munit/munit.h"
-#include "protocols/protocols.h"
+#include "protocols/cecp.h"
+#include "protocols/uci.h"
 
 void
 test_protocol_switch(struct Engine *engine)

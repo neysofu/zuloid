@@ -1,6 +1,6 @@
 #include "engine.h"
 #include "munit/munit.h"
-#include "protocols/protocols.h"
+#include "protocols/cecp.h"
 #include "test/utils.h"
 #include "utils.h"
 

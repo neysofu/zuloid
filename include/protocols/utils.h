@@ -13,9 +13,6 @@ struct Command
 const struct Command *
 identify_command(const char *token, const struct Command commands[], size_t count);
 
-int
-command_cmp(const void *cmd1, const void *cmd2);
-
 void
 display_err_syntax(FILE *stream);
 void

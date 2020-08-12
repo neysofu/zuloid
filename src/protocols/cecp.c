@@ -11,7 +11,7 @@
 #include "core.h"
 #include "engine.h"
 #include "globals.h"
-#include "protocols/protocols.h"
+#include "protocols/cecp.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "utils.h"
