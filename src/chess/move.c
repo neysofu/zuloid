@@ -36,7 +36,7 @@ bool
 string_represents_coordinate_notation_move(const char *str)
 {
 	size_t len = strlen(str);
-	bool is_castling = streq(str, "O-O") || streq(str, "O-O-O");
+	bool is_castling = !strcmp(str, "O-O") || !strcmp(str, "O-O-O");
 	bool is_normal_move = (len > 3) && isdigit(str[1]);
 	return is_castling || is_normal_move;
 }

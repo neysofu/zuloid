@@ -162,9 +162,9 @@ uci_call_position(struct Engine *engine)
 	if (!token) {
 		display_err_syntax(engine->output);
 		return;
-	} else if (streq(token, "startpos")) {
+	} else if (!strcmp(token, "startpos")) {
 		engine->board = POSITION_INIT;
-	} else if (streq(token, "fen")) {
+	} else if (!strcmp(token, "fen")) {
 		char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
 			token = strtok_whitespace(NULL);
@@ -179,14 +179,14 @@ uci_call_position(struct Engine *engine)
 			fen_fields[i] = token;
 		}
 		position_init_from_fen_fields(&engine->board, fen_fields);
-	} else if (streq(token, "960")) {
+	} else if (!strcmp(token, "960")) {
 		/* The "960" command is a custom addition the standard. I figured it could
 		 * be useful for training. */
 		position_init_960(&engine->board);
-	} else if (!streq(token, "current")) {
+	} else if (!!strcmp(token, "current")) {
 		display_err_syntax(engine->output);
 	}
-	if ((token = strtok_whitespace(NULL)) && !streq(token, "moves")) {
+	if ((token = strtok_whitespace(NULL)) && !!strcmp(token, "moves")) {
 		display_err_syntax(engine->output);
 		return;
 	}
@@ -204,11 +204,11 @@ uci_call_d(struct Engine *engine)
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		position_pprint(&engine->board, engine->output);
-	} else if (streq(token, "fen")) {
+	} else if (!strcmp(token, "fen")) {
 		char *fen = fen_from_position(NULL, &engine->board, ' ');
 		fprintf(engine->output, "%s\n", fen);
 		free(fen);
-	} else if (streq(token, "lichess")) {
+	} else if (!strcmp(token, "lichess")) {
 		char *fen = fen_from_position(NULL, &engine->board, '_');
 		fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
 		free(fen);
@@ -339,10 +339,10 @@ uci_call_magics(struct Engine *engine)
 	char *token = strtok_whitespace(NULL);
 	const char *identifier = NULL;
 	void (*finder)(struct Magic *, Square);
-	if (streq(token, "bishop")) {
+	if (!strcmp(token, "bishop")) {
 		identifier = "MAGICS_BISHOP";
 		finder = magic_find_bishop;
-	} else if (streq(token, "rook")) {
+	} else if (!strcmp(token, "rook")) {
 		identifier = "MAGICS_ROOK";
 		finder = magic_find_rook;
 	} else {
@@ -381,7 +381,7 @@ uci_call_debug(struct Engine *engine)
 	// details with it. It does *not* control debugging information, which instead
 	// gets compiled out with the NDEBUG macro.
 	const char *token = strtok_whitespace(NULL);
-	if (token && streq(token, "on")) {
+	if (token && !strcmp(token, "on")) {
 		engine->debug = true;
 	} else if (token && strcmp(token, "off")) {
 		engine->debug = false;
