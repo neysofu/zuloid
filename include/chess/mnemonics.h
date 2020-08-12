@@ -9,7 +9,9 @@ enum {
 	F_F,
 	F_G,
 	F_H,
+};
 
+enum {
 	R_1,
 	R_2,
 	R_3,
@@ -18,7 +20,9 @@ enum {
 	R_6,
 	R_7,
 	R_8,
+};
 
+enum {
 	SQ_A1,
 	SQ_A2,
 	SQ_A3,
