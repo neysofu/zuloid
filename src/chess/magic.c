@@ -60,32 +60,32 @@ init_attack_table(Square sq,
 }
 
 void
-bb_init_bishop(void)
+bb_init_bishop(const struct Magic *magics)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		init_attack_table(sq, MAGICS_BISHOP + sq, BB_ATTACKS_BISHOP + offset, bb_bishop);
+		init_attack_table(sq, magics + sq, BB_ATTACKS_BISHOP + offset, bb_bishop);
 		BB_OFFSETS_BISHOP[sq] = offset;
-		BB_MASK_BISHOP[sq] = MAGICS_BISHOP[sq].premask;
-		BB_SHIFTS_BISHOP[sq] = MAGICS_BISHOP[sq].rshift;
-		BB_MULTIPLIERS_BISHOP[sq] = MAGICS_BISHOP[sq].multiplier;
-		BB_POSTMASK_BISHOP[sq] = MAGICS_BISHOP[sq].postmask;
-		offset += MAGICS_BISHOP[sq].end - MAGICS_BISHOP[sq].start + 3;
+		BB_MASK_BISHOP[sq] = magics[sq].premask;
+		BB_SHIFTS_BISHOP[sq] = magics[sq].rshift;
+		BB_MULTIPLIERS_BISHOP[sq] = magics[sq].multiplier;
+		BB_POSTMASK_BISHOP[sq] = magics[sq].postmask;
+		offset += magics[sq].end - magics[sq].start + 3;
 	}
 }
 
 void
-bb_init_rook(void)
+bb_init_rook(const struct Magic *magics)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		init_attack_table(sq, MAGICS + sq, BB_ATTACKS_ROOK + offset, bb_rook);
+		init_attack_table(sq, magics + sq, BB_ATTACKS_ROOK + offset, bb_rook);
 		BB_OFFSETS_ROOK[sq] = offset;
-		BB_MASK_ROOK[sq] = MAGICS[sq].premask;
-		BB_SHIFTS_ROOK[sq] = MAGICS[sq].rshift;
-		BB_MULTIPLIERS_ROOK[sq] = MAGICS[sq].multiplier;
-		BB_POSTMASK_ROOK[sq] = MAGICS[sq].postmask;
-		offset += MAGICS[sq].end - MAGICS[sq].start + 3;
+		BB_MASK_ROOK[sq] = magics[sq].premask;
+		BB_SHIFTS_ROOK[sq] = magics[sq].rshift;
+		BB_MULTIPLIERS_ROOK[sq] = magics[sq].multiplier;
+		BB_POSTMASK_ROOK[sq] = magics[sq].postmask;
+		offset += magics[sq].end - magics[sq].start + 3;
 	}
 }
 
@@ -97,8 +97,8 @@ magic_init(void)
 		return;
 	}
 	done = true;
-	bb_init_rook();
-	bb_init_bishop();
+	bb_init_rook(MAGICS);
+	bb_init_bishop(MAGICS_BISHOP);
 }
 
 int

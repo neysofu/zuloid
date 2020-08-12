@@ -108,16 +108,6 @@ bb_rays_rook(Square sq)
 	return x ^ y;
 }
 
-size_t
-magics_size_in_kib(void)
-{
-	size_t total = 0;
-	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		total += (MAGICS[sq].end - MAGICS[sq].start) * sizeof(Bitboard);
-	}
-	return total / 1024;
-}
-
 void
 bb_init(void)
 {
