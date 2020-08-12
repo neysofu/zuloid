@@ -66,6 +66,11 @@ init_attack_table(Square sq,
 	} while ((subset = bb_next_subset(magic->premask, subset)));
 }
 
+size_t
+magic_calculate_offset(const struct Magic *magic) {
+	return 1 << (64 - magic->rshift);
+}
+
 void
 bb_init_bishop(const struct Magic *magics)
 {
@@ -77,7 +82,7 @@ bb_init_bishop(const struct Magic *magics)
 		BB_SHIFTS_BISHOP[sq] = magics[sq].rshift;
 		BB_MULTIPLIERS_BISHOP[sq] = magics[sq].multiplier;
 		BB_POSTMASK_BISHOP[sq] = magics[sq].postmask;
-		offset += magics[sq].length;
+		offset += magic_calculate_offset(magics + sq);
 	}
 }
 
@@ -92,7 +97,7 @@ bb_init_rook(const struct Magic *magics)
 		BB_SHIFTS_ROOK[sq] = magics[sq].rshift;
 		BB_MULTIPLIERS_ROOK[sq] = magics[sq].multiplier;
 		BB_POSTMASK_ROOK[sq] = magics[sq].postmask;
-		offset += magics[sq].length;
+		offset += magic_calculate_offset(magics + sq);
 	}
 }
 
@@ -110,14 +115,12 @@ magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 		              " .multiplier = 0x%" PRIx64 "ULL,"
 		              " .rshift = %d,"
 		              " .postmask = 0x%" PRIx64 "ULL,"
-		              " .length = %zu"
 		              " },\n",
 		              sq,
 		              magic.premask,
 		              magic.multiplier,
 		              magic.rshift,
-		              magic.postmask,
-		              magic.length);
+		              magic.postmask);
 		HANDLE_ERR(err);
 	}
 	fprintf(stream, "};\n");
@@ -214,7 +217,6 @@ magic_find_rook(struct Magic *magic, Square square)
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
 	} while (!verify_magic_candidate(magic, square, attacks_table, bb_rook));
-	magic->length = 1 << popcnt64(magic->premask);
 	free(attacks_table);
 }
 
@@ -230,6 +232,5 @@ magic_find_bishop(struct Magic *magic, Square square)
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
 	} while (!verify_magic_candidate(magic, square, attacks_table, bb_bishop));
-	magic->length = 1 << popcnt64(magic->premask);
 	free(attacks_table);
 }

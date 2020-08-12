@@ -12,7 +12,6 @@ struct Magic
 	uint64_t multiplier;
 	short rshift;
 	Bitboard postmask;
-	size_t length;
 };
 
 void
