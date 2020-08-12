@@ -1,6 +1,5 @@
 #include "chess/bb.h"
 #include "chess/magic.h"
-#include "chess/find_magics.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
 #include "munit/munit.h"

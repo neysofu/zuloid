@@ -24,6 +24,12 @@ bb_bishop_magic(Square sq, Bitboard obstacles);
 Bitboard
 bb_rook_magic(Square sq, Bitboard obstacles);
 
+void
+magic_find_rook(struct Magic *magic, Square square);
+
+void
+magic_find_bishop(struct Magic *magic, Square square);
+
 int
 magics_export(const struct Magic *magics, const char *identifier, FILE *stream);
 

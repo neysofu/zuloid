@@ -7,7 +7,7 @@
 #include "cache/cache.h"
 #include "chess/bb.h"
 #include "chess/fen.h"
-#include "chess/find_magics.h"
+#include "chess/magic.h"
 #include "chess/magic.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
@@ -153,26 +153,6 @@ uci_call_pseudolegalmoves(struct Engine *engine)
 		fprintf(engine->output, " %s", buf);
 	}
 	putc('\n', engine->output);
-}
-
-void
-uci_call_magics_export(struct Engine *engine)
-{
-	char *filename = strtok_whitespace(NULL);
-	if (!filename) {
-		display_err_syntax(engine->output);
-		return;
-	}
-	FILE *file = fopen(filename, "w");
-	if (!file) {
-		display_err_unspecified(engine->output);
-		return;
-	}
-	fprintf(file, "-- ROOK MAGICS:\n");
-	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		fprintf(file, "0x%zu:\n", MAGICS[sq].multiplier);
-	}
-	fclose(file);
 }
 
 void
@@ -421,7 +401,6 @@ const struct Command UCI_COMMANDS[] = {
 	{ "djbhash", uci_call_djbhash },
 	{ "go", uci_call_go },
 	{ "isready", uci_call_isready },
-	{ "magics", uci_call_magics_export },
 	{ "position", uci_call_position },
 	{ "quit", uci_call_quit },
 	{ "setoption", uci_call_setoption },

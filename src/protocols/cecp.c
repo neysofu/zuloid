@@ -5,7 +5,7 @@
 #include "cache/cache.h"
 #include "chess/bb.h"
 #include "chess/fen.h"
-#include "chess/find_magics.h"
+#include "chess/magic.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core.h"
