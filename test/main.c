@@ -9,14 +9,12 @@
 	do {                                                                                   \
 		test_pre(STRINGIFY(f));                                                            \
 		(f)();                                                                             \
-		test_post();                                                                       \
 	} while (0)
 
 #define CALL_TEST_WITH_ARGS(f, ...)                                                        \
 	do {                                                                                   \
 		test_pre(STRINGIFY(f));                                                            \
 		(f)(__VA_ARGS__);                                                                  \
-		test_post();                                                                       \
 	} while (0)
 
 #define CALL_TEST_WITH_TMP_ENGINE(f)                                                       \
@@ -24,20 +22,13 @@
 		test_pre(STRINGIFY(f));                                                            \
 		struct Engine *engine = engine_new_tmp(TEST_TMP_DIR "/tmp");                       \
 		(f)(engine);                                                                       \
-		test_post();                                                                       \
 		engine_delete(engine);                                                             \
 	} while (0)
 
 void
 test_pre(const char *function_name)
 {
-	printf("-- Running %s\n", function_name);
-}
-
-void
-test_post(void)
-{
-	puts("   OK");
+	printf("-- %s\n", function_name);
 }
 
 // clang-format off
