@@ -1,13 +1,13 @@
 #include "chess/magic.h"
-#include "chess/diagonals.h"
 #include "chess/bb.h"
-#include "utils.h"
+#include "chess/diagonals.h"
 #include "chess/generated/magics_bishop.h"
 #include "chess/generated/magics_rook.h"
 #include "libpopcnt/libpopcnt.h"
+#include "mt-64/mt-64.h"
+#include "utils.h"
 #include <inttypes.h>
 #include <stdbool.h>
-#include "mt-64/mt-64.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -77,7 +77,7 @@ bb_init_bishop(const struct Magic *magics)
 		BB_SHIFTS_BISHOP[sq] = magics[sq].rshift;
 		BB_MULTIPLIERS_BISHOP[sq] = magics[sq].multiplier;
 		BB_POSTMASK_BISHOP[sq] = magics[sq].postmask;
-		offset += magics[sq].end - magics[sq].start + 3;
+		offset += magics[sq].length;
 	}
 }
 
@@ -92,7 +92,7 @@ bb_init_rook(const struct Magic *magics)
 		BB_SHIFTS_ROOK[sq] = magics[sq].rshift;
 		BB_MULTIPLIERS_ROOK[sq] = magics[sq].multiplier;
 		BB_POSTMASK_ROOK[sq] = magics[sq].postmask;
-		offset += magics[sq].end - magics[sq].start + 3;
+		offset += magics[sq].length;
 	}
 }
 
@@ -100,26 +100,24 @@ int
 magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 {
 	int err;
-	err = fprintf(stream,
-	              "#include \"chess/coordinates.h\"\n"
-	              "\n"
-	              "const struct Magic %s[SQUARES_COUNT] = {\n",
-	              identifier);
+	err = fprintf(stream, "\nconst struct Magic %s[SQUARES_COUNT] = {\n", identifier);
 	HANDLE_ERR(err);
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		struct Magic magic = magics[sq];
 		err = fprintf(stream,
-		              "\t[0%o] = { .premask = 0x%" PRIx64 "ULL, .multiplier = 0x%" PRIx64
-		              "ULL, .rshift = %d, "
-		              ".postmask = "
-		              "0x%" PRIx64 "ULL, .start = %zu, .end = %zu },\n",
+		              "\t[0%o] = {"
+		              " .premask = 0x%" PRIx64 "ULL,"
+		              " .multiplier = 0x%" PRIx64 "ULL,"
+		              " .rshift = %d,"
+		              " .postmask = 0x%" PRIx64 "ULL,"
+		              " .length = %zu"
+		              " },\n",
 		              sq,
 		              magic.premask,
 		              magic.multiplier,
 		              magic.rshift,
 		              magic.postmask,
-		              magic.start,
-		              magic.end);
+		              magic.length);
 		HANDLE_ERR(err);
 	}
 	fprintf(stream, "};\n");
@@ -216,8 +214,7 @@ magic_find_rook(struct Magic *magic, Square square)
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
 	} while (!verify_magic_candidate(magic, square, attacks_table, bb_rook));
-	magic->start = find_start_of_attacks_table(attacks_table);
-	magic->end = find_end_of_attacks_table(attacks_table);
+	magic->length = 1 << popcnt64(magic->premask);
 	free(attacks_table);
 }
 
@@ -233,7 +230,6 @@ magic_find_bishop(struct Magic *magic, Square square)
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
 	} while (!verify_magic_candidate(magic, square, attacks_table, bb_bishop));
-	magic->start = 0;
-	magic->end = find_end_of_attacks_table(attacks_table);
+	magic->length = 1 << popcnt64(magic->premask);
 	free(attacks_table);
 }
