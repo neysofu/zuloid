@@ -1,12 +1,16 @@
 #include "chess/magic.h"
+#include "chess/diagonals.h"
 #include "chess/bb.h"
+#include "utils.h"
 #include "chess/generated/magics_bishop.h"
 #include "chess/generated/magics_rook.h"
 #include "libpopcnt/libpopcnt.h"
 #include <inttypes.h>
 #include <stdbool.h>
+#include "mt-64/mt-64.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 #define HANDLE_ERR(err)                                                                    \
 	do {                                                                                   \
