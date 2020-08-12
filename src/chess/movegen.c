@@ -214,12 +214,13 @@ size_t
 gen_attacks_against_from(struct Move moves[],
                          struct Board *pos,
                          Bitboard victims,
-                         enum Color attacker)
+                         enum Color attacker,
+						 Square en_passant_target)
 {
 	struct Move *ptr = moves;
 	Bitboard pieces = pos->bb[attacker];
 	moves += gen_pawn_moves(
-	  moves, pieces & pos->bb[PIECE_TYPE_PAWN], victims, position_occupancy(pos), attacker);
+	  moves, pieces & pos->bb[PIECE_TYPE_PAWN], victims | square_to_bb(en_passant_target), position_occupancy(pos), attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(
 	  moves, pieces & pos->bb[PIECE_TYPE_BISHOP], victims, position_occupancy(pos));
@@ -234,7 +235,7 @@ size_t
 gen_pseudolegal_moves(struct Move moves[], struct Board *pos)
 {
 	return gen_attacks_against_from(
-	  moves, pos, ~pos->bb[pos->side_to_move], pos->side_to_move);
+	  moves, pos, ~pos->bb[pos->side_to_move], pos->side_to_move, pos->en_passant_target);
 }
 
 bool
@@ -245,7 +246,8 @@ position_is_illegal(struct Board *pos)
 	                                pos,
 	                                pos->bb[color_other(pos->side_to_move)] &
 	                                  pos->bb[PIECE_TYPE_KING],
-	                                pos->side_to_move);
+	                                pos->side_to_move,
+									pos->en_passant_target);
 }
 
 size_t

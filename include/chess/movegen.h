@@ -37,7 +37,8 @@ size_t
 gen_attacks_against_from(struct Move moves[],
                          struct Board *pos,
                          Bitboard victims,
-                         enum Color attacker);
+                         enum Color attacker,
+						 Square en_passant_target);
 bool
 position_is_illegal(struct Board *pos);
 bool
