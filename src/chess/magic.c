@@ -211,7 +211,7 @@ magic_find_rook(struct Magic *magic, Square square)
 	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
 	exit_if_null(attacks_table);
 	magic->premask = bb_premask_rook(square);
-	magic->rshift = 52;
+	magic->rshift = 64 - popcnt64(magic->premask);
 	do {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
