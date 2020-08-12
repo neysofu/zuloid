@@ -74,21 +74,10 @@ gen_pawn_moves(struct Move moves[],
 		{ 7, -9 },
 		{ -7, 9 },
 	};
+	Bitboard rays[COLORS_COUNT][2] = { [COLOR_WHITE] = {captures_a >> 7, captures_h << 9}, [COLOR_BLACK] = {captures_a >> 9, captures_h << 7}};
+	captures_a = rays[side_to_move][0] & targets & all;
+	captures_h = rays[side_to_move][1] & targets & all;
 	Square square;
-	switch (side_to_move) {
-		case COLOR_WHITE:
-			captures_a >>= 7;
-			captures_h <<= 9;
-			break;
-		case COLOR_BLACK:
-			captures_a >>= 9;
-			captures_h <<= 7;
-			break;
-		default:
-			assert(0);
-	}
-	captures_a &= targets & all;
-	captures_h &= targets & all;
 	while (single_pushes) {
 		POP_LSB(square, single_pushes);
 		emit_move(moves++, square + color_params[0][side_to_move], square);
