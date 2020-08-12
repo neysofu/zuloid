@@ -19,11 +19,6 @@
 
 extern Bitboard BB_ATTACKS_BY_KNIGHT[64];
 extern Bitboard BB_ATTACKS_BY_KING[64];
-extern const Bitboard MAGIC_BISHOP[64];
-extern const Bitboard MAGIC_ROOK[64];
-
-extern Bitboard ATTACK_BISHOP[5248];
-extern Bitboard ATTACK_ROOK[10240];
 
 void
 bb_init(void);

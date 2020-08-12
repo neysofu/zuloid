@@ -1,4 +1,5 @@
 #include "chess/bb.h"
+#include "chess/magic.h"
 #include "chess/bb_subset_iter.h"
 #include "chess/find_magics.h"
 #include "libpopcnt/libpopcnt.h"
@@ -16,7 +17,7 @@ void
 test_magic_generation(void)
 {
 	srand(time(NULL));
-	bb_init();
+	magic_init();
 	for (size_t i = 0; i < 5000; i++) {
 		Square from = rand() % 64;
 		Bitboard mask = genrand64_int64() & genrand64_int64();

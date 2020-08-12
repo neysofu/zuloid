@@ -8,6 +8,7 @@
 #include "chess/bb.h"
 #include "chess/fen.h"
 #include "chess/find_magics.h"
+#include "chess/magic.h"
 #include "chess/export_magics.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
@@ -349,6 +350,7 @@ uci_call_uci(struct Engine *engine)
 		putc('\n', engine->output);
 	}
 	bb_init();
+	magic_init();
 	fputs("uciok\n", engine->output);
 }
 

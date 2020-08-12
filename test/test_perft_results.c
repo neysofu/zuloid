@@ -1,4 +1,5 @@
 #include "chess/bb.h"
+#include "chess/magic.h"
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
@@ -28,6 +29,7 @@ void
 test_perft_results(struct Engine *engine)
 {
 	bb_init();
+	magic_init();
 	for (size_t i = 0; i < ARRAY_SIZE(TEST_CASES); i++) {
 		char *fen = exit_if_null(malloc(FEN_SIZE));
 		strcpy(fen, TEST_CASES[i].fen);
