@@ -1,7 +1,24 @@
 #include "chess/coordinates.h"
 
-enum
-{
+enum {
+	F_A,
+	F_B,
+	F_C,
+	F_D,
+	F_E,
+	F_F,
+	F_G,
+	F_H,
+
+	R_1,
+	R_2,
+	R_3,
+	R_4,
+	R_5,
+	R_6,
+	R_7,
+	R_8,
+
 	SQ_A1,
 	SQ_A2,
 	SQ_A3,

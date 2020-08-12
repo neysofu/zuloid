@@ -15,6 +15,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 size_t
 buffer_deserialize_from_json(int64_t buf[], cJSON *obj)
@@ -265,7 +266,7 @@ void
 engine_start_search(struct Engine *engine)
 {
 	printf("info depth score cp %f\n", position_eval(&engine->board));
-	struct SSearchStack stack = ssearch_stack_new((size_t)3);
+	struct SSearchStack stack = ssearch_stack_new((size_t)engine->max_depth);
 	stack.board = engine->board;
 	stack.plies[1].child_i = 0;
 	stack.plies[1].best_child_i_so_far = 0;
@@ -280,11 +281,15 @@ engine_start_search(struct Engine *engine)
 				ssearch_stack_pop(&stack);
 			}
 		} else if (stack.current_depth == stack.desired_depth) {
-			last_plie->child_i++;
+			position_do_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
 			float eval = position_eval(&stack.board);
+			printf("eval is %f\n", eval);
+			position_undo_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
 			if (eval > last_plie->best_eval_so_far) {
 				last_plie->best_eval_so_far = eval;
+				last_plie->best_child_i_so_far = last_plie->child_i;
 			}
+			last_plie->child_i++;
 		} else {
 			ssearch_stack_push(&stack);
 		}

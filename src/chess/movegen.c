@@ -19,6 +19,7 @@
  * DEALINGS IN THE SOFTWARE. */
 
 #include "chess/movegen.h"
+#include "chess/mnemonics.h"
 #include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/fen.h"
@@ -66,17 +67,20 @@ gen_pawn_moves(struct Move moves[],
 	  (side_to_move == COLOR_WHITE ? single_pushes << 1 : single_pushes >> 1) & ~all &
 	  targets & rank_to_bb(color_double_push_rank(side_to_move));
 	single_pushes &= targets;
-	Bitboard captures_a = sources & ~file_to_bb(0);
-	Bitboard captures_h = sources & ~file_to_bb(7);
 	const int color_params[4][COLORS_COUNT] = {
 		{ -1, 1 },
 		{ -2, 2 },
-		{ 7, -9 },
-		{ -7, 9 },
+		{ -9, -7 },
+		{ 7, 9 },
 	};
-	Bitboard rays[COLORS_COUNT][2] = { [COLOR_WHITE] = {captures_a >> 7, captures_h << 9}, [COLOR_BLACK] = {captures_a >> 9, captures_h << 7}};
-	captures_a = rays[side_to_move][0] & targets & all;
-	captures_h = rays[side_to_move][1] & targets & all;
+	Bitboard captures_east = sources & ~file_to_bb(F_H);
+	Bitboard captures_west = sources & ~file_to_bb(F_A);
+	const Bitboard captures_params[COLORS_COUNT][2] = {
+		[COLOR_WHITE] = { captures_east << 9, captures_west >> 7 },
+		[COLOR_BLACK] = { captures_east << 7, captures_west >> 9 }
+	};
+	captures_east = captures_params[side_to_move][0] & targets & all;
+	captures_west = captures_params[side_to_move][1] & targets & all;
 	Square square;
 	while (single_pushes) {
 		POP_LSB(square, single_pushes);
@@ -86,12 +90,12 @@ gen_pawn_moves(struct Move moves[],
 		POP_LSB(square, double_pushes);
 		emit_move(moves++, square + color_params[1][side_to_move], square);
 	}
-	while (captures_a) {
-		POP_LSB(square, captures_a);
+	while (captures_east) {
+		POP_LSB(square, captures_east);
 		emit_move(moves++, square + color_params[2][side_to_move], square);
 	}
-	while (captures_h) {
-		POP_LSB(square, captures_h);
+	while (captures_west) {
+		POP_LSB(square, captures_west);
 		emit_move(moves++, square + color_params[3][side_to_move], square);
 	}
 	return moves - ptr;

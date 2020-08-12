@@ -86,7 +86,6 @@ uci_call_go(struct Engine *engine)
 				engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 				break;
 			case 57498: // "depth"
-				break;
 			case 32972: // "mate"
 				token = strtok_whitespace(NULL);
 				engine->max_depth = atoi(token);
