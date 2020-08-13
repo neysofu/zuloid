@@ -197,7 +197,7 @@ ssearch_stack_new(const struct Engine *engine)
 	stack.plies[0].child_i = 0;
 	stack.plies[0].best_child_i_so_far = 0;
 	stack.plies[0].children_count = gen_legal_moves(stack.plies[0].moves, &stack.board);
-	stack.plies[0].best_eval_so_far = FLT_MIN;
+	stack.plies[0].best_eval_so_far = -FLT_MAX;
 	return stack;
 }
 
@@ -228,20 +228,18 @@ ssearch_stack_pop(struct SSearchStack *stack)
 {
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
 	float eval = last_plie->best_eval_so_far;
-	assert(stack->current_depth > 0);
-	assert(last_plie->child_i == last_plie->children_count);
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
 	if (-eval > last_plie->best_eval_so_far) {
 		last_plie->best_eval_so_far = -eval;
-		last_plie->best_child_i_so_far = last_plie->child_i;
+		last_plie->best_child_i_so_far = last_plie->child_i - 1;
 	}
 }
 
 void
 ssearch_stack_push(struct SSearchStack *stack)
-{
+{	
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
 	assert(last_plie->child_i < last_plie->children_count);
 	struct Move generator = last_plie->moves[last_plie->child_i++];
@@ -249,7 +247,7 @@ ssearch_stack_push(struct SSearchStack *stack)
 	last_plie++;
 	last_plie->child_i = 0;
 	last_plie->best_child_i_so_far = -1;
-	last_plie->best_eval_so_far = FLT_MIN;
+	last_plie->best_eval_so_far = -FLT_MAX;
 	last_plie->generator = generator;
 	position_do_move_and_flip(&stack->board, &last_plie->generator);
 	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
@@ -259,17 +257,9 @@ void
 ssearch_stack_iter(struct SSearchStack *stack)
 {
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
+	enum Color evaluator = stack->board.side_to_move;
 	position_do_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
-	float eval =
-	  normalize_score(position_eval(&stack->board), color_other(stack->board.side_to_move));
-	// char buf[8] = {'\0'};
-	// move_to_string(last_plie->moves[last_plie->child_i], buf);
-	// printf("eval would be %f at move %d which is %s of depth %d\n",
-	//       eval,
-	//       last_plie->child_i,
-	//       buf,
-	//       stack->current_depth);
-
+	float eval = normalize_score(position_eval(&stack->board), evaluator);
 	position_undo_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
 	if (eval > last_plie->best_eval_so_far) {
 		last_plie->best_eval_so_far = eval;
