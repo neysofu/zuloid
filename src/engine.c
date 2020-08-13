@@ -34,7 +34,7 @@ engine_init(struct Engine *engine)
 {
 	*engine = (struct Engine){
 		.board = POSITION_INIT,
-		.time_controls = { NULL, NULL },
+		.time_controls = { time_control_new_bullet(), time_control_new_bullet() },
 		.cache = NULL,
 		.agent = agent_new(),
 		.seed = 0xcfca130b,

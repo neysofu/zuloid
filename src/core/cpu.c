@@ -1,6 +1,7 @@
 #include "agent.h"
 #include "base64/base64.h"
 #include "cJSON/cJSON.h"
+#include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core.h"
@@ -162,6 +163,7 @@ agent_new(void)
 //	}
 //}
 
+// State for search agents. It holds a game-tree several plies deep.
 struct SSearchStack
 {
 	struct SSearchStackPlie *plies;
@@ -181,22 +183,28 @@ struct SSearchStackPlie
 };
 
 struct SSearchStack
-ssearch_stack_new(size_t depth)
+ssearch_stack_new(const struct Engine *engine)
 {
+	assert(engine->max_depth > 0);
 	struct SSearchStack stack;
-	stack.plies = exit_if_null(malloc((depth + 1) * sizeof(struct SSearchStackPlie)));
-	stack.desired_depth = depth;
-	stack.current_depth = 1;
-	for (size_t i = 0; i < depth + 1; i++) {
+	stack.plies = exit_if_null(malloc(engine->max_depth * sizeof(struct SSearchStackPlie)));
+	stack.desired_depth = engine->max_depth - 1;
+	stack.current_depth = 0;
+	stack.board = engine->board;
+	for (int i = 0; i <= stack.desired_depth; i++) {
 		stack.plies[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
 	}
+	stack.plies[0].child_i = 0;
+	stack.plies[0].best_child_i_so_far = 0;
+	stack.plies[0].children_count = gen_legal_moves(stack.plies[0].moves, &stack.board);
+	stack.plies[0].best_eval_so_far = FLT_MIN;
 	return stack;
 }
 
 void
 ssearch_stack_delete(struct SSearchStack *stack)
 {
-	for (int i = 0; i < stack->desired_depth; i++) {
+	for (int i = 0; i <= stack->desired_depth; i++) {
 		free(stack->plies[i].moves);
 	}
 	free(stack->plies);
@@ -206,6 +214,13 @@ struct SSearchStackPlie *
 ssearch_stack_last(struct SSearchStack *stack)
 {
 	return stack->plies + stack->current_depth;
+}
+
+float
+normalize_score(float score, enum Color side_to_move)
+{
+	const float multipliers[COLORS_COUNT] = { 1.0, -1.0 };
+	return score * multipliers[side_to_move];
 }
 
 void
@@ -218,8 +233,8 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
-	if (eval > last_plie->best_eval_so_far) {
-		last_plie->best_eval_so_far = eval;
+	if (-eval > last_plie->best_eval_so_far) {
+		last_plie->best_eval_so_far = -eval;
 		last_plie->best_child_i_so_far = last_plie->child_i;
 	}
 }
@@ -238,6 +253,29 @@ ssearch_stack_push(struct SSearchStack *stack)
 	last_plie->generator = generator;
 	position_do_move_and_flip(&stack->board, &last_plie->generator);
 	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
+}
+
+void
+ssearch_stack_iter(struct SSearchStack *stack)
+{
+	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
+	position_do_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
+	float eval =
+	  normalize_score(position_eval(&stack->board), color_other(stack->board.side_to_move));
+	// char buf[8] = {'\0'};
+	// move_to_string(last_plie->moves[last_plie->child_i], buf);
+	// printf("eval would be %f at move %d which is %s of depth %d\n",
+	//       eval,
+	//       last_plie->child_i,
+	//       buf,
+	//       stack->current_depth);
+
+	position_undo_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
+	if (eval > last_plie->best_eval_so_far) {
+		last_plie->best_eval_so_far = eval;
+		last_plie->best_child_i_so_far = last_plie->child_i;
+	}
+	last_plie->child_i++;
 }
 
 float
@@ -266,41 +304,29 @@ struct SearchResults
 void
 engine_start_search(struct Engine *engine)
 {
-	if (engine->max_depth == 0) {
-		engine->max_depth = 3;
-	}
-	printf("info depth score cp %f\n", position_eval(&engine->board));
-	struct SSearchStack stack = ssearch_stack_new((size_t)engine->max_depth);
-	stack.board = engine->board;
-	stack.plies[1].child_i = 0;
-	stack.plies[1].best_child_i_so_far = 0;
-	stack.plies[1].children_count = gen_legal_moves(stack.plies[1].moves, &stack.board);
-	stack.plies[1].best_eval_so_far = FLT_MIN;
+	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
+	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {
 		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);
+		// We use depth-first search (DFS) to explore the game tree.
 		if (last_plie->child_i == last_plie->children_count) {
-			if (stack.current_depth == 1) {
+			if (stack.current_depth == 0) {
 				break;
 			} else {
 				ssearch_stack_pop(&stack);
 			}
 		} else if (stack.current_depth == stack.desired_depth) {
-			position_do_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
-			float eval = position_eval(&stack.board);
-			position_undo_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
-			if (eval > last_plie->best_eval_so_far) {
-				last_plie->best_eval_so_far = eval;
-				last_plie->best_child_i_so_far = last_plie->child_i;
-			}
-			last_plie->child_i++;
+			ssearch_stack_iter(&stack);
 		} else {
 			ssearch_stack_push(&stack);
 		}
 	}
 	struct SearchResults result = {
-		.best_move = stack.plies[1].moves[stack.plies[1].best_child_i_so_far],
-		.ponder_move = stack.plies[2].best_child_i_so_far,
-		.centipawns = stack.plies[1].best_eval_so_far,
+		.best_move = stack.plies[0].moves[stack.plies[0].best_child_i_so_far],
+		// FIXME: `.ponder_move` is the best-scoring move in the subtree of the
+		// best-scoring move of the first plie.
+		.ponder_move = stack.plies[1].best_child_i_so_far,
+		.centipawns = stack.plies[0].best_eval_so_far,
 	};
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	move_to_string(result.best_move, buf);

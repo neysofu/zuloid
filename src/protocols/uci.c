@@ -54,20 +54,24 @@ uci_call_go(struct Engine *engine)
 			return;
 		} else if (strcmp(token, "wtime") == 0) {
 			token = strtok_whitespace(NULL);
+			if (!token) {
+				display_err_syntax(engine->output);
+				return;
+			}
 			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
-			  atoi(token) * 1000;
+			  (float)(atol(token) * 1000);
 		} else if (strcmp(token, "btime") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
-			  atoi(token) * 1000;
+			  (float)(atol(token) * 1000);
 		} else if (strcmp(token, "winc") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->time_controls[COLOR_WHITE]->increment_in_seconds =
-			  atoi(token) * 1000;
+			  (float)(atol(token) * 1000);
 		} else if (strcmp(token, "binc") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->time_controls[COLOR_BLACK]->increment_in_seconds =
-			  atoi(token) * 1000;
+			  (float)(atol(token) * 1000);
 		} else if (strcmp(token, "infinite") == 0) {
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
@@ -78,7 +82,8 @@ uci_call_go(struct Engine *engine)
 			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
 			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 		} else if (strcmp(token, "depth") == 0) {
-			return; // TODO
+			token = strtok_whitespace(NULL);
+			engine->max_depth = atoi(token);
 		} else if (strcmp(token, "mate") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->max_depth = atoi(token);
