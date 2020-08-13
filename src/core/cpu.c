@@ -283,7 +283,6 @@ engine_start_search(struct Engine *engine)
 		} else if (stack.current_depth == stack.desired_depth) {
 			position_do_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
 			float eval = position_eval(&stack.board);
-			printf("eval is %f\n", eval);
 			position_undo_move_and_flip(&stack.board, &last_plie->moves[last_plie->child_i]);
 			if (eval > last_plie->best_eval_so_far) {
 				last_plie->best_eval_so_far = eval;
