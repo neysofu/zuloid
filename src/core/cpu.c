@@ -220,6 +220,7 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	last_plie--;
 	if (eval > last_plie->best_eval_so_far) {
 		last_plie->best_eval_so_far = eval;
+		last_plie->best_child_i_so_far = last_plie->child_i;
 	}
 }
 
@@ -265,6 +266,9 @@ struct SearchResults
 void
 engine_start_search(struct Engine *engine)
 {
+	if (engine->max_depth == 0) {
+		engine->max_depth = 3;
+	}
 	printf("info depth score cp %f\n", position_eval(&engine->board));
 	struct SSearchStack stack = ssearch_stack_new((size_t)engine->max_depth);
 	stack.board = engine->board;

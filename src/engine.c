@@ -45,6 +45,7 @@ engine_init(struct Engine *engine)
 		.contempt = 0.65,
 		.selectivity = 0.5,
 		.status = STATUS_IDLE,
+		.max_depth = 0,
 	};
 }
 
