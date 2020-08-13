@@ -44,61 +44,51 @@ uci_call_go(struct Engine *engine)
 	}
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
-		switch (djb_hash(token)) {
-			case 3430: // "perft"
-				token = strtok_whitespace(NULL);
-				if (token) {
-					position_perft(engine->output, &engine->board, atoi(token));
-				} else {
-					display_err_syntax(engine->output);
-				}
-				return;
-			case 52523: // "wtime"
-				token = strtok_whitespace(NULL);
-				engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
-				  atoi(token) * 1000;
-				break;
-			case 51862: // "btime"
-				token = strtok_whitespace(NULL);
-				engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
-				  atoi(token) * 1000;
-				break;
-			case 7638: // "winc"
-				token = strtok_whitespace(NULL);
-				engine->time_controls[COLOR_WHITE]->increment_in_seconds =
-				  atoi(token) * 1000;
-				break;
-			case 26541: // "binc"
-				token = strtok_whitespace(NULL);
-				engine->time_controls[COLOR_BLACK]->increment_in_seconds =
-				  atoi(token) * 1000;
-				break;
-			case 4603: // "infinite"
-				time_control_delete(engine->time_controls[COLOR_WHITE]);
-				time_control_delete(engine->time_controls[COLOR_BLACK]);
-				break;
-			case 29613: // "ponder"
-				engine->ponder = true;
-				break;
-			case 33256: // "movestogo"
-				token = strtok_whitespace(NULL);
-				engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
-				engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
-				break;
-			case 57498: // "depth"
-			case 32972: // "mate"
-				token = strtok_whitespace(NULL);
-				engine->max_depth = atoi(token);
-				break;
-			case 7294: // "nodes"
-				token = strtok_whitespace(NULL);
-				engine->max_nodes_count = atoi(token);
-				break;
-			case 5035: // "movetime"
-				token = strtok_whitespace(NULL);
-				engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
-				  atoi(token) * 1000;
-				break;
+		if (strcmp(token, "perft") == 0) {
+			token = strtok_whitespace(NULL);
+			if (token) {
+				position_perft(engine->output, &engine->board, atoi(token));
+			} else {
+				display_err_syntax(engine->output);
+			}
+			return;
+		} else if (strcmp(token, "wtime") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
+			  atoi(token) * 1000;
+		} else if (strcmp(token, "btime") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
+			  atoi(token) * 1000;
+		} else if (strcmp(token, "winc") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->time_controls[COLOR_WHITE]->increment_in_seconds =
+			  atoi(token) * 1000;
+		} else if (strcmp(token, "binc") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->time_controls[COLOR_BLACK]->increment_in_seconds =
+			  atoi(token) * 1000;
+		} else if (strcmp(token, "infinite") == 0) {
+			time_control_delete(engine->time_controls[COLOR_WHITE]);
+			time_control_delete(engine->time_controls[COLOR_BLACK]);
+		} else if (strcmp(token, "ponder") == 0) {
+			engine->ponder = true;
+		} else if (strcmp(token, "movestogo") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
+			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
+		} else if (strcmp(token, "depth") == 0) {
+			return; // TODO
+		} else if (strcmp(token, "mate") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->max_depth = atoi(token);
+		} else if (strcmp(token, "nodes") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->max_nodes_count = atoi(token);
+		} else if (strcmp(token, "movetime") == 0) {
+			token = strtok_whitespace(NULL);
+			engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
+			  atoi(token) * 1000;
 		}
 	}
 	engine_start_search(engine);
