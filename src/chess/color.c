@@ -28,13 +28,13 @@ color_pawn_rank(enum Color color)
 Rank
 color_en_passant_target_rank(enum Color color)
 {
-	return color ? R_3 : R_6;
+	return color ? R_6 : R_3;
 }
 
 Rank
 color_double_push_rank(enum Color color)
 {
-	return color ? R_4 : R_5;
+	return color ? R_5 : R_4;
 }
 
 enum Color
