@@ -12,6 +12,7 @@ Bitboard
 bb_next_subset(Bitboard mask, Bitboard previous_subset)
 {
 	// https://www.chessprogramming.org/Traversing_Subsets_of_a_Set
+	// https://graphics.stanford.edu/~seander/bithacks.html#CountBitsSetKernighan
 	return (previous_subset - mask) & mask;
 }
 
@@ -48,6 +49,10 @@ const short OFFSETS_KING[8][2] = {
 	{ -1, -1 }, { 0, -1 }, { 1, -1 }, { -1, 0 }, { 1, 0 }, { -1, 1 }, { 0, 1 }, { 1, 1 },
 };
 
+const short OFFSETS_BISHOP[4][2] = { { 1, -1 }, { -1, 1 }, { 1, 1 }, { -1, -1 } };
+
+const short OFFSETS_ROOK[4][2] = { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } };
+
 void
 bb_pprint(Bitboard bb)
 {
@@ -62,28 +67,15 @@ bb_pprint(Bitboard bb)
 }
 
 Bitboard
-bb_random(void)
-{
-	Bitboard u1, u2, u3, u4;
-	u1 = (Bitboard)(random()) & 0xFFFF;
-	u2 = (Bitboard)(random()) & 0xFFFF;
-	u3 = (Bitboard)(random()) & 0xFFFF;
-	u4 = (Bitboard)(random()) & 0xFFFF;
-	return u1 | (u2 << 16) | (u3 << 32) | (u4 << 48);
-}
-
-Bitboard
 bb_bishop(Square sq, Bitboard occupancy)
 {
-	const short bishop_offsets[4][2] = { { -1, -1 }, { -1, 1 }, { 1, -1 }, { 1, 1 } };
-	return slider_attacks(sq, occupancy, bishop_offsets);
+	return slider_attacks(sq, occupancy, OFFSETS_BISHOP);
 }
 
 Bitboard
 bb_rook(Square sq, Bitboard occupancy)
 {
-	const short rook_offsets[4][2] = { { -1, 0 }, { 0, -1 }, { 0, 1 }, { 1, 0 } };
-	return slider_attacks(sq, occupancy, rook_offsets);
+	return slider_attacks(sq, occupancy, OFFSETS_ROOK);
 }
 
 Bitboard

@@ -67,7 +67,8 @@ init_attack_table(Square sq,
 }
 
 size_t
-magic_calculate_offset(const struct Magic *magic) {
+magic_calculate_offset(const struct Magic *magic)
+{
 	return 1 << (64 - magic->rshift);
 }
 
@@ -205,33 +206,32 @@ verify_magic_candidate(const struct Magic *magic,
 }
 
 void
-magic_find_rook(struct Magic *magic, Square square)
+find_magic(struct Magic *magic,
+           Square square,
+           Bitboard (*attacker)(Square, Bitboard),
+           Bitboard (*premasker)(Square))
 {
 	size_t attacks_table_size = sizeof(Bitboard) * 4096;
 	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
 	exit_if_null(attacks_table);
-	magic->premask = bb_premask_rook(square);
+	magic->premask = premasker(square);
 	magic->postmask = UINT64_MAX;
 	magic->rshift = 64 - popcnt64(magic->premask);
 	do {
 		memset(attacks_table, 0, attacks_table_size);
 		magic->multiplier = bb_sparse_random();
-	} while (!verify_magic_candidate(magic, square, attacks_table, bb_rook));
+	} while (!verify_magic_candidate(magic, square, attacks_table, attacker));
 	free(attacks_table);
+}
+
+void
+magic_find_rook(struct Magic *magic, Square square)
+{
+	find_magic(magic, square, bb_rook, bb_premask_rook);
 }
 
 void
 magic_find_bishop(struct Magic *magic, Square square)
 {
-	size_t attacks_table_size = sizeof(Bitboard) * 4096;
-	Bitboard *attacks_table = malloc(sizeof(Bitboard) * 4096);
-	exit_if_null(attacks_table);
-	magic->premask = bb_premask_bishop(square);
-	magic->postmask = UINT64_MAX;
-	magic->rshift = 64 - popcount64(magic->premask);
-	do {
-		memset(attacks_table, 0, attacks_table_size);
-		magic->multiplier = bb_sparse_random();
-	} while (!verify_magic_candidate(magic, square, attacks_table, bb_bishop));
-	free(attacks_table);
+	find_magic(magic, square, bb_bishop, bb_premask_bishop);
 }
