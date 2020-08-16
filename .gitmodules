@@ -13,3 +13,6 @@
 [submodule "lib/cJSON"]
 	path = lib/cJSON
 	url = git@github.com:DaveGamble/cJSON.git
+[submodule "lib/libpopcnt"]
+	path = lib/libpopcnt
+	url = git@github.com:kimwalisch/libpopcnt.git
