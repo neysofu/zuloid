@@ -1,4 +1,5 @@
 #include "chess/coordinates.h"
+#include "chess/mnemonics.h"
 #include "munit/munit.h"
 
 void
@@ -25,4 +26,12 @@ test_char_to_file(void)
 	munit_assert_int(5, ==, char_to_file('f'));
 	munit_assert_int(6, ==, char_to_file('g'));
 	munit_assert_int(7, ==, char_to_file('h'));
+}
+
+void
+test_square_to_bb_conversion(void)
+{
+	munit_assert_uint64(SQ_A6, ==, bb_to_square(square_to_bb(SQ_A6)));
+	munit_assert_uint64(SQ_A1, ==, bb_to_square(square_to_bb(SQ_A1)));
+	munit_assert_uint64(SQ_H8, ==, bb_to_square(square_to_bb(SQ_H8)));
 }

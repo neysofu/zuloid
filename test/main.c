@@ -65,6 +65,7 @@ extern void test_protocol_uci_cmd_position(struct Engine *);
 extern void test_protocol_uci_cmd_quit(struct Engine *);
 extern void test_protocol_uci_cmd_uci(struct Engine *);
 extern void test_protocol_uci_unknown_cmd(struct Engine *);
+extern void test_square_to_bb_conversion(void);
 extern void test_utils(void);
 // clang-format on
 
@@ -106,6 +107,7 @@ main(void)
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_quit);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_uci);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_unknown_cmd);
+	CALL_TEST(test_square_to_bb_conversion);
 	CALL_TEST_WITH_TMP_ENGINE(test_perft_results);
 	puts("All tests passed.");
 	return EXIT_SUCCESS;

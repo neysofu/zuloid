@@ -231,10 +231,14 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
+		if (stack->current_depth == 0) {
+		printf("new eval is %f\n", -eval);
+		}
 	if (-eval > last_plie->best_eval_so_far) {
 		last_plie->best_eval_so_far = -eval;
-		last_plie->best_child_i_so_far = last_plie->child_i - 1;
+		last_plie->best_child_i_so_far = last_plie->child_i;
 	}
+	last_plie->child_i++;
 }
 
 void
@@ -242,7 +246,7 @@ ssearch_stack_push(struct SSearchStack *stack)
 {	
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
 	assert(last_plie->child_i < last_plie->children_count);
-	struct Move generator = last_plie->moves[last_plie->child_i++];
+	struct Move generator = last_plie->moves[last_plie->child_i];
 	stack->current_depth++;
 	last_plie++;
 	last_plie->child_i = 0;
@@ -274,14 +278,14 @@ position_eval_color(struct Board *pos, enum Color side)
 	return popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_PAWN]) +
 	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KNIGHT]) * 3 +
 	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_BISHOP]) * 3.2 +
+	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KING]) * 1000 +
 	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_ROOK]) * 5;
 }
 
 float
 position_eval(struct Board *pos)
 {
-	return (position_eval_color(pos, COLOR_WHITE) - position_eval_color(pos, COLOR_BLACK)) *
-	       100;
+	return position_eval_color(pos, COLOR_WHITE) - position_eval_color(pos, COLOR_BLACK);
 }
 
 struct SearchResults
@@ -294,6 +298,7 @@ struct SearchResults
 void
 engine_start_search(struct Engine *engine)
 {
+	engine->max_depth = 4;
 	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {

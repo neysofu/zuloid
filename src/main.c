@@ -1,9 +1,13 @@
 #include "engine.h"
 #include "globals.h"
 #include "utils.h"
-#include <plibsys.h>
+#include "switches.h"
 #include <stdio.h>
 #include <stdlib.h>
+
+#ifdef SWITCH_SHOW_PID
+#include <plibsys.h>
+#endif
 
 struct Engine engine;
 
@@ -16,7 +20,9 @@ main(int argc, char **argv)
 	// the client.
 	printf("# Zuloid %s (%s)\n", ZULOID_VERSION_VERBOSE, ZULOID_BUILD_DATE);
 	printf("# Copyright (c) 2018-2020 Filippo Costa\n");
+#ifdef SWITCH_SHOW_PID
 	printf("# Process ID: %d\n", p_process_get_current_pid());
+#endif
 	for (int i = 1; i < argc && engine.status != STATUS_EXIT; i++) {
 		engine.protocol(&engine, argv[i]);
 	}

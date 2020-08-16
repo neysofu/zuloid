@@ -19,10 +19,10 @@
  * DEALINGS IN THE SOFTWARE. */
 
 #include "chess/movegen.h"
-#include "chess/magic.h"
 #include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/fen.h"
+#include "chess/magic.h"
 #include "chess/mnemonics.h"
 #include "chess/position.h"
 #include "globals.h"
@@ -54,6 +54,7 @@ gen_pawn_moves(struct Move moves[],
                Bitboard sources,
                Bitboard targets,
                Bitboard all,
+               Bitboard en_passant_target,
                enum Color side_to_move)
 {
 	struct Move *ptr = moves;
@@ -75,8 +76,10 @@ gen_pawn_moves(struct Move moves[],
 		[COLOR_WHITE] = { captures_east << 9, captures_west >> 7 },
 		[COLOR_BLACK] = { captures_east << 7, captures_west >> 9 }
 	};
-	captures_east = captures_params[side_to_move][0] & targets & all;
-	captures_west = captures_params[side_to_move][1] & targets & all;
+	captures_east =
+	  captures_params[side_to_move][0] & ((targets & all) | en_passant_target);
+	captures_west =
+	  captures_params[side_to_move][1] & ((targets & all) | en_passant_target);
 	Square square;
 	while (single_pushes) {
 		POP_LSB(square, single_pushes);
@@ -165,40 +168,30 @@ size_t
 gen_king_castles(struct Move moves[], struct Board *pos)
 {
 	struct Move *ptr = moves;
-	Bitboard mask, maskk, foo;
-	/* TODO */
 	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move)) {
-		mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
-		position_flip_side_to_move(pos);
-		maskk = mask;
-		POP_LSB(foo, maskk);
-		POP_MSB(foo, maskk);
-		if (!(position_occupancy(pos) & maskk)) {
-			// struct Move dummy[255];
-			// if (!gen_attacks_against(dummy, pos, mask)) {
-			EMIT_MOVE(moves,
-			          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
-			          square_new(6, color_home_rank(pos->side_to_move)));
-			//}
+		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
+		Bitboard king = pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move];
+		if (!(position_occupancy(pos) & (mask ^ king))) {
+			Square source = bb_to_square(king);
+			EMIT_MOVE(moves, source, source + 16);
 		}
-		position_flip_side_to_move(pos);
 	}
-	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
-		position_flip_side_to_move(pos);
-		mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
-		maskk = mask;
-		POP_LSB(foo, maskk);
-		POP_MSB(foo, maskk);
-		if (!(position_occupancy(pos) & maskk)) {
-			// struct Move dummy[255];
-			// if (!gen_attacks_against(dummy, pos, mask)) {
-			EMIT_MOVE(moves,
-			          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
-			          square_new(2, color_home_rank(pos->side_to_move)));
-			//}
-		}
-		position_flip_side_to_move(pos);
-	}
+	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
+	//	position_flip_side_to_move(pos);
+	//	mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
+	//	maskk = mask;
+	//	POP_LSB(foo, maskk);
+	//	POP_MSB(foo, maskk);
+	//	if (!(position_occupancy(pos) & maskk)) {
+	//		// struct Move dummy[255];
+	//		// if (!gen_attacks_against(dummy, pos, mask)) {
+	//		EMIT_MOVE(moves,
+	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
+	//		          square_new(2, color_home_rank(pos->side_to_move)));
+	//		//}
+	//	}
+	//	position_flip_side_to_move(pos);
+	//}
 	return moves - ptr;
 }
 
@@ -213,8 +206,9 @@ gen_attacks_against_from(struct Move moves[],
 	Bitboard pieces = pos->bb[attacker];
 	moves += gen_pawn_moves(moves,
 	                        pieces & pos->bb[PIECE_TYPE_PAWN],
-	                        victims | square_to_bb(en_passant_target),
+	                        victims,
 	                        position_occupancy(pos),
+	                        0,//square_to_bb(en_passant_target),
 	                        attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(

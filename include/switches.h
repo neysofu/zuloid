@@ -3,5 +3,6 @@
 
 #define SWITCH_OPENMP 1
 #define SWITCH_DEBUG_MESSAGES 1
+#define SWITCH_SHOW_PID 1
 
 #endif

@@ -17,6 +17,7 @@ gen_pawn_moves(struct Move moves[],
                Bitboard srcs,
                Bitboard mask,
                Bitboard all,
+			   Bitboard en_passant,
                enum Color side_to_move);
 size_t
 gen_knight_moves(struct Move moves[], Bitboard srcs, Bitboard mask);

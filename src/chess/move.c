@@ -49,8 +49,8 @@ string_to_move(const char *str, struct Move *mv)
 	if (strlen(str) < 4) {
 		return 0;
 	}
-	mv->source = square_new(char_to_file(str[0]), char_to_rank(str[1]));
-	mv->target = square_new(char_to_file(str[2]), char_to_rank(str[3]));
+	mv->source = square_from_str(str);
+	mv->target = square_from_str(str + 2);
 	mv->promotion = char_to_piece(str[4]).type;
 	return 4;
 }
@@ -58,11 +58,12 @@ string_to_move(const char *str, struct Move *mv)
 void
 position_do_move(struct Board *pos, struct Move *mv)
 {
+	pos->en_passant_target = false;
+	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(mv->source);
 	mv->capture = position_piece_at_square(pos, mv->target).type;
 	position_set_piece_at_square(
 	  pos, mv->target, position_piece_at_square(pos, mv->source));
 	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
-	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(mv->source);
 	if (is_pawn && abs(mv->target - mv->source) == 2) {
 		pos->en_passant_target = (mv->target + mv->source) / 2;
 	}
@@ -86,11 +87,23 @@ position_undo_move_and_flip(struct Board *pos, const struct Move *mv)
 void
 position_undo_move(struct Board *pos, const struct Move *mv)
 {
+	pos->en_passant_target = false;
 	position_set_piece_at_square(
 	  pos, mv->source, position_piece_at_square(pos, mv->target));
 	position_set_piece_at_square(
 	  pos, mv->target, (struct Piece){ .type = mv->capture, .color = pos->side_to_move });
 	/* TODO: Castling, en passant. */
+}
+
+Square
+move_get_en_passant_target(const struct Move *move) {
+	return (move->target + move->source) / 2;
+}
+
+bool
+move_is_en_passant(const struct Move *move, const struct Board *pos) {
+	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(move->source);
+	return is_pawn && abs(move->target - move->source) == 2;
 }
 
 int

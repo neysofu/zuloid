@@ -95,7 +95,7 @@ position_occupancy(struct Board *pos)
 }
 
 Bitboard
-position_castle_mask(struct Board *pos, int castling_right)
+position_castle_mask(const struct Board *pos, int castling_right)
 {
 	Bitboard rank = rank_to_bb(color_home_rank(pos->side_to_move));
 	Bitboard source = pos->bb[PIECE_TYPE_KING] & rank;

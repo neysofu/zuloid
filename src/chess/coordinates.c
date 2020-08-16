@@ -46,7 +46,7 @@ square_to_bb(Square square)
 Square
 bb_to_square(Bitboard bb)
 {
-	return MSB(bb);
+	return 63 - MSB(bb);
 }
 
 Bitboard

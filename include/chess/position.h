@@ -48,7 +48,7 @@ position_occupancy(struct Board *pos);
 
 /* Tracks the king movement when castling. */
 Bitboard
-position_castle_mask(struct Board *pos, int castling_right);
+position_castle_mask(const struct Board *pos, int castling_right);
 
 struct Piece
 position_piece_at_square(const struct Board *position, Square square);
