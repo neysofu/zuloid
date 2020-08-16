@@ -1,6 +1,7 @@
 #include "chess/magic.h"
 #include "chess/bb.h"
 #include "chess/diagonals.h"
+#include "chess/mnemonics.h"
 #include "chess/generated/magics_bishop.h"
 #include "chess/generated/magics_rook.h"
 #include "libpopcnt/libpopcnt.h"
@@ -11,13 +12,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#define HANDLE_ERR(err)                                                                    \
-	do {                                                                                   \
-		if (err < 0) {                                                                     \
-			return -1;                                                                     \
-		}                                                                                  \
-	} while (0)
 
 Bitboard BB_ATTACKS_BISHOP[64 * 4096] = { 0 };
 Bitboard BB_ATTACKS_ROOK[64 * 4096] = { 0 };
@@ -105,12 +99,10 @@ bb_init_rook(const struct Magic *magics)
 int
 magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 {
-	int err;
-	err = fprintf(stream, "\nconst struct Magic %s[SQUARES_COUNT] = {\n", identifier);
-	HANDLE_ERR(err);
+	fprintf(stream, "\nconst struct Magic %s[SQUARES_COUNT] = {\n", identifier);
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		struct Magic magic = magics[sq];
-		err = fprintf(stream,
+		fprintf(stream,
 		              "\t[0%o] = {"
 		              " .premask = 0x%" PRIx64 "ULL,"
 		              " .multiplier = 0x%" PRIx64 "ULL,"
@@ -121,10 +113,8 @@ magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 		              magic.multiplier,
 		              magic.rshift,
 		              magic.postmask);
-		HANDLE_ERR(err);
 	}
 	fprintf(stream, "};\n");
-	HANDLE_ERR(err);
 	return 0;
 }
 
@@ -161,17 +151,6 @@ bb_premask_bishop(Square sq)
 	Bitboard diagonal2 = square_a8h1_diagonal(sq);
 	Bitboard borders = file_to_bb(0) | file_to_bb(7) | rank_to_bb(0) | rank_to_bb(7);
 	return (diagonal1 ^ diagonal2) & ~borders;
-}
-
-size_t
-find_start_of_attacks_table(Bitboard attacks_table[])
-{
-	for (size_t i = 0; i < 4096; i++) {
-		if (attacks_table[i]) {
-			return i;
-		}
-	}
-	return 4095;
 }
 
 size_t

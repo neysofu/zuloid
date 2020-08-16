@@ -1,4 +1,5 @@
 #include "chess/color.h"
+#include "chess/mnemonics.h"
 
 char
 color_to_char(enum Color color)
@@ -9,31 +10,31 @@ color_to_char(enum Color color)
 Rank
 color_promoting_rank(enum Color color)
 {
-	return color ? 0 : 7;
+	return color ? R_1 : R_8;
 }
 
 Rank
 color_home_rank(enum Color color)
 {
-	return color ? 7 : 0;
+	return color ? R_8 : R_1;
 }
 
 Rank
 color_pawn_rank(enum Color color)
 {
-	return color ? 6 : 1;
+	return color ? R_7 : R_2;
 }
 
 Rank
 color_en_passant_target_rank(enum Color color)
 {
-	return color ? 2 : 5;
+	return color ? R_3 : R_6;
 }
 
 Rank
 color_double_push_rank(enum Color color)
 {
-	return color ? 4 : 3;
+	return color ? R_4 : R_5;
 }
 
 enum Color
