@@ -10,3 +10,6 @@
 [submodule "lib/base64"]
 	path = lib/base64
 	url = git@github.com:joedf/base64.c.git
+[submodule "lib/cJSON"]
+	path = lib/cJSON
+	url = git@github.com:DaveGamble/cJSON.git
