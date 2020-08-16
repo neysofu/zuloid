@@ -32,9 +32,7 @@ test_perft_results(struct Engine *engine)
 	bb_init();
 	magic_init();
 	for (size_t i = 0; i < ARRAY_SIZE(TEST_CASES); i++) {
-		char *fen = exit_if_null(malloc(FEN_SIZE));
-		strcpy(fen, TEST_CASES[i].fen);
-		position_init_from_fen(&engine->board, fen);
+		position_init_from_fen(&engine->board, TEST_CASES[i].fen);
 		{
 			uint64_t result =
 			  position_perft(engine->output, &engine->board, TEST_CASES[i].depth);

@@ -79,13 +79,13 @@ fen_from_position(char *fen, const struct Board *position, char sep)
 }
 
 int
-position_init_from_fen_fields(struct Board *pos, char **fieldsptr)
+position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
 {
 	position_empty(pos);
-	char *token = fieldsptr[0];
+	const char *token = fieldsptr[0];
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
-		for (File file = 0; *token && file <= FILE_MAX; token++, file++) {
+		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX; token++, file++) {
 			if (isdigit(*token)) {
 				file += *token - '1';
 			} else {
@@ -124,13 +124,17 @@ position_init_from_fen_fields(struct Board *pos, char **fieldsptr)
 }
 
 int
-position_init_from_fen(struct Board *pos, char *fen)
+position_init_from_fen(struct Board *pos, const char *fen)
 {
 	assert(pos);
 	assert(fen);
-	char *fieldsptr[6] = { NULL };
-	for (size_t i = 0; i < 6; i++) {
-		fieldsptr[i] = strsep(&fen, " _");
+	const char *fieldsptr[6] = { NULL };
+	fieldsptr[0] = fen;
+	for (size_t i = 1; i < 6 && fieldsptr[i-1]; i++) {
+		const char *token = strpbrk(fieldsptr[i-1], " _") + 1;
+		if (token && *token) {
+			fieldsptr[i] = token;
+		}
 	}
 	return position_init_from_fen_fields(pos, fieldsptr);
 }

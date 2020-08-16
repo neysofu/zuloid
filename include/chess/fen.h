@@ -14,9 +14,9 @@ char *
 fen_from_position(char *buf, const struct Board *pos, char sep);
 
 int
-position_init_from_fen_fields(struct Board *pos, char **fieldsptr);
+position_init_from_fen_fields(struct Board *pos, const char **fieldsptr);
 
 int
-position_init_from_fen(struct Board *pos, char *fen);
+position_init_from_fen(struct Board *pos, const char *fen);
 
 #endif
