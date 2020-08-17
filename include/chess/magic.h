@@ -15,14 +15,6 @@ struct Magic
 };
 
 void
-magic_init(void);
-
-Bitboard
-bb_bishop_magic(Square sq, Bitboard obstacles);
-Bitboard
-bb_rook_magic(Square sq, Bitboard obstacles);
-
-void
 magic_find_rook(struct Magic *magic, Square square);
 
 void

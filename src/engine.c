@@ -2,6 +2,7 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/position.h"
+#include "mt-64/mt-64.h"
 #include "protocols/uci.h"
 #include "utils.h"
 #include <assert.h>

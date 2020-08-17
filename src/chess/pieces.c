@@ -43,37 +43,3 @@ char_to_piece(char c)
 }
 
 const struct Piece PIECE_NONE = { .type = PIECE_TYPE_NONE, .color = COLOR_WHITE };
-
-// Bitboard
-// rook_threats(Square sq)
-//{
-//	return FILE_TO_BITBOARD(SQUARE_RANK(sq)) ^
-// RANK_TO_BITBOARD(SQUARE_RANK(sq));
-//}
-//
-// Bitboard
-// knight_threats(Square sq)
-//{
-//	return BITBOARDS_KNIGHT_THREATS[sq];
-//}
-//
-// Bitboard
-// bishop_threats(Square sq)
-//{
-//	File file = SQUARE_FILE(sq);
-//	Rank rank = SQUARE_RANK(sq);
-//	return BITBOARDS_DIAGONALS[7 + rank - file] ^
-// BITBOARDS_ANTI_DIAGONALS[rank + file];
-//}
-//
-// Bitboard
-// king_threats(Square sq)
-//{
-//	return BITBOARDS_KING_THREATS[sq];
-//}
-//
-// Bitboard
-// queen_threats(Square sq)
-//{
-//	return bb_rook_threats(sq) | bb_bishop_threats(sq);
-//}

@@ -1,6 +1,7 @@
 #include "chess/bb.h"
 #include "chess/fen.h"
 #include "chess/magic.h"
+#include "chess/threats.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "engine.h"
@@ -29,8 +30,7 @@ const struct PerftTestCase TEST_CASES[] = {
 void
 test_perft_results(struct Engine *engine)
 {
-	bb_init();
-	magic_init();
+	init_threats();
 	for (size_t i = 0; i < ARRAY_SIZE(TEST_CASES); i++) {
 		position_init_from_fen(&engine->board, TEST_CASES[i].fen);
 		{

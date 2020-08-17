@@ -1,26 +1,22 @@
 #include "chess/bb.h"
 #include "chess/magic.h"
+#include "chess/threats.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
 #include "munit/munit.h"
 #include "utils.h"
 #include <time.h>
 
-extern Bitboard
-bb_rook_magic(Square sq, Bitboard occupancy);
-extern Bitboard
-bb_bishop_magic(Square sq, Bitboard occupancy);
-
 void
 test_magic_generation(void)
 {
 	srand(time(NULL));
-	magic_init();
+	init_threats();
 	for (size_t i = 0; i < 5000; i++) {
 		Square from = rand() % 64;
 		Bitboard mask = genrand64_int64() & genrand64_int64();
-		munit_assert_uint(bb_rook(from, mask), ==, bb_rook_magic(from, mask));
-		munit_assert_uint(bb_bishop(from, mask), ==, bb_bishop_magic(from, mask));
+		munit_assert_uint(threats_by_rook(from, mask), ==, threats_by_rook_no_init(from, mask));
+		munit_assert_uint(threats_by_bishop(from, mask), ==, threats_by_bishop_no_init(from, mask));
 	}
 }
 

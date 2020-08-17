@@ -1,6 +1,7 @@
 #include "chess/position.h"
 #include "chess/bb.h"
 #include "chess/color.h"
+#include "chess/fen.h"
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/pieces.h"
@@ -108,6 +109,7 @@ position_castle_mask(const struct Board *pos, int castling_right)
 			target = square_to_bb(square_new(2, color_home_rank(pos->side_to_move)));
 			break;
 		default:
+			target = 0;
 			assert(false);
 	}
 	return (((target - 1) ^ (source - 1)) | (source | target)) & rank;

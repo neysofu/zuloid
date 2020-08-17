@@ -25,6 +25,7 @@
 #include "chess/magic.h"
 #include "chess/mnemonics.h"
 #include "chess/position.h"
+#include "chess/threats.h"
 #include "globals.h"
 #include "utils.h"
 #include <assert.h>
@@ -107,7 +108,7 @@ gen_knight_moves(struct Move moves[], Bitboard sources, Bitboard mask)
 	Square source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_ATTACKS_BY_KNIGHT[source] & mask;
+		Bitboard targets = threats_by_knight(source) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -123,7 +124,7 @@ gen_bishop_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard 
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = bb_bishop_magic(source, occupancy) & mask;
+		Bitboard targets = threats_by_bishop(source, occupancy) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -139,7 +140,7 @@ gen_rook_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard al
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = bb_rook_magic(source, all) & mask;
+		Bitboard targets = threats_by_rook(source, all) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);
@@ -155,7 +156,7 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
-		Bitboard targets = BB_ATTACKS_BY_KING[source] & mask;
+		Bitboard targets = threats_by_king(source) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
 			EMIT_MOVE(moves, source, target);

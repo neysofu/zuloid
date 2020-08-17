@@ -24,13 +24,6 @@ Bitboard
 bb_next_subset(Bitboard mask, Bitboard previous_subset);
 
 void
-bb_init(void);
-void
 bb_pprint(Bitboard value);
-
-Bitboard
-bb_bishop(Square sq, Bitboard obstacles);
-Bitboard
-bb_rook(Square sq, Bitboard obstacles);
 
 #endif

@@ -7,6 +7,7 @@
 #include "agent.h"
 #include "cache/cache.h"
 #include "chess/bb.h"
+#include "chess/threats.h"
 #include "chess/fen.h"
 #include "chess/magic.h"
 #include "chess/movegen.h"
@@ -321,8 +322,7 @@ uci_call_uci(struct Engine *engine)
 		fputs(UCI_OPTIONS[i], engine->output);
 		putc('\n', engine->output);
 	}
-	bb_init();
-	magic_init();
+	init_threats();
 	fputs("uciok\n", engine->output);
 }
 
