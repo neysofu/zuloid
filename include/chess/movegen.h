@@ -17,7 +17,7 @@ gen_pawn_moves(struct Move moves[],
                Bitboard srcs,
                Bitboard mask,
                Bitboard all,
-			   Bitboard en_passant,
+               Bitboard en_passant,
                enum Color side_to_move);
 size_t
 gen_knight_moves(struct Move moves[], Bitboard srcs, Bitboard mask);
@@ -39,7 +39,7 @@ gen_attacks_against_from(struct Move moves[],
                          struct Board *pos,
                          Bitboard victims,
                          enum Color attacker,
-						 Square en_passant_target);
+                         Square en_passant_target);
 bool
 position_is_illegal(struct Board *pos);
 bool

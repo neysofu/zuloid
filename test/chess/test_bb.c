@@ -15,8 +15,10 @@ test_magic_generation(void)
 	for (size_t i = 0; i < 5000; i++) {
 		Square from = rand() % 64;
 		Bitboard mask = genrand64_int64() & genrand64_int64();
-		munit_assert_uint(threats_by_rook(from, mask), ==, threats_by_rook_no_init(from, mask));
-		munit_assert_uint(threats_by_bishop(from, mask), ==, threats_by_bishop_no_init(from, mask));
+		munit_assert_uint(
+		  threats_by_rook(from, mask), ==, threats_by_rook_no_init(from, mask));
+		munit_assert_uint(
+		  threats_by_bishop(from, mask), ==, threats_by_bishop_no_init(from, mask));
 	}
 }
 

@@ -209,7 +209,7 @@ gen_attacks_against_from(struct Move moves[],
 	                        pieces & pos->bb[PIECE_TYPE_PAWN],
 	                        victims,
 	                        position_occupancy(pos),
-	                        0,//square_to_bb(en_passant_target),
+	                        0, // square_to_bb(en_passant_target),
 	                        attacker);
 	moves += gen_knight_moves(moves, pieces & pos->bb[PIECE_TYPE_KNIGHT], victims);
 	moves += gen_bishop_moves(

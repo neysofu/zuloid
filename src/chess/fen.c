@@ -12,7 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-const char FEN_OF_INITIAL_POSITION[FEN_SIZE] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+const char FEN_OF_INITIAL_POSITION[FEN_SIZE] =
+  "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
 
 char *
 fen_write_position_pieces(char *fen, const struct Board *position)
@@ -87,7 +88,8 @@ position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
 	const char *token = fieldsptr[0];
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
-		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX; token++, file++) {
+		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX;
+		     token++, file++) {
 			if (isdigit(*token)) {
 				file += *token - '1';
 			} else {
@@ -132,8 +134,8 @@ position_init_from_fen(struct Board *pos, const char *fen)
 	assert(fen);
 	const char *fieldsptr[6] = { NULL };
 	fieldsptr[0] = fen;
-	for (size_t i = 1; i < 6 && fieldsptr[i-1]; i++) {
-		const char *token = strpbrk(fieldsptr[i-1], " _") + 1;
+	for (size_t i = 1; i < 6 && fieldsptr[i - 1]; i++) {
+		const char *token = strpbrk(fieldsptr[i - 1], " _") + 1;
 		if (token && *token) {
 			fieldsptr[i] = token;
 		}

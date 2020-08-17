@@ -1,5 +1,4 @@
 #include "core/eval.h"
-#include "mt-64/mt-64.h"
 #include "agent.h"
 #include "base64/base64.h"
 #include "cJSON/cJSON.h"
@@ -9,6 +8,7 @@
 #include "engine.h"
 #include "eval.h"
 #include "libpopcnt/libpopcnt.h"
+#include "mt-64/mt-64.h"
 #include "utils.h"
 #include <float.h>
 #include <math.h>

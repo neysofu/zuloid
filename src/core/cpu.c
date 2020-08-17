@@ -85,8 +85,8 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
-		if (stack->current_depth == 0) {
-		}
+	if (stack->current_depth == 0) {
+	}
 	if (-eval > last_plie->best_eval_so_far) {
 		last_plie->best_eval_so_far = -eval;
 		last_plie->best_child_i_so_far = last_plie->child_i;
@@ -96,7 +96,7 @@ ssearch_stack_pop(struct SSearchStack *stack)
 
 void
 ssearch_stack_push(struct SSearchStack *stack)
-{	
+{
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
 	assert(last_plie->child_i < last_plie->children_count);
 	struct Move generator = last_plie->moves[last_plie->child_i];

@@ -96,12 +96,14 @@ position_undo_move(struct Board *pos, const struct Move *mv)
 }
 
 Square
-move_get_en_passant_target(const struct Move *move) {
+move_get_en_passant_target(const struct Move *move)
+{
 	return (move->target + move->source) / 2;
 }
 
 bool
-move_is_en_passant(const struct Move *move, const struct Board *pos) {
+move_is_en_passant(const struct Move *move, const struct Board *pos)
+{
 	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(move->source);
 	return is_pawn && abs(move->target - move->source) == 2;
 }

@@ -1,10 +1,10 @@
-#include "chess/coordinates.h"
 #include "chess/bb.h"
-#include "chess/magic.h"
+#include "chess/coordinates.h"
 #include "chess/generated/magics_bishop.h"
 #include "chess/generated/magics_rook.h"
-#include <stdlib.h>
+#include "chess/magic.h"
 #include <stdbool.h>
+#include <stdlib.h>
 
 Bitboard THREATS_BY_KNIGHT[SQUARES_COUNT] = { 0 };
 Bitboard THREATS_BY_KING[SQUARES_COUNT] = { 0 };
@@ -25,7 +25,6 @@ size_t BB_OFFSETS_BISHOP[64] = { 0 };
 
 int64_t BB_SHIFTS_ROOK[64] = { 0 };
 int64_t BB_SHIFTS_BISHOP[64] = { 0 };
-
 
 Bitboard
 bb_attacks_by_offsets(Square sq, const short offsets[8][2])
@@ -63,24 +62,28 @@ slider_attacks(Square sq, Bitboard occupancy, const short delta[4][2])
 }
 
 Bitboard
-threats_by_king(Square sq) {
+threats_by_king(Square sq)
+{
 	return THREATS_BY_KING[sq];
 }
 
 Bitboard
-threats_by_knight(Square sq) {
+threats_by_knight(Square sq)
+{
 	return THREATS_BY_KNIGHT[sq];
 }
 
 Bitboard
-threats_by_rook_no_init(Square sq, Bitboard occupancy) {
-const short OFFSETS_ROOK[4][2] = { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } };
+threats_by_rook_no_init(Square sq, Bitboard occupancy)
+{
+	const short OFFSETS_ROOK[4][2] = { { 1, 0 }, { 0, 1 }, { 0, -1 }, { -1, 0 } };
 	return slider_attacks(sq, occupancy, OFFSETS_ROOK);
 }
 
 Bitboard
-threats_by_bishop_no_init(Square sq, Bitboard occupancy) {
-const short OFFSETS_BISHOP[4][2] = { { 1, -1 }, { -1, 1 }, { 1, 1 }, { -1, -1 } };
+threats_by_bishop_no_init(Square sq, Bitboard occupancy)
+{
+	const short OFFSETS_BISHOP[4][2] = { { 1, -1 }, { -1, 1 }, { 1, 1 }, { -1, -1 } };
 	return slider_attacks(sq, occupancy, OFFSETS_BISHOP);
 }
 
@@ -125,7 +128,8 @@ bb_init_bishop(const struct Magic *magics)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		init_attack_table(sq, magics + sq, BB_ATTACKS_BISHOP + offset, threats_by_bishop_no_init);
+		init_attack_table(
+		  sq, magics + sq, BB_ATTACKS_BISHOP + offset, threats_by_bishop_no_init);
 		BB_OFFSETS_BISHOP[sq] = offset;
 		BB_MASK_BISHOP[sq] = magics[sq].premask;
 		BB_SHIFTS_BISHOP[sq] = magics[sq].rshift;
@@ -140,7 +144,8 @@ bb_init_rook(const struct Magic *magics)
 {
 	size_t offset = 0;
 	for (Square sq = 0; sq <= SQUARE_MAX; sq++) {
-		init_attack_table(sq, magics + sq, BB_ATTACKS_ROOK + offset, threats_by_rook_no_init);
+		init_attack_table(
+		  sq, magics + sq, BB_ATTACKS_ROOK + offset, threats_by_rook_no_init);
 		BB_OFFSETS_ROOK[sq] = offset;
 		BB_MASK_ROOK[sq] = magics[sq].premask;
 		BB_SHIFTS_ROOK[sq] = magics[sq].rshift;

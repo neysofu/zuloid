@@ -1,7 +1,7 @@
 #include "engine.h"
 #include "globals.h"
-#include "utils.h"
 #include "switches.h"
+#include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 

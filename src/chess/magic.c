@@ -1,10 +1,10 @@
 #include "chess/magic.h"
 #include "chess/bb.h"
 #include "chess/diagonals.h"
-#include "chess/mnemonics.h"
-#include "chess/threats.h"
 #include "chess/generated/magics_bishop.h"
 #include "chess/generated/magics_rook.h"
+#include "chess/mnemonics.h"
+#include "chess/threats.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
 #include "utils.h"
@@ -21,16 +21,16 @@ magics_export(const struct Magic *magics, const char *identifier, FILE *stream)
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		struct Magic magic = magics[sq];
 		fprintf(stream,
-		              "\t[0%o] = {"
-		              " .premask = 0x%" PRIx64 "ULL,"
-		              " .multiplier = 0x%" PRIx64 "ULL,"
-		              " .rshift = %d,"
-		              " .postmask = 0x%" PRIx64 "ULL },\n",
-		              sq,
-		              magic.premask,
-		              magic.multiplier,
-		              magic.rshift,
-		              magic.postmask);
+		        "\t[0%o] = {"
+		        " .premask = 0x%" PRIx64 "ULL,"
+		        " .multiplier = 0x%" PRIx64 "ULL,"
+		        " .rshift = %d,"
+		        " .postmask = 0x%" PRIx64 "ULL },\n",
+		        sq,
+		        magic.premask,
+		        magic.multiplier,
+		        magic.rshift,
+		        magic.postmask);
 	}
 	fprintf(stream, "};\n");
 	return 0;
