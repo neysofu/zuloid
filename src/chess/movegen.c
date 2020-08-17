@@ -177,6 +177,14 @@ gen_king_castles(struct Move moves[], struct Board *pos)
 			EMIT_MOVE(moves, source, source + 16);
 		}
 	}
+	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
+		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
+		Bitboard king = pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move];
+		if (!(position_occupancy(pos) & (mask ^ king))) {
+			Square source = bb_to_square(king);
+			EMIT_MOVE(moves, source, source - 16);
+		}
+	}
 	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
 	//	position_flip_side_to_move(pos);
 	//	mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
@@ -201,7 +209,8 @@ gen_attacks_against_from(struct Move moves[],
                          struct Board *pos,
                          Bitboard victims,
                          enum Color attacker,
-                         Square en_passant_target)
+                         Square en_passant_target,
+                         bool castle)
 {
 	struct Move *ptr = moves;
 	Bitboard pieces = pos->bb[attacker];
@@ -217,15 +226,21 @@ gen_attacks_against_from(struct Move moves[],
 	moves += gen_rook_moves(
 	  moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
-	moves += gen_king_castles(moves, pos);
+	if (castle) {
+		moves += gen_king_castles(moves, pos);
+	}
 	return moves - ptr;
 }
 
 size_t
 gen_pseudolegal_moves(struct Move moves[], struct Board *pos)
 {
-	return gen_attacks_against_from(
-	  moves, pos, ~pos->bb[pos->side_to_move], pos->side_to_move, pos->en_passant_target);
+	return gen_attacks_against_from(moves,
+	                                pos,
+	                                ~pos->bb[pos->side_to_move],
+	                                pos->side_to_move,
+	                                pos->en_passant_target,
+	                                true);
 }
 
 bool
@@ -237,7 +252,8 @@ position_is_illegal(struct Board *pos)
 	                                pos->bb[color_other(pos->side_to_move)] &
 	                                  pos->bb[PIECE_TYPE_KING],
 	                                pos->side_to_move,
-	                                pos->en_passant_target);
+	                                pos->en_passant_target,
+	                                false);
 }
 
 size_t

@@ -5,6 +5,7 @@
 #include "chess/coordinates.h"
 #include "chess/move.h"
 #include "chess/position.h"
+#include <stdbool.h>
 #include <stdio.h>
 
 enum
@@ -39,7 +40,8 @@ gen_attacks_against_from(struct Move moves[],
                          struct Board *pos,
                          Bitboard victims,
                          enum Color attacker,
-                         Square en_passant_target);
+                         Square en_passant_target,
+                         bool castle);
 bool
 position_is_illegal(struct Board *pos);
 bool
