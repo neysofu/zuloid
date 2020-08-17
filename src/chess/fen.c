@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+const char FEN_OF_INITIAL_POSITION[FEN_SIZE] = "rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1";
+
 char *
 fen_write_position_pieces(char *fen, const struct Board *position)
 {

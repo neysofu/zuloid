@@ -19,4 +19,6 @@ position_init_from_fen_fields(struct Board *pos, const char **fieldsptr);
 int
 position_init_from_fen(struct Board *pos, const char *fen);
 
+extern const char FEN_OF_INITIAL_POSITION[FEN_SIZE];
+
 #endif

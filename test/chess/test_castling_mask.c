@@ -5,7 +5,8 @@
 void
 test_castling_mask(void)
 {
-	struct Board pos = POSITION_INIT;
+	struct Board pos;
+	position_init_from_fen(&pos, FEN_OF_INITIAL_POSITION);
 	munit_assert_int64(
 	  0x1010100000000, ==, position_castle_mask(&pos, CASTLING_RIGHT_KINGSIDE));
 	munit_assert_int64(

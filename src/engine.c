@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "agent.h"
 #include "cache/cache.h"
+#include "chess/fen.h"
 #include "chess/position.h"
 #include "mt-64/mt-64.h"
 #include "protocols/uci.h"
@@ -34,7 +35,6 @@ void
 engine_init(struct Engine *engine)
 {
 	*engine = (struct Engine){
-		.board = POSITION_INIT,
 		.time_controls = { time_control_new_bullet(), time_control_new_bullet() },
 		.cache = NULL,
 		.agent = agent_new(),
@@ -48,6 +48,7 @@ engine_init(struct Engine *engine)
 		.status = STATUS_IDLE,
 		.max_depth = 0,
 	};
+	position_init_from_fen(&engine->board, FEN_OF_INITIAL_POSITION);
 }
 
 void

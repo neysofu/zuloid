@@ -9,7 +9,6 @@
 #include "chess/magic.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
-#include "core.h"
 #include "engine.h"
 #include "globals.h"
 #include "protocols/utils.h"
@@ -104,7 +103,7 @@ cecp_call_result(struct Engine *engine)
 void
 cecp_call_new(struct Engine *engine)
 {
-	engine->board = POSITION_INIT;
+	position_init_from_fen(&engine->board, FEN_OF_INITIAL_POSITION);
 }
 
 void

@@ -4,7 +4,7 @@
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
-#include "core.h"
+#include "core/eval.h"
 #include "engine.h"
 #include "eval.h"
 #include "libpopcnt/libpopcnt.h"
@@ -270,22 +270,6 @@ ssearch_stack_iter(struct SSearchStack *stack)
 		last_plie->best_child_i_so_far = last_plie->child_i;
 	}
 	last_plie->child_i++;
-}
-
-float
-position_eval_color(struct Board *pos, enum Color side)
-{
-	return popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_PAWN]) +
-	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KNIGHT]) * 3 +
-	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_BISHOP]) * 3.2 +
-	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_KING]) * 1000 +
-	       popcnt64(pos->bb[side] & pos->bb[PIECE_TYPE_ROOK]) * 5;
-}
-
-float
-position_eval(struct Board *pos)
-{
-	return position_eval_color(pos, COLOR_WHITE) - position_eval_color(pos, COLOR_BLACK);
 }
 
 struct SearchResults

@@ -12,7 +12,6 @@
 #include "chess/magic.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
-#include "core.h"
 #include "engine.h"
 #include "globals.h"
 #include "protocols/utils.h"
