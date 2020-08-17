@@ -36,6 +36,26 @@ struct SSearchStackPlie
 	float best_eval_so_far;
 };
 
+void
+ssearch_stack_plie_init(struct SSearchStackPlie *plie)
+{
+	plie->moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+	plie->child_i = 0;
+	plie->best_child_i_so_far = 0;
+	plie->children_count = 0;
+	plie->best_eval_so_far = -FLT_MAX;
+}
+
+void
+ssearch_stack_plie_supply_eval(struct SSearchStackPlie *plie, float eval)
+{
+	if (eval > plie->best_eval_so_far) {
+		plie->best_eval_so_far = eval;
+		plie->best_child_i_so_far = plie->child_i;
+	}
+	plie->child_i++;
+}
+
 struct SSearchStack
 ssearch_stack_new(const struct Engine *engine)
 {
@@ -46,12 +66,9 @@ ssearch_stack_new(const struct Engine *engine)
 	stack.current_depth = 0;
 	stack.board = engine->board;
 	for (int i = 0; i <= stack.desired_depth; i++) {
-		stack.plies[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+		ssearch_stack_plie_init(stack.plies);
 	}
-	stack.plies[0].child_i = 0;
-	stack.plies[0].best_child_i_so_far = 0;
 	stack.plies[0].children_count = gen_legal_moves(stack.plies[0].moves, &stack.board);
-	stack.plies[0].best_eval_so_far = -FLT_MAX;
 	return stack;
 }
 
@@ -85,13 +102,7 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
-	if (stack->current_depth == 0) {
-	}
-	if (-eval > last_plie->best_eval_so_far) {
-		last_plie->best_eval_so_far = -eval;
-		last_plie->best_child_i_so_far = last_plie->child_i;
-	}
-	last_plie->child_i++;
+	ssearch_stack_plie_supply_eval(last_plie, -eval);
 }
 
 void
@@ -102,27 +113,21 @@ ssearch_stack_push(struct SSearchStack *stack)
 	struct Move generator = last_plie->moves[last_plie->child_i];
 	stack->current_depth++;
 	last_plie++;
-	last_plie->child_i = 0;
-	last_plie->best_child_i_so_far = -1;
-	last_plie->best_eval_so_far = -FLT_MAX;
+	ssearch_stack_plie_init(last_plie);
 	last_plie->generator = generator;
 	position_do_move_and_flip(&stack->board, &last_plie->generator);
 	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
 }
 
 void
-ssearch_stack_iter(struct SSearchStack *stack)
+ssearch_stack_eval_leaf(struct SSearchStack *stack)
 {
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
 	enum Color evaluator = stack->board.side_to_move;
 	position_do_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
 	float eval = normalize_score(position_eval(&stack->board), evaluator);
 	position_undo_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
-	if (eval > last_plie->best_eval_so_far) {
-		last_plie->best_eval_so_far = eval;
-		last_plie->best_child_i_so_far = last_plie->child_i;
-	}
-	last_plie->child_i++;
+	ssearch_stack_plie_supply_eval(last_plie, eval);
 }
 
 struct SearchResults
@@ -133,10 +138,33 @@ struct SearchResults
 };
 
 void
+search_results_init(struct SearchResults *results, const struct SSearchStack *stack)
+{
+	*results = (struct SearchResults){
+		.best_move = stack->plies[0].moves[stack->plies[0].best_child_i_so_far],
+		// FIXME: `.ponder_move` is the best-scoring move in the subtree of the
+		// best-scoring move of the first plie.
+		.ponder_move = stack->plies[1].best_child_i_so_far,
+		.centipawns = stack->plies[0].best_eval_so_far,
+	};
+}
+
+void
+finish_search(const struct Engine *engine, const struct SSearchStack *stack)
+{
+	struct SearchResults result;
+	search_results_init(&result, stack);
+	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
+	move_to_string(result.best_move, buf);
+	fprintf(engine->output, "bestmove %s\n", buf);
+}
+
+void
 engine_start_search(struct Engine *engine)
 {
-	engine->max_depth = 4;
+	engine->max_depth = 2;
 	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
+	position_pprint(&engine->board, stdout);
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {
 		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);
@@ -148,21 +176,14 @@ engine_start_search(struct Engine *engine)
 				ssearch_stack_pop(&stack);
 			}
 		} else if (stack.current_depth == stack.desired_depth) {
-			ssearch_stack_iter(&stack);
+			while (last_plie->child_i < last_plie->children_count) {
+				ssearch_stack_eval_leaf(&stack);
+			}
 		} else {
 			ssearch_stack_push(&stack);
 		}
 	}
-	struct SearchResults result = {
-		.best_move = stack.plies[0].moves[stack.plies[0].best_child_i_so_far],
-		// FIXME: `.ponder_move` is the best-scoring move in the subtree of the
-		// best-scoring move of the first plie.
-		.ponder_move = stack.plies[1].best_child_i_so_far,
-		.centipawns = stack.plies[0].best_eval_so_far,
-	};
-	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
-	move_to_string(result.best_move, buf);
-	printf("bestmove %s\n", buf);
+	finish_search(engine, &stack);
 }
 
 struct Move
