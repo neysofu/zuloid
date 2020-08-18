@@ -79,6 +79,7 @@ add_executable(zuloid "${SRC_DIR}/main.c")
 target_link_libraries(zuloid ZULOID_LIB)
 
 # Tests
+enable_testing()
 file(GLOB_RECURSE TEST_FILES "${TEST_DIR}/*.c")
 add_executable(test_zuloid "${TEST_FILES}")
 target_include_directories(ZULOID_LIB PUBLIC "${TEST_DIR}")

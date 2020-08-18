@@ -95,6 +95,18 @@ normalize_score(float score, enum Color side_to_move)
 }
 
 void
+ssearch_stack_print_lines(struct SSearchStack *stack)
+{
+	printf("  info line");
+	for (int i = 1; i < stack->desired_depth; i++) {
+		char buf[6] = {'\0'};
+		move_to_string(stack->plies[i].moves[stack->plies[i].best_child_i_so_far], buf);
+		printf(" %s", buf);
+	}
+	puts("");
+}
+
+void
 ssearch_stack_pop(struct SSearchStack *stack)
 {
 	struct SSearchStackPlie *last_plie = ssearch_stack_last(stack);
@@ -102,6 +114,11 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
 	last_plie--;
+	if (stack->current_depth == 0) {
+		char buf[6] = {'\0'};
+		move_to_string(last_plie->moves[last_plie->child_i], buf);
+		printf("depth 0, with eval %f @ %s:\n", -eval, buf);
+	}
 	ssearch_stack_plie_supply_eval(last_plie, -eval);
 }
 
@@ -162,7 +179,6 @@ finish_search(const struct Engine *engine, const struct SSearchStack *stack)
 void
 engine_start_search(struct Engine *engine)
 {
-	engine->max_depth = 2;
 	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {

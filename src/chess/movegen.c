@@ -43,7 +43,7 @@ emit_move(struct Move *move, Square source, Square target)
 {
 	move->source = source;
 	move->target = target;
-	move->promotion = 0;
+	move->promotion = PIECE_TYPE_NONE;
 }
 
 /* Generates all pseudolegal moves by pawns located on 'sources' to 'targets'
@@ -84,7 +84,11 @@ gen_pawn_moves(struct Move moves[],
 	Square square;
 	while (single_pushes) {
 		POP_LSB(square, single_pushes);
-		emit_move(moves++, square + color_params[0][side_to_move], square);
+		emit_move(moves, square + color_params[0][side_to_move], square);
+		if (square_rank(square) == color_promoting_rank(side_to_move)) {
+			moves->promotion = PIECE_TYPE_QUEEN;
+		}
+		moves++;
 	}
 	while (double_pushes) {
 		POP_LSB(square, double_pushes);
@@ -92,11 +96,19 @@ gen_pawn_moves(struct Move moves[],
 	}
 	while (captures_east) {
 		POP_LSB(square, captures_east);
-		emit_move(moves++, square + color_params[2][side_to_move], square);
+		emit_move(moves, square + color_params[2][side_to_move], square);
+		if (square_rank(square) == color_promoting_rank(side_to_move)) {
+			moves->promotion = PIECE_TYPE_QUEEN;
+		}
+		moves++;
 	}
 	while (captures_west) {
 		POP_LSB(square, captures_west);
-		emit_move(moves++, square + color_params[3][side_to_move], square);
+		emit_move(moves, square + color_params[3][side_to_move], square);
+		if (square_rank(square) == color_promoting_rank(side_to_move)) {
+			moves->promotion = PIECE_TYPE_QUEEN;
+		}
+		moves++;
 	}
 	return moves - ptr;
 }
