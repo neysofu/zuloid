@@ -78,8 +78,8 @@ struct Engine *
 engine_new_tmp(const char *filename)
 {
 	struct Engine *engine = engine_new();
-	engine->output = fopen(filename, "w+");
-	if (!engine->output) {
+	engine->config.output = fopen(filename, "w+");
+	if (!engine->config.output) {
 		exit(1);
 	}
 	return engine;

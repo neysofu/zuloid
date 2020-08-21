@@ -59,10 +59,10 @@ ssearch_stack_plie_supply_eval(struct SSearchStackPlie *plie, float eval)
 struct SSearchStack
 ssearch_stack_new(const struct Engine *engine)
 {
-	assert(engine->max_depth > 0);
+	assert(engine->config.max_depth > 0);
 	struct SSearchStack stack;
-	stack.plies = exit_if_null(malloc(engine->max_depth * sizeof(struct SSearchStackPlie)));
-	stack.desired_depth = engine->max_depth - 1;
+	stack.plies = exit_if_null(malloc(engine->config.max_depth * sizeof(struct SSearchStackPlie)));
+	stack.desired_depth = engine->config.max_depth - 1;
 	stack.current_depth = 0;
 	stack.board = engine->board;
 	for (int i = 0; i <= stack.desired_depth; i++) {
@@ -173,14 +173,14 @@ finish_search(const struct Engine *engine, const struct SSearchStack *stack)
 	search_results_init(&result, stack);
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	move_to_string(result.best_move, buf);
-	fprintf(engine->output, "bestmove %s\n", buf);
+	fprintf(engine->config.output, "bestmove %s\n", buf);
 }
 
 void
 engine_start_search(struct Engine *engine)
 {
-	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
-	engine->max_depth = 4;
+	fprintf(engine->config.output, "info depth score cp %f\n", position_eval(&engine->board));
+	engine->config.max_depth = 4;
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {
 		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);

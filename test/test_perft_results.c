@@ -35,7 +35,7 @@ test_perft_results(struct Engine *engine)
 		position_init_from_fen(&engine->board, TEST_CASES[i].fen);
 		{
 			uint64_t result =
-			  position_perft(engine->output, &engine->board, TEST_CASES[i].depth);
+			  position_perft(engine->config.output, &engine->board, TEST_CASES[i].depth);
 			munit_assert_uint(result, ==, TEST_CASES[i].expected_result);
 		}
 	}

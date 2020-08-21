@@ -24,11 +24,11 @@ main(int argc, char **argv)
 	printf("# Process ID: %d\n", p_process_get_current_pid());
 #endif
 	for (int i = 1; i < argc && engine.status != STATUS_EXIT; i++) {
-		engine.protocol(&engine, argv[i]);
+		engine.config.protocol(&engine, argv[i]);
 	}
 	while (engine.status != STATUS_EXIT) {
 		char *line = read_line(stdin);
-		engine.protocol(&engine, line);
+		engine.config.protocol(&engine, line);
 		free(line);
 	}
 	p_libsys_shutdown();

@@ -30,10 +30,10 @@ void
 uci_call_eval(struct Engine *engine)
 {
 	fprintf(
-	  engine->output, "wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
+	  engine->config.output, "wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
 	fprintf(
-	  engine->output, "bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
-	fprintf(engine->output, "totmaterial %f\n", position_eval(&engine->board));
+	  engine->config.output, "bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
+	fprintf(engine->config.output, "totmaterial %f\n", position_eval(&engine->board));
 }
 
 void
@@ -47,15 +47,15 @@ uci_call_go(struct Engine *engine)
 		if (strcmp(token, "perft") == 0) {
 			token = strtok_whitespace(NULL);
 			if (token) {
-				position_perft(engine->output, &engine->board, atoi(token));
+				position_perft(engine->config.output, &engine->board, atoi(token));
 			} else {
-				display_err_syntax(engine->output);
+				display_err_syntax(engine->config.output);
 			}
 			return;
 		} else if (strcmp(token, "wtime") == 0) {
 			token = strtok_whitespace(NULL);
 			if (!token) {
-				display_err_syntax(engine->output);
+				display_err_syntax(engine->config.output);
 				return;
 			}
 			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
@@ -76,20 +76,20 @@ uci_call_go(struct Engine *engine)
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
 		} else if (strcmp(token, "ponder") == 0) {
-			engine->ponder = true;
+			engine->config.ponder = true;
 		} else if (strcmp(token, "movestogo") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
 			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 		} else if (strcmp(token, "depth") == 0) {
 			token = strtok_whitespace(NULL);
-			engine->max_depth = atoi(token);
+			engine->config.max_depth = atoi(token);
 		} else if (strcmp(token, "mate") == 0) {
 			token = strtok_whitespace(NULL);
-			engine->max_depth = atoi(token);
+			engine->config.max_depth = atoi(token);
 		} else if (strcmp(token, "nodes") == 0) {
 			token = strtok_whitespace(NULL);
-			engine->max_nodes_count = atoi(token);
+			engine->config.max_nodes_count = atoi(token);
 		} else if (strcmp(token, "movetime") == 0) {
 			token = strtok_whitespace(NULL);
 			engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
@@ -106,17 +106,17 @@ uci_call_islegal(struct Engine *engine)
 	struct Move mv;
 	char *token = strtok_whitespace(NULL);
 	if (!token || string_to_move(token, &mv) == 0) {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 		return;
 	}
 	size_t count = gen_legal_moves(moves, &engine->board);
 	for (size_t i = 0; i < count; i++) {
 		if (moves[i].source == mv.source && moves[i].target == mv.target) {
-			fputs("1\n", engine->output);
+			fputs("1\n", engine->config.output);
 			return;
 		}
 	}
-	fputs("0\n", engine->output);
+	fputs("0\n", engine->config.output);
 }
 
 void
@@ -125,13 +125,13 @@ uci_call_legalmoves(struct Engine *engine)
 	struct Move moves[255] = { 0 };
 	/* FIXME */
 	size_t count = gen_legal_moves(moves, &engine->board);
-	fprintf(engine->output, "%zu", count);
+	fprintf(engine->config.output, "%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
 		move_to_string(moves[i], buf);
-		fprintf(engine->output, " %s", buf);
+		fprintf(engine->config.output, " %s", buf);
 	}
-	fprintf(engine->output, "\n");
+	fprintf(engine->config.output, "\n");
 }
 
 void
@@ -139,13 +139,13 @@ uci_call_pseudolegalmoves(struct Engine *engine)
 {
 	struct Move moves[255] = { 0 };
 	size_t count = gen_pseudolegal_moves(moves, &engine->board);
-	fprintf(engine->output, "%zu", count);
+	fprintf(engine->config.output, "%zu", count);
 	char buf[8] = { '\0' };
 	for (size_t i = 0; i < count; i++) {
 		move_to_string(moves[i], buf);
-		fprintf(engine->output, " %s", buf);
+		fprintf(engine->config.output, " %s", buf);
 	}
-	putc('\n', engine->output);
+	putc('\n', engine->config.output);
 }
 
 void
@@ -153,7 +153,7 @@ uci_call_position(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 		return;
 	} else if (!strcmp(token, "startpos")) {
 		engine->board = POSITION_INIT;
@@ -165,7 +165,7 @@ uci_call_position(struct Engine *engine)
 				if (i >= 4) {
 					break;
 				} else {
-					display_err_syntax(engine->output);
+					display_err_syntax(engine->config.output);
 					return;
 				}
 			}
@@ -177,10 +177,10 @@ uci_call_position(struct Engine *engine)
 		 * be useful for training. */
 		position_init_960(&engine->board);
 	} else if (!!strcmp(token, "current")) {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 	}
 	if ((token = strtok_whitespace(NULL)) && !!strcmp(token, "moves")) {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 		return;
 	}
 	// Now feed moves into the position.
@@ -196,17 +196,17 @@ uci_call_d(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		position_pprint(&engine->board, engine->output);
+		position_pprint(&engine->board, engine->config.output);
 	} else if (!strcmp(token, "fen")) {
 		char *fen = fen_from_position(NULL, &engine->board, ' ');
-		fprintf(engine->output, "%s\n", fen);
+		fprintf(engine->config.output, "%s\n", fen);
 		free(fen);
 	} else if (!strcmp(token, "lichess")) {
 		char *fen = fen_from_position(NULL, &engine->board, '_');
-		fprintf(engine->output, "https://lichess.org/analysis/standard/%s\n", fen);
+		fprintf(engine->config.output, "https://lichess.org/analysis/standard/%s\n", fen);
 		free(fen);
 	} else {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 	}
 }
 
@@ -214,7 +214,7 @@ void
 uci_call_setoption(struct Engine *engine)
 {
 	if (engine->status != STATUS_IDLE) {
-		display_err_unspecified(engine->output);
+		display_err_unspecified(engine->config.output);
 		return;
 	}
 	XXH64_hash_t hash = 0;
@@ -250,7 +250,7 @@ uci_call_setoption(struct Engine *engine)
 		case 14447: // "nalimovcache"
 			break;
 		case 29613: // "ponder"
-			engine->ponder = true;
+			engine->config.ponder = true;
 			break;
 		case 868: // "ownbook"
 			break;
@@ -269,7 +269,7 @@ uci_call_setoption(struct Engine *engine)
 void
 uci_call_isready(struct Engine *engine)
 {
-	fputs("readyok\n", engine->output);
+	fputs("readyok\n", engine->config.output);
 }
 
 void
@@ -312,17 +312,17 @@ const char *UCI_OPTIONS[] = {
 void
 uci_call_uci(struct Engine *engine)
 {
-	engine->protocol = protocol_uci;
-	fprintf(engine->output,
+	engine->config.protocol = protocol_uci;
+	fprintf(engine->config.output,
 	        "id name Zuloid %s\n"
 	        "id author Filippo Costa\n",
 	        ZULOID_VERSION);
 	for (size_t i = 0; i < ARRAY_SIZE(UCI_OPTIONS); i++) {
-		fputs(UCI_OPTIONS[i], engine->output);
-		putc('\n', engine->output);
+		fputs(UCI_OPTIONS[i], engine->config.output);
+		putc('\n', engine->config.output);
 	}
 	init_threats();
-	fputs("uciok\n", engine->output);
+	fputs("uciok\n", engine->config.output);
 }
 
 void
@@ -338,14 +338,14 @@ uci_call_magics(struct Engine *engine)
 		identifier = "MAGICS_ROOK";
 		finder = magic_find_rook;
 	} else {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 		return;
 	}
 	struct Magic magics[64];
 	for (Square sq = 0; sq < SQUARES_COUNT; sq++) {
 		finder(magics + sq, sq);
 	}
-	magics_export(magics, identifier, engine->output);
+	magics_export(magics, identifier, engine->config.output);
 }
 
 void
@@ -362,7 +362,7 @@ uci_call_djbhash(struct Engine *engine)
 	while ((token = strtok_whitespace(NULL))) {
 		hash ^= djb_hash(token);
 	}
-	fprintf(engine->output, "%u\n", hash);
+	fprintf(engine->config.output, "%u\n", hash);
 }
 
 void
@@ -374,11 +374,11 @@ uci_call_debug(struct Engine *engine)
 	// gets compiled out with the NDEBUG macro.
 	const char *token = strtok_whitespace(NULL);
 	if (token && !strcmp(token, "on")) {
-		engine->debug = true;
+		engine->config.debug = true;
 	} else if (token && strcmp(token, "off")) {
-		engine->debug = false;
+		engine->config.debug = false;
 	} else {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 	}
 }
 
@@ -415,7 +415,7 @@ protocol_uci(struct Engine *engine, const char *s_const)
 		ENGINE_LOGF(engine, "Accepted UCI command.\n");
 		cmd->handler(engine);
 	} else {
-		display_err_invalid_command(engine->output);
+		display_err_invalid_command(engine->config.output);
 	}
 	free(s);
 }

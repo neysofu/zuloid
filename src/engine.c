@@ -12,6 +12,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+const struct Config CONFIG_DEFAULT;
+
 void
 init_subsystems(void)
 {
@@ -39,15 +41,10 @@ engine_init(struct Engine *engine)
 		.cache = NULL,
 		.agent = agent_new(),
 		.seed = 0xcfca130b,
-		.protocol = protocol_uci,
-		.output = stdout,
-		.debug = false,
-		.move_selection_noise = 0.005,
-		.contempt = 0.65,
-		.selectivity = 0.5,
 		.status = STATUS_IDLE,
-		.max_depth = 0,
+		.config = CONFIG_DEFAULT,
 	};
+	engine->config.output = stdout;
 	position_init_from_fen(&engine->board, FEN_OF_INITIAL_POSITION);
 }
 
@@ -71,13 +68,26 @@ engine_logf(struct Engine *engine,
 	assert(engine);
 	assert(filename);
 	assert(function_name);
-	if (!engine->debug) {
+	if (!engine->config.debug) {
 		return;
 	}
-	fprintf(engine->output, "info string ");
-	fprintf(engine->output, "%s:%zu @ %s -- ", filename, line_num, function_name);
+	fprintf(engine->config.output, "info string ");
+	fprintf(engine->config.output, "%s:%zu @ %s -- ", filename, line_num, function_name);
 	va_list args;
 	va_start(args, function_name);
-	vfprintf(engine->output, va_arg(args, const char *), args);
+	vfprintf(engine->config.output, va_arg(args, const char *), args);
 	va_end(args);
 }
+
+const struct Config CONFIG_DEFAULT = {
+	.debug = false,
+	.move_selection_noise = 0.005,
+	.contempt = 0.3,
+	.selectivity = 0.5,
+	.ponder = false,
+	.max_nodes_count = 0,
+	.max_depth = 0,
+	.protocol = protocol_uci,
+	.output = NULL,
+};
+

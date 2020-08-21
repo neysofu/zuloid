@@ -25,7 +25,7 @@ uci_call_uci(struct Engine *engine);
 void
 cecp_call_xboard(struct Engine *engine)
 {
-	engine->protocol = protocol_cecp;
+	engine->config.protocol = protocol_cecp;
 }
 
 const char *CECP_FEATURES[] = {
@@ -37,19 +37,19 @@ const char *CECP_FEATURES[] = {
 void
 cecp_call_protover(struct Engine *engine)
 {
-	fputs("feature", engine->output);
+	fputs("feature", engine->config.output);
 	for (size_t i = 0; i < ARRAY_SIZE(CECP_FEATURES); i++) {
-		fprintf(engine->output, " %s", CECP_FEATURES[i]);
+		fprintf(engine->config.output, " %s", CECP_FEATURES[i]);
 	}
-	fputc('\n', engine->output);
-	fputs("feature done=1\n", engine->output);
+	fputc('\n', engine->config.output);
+	fputs("feature done=1\n", engine->config.output);
 }
 
 void
 cecp_call_ping(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
-	fprintf(engine->output, "pong %d\n", atoi(token));
+	fprintf(engine->config.output, "pong %d\n", atoi(token));
 }
 
 void
@@ -69,7 +69,7 @@ cecp_call_setboard(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
-		display_err_syntax(engine->output);
+		display_err_syntax(engine->config.output);
 		return;
 	}
 	char *fen_fields[6] = { NULL };
@@ -79,7 +79,7 @@ cecp_call_setboard(struct Engine *engine)
 			if (i >= 4) {
 				break;
 			} else {
-				display_err_syntax(engine->output);
+				display_err_syntax(engine->config.output);
 				return;
 			}
 		}
@@ -91,7 +91,7 @@ cecp_call_setboard(struct Engine *engine)
 void
 cecp_call_draw(struct Engine *engine)
 {
-	fputs("offer draw\n", engine->output);
+	fputs("offer draw\n", engine->config.output);
 }
 
 void
@@ -109,25 +109,25 @@ cecp_call_new(struct Engine *engine)
 void
 cecp_call_post(struct Engine *engine)
 {
-	engine->debug = true;
+	engine->config.debug = true;
 }
 
 void
 cecp_call_nopost(struct Engine *engine)
 {
-	engine->debug = false;
+	engine->config.debug = false;
 }
 
 void
 cecp_call_hard(struct Engine *engine)
 {
-	engine->ponder = true;
+	engine->config.ponder = true;
 }
 
 void
 cecp_call_easy(struct Engine *engine)
 {
-	engine->ponder = false;
+	engine->config.ponder = false;
 }
 
 void
@@ -186,7 +186,7 @@ cecp_call_sd(struct Engine *engine)
 {
 	char *token = strtok_whitespace(NULL);
 	int quantity = atoi(token);
-	engine->max_depth = quantity;
+	engine->config.max_depth = quantity;
 }
 
 void
@@ -235,7 +235,7 @@ cecp_call_memory(struct Engine *engine)
 void
 cecp_call_random(struct Engine *engine)
 {
-	engine->move_selection_noise = 0.5;
+	engine->config.move_selection_noise = 0.5;
 }
 
 const struct Command CECP_COMMANDS[] = {
@@ -286,7 +286,7 @@ protocol_cecp(struct Engine *engine, const char *s_const)
 		string_to_move(token, &move);
 		position_do_move_and_flip(&engine->board, &move);
 	} else {
-		display_err_invalid_command(engine->output);
+		display_err_invalid_command(engine->config.output);
 	}
 	free(s);
 }
