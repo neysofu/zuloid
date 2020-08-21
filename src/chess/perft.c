@@ -3,7 +3,7 @@
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
-#include "globals.h"
+#include "meta.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>

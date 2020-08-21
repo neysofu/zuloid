@@ -1,5 +1,5 @@
 #include "engine.h"
-#include "globals.h"
+#include "meta.h"
 #include "switches.h"
 #include "utils.h"
 #include <stdio.h>

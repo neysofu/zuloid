@@ -10,7 +10,7 @@
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "engine.h"
-#include "globals.h"
+#include "meta.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "utils.h"

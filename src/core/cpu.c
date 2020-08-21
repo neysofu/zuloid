@@ -180,6 +180,7 @@ void
 engine_start_search(struct Engine *engine)
 {
 	fprintf(engine->output, "info depth score cp %f\n", position_eval(&engine->board));
+	engine->max_depth = 4;
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {
 		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);

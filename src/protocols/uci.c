@@ -13,7 +13,7 @@
 #include "chess/position.h"
 #include "chess/threats.h"
 #include "engine.h"
-#include "globals.h"
+#include "meta.h"
 #include "protocols/utils.h"
 #include "rating.h"
 #include "switches.h"

@@ -1,5 +1,5 @@
-#ifndef ZULOID_GLOBALS_H
-#define ZULOID_GLOBALS_H
+#ifndef ZULOID_META_H
+#define ZULOID_META_H
 
 #include <stdlib.h>
 

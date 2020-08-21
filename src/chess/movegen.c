@@ -26,7 +26,7 @@
 #include "chess/mnemonics.h"
 #include "chess/position.h"
 #include "chess/threats.h"
-#include "globals.h"
+#include "meta.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdio.h>
