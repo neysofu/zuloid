@@ -1,6 +1,5 @@
 #include "cache/cache.h"
 #include "cache/fast_range.h"
-#include "globals.h"
 #include "switches.h"
 #include "utils.h"
 #include <assert.h>
@@ -13,6 +12,9 @@
 #include "xxHash/xxhash.h"
 
 const size_t CACHE_BUCKET_SIZE = 32;
+
+const int ADDRESS_SIZE = sizeof(void *) * CHAR_BIT;
+
 
 /* We strive for 8 bytes for each position. */
 struct CacheSlot
