@@ -178,20 +178,18 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 }
 
 size_t
-gen_king_castles(struct Move moves[], struct Board *pos)
+gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitboard king)
 {
 	struct Move *ptr = moves;
-	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << pos->side_to_move)) {
+	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << color)) {
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
-		Bitboard king = pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move];
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
 			EMIT_MOVE(moves, source, source + 16);
 		}
 	}
-	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
+	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << color)) {
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
-		Bitboard king = pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move];
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
 			EMIT_MOVE(moves, source, source - 16);
@@ -239,7 +237,7 @@ gen_attacks_against_from(struct Move moves[],
 	  moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
 	if (castle) {
-		moves += gen_king_castles(moves, pos);
+		moves += gen_king_castles(moves, pos, victims, pieces & pos->bb[PIECE_TYPE_KING]);
 	}
 	return moves - ptr;
 }

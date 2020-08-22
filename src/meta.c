@@ -1,6 +1,4 @@
 #include "meta.h"
-#include <limits.h>
-#include <stdlib.h>
 
 const char *const ZULOID_BUILD_DATE = PROJECT_BUILD_DATE;
 const char *const ZULOID_VERSION = PROJECT_VERSION;

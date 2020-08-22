@@ -30,4 +30,7 @@ exit_if_null(void *ptr);
 uint16_t
 djb_hash(const char *str);
 
+char *
+strtok_r_whitespace(char *restrict str, char **restrict save);
+
 #endif

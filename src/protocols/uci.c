@@ -29,11 +29,71 @@ cecp_call_xboard(struct Engine *engine);
 void
 uci_call_eval(struct Engine *engine)
 {
-	fprintf(
-	  engine->config.output, "wmaterial %f\n", position_eval_color(&engine->board, COLOR_WHITE));
-	fprintf(
-	  engine->config.output, "bmaterial %f\n", position_eval_color(&engine->board, COLOR_BLACK));
+	fprintf(engine->config.output,
+	        "wmaterial %f\n",
+	        position_eval_color(&engine->board, COLOR_WHITE));
+	fprintf(engine->config.output,
+	        "bmaterial %f\n",
+	        position_eval_color(&engine->board, COLOR_BLACK));
 	fprintf(engine->config.output, "totmaterial %f\n", position_eval(&engine->board));
+}
+
+void
+uci_call_go_perft(struct Engine *engine)
+{
+	const char *token = strtok_whitespace(NULL);
+	if (token) {
+		position_perft(engine->config.output, &engine->board, atoi(token));
+	} else {
+		display_err_syntax(engine->config.output);
+	}
+}
+
+void
+uci_call_go_time(struct Engine *engine, enum Color color)
+{
+	const char *token = strtok_whitespace(NULL);
+	if (token) {
+		float time = (float)(atol(token) * 1000);
+		engine->time_controls[color]->time_limit_in_seconds = time;
+	} else {
+		display_err_syntax(engine->config.output);
+	}
+}
+
+void
+uci_call_go_inc(struct Engine *engine, enum Color color)
+{
+	const char *token = strtok_whitespace(NULL);
+	if (token) {
+		float time = (float)(atol(token) * 1000);
+		engine->time_controls[color]->increment_in_seconds = time;
+	} else {
+		display_err_syntax(engine->config.output);
+	}
+}
+
+void
+uci_call_go_mate(struct Engine *engine)
+{
+	const char *token = strtok_whitespace(NULL);
+	if (token) {
+		engine->config.max_depth = atoi(token);
+	} else {
+		display_err_syntax(engine->config.output);
+	}
+}
+
+void
+uci_call_go_movetime(struct Engine *engine)
+{
+	const char *token = strtok_whitespace(NULL);
+	if (token) {
+		float time = (float)(atol(token) * 1000);
+		engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time;
+	} else {
+		display_err_syntax(engine->config.output);
+	}
 }
 
 void
@@ -45,33 +105,16 @@ uci_call_go(struct Engine *engine)
 	char *token = NULL;
 	while ((token = strtok_whitespace(NULL))) {
 		if (strcmp(token, "perft") == 0) {
-			token = strtok_whitespace(NULL);
-			if (token) {
-				position_perft(engine->config.output, &engine->board, atoi(token));
-			} else {
-				display_err_syntax(engine->config.output);
-			}
+			uci_call_go_perft(engine);
 			return;
 		} else if (strcmp(token, "wtime") == 0) {
-			token = strtok_whitespace(NULL);
-			if (!token) {
-				display_err_syntax(engine->config.output);
-				return;
-			}
-			engine->time_controls[COLOR_WHITE]->time_limit_in_seconds =
-			  (float)(atol(token) * 1000);
+			uci_call_go_time(engine, COLOR_WHITE);
 		} else if (strcmp(token, "btime") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->time_controls[COLOR_BLACK]->time_limit_in_seconds =
-			  (float)(atol(token) * 1000);
+			uci_call_go_time(engine, COLOR_BLACK);
 		} else if (strcmp(token, "winc") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->time_controls[COLOR_WHITE]->increment_in_seconds =
-			  (float)(atol(token) * 1000);
+			uci_call_go_inc(engine, COLOR_WHITE);
 		} else if (strcmp(token, "binc") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->time_controls[COLOR_BLACK]->increment_in_seconds =
-			  (float)(atol(token) * 1000);
+			uci_call_go_inc(engine, COLOR_BLACK);
 		} else if (strcmp(token, "infinite") == 0) {
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
@@ -85,15 +128,11 @@ uci_call_go(struct Engine *engine)
 			token = strtok_whitespace(NULL);
 			engine->config.max_depth = atoi(token);
 		} else if (strcmp(token, "mate") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->config.max_depth = atoi(token);
+			uci_call_go_mate(engine);
 		} else if (strcmp(token, "nodes") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->config.max_nodes_count = atoi(token);
+			uci_call_go_mate(engine);
 		} else if (strcmp(token, "movetime") == 0) {
-			token = strtok_whitespace(NULL);
-			engine->game_clocks[engine->board.side_to_move].time_left_in_seconds =
-			  atoi(token) * 1000;
+			uci_call_go_movetime(engine);
 		}
 	}
 	engine_start_search(engine);
@@ -197,11 +236,11 @@ uci_call_d(struct Engine *engine)
 	char *token = strtok_whitespace(NULL);
 	if (!token) {
 		position_pprint(&engine->board, engine->config.output);
-	} else if (!strcmp(token, "fen")) {
+	} else if (strcmp(token, "fen") == 0) {
 		char *fen = fen_from_position(NULL, &engine->board, ' ');
 		fprintf(engine->config.output, "%s\n", fen);
 		free(fen);
-	} else if (!strcmp(token, "lichess")) {
+	} else if (strcmp(token, "lichess") == 0) {
 		char *fen = fen_from_position(NULL, &engine->board, '_');
 		fprintf(engine->config.output, "https://lichess.org/analysis/standard/%s\n", fen);
 		free(fen);
@@ -373,9 +412,9 @@ uci_call_debug(struct Engine *engine)
 	// details with it. It does *not* control debugging information, which instead
 	// gets compiled out with the NDEBUG macro.
 	const char *token = strtok_whitespace(NULL);
-	if (token && !strcmp(token, "on")) {
+	if (token && strcmp(token, "on") == 0) {
 		engine->config.debug = true;
-	} else if (token && strcmp(token, "off")) {
+	} else if (token && strcmp(token, "off") == 0) {
 		engine->config.debug = false;
 	} else {
 		display_err_syntax(engine->config.output);

@@ -82,10 +82,7 @@ fen_from_position(char *fen, const struct Board *position, char sep)
 }
 
 int
-position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
-{
-	position_empty(pos);
-	const char *token = fieldsptr[0];
+position_init_piece_placement(struct Board *pos, const char *token) {
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX;
@@ -101,7 +98,10 @@ position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
 			token++;
 		}
 	}
-	token = fieldsptr[1];
+}
+
+int
+position_init_side_to_move(struct Board *pos, const char *token) {
 	switch (tolower(*token)) {
 		case 'w':
 			pos->side_to_move = COLOR_WHITE;
@@ -112,18 +112,39 @@ position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
 		default:
 			return ERR_CODE_INVALID_FEN;
 	}
-	token = fieldsptr[2];
-	pos->castling_rights = string_to_castling_rights(token);
-	token = fieldsptr[3];
-	if (strlen(token) >= 2) {
+}
+
+int
+position_init_en_passant(struct Board *pos, const char *token) {
+	if (token && strlen(token) >= 2) {
 		pos->en_passant_target = square_from_str(token);
 	}
-	if ((token = fieldsptr[4])) {
+}
+
+int
+position_init_rev_moves_count(struct Board *pos, const char *token) {
+	if (token) {
 		pos->reversible_moves_count = strtol(token, NULL, 10);
 	}
-	if ((token = fieldsptr[5])) {
+}
+
+int
+position_init_total_moves_count(struct Board *pos, const char *token) {
+	if (token) {
 		pos->moves_count = strtol(token, NULL, 10);
 	}
+}
+
+int
+position_init_from_fen_fields(struct Board *pos, const char **fieldsptr)
+{
+	position_empty(pos);
+	position_init_piece_placement(pos, fieldsptr[0]);
+	position_init_side_to_move(pos, fieldsptr[1]);
+	pos->castling_rights = string_to_castling_rights(fieldsptr[2]);
+	position_init_en_passant(pos, fieldsptr[3]);
+	position_init_rev_moves_count(pos, fieldsptr[4]);
+	position_init_total_moves_count(pos, fieldsptr[5]);
 	return ERR_CODE_NONE;
 }
 
@@ -134,7 +155,7 @@ position_init_from_fen(struct Board *pos, const char *fen)
 	assert(fen);
 	const char *fieldsptr[6] = { NULL };
 	fieldsptr[0] = fen;
-	for (size_t i = 1; i < 6 && fieldsptr[i - 1]; i++) {
+	for (size_t i = 1; i < ARRAY_SIZE(fieldsptr) && fieldsptr[i - 1]; i++) {
 		const char *token = strpbrk(fieldsptr[i - 1], " _") + 1;
 		if (token && *token) {
 			fieldsptr[i] = token;
