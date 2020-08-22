@@ -36,17 +36,21 @@ struct Cache
 	struct CacheSlot *slots;
 };
 
+void
+cache_init_slots(struct Cache *cache) {
+	memset(cache->slots, 0, cache->capacity / sizeof(struct CacheSlot) + CACHE_BUCKET_SIZE);
+}
+
 struct Cache *
 cache_new(size_t size_in_bytes)
 {
 	struct Cache *cache = malloc(sizeof(struct Cache));
-	if (cache) {
-		*cache = (struct Cache){
-			.capacity = size_in_bytes / sizeof(struct CacheSlot),
-			.slots = malloc(size_in_bytes + CACHE_BUCKET_SIZE),
-		};
-		memset(cache->slots, 0, size_in_bytes + CACHE_BUCKET_SIZE);
-	}
+	exit_if_null(cache);
+	*cache = (struct Cache){
+		.capacity = size_in_bytes / sizeof(struct CacheSlot),
+		.slots = malloc(size_in_bytes + CACHE_BUCKET_SIZE),
+	};
+	cache_init_slots(cache);
 	return cache;
 }
 
@@ -63,6 +67,7 @@ cache_delete(struct Cache *cache)
 size_t
 cache_clear(struct Cache *cache)
 {
+	cache_init_slots(cache);
 	return 0;
 }
 

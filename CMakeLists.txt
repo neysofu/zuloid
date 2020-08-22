@@ -43,9 +43,6 @@ string(TIMESTAMP BUILD_DATE "%Y-%m-%d")
 # base64
 add_library(base64 "${LIB_DIR}/base64/base64.c")
 set_property(TARGET base64 PROPERTY C_STANDARD 99)
-# SDS
-add_library(sds "${LIB_DIR}/sds/sds.c")
-set_property(TARGET sds PROPERTY C_STANDARD 99)
 # cJSON
 set(ENABLE_CJSON_TEST OFF CACHE BOOL "" FORCE)
 add_subdirectory("${LIB_DIR}/cJSON")
@@ -64,7 +61,7 @@ set_property(TARGET xxhash PROPERTY C_STANDARD 99)
 add_library(munit "${LIB_DIR}/munit/munit.c")
 set_property(TARGET munit PROPERTY C_STANDARD 99)
 
-set_target_properties(base64 sds cjson mt64 plibsys xxhash munit PROPERTIES COMPILE_FLAGS "-w")
+set_target_properties(base64 cjson mt64 plibsys xxhash munit PROPERTIES COMPILE_FLAGS "-w")
 
 # ZULOID_LIB
 file(GLOB_RECURSE SRC_FILES "${INCLUDE_DIR}/*.h" "${SRC_DIR}/*.c")
@@ -72,7 +69,7 @@ list(REMOVE_ITEM SRC_FILES "${SRC_DIR}/main.c")
 add_library(ZULOID_LIB STATIC "${SRC_FILES}")
 target_include_directories(ZULOID_LIB PUBLIC "${INCLUDE_DIR}")
 target_include_directories(ZULOID_LIB SYSTEM PUBLIC "${LIB_DIR}")
-target_link_libraries(ZULOID_LIB base64 sds cjson mt64 plibsys xxhash)
+target_link_libraries(ZULOID_LIB base64 cjson mt64 plibsys xxhash)
 target_compile_definitions(ZULOID_LIB PRIVATE
     PROJECT_BUILD_DATE=\"${BUILD_DATE}\"
     PROJECT_VERSION=\"${PROJECT_VERSION}\")
