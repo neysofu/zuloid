@@ -11,14 +11,43 @@ command_cmp(const void *cmd1, const void *cmd2)
 	return strcmp(s1, s2);
 }
 
-const struct Command *
-identify_command(const char *token, const struct Command commands[], size_t count)
+struct PState *
+pstate_new(const char *str, const struct Command commands[], size_t count)
 {
-	const struct Command key = {
-		.name = token,
-		.handler = NULL,
+	struct PState *pstate = malloc(sizeof(struct PState));
+	exit_if_null(pstate);
+	char *str_w = exit_if_null(malloc(strlen(str) + 1));
+	strcpy(str_w, str);
+	*pstate = (struct PState){
+		.str = str_w,
+		.token = NULL,
+		.saveptr = NULL,
+		.cmd = NULL,
 	};
-	return bsearch(&key, commands, count, sizeof(struct Command), command_cmp);
+	pstate->token = strtok_r_whitespace(str_w, &pstate->saveptr);
+	if (pstate->token) {
+		struct Command key = {
+			.name = pstate->token,
+			.handler = NULL,
+		};
+		pstate->cmd = (struct Command *)(bsearch(
+		  &key, commands, count, sizeof(struct Command), command_cmp));
+
+	}
+	return pstate;
+}
+
+void
+pstate_free(struct PState *pstate)
+{
+	free(pstate->str);
+	free(pstate);
+}
+
+const char *
+pstate_next(struct PState *pstate)
+{
+	return strtok_r_whitespace(NULL, &pstate->saveptr);
 }
 
 void

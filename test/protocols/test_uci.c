@@ -50,24 +50,6 @@ test_protocol_uci_cmd_go_perft(struct Engine *engine)
 }
 
 void
-test_protocol_uci_cmd_djbhash(struct Engine *engine)
-{
-	protocol_uci(engine, "djbhash position");
-	protocol_uci(engine, "djbhash");
-	protocol_uci(engine, "djbhash foobar foobar");
-	protocol_uci(engine, "djbhash foobar position foobar");
-	{
-		struct Lines *lines = file_line_by_line(engine->config.output);
-		munit_assert_uint(lines_count(lines), ==, 4);
-		munit_assert_uint(atoi(lines_nth(lines, 0)), ==, 31418);
-		munit_assert_uint(atoi(lines_nth(lines, 1)), ==, 0);
-		munit_assert_uint(atoi(lines_nth(lines, 2)), ==, 0);
-		munit_assert_uint(atoi(lines_nth(lines, 3)), ==, 31418);
-		lines_delete(lines);
-	}
-}
-
-void
 test_protocol_uci_cmd_isready(struct Engine *engine)
 {
 	protocol_uci(engine, "isready");

@@ -33,4 +33,22 @@ djb_hash(const char *str);
 char *
 strtok_r_whitespace(char *restrict str, char **restrict save);
 
+struct Strings {
+	const char **buffers;
+	const int count;
+	const int i;
+};
+
+struct Strings *
+strings_new(void);
+
+void
+strings_delete(struct Strings *strings);
+
+const char *
+strings_ith(const struct Strings *strings);
+
+const char *
+strings_next(struct Strings *strings);
+
 #endif

@@ -58,7 +58,6 @@ extern void test_protocol_switch(struct Engine *);
 extern void test_protocol_uci_empty(struct Engine *);
 extern void test_protocol_uci_cmd_d(struct Engine *);
 extern void test_protocol_uci_cmd_debug(struct Engine *);
-extern void test_protocol_uci_cmd_djbhash(struct Engine *);
 extern void test_protocol_uci_cmd_go_perft(struct Engine *);
 extern void test_protocol_uci_cmd_isready(struct Engine *);
 extern void test_protocol_uci_cmd_position(struct Engine *);
@@ -100,7 +99,6 @@ main(void)
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_empty);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_d);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_debug);
-	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_djbhash);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_go_perft);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_isready);
 	CALL_TEST_WITH_TMP_ENGINE(test_protocol_uci_cmd_position);

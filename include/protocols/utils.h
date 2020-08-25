@@ -4,14 +4,29 @@
 #include "engine.h"
 #include <stdlib.h>
 
+struct PState;
+
 struct Command
 {
 	const char *name;
-	void (*handler)(struct Engine *);
+	void (*handler)(struct Engine *, struct PState *);
 };
 
-const struct Command *
-identify_command(const char *token, const struct Command commands[], size_t count);
+struct PState {
+	char *str;
+	char *token;
+	char *saveptr;
+	struct Command *cmd;
+};
+
+struct PState *
+pstate_new(const char *str, const struct Command commands[], size_t count);
+
+void
+pstate_free(struct PState *pstate);
+
+const char *
+pstate_next(struct PState *pstate);
 
 void
 display_err_syntax(FILE *stream);

@@ -50,6 +50,12 @@ strtok_whitespace(char *str)
 	return strtok(str, " \t\v\r\n");
 }
 
+char *
+strtok_r_whitespace(char *str, char **saveptr)
+{
+	return strtok_r(str, " \t\v\r\n", saveptr);
+}
+
 // Copyright (c) 2005-2014 Rich Felker, et al.
 // musl library
 char *
@@ -66,9 +72,4 @@ strtok_r(char *restrict s, const char *restrict sep, char **restrict p)
 	else
 		*p = 0;
 	return s;
-}
-
-char *
-strtok_r_whitespace(char *restrict s, char **restrict p) {
-	return strtok_r(s, " \t\v\r\n", p);
 }
