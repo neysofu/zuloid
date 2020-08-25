@@ -24,10 +24,10 @@
 #include <string.h>
 
 extern void
-cecp_call_xboard(struct Engine *engine);
+engine_call_cecp_xboard(struct Engine *engine);
 
 void
-uci_call_eval(struct Engine *engine, struct PState *pstate)
+engine_call_uci_eval(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	fprintf(engine->config.output,
@@ -40,7 +40,7 @@ uci_call_eval(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_go_perft(struct Engine *engine, const char *arg)
+engine_call_uci_go_perft(struct Engine *engine, const char *arg)
 {
 	if (arg) {
 		position_perft(engine->config.output, &engine->board, atoi(arg));
@@ -50,7 +50,7 @@ uci_call_go_perft(struct Engine *engine, const char *arg)
 }
 
 void
-uci_call_go_time(struct Engine *engine, const char *arg, enum Color color)
+engine_call_uci_go_time(struct Engine *engine, const char *arg, enum Color color)
 {
 	if (arg) {
 		float time = (float)(atol(arg) * 1000);
@@ -61,7 +61,7 @@ uci_call_go_time(struct Engine *engine, const char *arg, enum Color color)
 }
 
 void
-uci_call_go_inc(struct Engine *engine, const char *arg, enum Color color)
+engine_call_uci_go_inc(struct Engine *engine, const char *arg, enum Color color)
 {
 	if (arg) {
 		float time = (float)(atol(arg) * 1000);
@@ -72,7 +72,7 @@ uci_call_go_inc(struct Engine *engine, const char *arg, enum Color color)
 }
 
 void
-uci_call_go_mate(struct Engine *engine, const char *token)
+engine_call_uci_go_mate(struct Engine *engine, const char *token)
 {
 	if (token) {
 		engine->config.max_depth = atoi(token);
@@ -82,7 +82,7 @@ uci_call_go_mate(struct Engine *engine, const char *token)
 }
 
 void
-uci_call_go_movetime(struct Engine *engine, const char *token)
+engine_call_uci_go_movetime(struct Engine *engine, const char *token)
 {
 	if (token) {
 		float time = (float)(atol(token) * 1000);
@@ -93,7 +93,7 @@ uci_call_go_movetime(struct Engine *engine, const char *token)
 }
 
 void
-uci_call_go(struct Engine *engine, struct PState *pstate)
+engine_call_uci_go(struct Engine *engine, struct PState *pstate)
 {
 	if (engine->status != STATUS_IDLE) {
 		return;
@@ -101,16 +101,16 @@ uci_call_go(struct Engine *engine, struct PState *pstate)
 	const char *token = NULL;
 	while ((token = pstate_next(pstate))) {
 		if (strcmp(token, "perft") == 0) {
-			uci_call_go_perft(engine, pstate_next(pstate));
+			engine_call_uci_go_perft(engine, pstate_next(pstate));
 			return;
 		} else if (strcmp(token, "wtime") == 0) {
-			uci_call_go_time(engine, pstate_next(pstate), COLOR_WHITE);
+			engine_call_uci_go_time(engine, pstate_next(pstate), COLOR_WHITE);
 		} else if (strcmp(token, "btime") == 0) {
-			uci_call_go_time(engine, pstate_next(pstate), COLOR_BLACK);
+			engine_call_uci_go_time(engine, pstate_next(pstate), COLOR_BLACK);
 		} else if (strcmp(token, "winc") == 0) {
-			uci_call_go_inc(engine, pstate_next(pstate), COLOR_WHITE);
+			engine_call_uci_go_inc(engine, pstate_next(pstate), COLOR_WHITE);
 		} else if (strcmp(token, "binc") == 0) {
-			uci_call_go_inc(engine, pstate_next(pstate), COLOR_BLACK);
+			engine_call_uci_go_inc(engine, pstate_next(pstate), COLOR_BLACK);
 		} else if (strcmp(token, "infinite") == 0) {
 			time_control_delete(engine->time_controls[COLOR_WHITE]);
 			time_control_delete(engine->time_controls[COLOR_BLACK]);
@@ -124,18 +124,18 @@ uci_call_go(struct Engine *engine, struct PState *pstate)
 			token = strtok_whitespace(NULL);
 			engine->config.max_depth = atoi(token);
 		} else if (strcmp(token, "mate") == 0) {
-			uci_call_go_mate(engine, pstate_next(pstate));
+			engine_call_uci_go_mate(engine, pstate_next(pstate));
 		} else if (strcmp(token, "nodes") == 0) {
-			uci_call_go_mate(engine, pstate_next(pstate));
+			engine_call_uci_go_mate(engine, pstate_next(pstate));
 		} else if (strcmp(token, "movetime") == 0) {
-			uci_call_go_movetime(engine, pstate_next(pstate));
+			engine_call_uci_go_movetime(engine, pstate_next(pstate));
 		}
 	}
 	engine_start_search(engine);
 }
 
 void
-uci_call_listmoves(struct Engine *engine, struct PState *pstate)
+engine_call_uci_listmoves(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	size_t count = 0;
@@ -158,7 +158,7 @@ uci_call_listmoves(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_position(struct Engine *engine, struct PState *pstate)
+engine_call_uci_position(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (!token) {
@@ -201,7 +201,7 @@ uci_call_position(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_d(struct Engine *engine, struct PState *pstate)
+engine_call_uci_d(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (!token) {
@@ -220,7 +220,7 @@ uci_call_d(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_setoption(struct Engine *engine, struct PState *pstate)
+engine_call_uci_setoption(struct Engine *engine, struct PState *pstate)
 {
 	if (engine->status != STATUS_IDLE) {
 		display_err_unspecified(engine->config.output);
@@ -276,28 +276,28 @@ uci_call_setoption(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_isready(struct Engine *engine, struct PState *pstate)
+engine_call_uci_isready(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	fputs("readyok\n", engine->config.output);
 }
 
 void
-uci_call_quit(struct Engine *engine, struct PState *pstate)
+engine_call_uci_quit(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->status = STATUS_EXIT;
 }
 
 void
-uci_call_stop(struct Engine *engine, struct PState *pstate)
+engine_call_uci_stop(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
 }
 
 void
-uci_call_uci(struct Engine *engine, struct PState *pstate)
+engine_call_uci_uci(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	const char *options[] = {
@@ -337,7 +337,7 @@ uci_call_uci(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_magics(struct Engine *engine, struct PState *pstate)
+engine_call_uci_magics(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	const char *identifier = NULL;
@@ -360,14 +360,14 @@ uci_call_magics(struct Engine *engine, struct PState *pstate)
 }
 
 void
-uci_call_ucinewgame(struct Engine *engine, struct Pstate *pstate)
+engine_call_uci_ucinewgame(struct Engine *engine, struct Pstate *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
 }
 
 void
-uci_call_debug(struct Engine *engine, struct PState *pstate)
+engine_call_uci_debug(struct Engine *engine, struct PState *pstate)
 {
 	// This command feels quite useless (in fact, Stockfish doesn't even recognize
 	// it). Nevertheless, we shall offer the option to send additional evaluation
@@ -387,20 +387,20 @@ void
 protocol_uci(struct Engine *engine, const char *str)
 {
 	const struct Command commands[] = {
-		{ "%eval", uci_call_eval },
-		{ "%listmoves", uci_call_listmoves },
-		{ "%magics", uci_call_magics },
-		{ "d", uci_call_d },
-		{ "debug", uci_call_debug },
-		{ "go", uci_call_go },
-		{ "isready", uci_call_isready },
-		{ "position", uci_call_position },
-		{ "quit", uci_call_quit },
-		{ "setoption", uci_call_setoption },
-		{ "stop", uci_call_stop },
-		{ "uci", uci_call_uci },
-		{ "ucinewgame", uci_call_ucinewgame },
-		{ "xboard", cecp_call_xboard },
+		{ "%eval", engine_call_uci_eval },
+		{ "%listmoves", engine_call_uci_listmoves },
+		{ "%magics", engine_call_uci_magics },
+		{ "d", engine_call_uci_d },
+		{ "debug", engine_call_uci_debug },
+		{ "go", engine_call_uci_go },
+		{ "isready", engine_call_uci_isready },
+		{ "position", engine_call_uci_position },
+		{ "quit", engine_call_uci_quit },
+		{ "setoption", engine_call_uci_setoption },
+		{ "stop", engine_call_uci_stop },
+		{ "uci", engine_call_uci_uci },
+		{ "ucinewgame", engine_call_uci_ucinewgame },
+		{ "xboard", engine_call_cecp_xboard },
 	};
 	struct PState *pstate = pstate_new(str, commands, ARRAY_SIZE(commands));
 	if (!pstate->token) {

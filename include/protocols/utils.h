@@ -16,7 +16,7 @@ struct PState {
 	char *str;
 	char *token;
 	char *saveptr;
-	struct Command *cmd;
+	const struct Command *cmd;
 };
 
 struct PState *

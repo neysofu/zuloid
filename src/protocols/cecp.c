@@ -20,35 +20,34 @@
 #include <string.h>
 
 extern void
-uci_call_uci(struct Engine *engine);
+engine_call_uci_uci(struct Engine *engine);
 
 void
-cecp_call_xboard(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.protocol = protocol_cecp;
 }
 
-const char *CECP_FEATURES[] = {
-	"done=0",    "ping=1",   "playother=1", "debug=1",    "exclude=1",
-	"nps=0",     "pause=1",  "memory=1",    "smp=1",      "usermove=1",
-	"exclude=1", "sigint=0", "sigterm=0",   "setboard=1", "reuse=0",
-};
-
 void
-cecp_call_protover(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_protover(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
+	const char *features[] = {
+		"done=0",    "ping=1",   "playother=1", "debug=1",    "exclude=1",
+		"nps=0",     "pause=1",  "memory=1",    "smp=1",      "usermove=1",
+		"exclude=1", "sigint=0", "sigterm=0",   "setboard=1", "reuse=0",
+	};
 	fputs("feature", engine->config.output);
-	for (size_t i = 0; i < ARRAY_SIZE(CECP_FEATURES); i++) {
-		fprintf(engine->config.output, " %s", CECP_FEATURES[i]);
+	for (size_t i = 0; i < ARRAY_SIZE(features); i++) {
+		fprintf(engine->config.output, " %s", features[i]);
 	}
 	fputc('\n', engine->config.output);
 	fputs("feature done=1\n", engine->config.output);
 }
 
 void
-cecp_call_ping(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_ping(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	const char *token = pstate_next(pstate);
@@ -58,21 +57,21 @@ cecp_call_ping(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_quit(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_quit(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->status = STATUS_EXIT;
 }
 
 void
-cecp_call_playother(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_playother(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->board.side_to_move = color_other(engine->board.side_to_move);
 }
 
 void
-cecp_call_setboard(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_setboard(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (!token) {
@@ -96,56 +95,56 @@ cecp_call_setboard(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_draw(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_draw(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	fputs("offer draw\n", engine->config.output);
 }
 
 void
-cecp_call_result(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_result(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->status = STATUS_IDLE;
 }
 
 void
-cecp_call_new(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_new(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	position_init_from_fen(&engine->board, FEN_OF_INITIAL_POSITION);
 }
 
 void
-cecp_call_post(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_post(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.debug = true;
 }
 
 void
-cecp_call_nopost(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_nopost(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.debug = false;
 }
 
 void
-cecp_call_hard(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_hard(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.ponder = true;
 }
 
 void
-cecp_call_easy(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_easy(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.ponder = false;
 }
 
 void
-cecp_call_ratings(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_ratings(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -153,7 +152,7 @@ cecp_call_ratings(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_pause(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_pause(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -161,7 +160,7 @@ cecp_call_pause(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_resume(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_resume(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -169,7 +168,7 @@ cecp_call_resume(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_usermove(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_usermove(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (token) {
@@ -182,7 +181,7 @@ cecp_call_usermove(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_question_mark(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_question_mark(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -190,14 +189,14 @@ cecp_call_question_mark(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_time(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_time(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
 }
 
 void
-cecp_call_otim(struct Engine *engine, struct Pstate *pstate)
+engine_call_cecp_otim(struct Engine *engine, struct Pstate *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (token) {
@@ -209,7 +208,7 @@ cecp_call_otim(struct Engine *engine, struct Pstate *pstate)
 }
 
 void
-cecp_call_sd(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_sd(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	int quantity = atoi(token);
@@ -217,20 +216,20 @@ cecp_call_sd(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_exit(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_exit(struct Engine *engine, struct PState *pstate)
 {
 	engine->status = STATUS_IDLE;
 	engine_stop_search(engine);
 }
 
 void
-cecp_call_analyze(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_analyze(struct Engine *engine, struct PState *pstate)
 {
 	engine_start_search(engine);
 }
 
 void
-cecp_call_cores(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_cores(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -238,7 +237,7 @@ cecp_call_cores(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_exclude(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_exclude(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -246,7 +245,7 @@ cecp_call_exclude(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_include(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_include(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
@@ -254,7 +253,7 @@ cecp_call_include(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_memory(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_memory(struct Engine *engine, struct PState *pstate)
 {
 	cache_delete(engine->cache);
 	const char *token = pstate_next(pstate);
@@ -267,41 +266,41 @@ cecp_call_memory(struct Engine *engine, struct PState *pstate)
 }
 
 void
-cecp_call_random(struct Engine *engine, struct PState *pstate)
+engine_call_cecp_random(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
 	engine->config.move_selection_noise = 0.5;
 }
 
 const struct Command CECP_COMMANDS[] = {
-	{ "?", cecp_call_question_mark },
-	{ "analyze", cecp_call_analyze },
-	{ "cores", cecp_call_cores },
-	{ "draw", cecp_call_draw },
-	{ "easy", cecp_call_easy },
-	{ "exclude", cecp_call_exclude },
-	{ "exit", cecp_call_exit },
-	{ "hard", cecp_call_hard },
-	{ "include", cecp_call_include },
-	{ "memory", cecp_call_memory },
-	{ "new", cecp_call_new },
-	{ "nopost", cecp_call_nopost },
-	{ "otim", cecp_call_otim },
-	{ "pause", cecp_call_pause },
-	{ "ping", cecp_call_ping },
-	{ "playother", cecp_call_playother },
-	{ "post", cecp_call_post },
-	{ "protover", cecp_call_protover },
-	{ "quit", cecp_call_quit },
-	{ "random", cecp_call_random },
-	{ "ratings", cecp_call_ratings },
-	{ "result", cecp_call_result },
-	{ "resume", cecp_call_resume },
-	{ "sd", cecp_call_sd },
-	{ "setboard", cecp_call_setboard },
-	{ "time", cecp_call_time },
-	{ "uci", uci_call_uci },
-	{ "xboard", cecp_call_xboard },
+	{ "?", engine_call_cecp_question_mark },
+	{ "analyze", engine_call_cecp_analyze },
+	{ "cores", engine_call_cecp_cores },
+	{ "draw", engine_call_cecp_draw },
+	{ "easy", engine_call_cecp_easy },
+	{ "exclude", engine_call_cecp_exclude },
+	{ "exit", engine_call_cecp_exit },
+	{ "hard", engine_call_cecp_hard },
+	{ "include", engine_call_cecp_include },
+	{ "memory", engine_call_cecp_memory },
+	{ "new", engine_call_cecp_new },
+	{ "nopost", engine_call_cecp_nopost },
+	{ "otim", engine_call_cecp_otim },
+	{ "pause", engine_call_cecp_pause },
+	{ "ping", engine_call_cecp_ping },
+	{ "playother", engine_call_cecp_playother },
+	{ "post", engine_call_cecp_post },
+	{ "protover", engine_call_cecp_protover },
+	{ "quit", engine_call_cecp_quit },
+	{ "random", engine_call_cecp_random },
+	{ "ratings", engine_call_cecp_ratings },
+	{ "result", engine_call_cecp_result },
+	{ "resume", engine_call_cecp_resume },
+	{ "sd", engine_call_cecp_sd },
+	{ "setboard", engine_call_cecp_setboard },
+	{ "time", engine_call_cecp_time },
+	{ "uci", engine_call_uci_uci },
+	{ "xboard", engine_call_cecp_xboard },
 };
 
 void
