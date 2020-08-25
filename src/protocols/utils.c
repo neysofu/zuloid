@@ -4,15 +4,15 @@
 #include <string.h>
 
 static int
-command_cmp(const void *cmd1, const void *cmd2)
+pcommand_cmp(const void *cmd1, const void *cmd2)
 {
-	const char *s1 = ((struct Command *)cmd1)->name;
-	const char *s2 = ((struct Command *)cmd2)->name;
+	const char *s1 = ((struct PCommand *)cmd1)->name;
+	const char *s2 = ((struct PCommand *)cmd2)->name;
 	return strcmp(s1, s2);
 }
 
 struct PState *
-pstate_new(const char *str, const struct Command commands[], size_t count)
+pstate_new(const char *str, const struct PCommand commands[], size_t count)
 {
 	struct PState *pstate = malloc(sizeof(struct PState));
 	exit_if_null(pstate);
@@ -26,12 +26,12 @@ pstate_new(const char *str, const struct Command commands[], size_t count)
 	};
 	pstate->token = strtok_r_whitespace(str_w, &pstate->saveptr);
 	if (pstate->token) {
-		struct Command key = {
+		struct PCommand key = {
 			.name = pstate->token,
 			.handler = NULL,
 		};
-		pstate->cmd = (struct Command *)(bsearch(
-		  &key, commands, count, sizeof(struct Command), command_cmp));
+		pstate->cmd = (struct PCommand *)(bsearch(
+		  &key, commands, count, sizeof(struct PCommand), pcommand_cmp));
 
 	}
 	return pstate;

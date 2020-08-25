@@ -26,7 +26,7 @@ void
 engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
-	engine->config.protocol = protocol_cecp;
+	engine->config.protocol = engine_call_cecp;
 }
 
 void
@@ -272,7 +272,7 @@ engine_call_cecp_random(struct Engine *engine, struct PState *pstate)
 	engine->config.move_selection_noise = 0.5;
 }
 
-const struct Command CECP_COMMANDS[] = {
+const struct PCommand CECP_COMMANDS[] = {
 	{ "?", engine_call_cecp_question_mark },
 	{ "analyze", engine_call_cecp_analyze },
 	{ "cores", engine_call_cecp_cores },
@@ -304,7 +304,7 @@ const struct Command CECP_COMMANDS[] = {
 };
 
 void
-protocol_cecp(struct Engine *engine, const char *str)
+engine_call_cecp(struct Engine *engine, const char *str)
 {
 	struct PState *pstate = pstate_new(str, CECP_COMMANDS, ARRAY_SIZE(CECP_COMMANDS));
 	if (!pstate->token) {

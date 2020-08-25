@@ -6,7 +6,7 @@
 
 struct PState;
 
-struct Command
+struct PCommand
 {
 	const char *name;
 	void (*handler)(struct Engine *, struct PState *);
@@ -16,11 +16,11 @@ struct PState {
 	char *str;
 	char *token;
 	char *saveptr;
-	const struct Command *cmd;
+	const struct PCommand *cmd;
 };
 
 struct PState *
-pstate_new(const char *str, const struct Command commands[], size_t count);
+pstate_new(const char *str, const struct PCommand commands[], size_t count);
 
 void
 pstate_free(struct PState *pstate);

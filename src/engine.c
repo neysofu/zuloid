@@ -87,7 +87,7 @@ const struct Config CONFIG_DEFAULT = {
 	.ponder = false,
 	.max_nodes_count = 0,
 	.max_depth = 0,
-	.protocol = protocol_uci,
+	.protocol = engine_call_uci,
 	.output = NULL,
 };
 

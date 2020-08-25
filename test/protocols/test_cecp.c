@@ -5,10 +5,10 @@
 #include "utils.h"
 
 void
-test_protocol_cecp(struct Engine *engine)
+test_engine_call_cecp(struct Engine *engine)
 {
-	protocol_cecp(engine, "xboard");
-	protocol_cecp(engine, "protover 2");
+	engine_call_cecp(engine, "xboard");
+	engine_call_cecp(engine, "protover 2");
 	{
 		struct Lines *lines = file_line_by_line(engine->config.output);
 		for (size_t i = 0; i < lines_count(lines); i++) {
@@ -19,12 +19,12 @@ test_protocol_cecp(struct Engine *engine)
 }
 
 void
-test_protocol_cecp_ping(struct Engine *engine)
+test_engine_call_cecp_ping(struct Engine *engine)
 {
-	protocol_cecp(engine, "ping 0");
-	protocol_cecp(engine, "ping -1");
-	protocol_cecp(engine, "ping 128");
-	protocol_cecp(engine, "ping -1025");
+	engine_call_cecp(engine, "ping 0");
+	engine_call_cecp(engine, "ping -1");
+	engine_call_cecp(engine, "ping 128");
+	engine_call_cecp(engine, "ping -1025");
 	{
 		struct Lines *lines = file_line_by_line(engine->config.output);
 		munit_assert_string_equal(lines_nth(lines, 0), "pong 0");
@@ -36,12 +36,12 @@ test_protocol_cecp_ping(struct Engine *engine)
 }
 
 void
-test_protocol_cecp_quit(struct Engine *engine)
+test_engine_call_cecp_quit(struct Engine *engine)
 {
 	{
 		munit_assert_uint(engine->status, !=, STATUS_EXIT);
 	}
-	protocol_cecp(engine, "quit");
+	engine_call_cecp(engine, "quit");
 	{
 		munit_assert_uint(engine->status, ==, STATUS_EXIT);
 	}

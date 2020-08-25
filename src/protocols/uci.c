@@ -323,7 +323,7 @@ engine_call_uci_uci(struct Engine *engine, struct PState *pstate)
 		"option name UCI_LimitStrength type check default false",
 		"option name UCI_Elo type spin default 1350 min 1350 max 2850",
 	};
-	engine->config.protocol = protocol_uci;
+	engine->config.protocol = engine_call_uci;
 	fprintf(engine->config.output,
 	        "id name Zuloid %s\n"
 	        "id author Filippo Costa\n",
@@ -384,9 +384,9 @@ engine_call_uci_debug(struct Engine *engine, struct PState *pstate)
 }
 
 void
-protocol_uci(struct Engine *engine, const char *str)
+engine_call_uci(struct Engine *engine, const char *str)
 {
-	const struct Command commands[] = {
+	const struct PCommand commands[] = {
 		{ "%eval", engine_call_uci_eval },
 		{ "%listmoves", engine_call_uci_listmoves },
 		{ "%magics", engine_call_uci_magics },

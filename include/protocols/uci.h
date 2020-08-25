@@ -4,6 +4,6 @@
 #include "engine.h"
 
 void
-protocol_uci(struct Engine *restrict engine, const char *cmd);
+engine_call_uci(struct Engine *restrict engine, const char *cmd);
 
 #endif

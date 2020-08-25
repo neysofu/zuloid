@@ -7,14 +7,14 @@ void
 test_protocol_switch(struct Engine *engine)
 {
 	{
-		munit_assert(engine->config.protocol == protocol_uci);
+		munit_assert(engine->config.protocol == engine_call_uci);
 	}
 	engine->config.protocol(engine, "xboard");
 	{
-		munit_assert(engine->config.protocol == protocol_cecp);
+		munit_assert(engine->config.protocol == engine_call_cecp);
 	}
 	engine->config.protocol(engine, "uci");
 	{
-		munit_assert(engine->config.protocol == protocol_uci);
+		munit_assert(engine->config.protocol == engine_call_uci);
 	}
 }

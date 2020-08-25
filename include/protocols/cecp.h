@@ -4,6 +4,6 @@
 #include "engine.h"
 
 void
-protocol_cecp(struct Engine *restrict engine, const char *cmd);
+engine_call_cecp(struct Engine *restrict engine, const char *cmd);
 
 #endif
