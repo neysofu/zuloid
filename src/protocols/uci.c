@@ -14,7 +14,8 @@
 #include "chess/threats.h"
 #include "engine.h"
 #include "meta.h"
-#include "protocols/utils.h"
+#include "protocols/support/err.h"
+#include "protocols/support/pstate.h"
 #include "rating.h"
 #include "switches.h"
 #include "utils.h"
@@ -188,7 +189,8 @@ engine_call_uci_position(struct Engine *engine, struct PState *pstate)
 	} else if (strcmp(token, "current") != 0) {
 		display_err_syntax(engine->config.output);
 	}
-	if ((token = pstate_next(pstate)) && strcmp(token, "moves") != 0) {
+	token = pstate_next(pstate);
+	if (token && strcmp(token, "moves") != 0) {
 		display_err_syntax(engine->config.output);
 		return;
 	}

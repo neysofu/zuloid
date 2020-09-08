@@ -1,5 +1,5 @@
-#ifndef ZULOID_PROTOCOLS_UTILS_H
-#define ZULOID_PROTOCOLS_UTILS_H
+#ifndef ZULOID_PROTOCOLS_SUPPORT_PSTATE_H
+#define ZULOID_PROTOCOLS_SUPPORT_PSTATE_H
 
 #include "engine.h"
 #include <stdlib.h>

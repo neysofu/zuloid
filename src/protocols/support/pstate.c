@@ -1,4 +1,4 @@
-#include "protocols/utils.h"
+#include "protocols/support/pstate.h"
 #include "utils.h"
 #include <stdlib.h>
 #include <string.h>
@@ -48,22 +48,4 @@ const char *
 pstate_next(struct PState *pstate)
 {
 	return strtok_r_whitespace(NULL, &pstate->saveptr);
-}
-
-void
-display_err_syntax(FILE *stream)
-{
-	fputs("[ERROR] Invalid syntax.\n", stream);
-}
-
-void
-display_err_unspecified(FILE *stream)
-{
-	fputs("[ERROR] Unspecified error.\n", stream);
-}
-
-void
-display_err_invalid_command(FILE *stream)
-{
-	fputs("[ERROR] Invalid command.\n", stream);
 }
