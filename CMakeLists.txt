@@ -5,10 +5,7 @@ set(CMAKE_POLICY_DEFAULT_CMP0042 NEW)
 
 project(ZULOID VERSION 0.1 LANGUAGES C)
 
-set(CMAKE_C_FLAGS " \
-   ${CMAKE_C_FLAGS} \
-   -fverbose-asm \
-   -save-temps \
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} \
    -Wall \
    -Wpedantic \
    -Wextra \
@@ -90,6 +87,16 @@ target_compile_definitions(test_zuloid PRIVATE
     PROJECT_VERSION=\"${PROJECT_VERSION}\"
     TEST_TMP_DIR=\"${TEST_TMP_DIR}\")
 add_test(NAME ZULOID COMMAND test_zuloid)
+
+function(zuloid_compiler_flag FLAG)
+    set_target_properties(ZULOID_LIB zuloid test_zuloid PROPERTIES COMPILE_FLAGS "${FLAG}")
+endfunction()
+
+if (CMAKE_C_COMPILER_ID STREQUAL "Clang")
+    zuloid_compiler_flag("-fcolor-diagnostics")
+elseif (CMAKE_C_COMPILER_ID STREQUAL "GNU")
+    zuloid_compiler_flag("-fdiagnostics-color=always")
+endif()
 
 add_custom_target(run
     COMMAND zuloid

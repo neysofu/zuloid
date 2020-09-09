@@ -1,8 +1,10 @@
 #include "protocols/support/uci_options.h"
+#include "utils.h"
+#include <assert.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <assert.h>
 
 void
 ucioption_fprint(const struct UciOption *option, FILE *stream)
@@ -43,4 +45,33 @@ ucioption_fprint(const struct UciOption *option, FILE *stream)
 		default:
 			exit(EXIT_FAILURE);
 	}
+}
+
+int
+ucioption_cmp(const void *opt1, const void *opt2)
+{
+	const char *str1 = ((struct UciOption *)(opt1))->name;
+	const char *str2 = ((struct UciOption *)(opt2))->name;
+	return strncmpci(str1, str2);
+}
+
+bool
+ucioption_combo_allows(const struct UciOption *option, const char *variant)
+{
+	const char *pos = strstr(option->data.combo.variants, variant);
+	return pos > option->data.combo.variants && *(pos - 1) == '[' &&
+	       *(pos + strlen(variant) + 1) == ']';
+}
+
+bool
+ucioption_spin_allows(const struct UciOption *option, long val) {
+	return val >= option->data.spin.min && val <= option->data.spin.max;
+}
+
+struct UciOption *
+ucioption_find(const struct UciOption options[], size_t count, const char *name)
+{
+	struct UciOption key = { .name = name };
+	return (struct UciOption *)(bsearch(
+	  &key, options, count, sizeof(struct UciOption), ucioption_cmp));
 }

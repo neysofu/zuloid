@@ -13,44 +13,58 @@ enum UciOptionType
 	UCI_OPTION_TYPE_STRING,
 };
 
+union UciOptionData
+{
+	struct
+	{
+		bool default_val;
+		int (*setter)(struct Engine *engine, bool value);
+	} check;
+	struct
+	{
+		long default_val;
+		long min;
+		long max;
+		int (*setter)(struct Engine *engine, long value);
+	} spin;
+	struct
+	{
+		const char *default_val;
+		const char *variants;
+		int (*setter)(struct Engine *engine, const char *value);
+	} combo;
+	struct
+	{
+		const char *default_val;
+		int (*setter)(struct Engine *engine, const char *value);
+	} string;
+	struct
+	{
+		int (*setter)(struct Engine *engine);
+	} button;
+};
+
 struct UciOption
 {
 	const char *name;
 	enum UciOptionType type;
-	union
-	{
-		struct
-		{
-			bool default_val;
-			int (*setter)(struct Engine *engine, bool value);
-		} check;
-		struct
-		{
-			long default_val;
-			long min;
-			long max;
-			int (*setter)(struct Engine *engine, long value);
-		} spin;
-		struct
-		{
-			const char *default_val;
-			const char *variants;
-			int (*setter)(struct Engine *engine, const char *value);
-		} combo;
-		struct
-		{
-			const char *default_val;
-			int (*setter)(struct Engine *engine, const char *value);
-		} string;
-		struct
-		{
-			int (*setter)(struct Engine *engine);
-		} button;
-	} data;
+	union UciOptionData data;
 };
 
 void
 ucioption_fprint(const struct UciOption *option, FILE *stream);
+
+bool
+ucioption_combo_allows(const struct UciOption *option, const char *variant);
+
+bool
+ucioption_spin_allows(const struct UciOption *option, long val);
+
+void
+ucioptiondata_fill(union UciOptionData *data, const char *str, enum UciOptionType type);
+
+struct UciOption *
+ucioption_find(const struct UciOption[], size_t count, const char *name);
 
 // Option support is quite hairy and messy. I don't want to break pre-existing
 // scripts and configs originally written for other engines.
@@ -61,8 +75,7 @@ ucioption_fprint(const struct UciOption *option, FILE *stream);
 static const struct UciOption UCI_OPTIONS[] = {
 	{ .name = "Analysis Contempt",
 	  .type = UCI_OPTION_TYPE_COMBO,
-	  .data.combo = { .default_val = "Both",
-	                  .variants = "[Off][White][Black][Both]" } },
+	  .data.combo = { .default_val = "Both", .variants = "[Off][White][Black][Both]" } },
 	{ .name = "Clear Hash",
 	  .type = UCI_OPTION_TYPE_BUTTON,
 	  .data.button = { .setter = NULL } },
@@ -111,12 +124,12 @@ static const struct UciOption UCI_OPTIONS[] = {
 	{ .name = "UCI_Chess960",
 	  .type = UCI_OPTION_TYPE_CHECK,
 	  .data.check = { .default_val = false } },
-	{ .name = "UCI_LimitStrength",
-	  .type = UCI_OPTION_TYPE_CHECK,
-	  .data.check = { .default_val = false } },
 	{ .name = "UCI_Elo",
 	  .type = UCI_OPTION_TYPE_SPIN,
 	  .data.spin = { .default_val = 1350, .min = 1350, .max = 2850 } },
+	{ .name = "UCI_LimitStrength",
+	  .type = UCI_OPTION_TYPE_CHECK,
+	  .data.check = { .default_val = false } },
 };
 
 #endif

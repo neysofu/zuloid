@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <limits.h>
 
 char *
 read_line(FILE *stream)
@@ -75,7 +77,8 @@ strtok_r(char *restrict s, const char *restrict sep, char **restrict p)
 }
 
 char *
-strtrim(char *str, const char *trimmable) {
+strtrim(char *str, const char *trimmable)
+{
 	str += strspn(str, trimmable);
 	for (char *ptr = str + strlen(str); strchr(trimmable, *ptr); ptr--) {
 		*ptr = '\0';

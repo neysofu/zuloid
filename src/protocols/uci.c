@@ -222,18 +222,65 @@ engine_call_uci_d(struct Engine *engine, struct PState *pstate)
 }
 
 void
-engine_call_uci_setoption(struct Engine *engine, struct PState *pstate) {
+engine_call_uci_setoption(struct Engine *engine, struct PState *pstate)
+{
 	if (engine->status != STATUS_IDLE) {
 		display_err_unspecified(engine->config.output);
 		return;
 	}
-	if (pstate_skip(pstate, "name") != 1) {
+	const char *name = NULL;
+	if (pstate_skip(pstate, "name") != 1 || !(name = pstate_next_sep(pstate, "value"))) {
 		display_err_syntax(engine->config.output);
 		return;
 	}
-	struct UciOption option;
-	const char *name = pstate_next_sep(pstate, "value");
 	const char *value = pstate_next_all(pstate);
+	const struct UciOption *option =
+	  ucioption_find(UCI_OPTIONS, ARRAY_SIZE(UCI_OPTIONS), name);
+	if (!option) {
+		display_err_unspecified(engine->config.output);
+		return;
+	}
+	if (!value && option->type != UCI_OPTION_TYPE_BUTTON) {
+		display_err_syntax(engine->config.output);
+		return;
+	}
+	switch (option->type) {
+		case UCI_OPTION_TYPE_BUTTON:
+			option->data.button.setter(engine);
+			break;
+		case UCI_OPTION_TYPE_CHECK:
+			if (strcmp(value, "true") == 0) {
+				option->data.check.setter(engine, true);
+			} else if (strcmp(value, "false") == 0) {
+				option->data.check.setter(engine, false);
+			} else {
+				display_err_syntax(engine->config.output);
+			}
+			break;
+		case UCI_OPTION_TYPE_COMBO:
+			if (ucioption_combo_allows(option, value)) {
+				option->data.combo.setter(engine, value);
+			} else {
+				display_err_unspecified(engine->config.output);
+			}
+			break;
+		case UCI_OPTION_TYPE_STRING:
+			option->data.string.setter(engine, value);
+			break;
+		case UCI_OPTION_TYPE_SPIN:;
+			char *endptr = NULL;
+			long val = strtol(value, &endptr, 10);
+			if (endptr && val >= option->data.spin.min && val <= option->data.spin.max) {
+				option->data.spin.setter(engine, val);
+			} else if (!endptr) {
+				display_err_syntax(engine->config.output);
+			} else {
+				display_err_unspecified(engine->config.output);
+			}
+			break;
+		default:
+			exit(EXIT_FAILURE);
+	}
 }
 
 void
@@ -297,7 +344,7 @@ engine_call_uci_magics(struct Engine *engine, struct PState *pstate)
 }
 
 void
-engine_call_uci_ucinewgame(struct Engine *engine, struct Pstate *pstate)
+engine_call_uci_ucinewgame(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(engine);
 	UNUSED(pstate);
