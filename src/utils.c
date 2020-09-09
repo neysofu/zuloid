@@ -73,3 +73,12 @@ strtok_r(char *restrict s, const char *restrict sep, char **restrict p)
 		*p = 0;
 	return s;
 }
+
+char *
+strtrim(char *str, const char *trimmable) {
+	str += strspn(str, trimmable);
+	for (char *ptr = str + strlen(str); strchr(trimmable, *ptr); ptr--) {
+		*ptr = '\0';
+	}
+	return str;
+}

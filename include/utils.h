@@ -30,6 +30,11 @@ exit_if_null(void *ptr);
 uint16_t
 djb_hash(const char *str);
 
+static const char *const WHITESPACE = " \t\v\r\n";
+
+char *
+strtrim(char *str, const char *trimmable);
+
 char *
 strtok_r_whitespace(char *restrict str, char **restrict save);
 

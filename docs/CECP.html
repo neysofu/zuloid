@@ -1,0 +1,1443 @@
+<html><head>
+<meta http-equiv="content-type" content="text/html; charset=windows-1252"><style>
+h4 {
+  margin: 0px;
+}
+h4.togui {
+  color: blue;
+}
+h4.toeng {
+  color: red;
+}
+p {
+  margin: 5px 0 15px 0;
+}
+</style>
+<style>
+.vimvixen-console-frame {
+  margin: 0;
+  padding: 0;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  position: fixed;
+  z-index: 2147483647;
+  border: none;
+  background-color: unset;
+  pointer-events:none;
+}
+
+.vimvixen-hint {
+  background-color: yellow;
+  border: 1px solid gold;
+  font-weight: bold;
+  position: absolute;
+  text-transform: uppercase;
+  z-index: 2147483647;
+  font-size: 12px;
+  color: black;
+}
+</style></head><body><h1>Chess-Engine Communication Protocol v2</h1>
+<h2>by H.G.Muller</h2>
+<p>
+This document gives a compact description of CECP, a.k.a. WinBoard or XBoard protocol.
+It lists the commands as they would be given to the engine,
+with symbolically indicated parts in capitals,
+followed by a short explanation.
+Related commands or multiple forms of the same command are discussed together.
+There is not a very strict separation between <span style="color:blue;">engine -&gt; GUI</span> and <span style="color:red;">GUI -&gt; engine</span> commands,
+to make it possible to discuss commands and the replies to them close together.
+Many commands are for very specialized tasks that most engines would never want to do,
+in which case there is no reason for them to implement the command.
+Such commands are marked as "[advanced]".
+In any case these would be good candidates to omit if you first implement the protocol.
+</p>
+<h3>PIPES AND SIGNALS</h3>
+<p>
+For the main part CECP is based on exchanging single-line text messages 
+between GUI and engine through 'pipes' set up by the GUI,
+and connected to the engine's standard input and output,
+and on MS Windows that would be the only communication channel.
+But on Linux it is also possible for processes to send 'signals' to each
+ other, which interrupt their normal program flow.
+And CECP uses this when it sends commands that might have to interrupt 
+the engine's search,
+so that the engine doesn't have to poll for input, but gets 'forcefully 
+notified' when such input has arrived.
+Without special code being set up to handle the signal, the latter would
+ terminate the engine process, though.
+And as Windows does not support signals at all, most engines rely on 
+polling for input anyway, and do not need the signals.
+Engines can be made immune for the signals, but this does not work when 
+they run as Windows binaries on Linux under Wine,
+as Wine itself will die by the signal.
+It is therefore recommended that engines that cannot handle signals 
+should
+send 'feature sigint=0 sigterm=0' during the initial handshake (see 
+below),
+which suppresses the use of signals by the GUI.
+Then you don't have to take any special precautions for handling 
+signals, as you would never receive any.
+This also has the advantage you will still be able to kill the engine 
+with Ctrl-C (also a signal!), when running it from the command line.
+</p>
+
+<h3>(INITIAL) HANDSHAKE</h3>
+<h4 class="toeng">xboard</h4>
+<h4 class="toeng">protover N</h4>
+<p>
+The GUI always starts sending the 'xboard' command.
+Multi-protocol engines can use that to switch to CECP mode.
+(Be sure that any prompt you might have printed in a previous mode is 'disarmed' by printing a newline,
+so it won't prefix any subsequent command sent by the engine.)
+Non-obsolete GUIs immediately follow this by a 'protover' command
+(N specifying the version of the protocol it supports, which at present must be &lt;= 2).
+The engine can reply to 'protover 2' with a number of commands of the form:
+</p>
+<h4 class="togui">feature NAME=VALUE</h4>
+<h4 class="togui">feature NAME1=VALUE1 NAME2=VALUE2 ...</h4>
+<p>
+to tell the GUI what parts of the protocol it supports in addition to or deviation of the default.
+Text VALUEs should be surrounded by double quotes.
+The list of features transferred this way should always end with <b>done=1</b>,
+at the time when the engine is done initialyzing and is ready for use.
+It can start with <b>done=0</b> to warn the GUI that it may take significant
+time before the done=1 will be emitted;
+without that GUIs can assume after a timeout period that no or no more feature commands will be coming.
+</p>
+<p>
+The individual feature commands will be discussed with the commands of the protocol they affect.
+Some features, however, do not affect the protocol, but just convey information.
+One of those is 'feature myname="XXX"', which tells the GUI the name XXX of the engine.
+With 'feature reuse=0' an engine can indicate it should never be used to play more than a single game,
+and the GUI should start a new instance of it for every game.
+There is no limiting list of allowed features; an engine can send features with any (alphabetic) NAME.
+GUIs will respond to each NAME=VALUE pair in a feature command by one of the two commands:
+</p>
+<h4 class="toeng">accepted NAME</h4>
+<h4 class="toeng">rejected NAME</h4>
+<p>
+depending on whether they recognize and implement the mentioned feature with that NAME and VALUE, or not.
+For most features it is not very relevant for the engine to know whether the GUI supports those;
+if the features were supposed to enable sending of commands added only in later versions of the protocol,
+(which could not be sent unconditionally for backward compatibility),
+it will simply never receive them if the GUI does not support them.
+If the feature was supposed to disable sending of obsolete, redundant commands,
+a rejection will mean you get such commands anyway.
+So to be safe it is best you program the engine to silently ignore such commands in addition to disabling them with a feature,
+although printing the standard error message in reply to such commands should also not be harmful.
+</p>
+<h4 class="toeng">ping N</h4>
+<p>
+Can be sent (with an arbitrary integer N) at any time by the GUI,
+but only to engines that have sent 'feature ping=1' at startup
+(which should be considered mandatory to have a properly working engine).
+GUIs should always support ping, and use it to prevent ambiguity in the engine output due to race conditions
+(like whether aborted thinking resulted in a move or not).
+The engine should respond with:
+</p>
+<h4 class="togui">pong N</h4>
+<p>
+after having finished processing of all commands received earlier.
+Note that processing of a command that set the engine 'thinking' (= searching for producing a move)
+only ends when that move is printed (or the command is aborted so that no move will be coming),
+so that a 'ping' received during thinking should never be replied to before printing that move.
+But a GUI really should not send anything (including 'ping') to an engine that is thinking,
+unless it wants the engine to stop thinking.
+</p>
+
+<h3>BASIC GAME DIALOG (GUI-to-ENGINE)</h3>
+
+<p>
+CECP is based on the design where the engine knows for which side it is playing for, (or what else is expected of it).
+The engine is also at any time aware of the game state,
+and after it produces a move, it will update the game state accordingly.
+It will spontaneously start thinking and produce a move whenever the turn of the side it plays for comes up.
+The engine can thus be in any one of four states { PLAY WHITE, PLAY BLACK, FORCE MODE, ANALYZE MODE }.
+In general the engine will accept commands silently, and should certainly not print a prompt.
+Some commands can trigger a search, however,
+and during this search the engine can print 'Thinking Output' to inform the GUI on how the search is progressing.
+At the end of a search the engine can print the move it has decided to play,
+possibly preceded by a draw offer,
+or it can decide to terminate the game.
+</p>
+<p>
+All command keywords are case sensitive, and (except for 'Hint:' and error messages) contain only lower-case letters.
+Below capitals are used to symbolize command parameters that would describe the quantity suggested by the name.
+</p>
+
+<h4 class="toeng">quit</h4>
+<p>
+The engine should immediately exit (i.e. terminate all its processes or threads).
+</p>
+<h4 class="toeng">new</h4>
+<p>
+Start a game of normal chess, setting up the initial position for it.
+Turn any explicit randomization off, revoke any depth limit, and assume the opponent will be human.
+Set engine to use wall-clock time for time measurement.
+Engine is set to play black,
+(except when it was in analyze mode, in which case it should stay in analyze mode),
+but should never start pondering in this position.
+</p>
+<h4 class="toeng">force</h4>
+<p>
+Engine is set to play neither side, so it will accept legal moves for both sides without ever starting to think or ponder.
+The engine can stop immediately any search in progress, without producing a move.
+If GUIs do receive a move after sending this command,
+they should be aware that the engine now considers that move made,
+and should thus undo that move when this was not desired (see 'undo' below).
+</p>
+<div style="background:#C0C0FF">
+<h4 class="toeng">playother</h4>
+<p>
+[advanced] Engine is set to play the side currently not on move (and might start pondering as a result).
+Only sent to engines that have sent 'feature playother=1' at startup.
+</p>
+</div>
+<h4 class="toeng">go</h4>
+<p>
+Engine is set to play for the side that is currently on move (and will start thinking as a result).
+</p>
+<h4 class="toeng">MOVE</h4>
+<h4 class="toeng">usermove MOVE</h4>
+<p>
+Feed the MOVE of a side the engine does not play (and which is on move) to the engine.
+As a result the other side's turn now comes up (which might set the engine thinking).
+The 'usermove' prefix is only used when the engine has requested it through "feature usermove=1".
+See appendix A for the MOVE format.
+</p>
+<h4 class="toeng">setboard FEN</h4>
+<p>
+Let the engine set up the position indicated by the FEN.
+Only sent to engines that have enabled this through "feature setboard=1" (recommended).
+Otherwise (or when the setboard feature is rejected) GUIs will use the 'edit' command when they want to set up a position.
+As in practice most engines do not account for the possibility that setboard will be rejected,
+supporting setboard=1 should be considered mandatory for any GUI.
+Variant engines should understand FEN formats in common use for that variant.
+On receiving a position the engine cannot handle,
+it is recommended to issue an error message (see below) like "Error (too many knights): setboard"
+</p>
+<h4 class="toeng">draw</h4>
+<p>
+The opponent offers you a draw.
+Respond with 'offer draw' if you want to accept it; just ignore it to reject the offer.
+Do not count on the offer still to be on the table when you accept it.
+Sending of this command can be suppressed by sending 'feature draw=0',
+which could be useful if your engine's thinking would be aborted by receiving a 'draw' command.
+GUIs should protect you from this by relaying draw offers only just before you get the opponent's move,
+so that it can neither interfere with thinking or pondering,
+but not all GUIs do.
+</p>
+<h4 class="toeng">result RESULT</h4>
+<h4 class="toeng">result RESULT {REASON}</h4>
+<p>
+Notifies the engine that the game has ended with the mentioned RESULT (1-0, 0-1 or 1/2-1/2, from white point of view),
+for the given REASON (typically "checkmate", "50-move rule" etc.).
+In ICS mode RESULT can also be '*', for an unfinished (adjourned) game.
+It would be a good idea to let the engine stop thinking immediately on reception of this command.
+</p>
+<h4 class="toeng">undo</h4>
+<h4 class="toeng">remove</h4>
+<p>
+Let the engine take back the preceding one or two half-moves, 
+respectively.
+With the latter the same side stays on move, which can prevent an engine
+ starts thinking, as it might do after the first of two 'undo' commands.
+</p>
+
+<h4 class="toeng">?</h4>
+<p>
+The single-character command '?' orders a thinking engine to consider its time up, and move immediately.
+Like the 'pause' command, this would necessitate the engine to watch for input while it is thinking.
+CECP allows a range of implementations, from those that abort thinking on arrival of any command,
+to those that only start checking for input after they are done thinking and have moved.
+In the latter case '?' will have no meaning.
+</p>
+<div style="background:#FFFF80">
+<h4 class="toeng">edit</h4>
+<p>
+[Obsolete] A multi-line command that is the default method for letting 
+the engine set up a position,
+used with engines that have not sent 'feature setboard=1'.
+The command will be terminated by a line consisting of a single period.
+Until then, each line can contain a piece ID plus square name (like Ng1 
+or Ke8), which will place the mentioned piece on the mentioned square.
+A line '#' will clear the board, a line 'c' will switch to placing 
+pieces of the other color
+(which at the start of the edit command will be set to place white 
+pieces).
+</p><p>
+There is no way to specify castling or e.p. rights;
+pieces placed on the same square as they are on in the initial position 
+should be assumed to be virgin,
+and e.p. capture should be assumed impossible.
+(It is up to the GUI to devise work-arounds for positions where this is 
+not desired.)
+The 'edit' command is made obsolete by the setboard command, where the 
+FEN specifies castling and e.p rights without the aid of any kludges.
+</p>
+<h4 class="toeng">white</h4>
+<h4 class="toeng">black</h4>
+<p>
+[Obsolete] Sets the mentioned side to move, and sets engine to play the opposite side.
+Sending of these commands can be suppressed by sending 'feature colors=0' at startup.
+Made obsolete by the 'setboard' command, where the FEN already specifies the side to move.
+</p>
+</div>
+
+<h3>BASIC GAME DIALOG (EGINE-to-GUI)</h3>
+
+<h4 class="togui">move MOVE</h4>
+<p>
+Specifies the move the engine plays for the side it is playing for.
+See appendix A for the MOVE format.
+</p>
+<h4 class="togui">offer draw</h4>
+<p>
+Used to offer, accept or claim draws.
+The engine should not count on the offer or claim being accepted, and be ready to play on.
+This command must be used before a move to claim draws that are only claimable after the move,
+and GUIs should always grant a draw when it gets claimable and at least one draw offer is pending.
+</p>
+<h4 class="togui">RESULT</h4>
+<h4 class="togui">RESULT {REASON}</h4>
+<p>
+Irreversibly terminates the game, RESULT (1-0, 0-1 or 1/2-1/2, from 
+white POV) being the result according to the engine, for the specified 
+REASON.
+Must be sent in checkmate, stalemate and insufficient-mating-material 
+positions, even when the engine is in force mode.
+A GUI could overrule the result when it knows better (e.g. forfeit the 
+engine for a false claim).
+</p>
+<h4 class="togui">resign</h4>
+<p>
+An alternative for terminating the game as a loss, implying the reason.
+</p>
+<h4 class="togui">DEPTH SCORE TIME NODES PV</h4>
+<h4 class="togui">DEPTH SCORE TIME NODES SELECTIVEDEPTH SPEED TABLEBASEHITS&lt;Tab&gt;PV</h4>
+<p>
+While searching (and controlled by 'post'/'nopost', see below) the 
+engine can print 'Thinking Output',
+which should start with at least 4 integer numbers, indicating search 
+depth, score in centi-Pawn, nodes searched, and time searched in 
+centi-seconds.
+PV is a text string representing the principle variation.
+SCORE is in centi-Pawn units, and the de-facto standard is to report it 
+from the point of view of the side to move.
+For indicating mate in N moves, SCORE should be reported as (plus or 
+minus) 100000+N.
+GUIs can show such 'mate scores' to the user in a special format.
+TIME is in centi-second units.
+In the second (extended) format, the engine can optionally print 
+additional numbers between NODES and PV,
+provided it uses a Tab character to separate these from the PV.
+The last such info before the Tab represents the number of tablebase 
+hits.
+When present, the numbers before it represent (from left to right) 
+maximum depth of its selective search,
+and the number of nodes searched per second.
+In the future additional numbers between SPEED and TABLEBASEHITS might 
+get a defined meaning.
+GUIs that are not aware of this extended format don't know any better 
+than that these extra parameters are the initial part of the PV,
+an will thus print them in the PV field as given.
+So use spaces and tabs to format them nicely into columns.
+</p>
+<p>
+When the engine is pondering on a speculative move, it should either start the PV with this move between parentheses,
+or send that move to the GUI before any other ponder output with the command:
+</p>
+<h4 class="togui">Hint: MOVE</h4>
+<p>
+This command should also be used when the engine is not pondering, and the user asks it for a hint.
+(See the 'hint' commnand below.)
+</p>
+<h4 class="togui">Illegal move: MOVE</h4>
+<h4 class="togui">Illegal move (REASON): MOVE</h4>
+<p>
+Reply to reception of a move that is not legal or valid in the current position.
+(Which by definition is the case if the position itself was invalid or undefined.)
+The GUI should retract the move it just sent the engine,
+or forfeit the engine and terminate the game if it thinks the claim is invalid.
+</p>
+<h4 class="togui">Error (ERRORTYPE): COMMAND</h4>
+<p>
+Reply to a COMMAND that the engine does not understand.
+The ERRORTYPE is usually "unknown command", but could also be a specific complaint against command parameters,
+or the context in which the command is used.
+Should not be used in response to illegal moves, as it will not make the GUI take the move back.
+(And GUIs will only send moves to the engine that they approved of and performed themselves,
+so this would bring GUI and engine out of phase.)
+</p>
+
+
+<h3>TIME &amp; DEPTH CONTROL</h3>
+
+<h4 class="toeng">time T</h4>
+<h4 class="toeng">otim T</h4>
+<p>
+Specifies the time left on the clock (in centi-seconds) of the side for which the engine has to think up a move next,
+or on the clock of its opponent, respectively.
+(Usually sent just before a command that sets the engine thinking).
+Note that the side it will think for next does not always have to be the side it is playing for when it receives these command!
+(E.g. if it is set thinking by a 'go' command.)
+Sending of these commands can be suppressed by sending 'feature time=0' at startup. (Never do it!)
+If the engine does not use the opponent time, be sure that you ignore the otim command in a way that would not
+interfere with recognizing an input move that follows it during ponder search as a ponder hit or miss!
+</p>
+<h4 class="toeng">level MOVESPERSESSION BASETIME INCREMENT</h4>
+<h4 class="toeng">st T</h4>
+<p>
+Two mutually exclusive commands (erasing each other's effect) for specifying the time control.
+In 'level' either MOVESPERSESSION equals 0 (for incremental and sudden-death TC), or INCREMENT is 0 (for classical TC).
+With 'st' the time control will be T seconds per move (not accumulating leftovers).
+The BASETIME parameter is in minutes, and can have the MIN:SEC notation.
+INCREMENT and T are in seconds.
+Engines are encouraged to understand a floating-point number for the INCREMENT, or at least to not choke on it.
+</p><p>
+A proposed protocol extension for the 'level' command is this:
+negative INCREMENT would be interpreted as its absolute value, but the 
+awarded time would then be limited to the time used on the preceding 
+move.
+In addition, 'level' can have arbitrarily many triplets of parameters,
+to describe a 'multi-session' TC.
+After one session completes, the next session will be played according 
+to the next triplet of parameters (if one is specified),
+instead of with the same (classical session) or not at all (incremental 
+session, where you would flag at the end).
+The engine would have to allow this format through <b>feature level=1</b>.
+</p>
+<h4 class="toeng">sd N</h4>
+<p>
+Limits the nominal search depth to N ply,
+in addition to the time limits specified by 'level' or 'st' commands.
+</p>
+<div style="background:#C0C0FF">
+<h4 class="toeng">nps NODERATE</h4>
+<p>
+[advanced] Set the engine to use its own node count for any timing 
+decisions,
+converting nodes to time by dividing the node count by the specified 
+NODERATE.
+When NODERATE equals zero the engine should use its consumed CPU time to
+ measure time,
+rather than the 'wall clock'.
+The specified NODERATE remains in force until the next 'new' command.
+This is useful in super-fast games, where time is no longer an accurate 
+measure for effort due to unpredictable delays in GUI-engine 
+communication.
+</p>
+</div>
+
+<h3>ANALYSIS</h3>
+
+
+<h4 class="toeng">analyze</h4>
+<p>
+Sets engine thinking on the current position, without ever making a move.
+In this mode the engine can only get an input move, 'new', 'setboard', 'undo', '.', 'include' and 'exclude' commands,
+and some 'option' commands (in particular for the MultiPV option),
+and should then automatically switch to analyzing the new positions that come up by this in the requested way.
+Engines that do not support this command should send 'feature analyze=0' at startup,
+in which case the GUI should prevent the user from using the engine for analysis (so that the command will never be sent).
+</p>
+<h4 class="toeng">exit</h4>
+<p>
+Only sent in analyze mode, to switch back to 'force mode', where the engine plays neither side.
+</p>
+<h4 class="toeng">.</h4>
+<p>
+This 1-character command, sent only in analyze mode, requests the engine to immediately tell how far its search has progressed.
+The engine should either ignore it, or reply with:
+</p>
+<h4 class="togui">stat01 TIME NODES DEPTH MOVESLEFT TOTALMOVES</h4>
+<h4 class="togui">stat01 TIME NODES DEPTH MOVESLEFT TOTALMOVES CURRENTMOVE</h4>
+<p>
+which mentions the TIME and NODES used by the search so far, the DEPTH of the iteraton currently in progress,
+the number of moves still to be searched in the current depth iteration,
+the total number of moves in the current position,
+and (optionally) the move that is being considered now.
+</p>
+<div style="background:#C0C0FF">
+<h4 class="toeng">exclude MOVE</h4>
+<h4 class="toeng">include MOVE</h4>
+<h4 class="toeng">exclude all</h4>
+<h4 class="toeng">include all</h4>
+<p>
+[advanced] Only sent in analyze mode, to engines that have sent "feature exclude=1" at startup,
+to include or exclude the mentioned move from the analysis of the current position.
+The effect of these commands is cumulative, and should be reset any time a new position comes up,
+or when analyze mode is left.
+</p>
+<h4 class="toeng">setscore N</h4>
+<p>
+[advanced] Define the score of the current position as N (centi-Pawn from side-to-move POV),
+to be used whenever an analysis search hits this position.
+Only set to engines that enabled it through 'feature setscore=1' at startup.
+</p>
+</div>
+
+<h3>SETTING ENGINE PARAMETERS</h3>
+<h4 class="toeng">memory N</h4>
+<p>
+Specifies the engine can use at most N megabytes of memory.
+Only sent when the engine requested it through <b>feature memory=1</b>, and never during a game.
+</p>
+<h4 class="toeng">cores N</h4>
+<p>
+Specifies the engine can use at most N search threads in is parallel search.
+Only sent when the engine requested it through <b>feature smp=1</b>.
+The engine should obey this at its earliest convenience,
+but certainly before starting a new search.
+</p>
+<h4 class="toeng">egtpath TYPE PATH</h4>
+<p>
+Informs the engine where in the file system it can find end-game tables of the mentioned TYPE.
+(Common types are nalimov, scorpio, gaviota and syzygy.)
+Sent for each TYPE that the engine listed in its egt feature (<b>feature egt="TYPE1,TYPE2,..."</b>),
+or not at all if such a feature was not sent at startup.
+</p>
+<h4 class="toeng">random</h4>
+<p>
+Toggles any explicit randomization by the engine on or off.
+</p>
+<h4 class="toeng">post</h4>
+<h4 class="toeng">nopost</h4>
+<p>
+Switches printing of 'Thinking Output' during the engine search on or off, respectively.
+</p>
+<h4 class="toeng">hard</h4>
+<h4 class="toeng">easy</h4>
+<p>
+Switches pondering (heavily using computing power during the turn of the engine's opponent) on or off, respectively.
+</p>
+<h4 class="toeng">option NAME=VALUE</h4>
+<h4 class="toeng">option NAME</h4>
+<p>
+Sets the value of an engine-defined option with the specified NAME
+(which is an arbitrary text string not containing equal signs).
+The second form is used for 'button' options, to indicate the user pressed the button;
+other option types will transfer a value.
+Only sent for options that the engine declared at startup through:
+</p><h4 class="togui">feature option="NAME -spin VALUE MIN MAX"</h4>
+<h4 class="togui">feature option="NAME -combo TEXT1 /// TEXT2 /// ..."</h4>
+<h4 class="togui">feature option="NAME -check VALUE"</h4>
+<h4 class="togui">feature option="NAME -string TEXT"</h4>
+<h4 class="togui">feature option="NAME -file FILENAME"</h4>
+<h4 class="togui">feature option="NAME -path FILENAME"</h4>
+<h4 class="togui">feature option="NAME -button"</h4>
+<h4 class="togui">feature option="NAME -reset"</h4>
+<h4 class="togui">feature option="NAME -save"</h4>
+<p>
+For -check options the VALUE must be 0 or 1.
+MIN and MAX indicate the valid range of a -spin option, which has an integer VALUE.
+The current value of a -combo option can be prefixed with an asterisk,
+otherwise it will be assumed to be the first mentioned TEXT.
+The -string, -file and -path options convey an arbitrary text,
+but the latter two indicate to the GUI that this text represents a file or directory name,
+so that the appropriate Browse button can be displayed with it in the settings dialog.
+The -button, -reset and -save options are all instantaneous signals,
+but -save indicates to the GUI it should first flush all other settings to the engine
+when the corresponding button is pressed
+(which otherwise it might only do after the user presses some 'OK' button in the settings dialog),
+while -reset options will erase the list of options in the GUI as a side effect of their activation,
+and expect the engine to send a new list of options through feature commands.
+</p>
+<p>
+If a GUI wants to reject an option feature (e.g. because the syntax of the string describing it is incorrect),
+it should say 'rejected option NAME', i.e. include the NAME of the option in the 'rejected' command,
+as unlike with other features, there can be multiple option features that need to be distinguished.
+If other features appear in duplicate, only the last one should be obeyed,
+but for option features the GUI should accumulate them in a list of available options.
+This list should be cleared on reception of 'feature done=0'.
+</p>
+
+<h3>MESSAGES AND SOCIAL INTERACTION</h3>
+
+<h4 class="togui"># MESSAGE</h4>
+<p>
+When the engine has sent 'feature debug=1' at startup, and the GUI 'accepted' this feature,
+any line starting with a '#' character is guaranteed to be completely ignored by the GUI.
+This is the recommended way to have your engine print messages for debugging purposes.
+Although most GUIs are usually pretty resistant to non-compliant garbage the engine sends them,
+there is never the guarantee that what you send them will not get a meaning in future protocol extensions,
+if you don't send it in this way.
+</p>
+<h4 class="toeng">hint</h4>
+<p>
+Asks the engine to name a good move in the current position (without playing it).
+The engine should reply with a 'Hint' command.
+The most common implementation is to send the move on which the engine would ponder.
+</p>
+<div style="background:#C0C0FF">
+<h4 class="toeng">bk</h4>
+<p>
+[advanced] Invites the engine to send a number of text lines starting with a Space or Tab character to the GUI,
+terminated by an empty line, for display as a table to the user.
+Intended for book or tablebase moves the engine has available in the current position,
+although creative use for other purposes is certainly possible.
+</p>
+<h4 class="togui">askuser REPLYTAG MESSAGE</h4>
+<p>
+[advanced] Sent to the GUI for presenting the MESSAGE to the user in a dialog to which the user can type a reply.
+This reply will then be sent to the engine as a line <b>REPLYTAG ANSWER</b>.
+</p>
+</div>
+<h4 class="togui">telluser MESSAGE</h4>
+<h4 class="togui">tellusererror MESSAGE</h4>
+<p>
+Requests the GUI to present the specified message to the user,
+as a 'note' or an 'error', respectively.
+In the latter case no additional error messages should be given by the GUI when the engine process suddenly dies.
+</p>
+<div style="background:#C0C0FF">
+<h4 class="togui">tellall MESSAGE</h4>
+<h4 class="togui">tellothers MESSAGE</h4>
+<h4 class="togui">tellopponent MESSAGE</h4>
+<p>
+[advanced] When the opponent is an ICS, these commands can be used to 
+send the specified MESSAGE to selected groups of ICS users:
+All people watching the game, all except the opponent, or just the 
+opponent, respectively.
+(This corresponds to the ICS commands 'kibitz', 'whisper' and 'say', 
+respectively.)
+In other cases the GUI could add messages relayed by 'tellothers' as 
+comments to the current game.
+</p>
+<h4 class="togui">tellics COMMAND</h4>
+<h4 class="togui">tellicsnoalias COMMAND</h4>
+<p>
+[advanced] When connected to an ICS, send the specified command to it.
+In the second case the COMMAND will be prefixed by the character that will prevent the ICS
+to remap it to some other command defined as an alias.
+</p>
+<h4 class="toeng">name NAME</h4>
+<p>
+[advanced] Informs the engine about the name of the opponent.
+Only sent in non-ICS mode when the engine requested it by sending 'feature name=1' at startup,
+while sending 'feature name=0' there would suppress sending of this command even in ICS mode.
+</p>
+<h4 class="toeng">ics ICSNAME</h4>
+<p>
+[advanced] Informs the engine on the name of the ICS it is playing on.
+(When not playing on an ICS, the hyphen character '-' will replace the ICSNAME.)
+Only sent to engines that have requested it with 'feature ics=1' at startup.
+</p>
+<h4 class="toeng">ratings WHITERATING BLACKRATING</h4>
+<p>
+[advanced] Informs the engine of the rating of the players.
+Usually only used when connected to an ICS, which would provide the ratings.
+</p>
+<h4 class="toeng">computer</h4>
+<p>
+[advanced] Informs the engine that the opponent is a computer.
+</p>
+<h4 class="toeng">pause</h4>
+<h4 class="toeng">resume</h4>
+<p>
+[advanced] On receiving 'pause' the engine should suspend all activity, including measuring the progress of time,
+until it receives a subsequent 'resume' command.
+Then it should continue with whatever it was doing like nothing had happened.
+Only sent to engines that sent 'feature pause=1' at at startup.
+</p>
+</div>
+
+<h3>CHESS VARIANTS</h3>
+
+<p>
+CECP is designed such that the GUI needs not have much knowledge of the 
+game rules, and can leave the engine in control:
+The engine can decide which moves are legal and which are not by 
+rejecting the illegal ones with an 'Illegal move' command,
+and declare game end with a particular result through the RESULT 
+command.
+In this section a number of commands are discussed that could make the 
+engine do even more to control the GUI.
+Like determining the board size, setting up the initial position, 
+highlighting squares where a 'picked-up' piece can move to, etc.
+GUIs can have built-in knowledge of some variants, though, and need not 
+follow the engine's lead in that case.
+</p>
+
+<h4 class="toeng">variant VARIANT</h4>
+<p>
+Optionally sent to the engine immediately after 'new' for games that use
+ other than FIDE rules.
+Sets the engine to play mentioned variant, starting in the initial 
+position for it.
+The engine stays playing for the side that does not have the move, but 
+should not start pondering on this position.
+Only used with VARIANTs that the engine announced it could play in the 
+'feature variants="VARIANT1,VARIANT2,..."' command at startup.
+Absence of "normal" amongst the mentioned variants implies the engine is
+ not able to play orthodox Chess.
+It is up to the GUI to decide what it can request the engine to play if 
+the engine does not emit any variants feature.
+</p>
+<h4 class="togui">setup FEN</h4>
+<h4 class="togui">setup (PIECETOCHAR) FEN</h4>
+<h4 class="togui">setup (PIECETOCHAR) WxH+S_PARENTVARIANT FEN</h4>
+<p>
+This engine-to-GUI command informs the GUI of the start position of the 
+selected variant.
+The first two forms are used when a standard variant is used for playing
+ another variant.
+(This standard variant could be a 'catch-all' for a family of variants, 
+like 'fairy', or a precisely defined one with legality checking off).
+The PIECETOCHAR string is necessary when the FEN contains other pieces 
+than normally used in the specified variant,
+and informs the GUI what piece image to use for which piece,
+by specifying the ID letter assigned to each of the GUIs internal piece 
+types
+(see appendix E).
+For non-standard variants, for which sending the third form is a 
+mandatory reply to the 'variant command' selecting them,
+the 'setup' command specifies the board (Width x Height) and holdings 
+size (S),
+plus a PARENTVARIANT from which the remaining rules will be inherited,
+</p><p>
+Normally a GUI would only pay attention to 'setup' commands sent by the first engine (if at all),
+and the first 'setup' command after 'variant',
+and send the position thus received to the second engine.
+By prefixing the PARENTVARIANT with an exclamation point the engine can indicate the 'setup' command is non-final,
+and another one will follow to overrule it.
+This can be used for conducting a 'prelude' to the game by first showing the user a board other than the start position,
+from which he could select something (like which pieces he wants to participate, or where to put those).
+What the user clicks on such a board (relayed through 'lift' commands) can then be used to determine
+the start position and participating pieces in the following, final 'setup' command.
+</p>
+<div style="background:#C0C0FF">
+<h4 class="togui">piece ID MOVEDESCRIPTION</h4>
+<p>
+[advanced] Also in response to the 'variant' command the engine can send
+ a number of 'piece' commands,
+to define how some pieces move that are specified (in the PIECETOCHAR 
+part of a preceding 'setup' command) or implied to participate in the 
+variant.
+The ID is the single-letter ID used for the piece in FEN, (so that white
+ and black pieces can be defined separately),
+but can also be a white (= upper-case) ID followed by an ampersand 
+'&amp;', to indicate the definition applies to pieces of both colors.
+The MOVEDESCRIPTION specifies how pieces of this type are allowed to 
+move, in XBetza notation.
+Pieces not defined by a 'piece' command and not naturally appearing in 
+the selected standard variant or the specified parent variant
+will move according to the GUI's idea of that piece type, which for 
+unorthodox piece symbols is essentially undefined.
+</p>
+<h4 class="toeng">lift SQUARE</h4>
+<h4 class="toeng">put SQUARE</h4>
+<h4 class="toeng">hover SQUARE</h4>
+<p>
+[advanced] Informs the engine that the user selected the piece on the mentioned SQUARE,
+put a previously selected piece on the mentioned SQUARE,
+or hovers the mouse pointer over the mentioned SQUARE, respectively.
+Only sent when requested by the engine with <b>feature highlight=1</b>.
+The engine can reply to these commands with:
+</p>
+<h4 class="togui">highlight COLORFEN</h4>
+<p>
+where the COLORFEN is the board part of a FEN where the letters indicate colors,
+rather than pieces (Red, Yellow, Green, Cyan, Blue, Magenta, White, Dark or Transparent),
+which the GUI then can use to mark / highlight the corresponding squares in that color.
+GUIs can use these markings to decide upon legality of moves,
+where colors indicated in capitals are considered legal destinations.
+Colors that have been assigned a special meaning when the lifted piece lands on them are magenta (promotion with choice),
+blue (forced promotion)
+and cyan (non-final leg of a multi-leg move).
+XBoard emits 'hover' commands when the mouse enters a square marked in red,
+which could be used by the engine to highlight victims of side-effects captures made on going to that destination.
+The GUI is expected to erase the color markers when the piece ceases to be selected,
+or revert to the marking pattern existing when the mouse pointer entered a 'hover' square when it again leaves it.
+</p>
+<h4 class="togui">choice PIECES</h4>
+<p>
+[advanced] When the engine foresees the picked-up piece (as indicated by the 'lift' command) can promote,
+it can emit a 'choice' command to alter the promotion choice to the mentioned PIECES (a string of piece IDs).
+By default all pieces other than Pawn or King will be on offer,
+except when the pieceToChar table assigned a fixed promotion partner to pieces of the moved type,
+in which case only the original piece and its designated partner are offered.
+This is a fancy alternative to letting the GUI offer all participating pieces types,
+and having the engine reject promotions to undesired ones as illegal move.
+</p>
+<h4 class="togui">dice MAX</h4>
+<h4 class="togui">dice MAX1 MAX2 ...</h4>
+<p>
+[advanced] Requests one or more random integers from the GUI in the range 1...MAX.
+Must only be used when the GUI accepted <b>feature dice=1</b>.
+The GUI will then generate the requested numbers with independent homogeneous probability distributions,
+and send them to the engine in the command
+</p>
+<h4 class="toeng">pips RANDOM1/MAX1 RANDOM2/MAX2 ...</h4>
+<p>
+In engine-engine games both engines will receive this command,
+(if they declared mentioned feature),
+and requests from the engine that is not on move will be ignored.
+In human-engine games an out-of-turn request will be honored, so that 
+the engine can request a virtual dice roll on behalf of the user.
+The information sent to the engine should always be shown to the human 
+player as well.
+</p>
+<h4 class="togui">deck SIZE NUMBER</h4>
+<p>
+[advanced] Requests the GUI to draw a NUMBER of cards from a virtual deck of the given SIZE.
+Can only be used when the GUI accepted <b>feature deck=NDECKS</b>, where NDECKS requests the maximum allowed number of decks per player.
+The SIZE identifies the deck, (so a player cannot have multiple decks of the same size), and should not be unreasonably large.
+Negative SIZE would be interpreted as its absolute value, but would draw from a deck of the opponent;
+if a game involves a common deck this should be considered to belong to the white player.
+The GUI will reply to a 'deck' command with
+</p>
+<h4 class="toeng">cards SIZE CARD1 CARD2 ...</h4>
+<p>
+where SIZE is the same as in the request, and CARDn is a random integer in the range 1...SIZE
+that has not yet appeared in any earlier 'cards' command for this deck, or as an earlier CARD in this one.
+At the start of a game all decks contain their maximum number of cards.
+The results of using more than NDECKS decks (per player) in the same game,
+or drawing from an empty deck are undefined,
+What is said for the 'pips' command above also applies here.
+</p>
+<h4 class="togui">stack SIZE CARD1 CARD2 ...</h4>
+<p>
+[advanced] Put the mentioned CARDS back into the deck SIZE.
+The deck must not already contain any of these cards,
+so this command can only be used after an earlier 'deck' command has drawn some cards from the deck.
+The GUI replies with the 'cards' command described above, except that the CARDs now are given as negative numers.
+</p>
+</div>
+<h4 class="toeng">holding WHITE BLACK</h4>
+<h4 class="toeng">holding WHITE BLACK NEWPIECE</h4>
+<p>
+[advanced] Specifies to the engine what is in the holdings during bughouse games.
+WHITE and BLACK are a list of capitalized piece IDs enclosed in brackets, like [PPPRQ] or [].
+The second form indicates NEWPIECE was just added, where the latter is a 2-letter combination,
+the first letter a W or B indicating the color, the second the capitalized piece ID.
+</p>
+<h4 class="toeng">partner</h4>
+<h4 class="toeng">partner NAME</h4>
+<p>
+[advanced] Tells you who your bughouse partner is on the ICS.
+The first form means you no longer have a partner.
+</p>
+<h4 class="toeng">ptell MESSAGE</h4>
+<p>
+[advanced] Your bughouse partner sent you the mentioned MESSAGE through an ICS tell or ptell command.
+</p>
+
+<h3>APPENDIX A: MOVE FORMAT</h3>
+
+<p>
+Moves should be specified in coordinate notation, e.g. e2e4 or g8f6.
+<br>
+For promotions the chosen piece should be indicated by a lower-case suffix, e.g.a7a8q or e2e1n.
+<br>
+Castlings are indicated as the King move, e.g. e1g1 or e8c8,
+except for Fischer castling, which is O-O or O-O-O (oh, not zero!).
+<br>
+Crazyhouse/bughouse drops: N@e6, P@e7 (piece always capitalized).
+<br>
+Multi-leg moves separate the legs by commas: e.g. c5d5,d5e4.
+For engine to GUI this has to be sent as a separate 'move' command for each leg,
+the non-final legs suffixed with a comma.
+<br>
+Null move: @@@@.
+</p><p>
+On boards with exactly 10 ranks, rank counting starts at 0.
+Some GUIs understand SAN. (But don't count on it!)
+The engine can request that the GUI sends its moves in SAN too,
+by sending 'feature san=1' at startup.
+Use of SAN is not recommended, though.
+</p>
+<h3>APPENDIX B: STANDARD VARIANTS</h3>
+<p>
+The variants mentioned in the list below are 'standard variants', meaning XBoard knows their rules.
+XBoard would allow all of those to be used as 'parent variant' for non-standard (= engine-defined) variants,
+which will then inherit their rules.
+Except for board/holdings size, participating pieces and initial setup,
+which will be explicitly specified in the 'setup' command sent by the engine,
+and possibly piece movement,
+which can be redefined through 'piece' commands.
+But that still leaves matters like promotion-zone depth,
+type of holdings (captured own pieces or color-flipped enemy pieces),
+promotion procedure (select any participating type, or only from holdings),
+game result for stalemate and checkmate,
+whether capture is mandatory or pieces explode on capture.
+</p><p>
+Note that the user can also redefine participating pieces,
+initial position and board / holdings size, through command-line options,
+effectively using the selected variant as parent variant.
+Such a user-modified variant is announced to the engine with a prefix indicating the board and holdings size,
+like 7x7+6_shogi, so the engine can distinguish it from the standard variant (and possibly support both).
+</p><p>
+GUI developers are free to decide which variants they want to implement.
+If they decide to not implement a certain variant, they would also not support any engine-defined variants based on it.
+To minimize the risk for that, engines should avoid using parent variants other than from some minimal group,
+which offers all rule variations.
+If GUIs do implement engine-defined variants, they should be aware of the names of all standard variants,
+in order to not confuse them with standard variants, expecting the engine to provide rules for them.
+</p>
+<pre>VARIANTS USEFUL AS PARENT BECAUSE OF UNIQUE SPECIAL RULES:
+giveaway          mandatory capture, no royal, win by being stalemated
+suicide           similar to giveaway, but stalemate result dependent on piece count
+losers            similar to giveaway, but with royal King
+twokings          multiple Kings, one closest to a1 is royal
+3check            win by giving 3rd check
+atomic            capturing pieces explode, and destroy all neighboring non-Pawns
+xiangqi           some pieces confined to board zones, Wazir is royal
+shogi             all pieces can promote to a predetermined other type
+shatranj          win by check or stalemate, or baring opponent King
+makruk            promotion zone 3 ranks deep
+seirawan          pieces from holdings can be gated onto the board
+super             shuffle, promotion only to captured or substituted pieces
+knightmate        royal piece is Unicorn (moves as Knight)
+berolina          Pawns move diagonally, capture straight
+chu               many more piece types as in other variants
+fairy             rules as for orthodox Chess
+
+VARIANTS THAT SHOULD NOT BE USED AS PARENTS:
+normal            use 'fairy' to guarantee sending of 'variant' command to engine
+fischerandom      use 'fairy' with a shuffle request in the setup FEN 
+wildcastle        obsolete
+nocastle          obsolete
+crazyhouse        use 'fairy' with holdings
+capablanca        use 'fairy' with proper board size
+gothic            use 'fairy' with proper board size
+janus             use 'fairy' with proper board size
+caparandom        use 'fairy' with proper board size and shuffle FEN
+lion              use 'fairy'
+great             use 'super'
+elven             use 'makruk'
+falcon            use 'fairy'
+courier           use 'fairy'
+cylinder          (board wraps on left-right edges) use fairy with 'o' piece moves
+bughouse          works only on ICS
+kriegspiel        works only on ICS (?)
+
+VARIANTS ONLY SUPPORTED IN THE WINBOARD ALIEN EDITION
+(Might be ported to XBoard some day.)
+checkers          jumped-over pieces disappear
+go                surrounded piece chains disappear
+reversi           sandwiched piece rows flip color
+amazons           moving piece throws arrow
+multi             turn has arbitrary many moves
+dai               large Shogi variant
+dada              likewise
+maka              likewise
+tai               likewise
+tenjiku           likewise
+
+</pre>
+<p>
+In general a GUI should know the moves for all pieces that participate in the current standard variant.
+When a standard variant is used as parent for an engine-defined variant,
+the engine might not send 'piece' commands for those.
+It should always recognize the orthodox and Capablanca pieces, unless a variant redefines them
+(which tends to happen for most pieces in Xiangqi and Shogi, and elsewhere often for the Elephant).
+About half the variants suitable as parent use nothing more than those.
+In the others the extra pieces are:
+</p>
+<pre>'ORTHODOX': FIDE Pawn, N, B, R, Q, K, Archbishop (BN), Chancellor (RN)
+SEIRAWAN:   Hawk (BN), Elephant (RN)
+XIANGQI:    Pawn (fW), Horse (afsW), Elephant (nA), Cannon (mRcpR), Wazir (W)
+SHOGI:      Pawn (fW), Lance (fR), Knight (fN), Silver (FfW), Gold (wfF), Horse (BW), Dragon (RF)
+SHATRANJ:   Pawn (fmWfcF), Ferz (F), Elephant (A)
+MAKRUK:     Ferz (F), Man (FfW = Silver)
+SUPER:      Amazon (QN), Veteran (KN)
+KNIGHTMATE: Man (K), Unicorn (N)
+BEROLINA:   Pawn (fnFfceWifmnA)
+CHU:        just the Shogi pieces.
+</pre>
+
+<h3>APPENDIX C: AN XBOARD PROTOCOL DRIVER IN PSEUDO-CODE</h3>
+
+<p>
+The following pseudo-code describes a protocol driver for a full-featured engine,
+which would even react to commands during thinking, such as "quit" or "?" (move now).
+Lines that are only needed for supporting a particular feature are clearly indicated,
+and could be left out in a "mean-and-lean" engine that does not implement that feature.
+</p><p>
+Note that in practice testing for pending input in a way that doesn't block the program if there is none is tricky:
+reading any of it might cause the rest to be buffered in a place where it no longer count as pending input,
+even though the program has not seen it yet.
+So make sure the engine reads input through routines that cannot buffer anything.
+Buffering of output can also wreck things, but can be combatted by explicit flushing of potential buffers.
+</p>
+
+<pre>// some state variables
+int stm;          // side to move (WHITE or BLACK), part of game state
+int mode;         // side the engine plays, or what else it should do (WHITE, BLACK, FORCE or ANALYZE)
+int activity;     // purpose of the current search (THINK, PONDER, ANALYZE)
+int ponder;       // whether we must think in opponent time (ON or OFF)
+int post;         // whether we must print info during search (ON or OFF)
+int tcMode;       // type of time control (CLASSICAL, INCREMENTAL, FIXED)
+int timerMode;    // how to measure time (WALL_CLOCK, CPU, or derive from node count)
+
+// more time-control parameters and variables
+int movesPerSession, baseTime, timePerMove, myTimeLeft, oppoTimeLeft, startTime;
+
+// other stuff (which might not be of much interest to your engine)
+int debug;           // whether it is safe to print debug messages (debug=1)
+int randomize;       // whether we should explicitly randomize move choice (TRUE, FALSE)
+int computerOppo;    // whether opponent is a computer (TRUE, FALSE)
+String opponentName; // name of opponent
+String icsName;      // name of Internet Chess Server
+
+Board gamePosition;  // copy of current position in game (to make sure it is available during search)
+
+String line;                   // input buffer
+int backloggedCommand = FALSE; // whether input buffer already contains a not-yet-executed command
+
+char exclude[MAXMOVECODE]; // exclusion map
+Move ponderMove = INVALID; // expected move of opponent
+
+int GetTime()
+{
+  if(timerMode == WALL_CLOCK) return GetWallClockTime();
+  else if(timerMode == CPU)   return GetUsedCpuTime();
+  else                        return nodeCount/timerMode;
+}
+
+int ParseTimeControl(char *s)
+{
+  words = Split(s, ' ');                      // split string into words at space boundaries
+  parts = Split(words[1], ':');               // split base-time spec into words along colon boundaries
+  movesPerSession = StringToNumber(words[0]); // first word: session length of classical TC
+  timePerMove     = StringToNumber(words[2]); // third word: Fischer increment
+  minutes         = StringToNumber(parts[0]);
+  if(parts[1]) seconds = StringToNumber(parts[1]); else seconds = 0; // defaults to 0
+  baseTime = 60*minutes + seconds;
+  if(movesPerSession != 0) return CLASSICAL; else return INCREMENTAL;
+}
+
+void SetExclusionMap(Move move, int state)
+{
+  if(move != INVALID) exclude[move] = state;
+  else for(i=0 to MAXMOVECODE) exclude[i] = state; // when move was "all"
+}
+
+Boolean ExecuteOneCommand()
+// returns whether the next command requires aborting the search
+{
+  // first handle pause - resume pairs, which keep us hanging here waiting for more input
+  paused = FALSE;
+  do {
+    if(!backloggedCommand) line = ReadLine(); // assumes end-of-file in ReadLine will make the engine exit
+    backloggedCommand = FALSE;
+    command = FirstWord(line); params = RemainderOf(line);
+    if(debug) print('# input command: ' + command + '\n'); fflush(stdout);   // (debug=1) example of non-protocol output for debugging purposes
+    if(command == "quit")   { exit(0); }                                     // always obey quit command
+    if(command == "resume") { startTime += GetTime() - time; return FALSE; } // optional (pause=1); corrects startTime for pause duration
+    if(command == "pause")  { time = GetTime(); paused = TRUE; }             // optional (pause=1); remember when pause started
+  } while(paused); // optional (pause=1); loop ignoring all input (which is not supposed to come!) until we receive 'resume'
+
+  // then handle commands that can be executed during search (so they can return FALSE to let the search continue)
+  if(command == ".")         { print('stat01 '+ (GetTime() - startTime) + ' ' + nodeCount + ' ' + rootDepth + ' ' +
+                                     nrOfRootMovesLeft + ' ' + nrOfRootMoves + ' ' +  rootMove + '\n'); fflush(stdout); return FALSE; }
+  if(command == "time")      { myTimeLeft    = StringToNumber(params); return FALSE; }
+  if(command == "otim")      { oppoTimeLeft  = StringToNumber(params); return FALSE; }
+  if(command == "cores")     { searchThreads = StringToNumber(params); return FALSE; } // optional (smp=1), to take effect next search
+  if(command == "easy")      { ponder = OFF; return FALSE; }   // or ignore if you cannot ponder
+  if(command == "hard")      { ponder = ON;  return FALSE; }   // or ignore if you cannot ponder
+  if(command == "draw")      { drawOfferPending = TRUE; return FALSE; } // optional (draw=1), or ignore if you don't do draws
+  if(command == "random")    { randomize = !randomize;  return FALSE; } // or ignore if you do not support randomization
+  if(command == "post")      { post = ON;    return FALSE; }   // ignoring post/nopost and always prining thinking output ...
+  if(command == "nopost")    { post = OFF;   return FALSE; }   // ... is an almost unnoticeable non-compliancy
+  if(command == "bk")        {                                 // only if the engine handles its own book
+    for(i=0 to NRBOOKMOVES) print(' ' + BookMove(gamePosition, i) + '\n'); // send moves witth leading Space or Tab!
+    print('\n'); fflush(stdout); return FALSE;                             // terminate with empty line
+  }
+  // next three very optional (highlight=1); only useful for move entry in weird variants, but then must work during ponder or analysis
+  if(command == "put")       { return FALSE; }                    // could trigger emission of 'choice' when promotion square
+  if(command == "hover")     { return FALSE; }                    // could trigger other ColorFEN
+  if(command == "lift") {                                         // must indicate legal destinations for this piece
+    fromSqr = params;                                             // remember lifted piece
+    print('highlight ' + ColorFEN(gamePosition, fromSqr) + '\n'); // request colored markers on target squares of lifted piece
+    fflush(stdout); return FALSE;
+  }
+  // next three only meaningful in bughouse engines (variant="bughouse"); here we ignore them without interrupting any search
+  if(command == "holding")   { return FALSE; }                    // partner hands us the given piece; rethink matters...
+  if(command == "ptell")     { return FALSE; }                    // could ask us to capture a specific piece
+  if(command == "partner")   { return FALSE; }                    // cannot happen during search, but as long as we ignore it...
+
+  // 'move now' command should abort thinking
+  if(command == "?")         { return (activity == THINKING); }   // ignored (meaningless) during pondering or analysis
+
+  // figure out if we are dealing with move (without 'usermove' prefix this is a bit flaky)
+  moveText = NULL;
+  if(command == "usermove")  moveText = params;  else    // only when we sent usermove=1
+  if(!isalpha(command[1]))   moveText = command; else    // for when usermove=1 was rejected, also handy when playing from command line
+  if(isupper(command[0]))    moveText = command;         // optional (san=1) to recognize bare SAN moves
+  if(moveText != NULL &amp;&amp; activity == PONDER) { // during ponder search we have to examine input move for being a ponder hit
+    if(ponderMove == ParseMove(moveText)) {    // ponder hit
+      myTimeLeft += GetTime() - startTime;     // add time gained by pondering (which we already have used up)
+      activity = THINK;                        // switch from pondering to thinking
+      return FALSE;                            // and continue search
+    }                                          // ponder miss: fall through to abort search, backlogging input move
+  }
+
+  if(command == "ping"                         // (ping=1), mandatory, even though it isn't the default!
+     &amp;&amp; activity != THINK) {                   // when thinking, pong reply must be postponed to after we move
+    nr = StringToNumber(params); print('pong ' + nr + '\n'); // otherwise reply immediately
+    fflush(stdout); return FALSE;                            // without disturbing search
+  }
+
+  // other commands must wait until search terminates; backlog them for processing in main loop, and abort search
+  if(activity != IDLE) { backloggedCommand = TRUE; return TRUE; }
+
+  postionChanged = TRUE;     // assumption for the eight following (game-state changing) commands
+  if(command == "undo")      { UnMake(); } else
+  if(command == "remove")    { UnMake(); UnMake(); } else
+  if(command == "setboard")  { stm = Setup(NULL, params); } else
+  if(command == "white")     { mode = BLACK; stm = WHITE; } else
+  if(command == "black")     { mode = WHITE; stm = BLACK; } else
+  if(command == "exit")      { mode = FORCE; } else              // for analysis support (analyze=1)
+  if(command == "new")       { if(mode != ANALYZE) mode = BLACK; stm = WHITE; Setup("normal", FIDE_FEN); moveNr = 0;
+                               maxDepth = INFINITE; timerMode = WALL_CLOCK; computerOppo = randomize = FALSE; } else
+  if(moveText != NULL) {          // input move (was already extracted from command)
+    move = ParseMove(moveText);   // in main loop we must always make it
+    if(MakeMove(move) == ERROR) print('Illegal move: ' + moveText + '\n'); // MakeMove() flips stm when successful
+  } else positionChanged = FALSE; // revoke assumption if none of the above
+
+  if(positionChanged) {              // one of the above game-state-changing commands was executed (or we left analysis mode)
+    SetExclusionMap(INVALID, FALSE); // optional (exclude=1): new position starts without excluding any move
+    ponderMove = INVALID;            // don't bother with this if the engine cannot ponder
+    return WHATEVER;                 // no one is looking at this
+  }
+
+  if(command == "include")   { move = ParseMove(params); SetExclusionMap(move, FALSE); } else // optional (exclude=1)
+  if(command == "exclude")   { move = ParseMove(params); SetExclusionMap(move, TRUE);  } else // optional (exclude=1)
+  if(command == "level")     { tcMode = ParseTimeControl(params); } else
+  if(command == "st")        { tcMode = FIXED; timePerMove = StringToNumber(params); } else
+  if(command == "sd")        { maxDepth  = StringToNumber(params); } else
+  if(command == "nps")       { timerMode = StringToNumber(params); } else // optional (nps=1)
+  if(command == "playother") { mode = Opponent(stm); } else               // optional (playother=1)
+  if(command == "go")        { mode = stm; } else
+  if(command == "force")     { mode = FORCE; } else
+  if(command == "result")    { mode = FORCE; Process(params); } else      // 'Process' could do learning based on result
+  if(command == "analyze")   { mode = ANALYZE; } else  // optional (analyze=1), but default and highly recommended
+  if(command == "xboard")    { print('\n'); } else     // make sure first CECP engine-&gt;GUI command will start on a fresh line
+  if(command == "protover")  {
+    print('feature done=0 myname="Example 1.0" ping=1 memory=1 setboard=1 debug=1 sigint=0 sigterm=0\n'); // always support these!
+    print('feature name=1 ics=1\n');                   // likely you are not interested in receiving these, and leave out this line
+    print('feature usermove=1\n');                     // when you are not confident you can distinguish moves from other commands
+    print('feature egt="syzygy,scorpio"\n');           // when you support end-game tables of the mentioned flavor(s)
+    print('feature variants="normal,suicide,foo"\n');  // when you support variants other than orthodox chess
+    print('feature nps=1\n');                          // when you support node-count-based time controls
+    print('feature smp=1\n');                          // when you support multi-threaded parallel search
+    print('feature exclude=1\n');                      // when you support move exclusion in analysis
+    print('feature option="MultiPV -spin 1 1 100"\n'); // 3 examples of engine-defined options, first is sort of standard
+    print('feature option="Resign -check 0"\n');
+    print('feature option="Clear Hash -button"\n');
+    print('feature done=1\n');                         // never forget this one!
+  } else
+  if(command == "option") { // recognize the options that were defined above (could do some during search?)
+    name = Split(params, '=');                                      // split into option name and new value
+    if(name[0] == "Clear Hash") ClearHashTable(); else              // button options have no value parameter
+    if(name[0] == "MultiPV") nrOfPV = StringToNumber(name[1]); else
+    if(name[0] == "Resign")  resign = StringToNumber(name[1]); else
+    print('Error (unknown option): ' + name[0] + '\n');             // should never happen if option features were OK
+  } else
+  if(command == "rejected")  { ; } else // ignore for now
+  if(command == "accepted")  { if(params == "debug") debug = TRUE; } else                  // it is safe to print (disarmed) debug info
+  if(command == "memory")    { size = StringToNumber(params); ReallocateHash(size); } else // must-have when your engine has hash table
+  if(command == "egtpath")   { egtType = FirstWord(params); egtPath[egtType] = RemainderOf(params); } else // optional (egt="...")
+  if(command == "variant")   { // optional (variants="...")
+    variantName = FirstWord(params);
+    if(variantName == "suicide") Setup("suicide", FIDE_FEN); else        // standard variant, just set up game
+    if(variantName == "foo") {                                           // example of an engine-defined variant
+      fooFEN = 'rnbfqkfbnr/pppppppppp/10/10/10/10/PPPPPPPPPP/RNBFQKFBNR w KQkq - 0 1';
+      print('setup (PNBRQ..FKpnbrq..fk) 10x8+0_fairy ' + fooFEN + '\n'); // mandatory definition of it towards GUI
+      print('piece F&amp; mNcK\n');                                          // specify non-standard move for the F piece
+      Setup("foo", fooFEN);
+    } else print('Error (unknow variant): ' + variantName + '\n');       // should never happen if variants feature was OK
+  } else
+  // The following commands could simply be ignored (or even replied to with 'Error') if you are not interested in the info they convey
+  if(command == "computer")  { computerOppo = TRUE; } else
+  if(command == "rating")    { whiteRating = StringToNumber(params); blackRating = StringToNumber(RemainderOf(params)); } else
+  if(command == "ics")       { icsName = params; } else      // optional (ics=1)
+  if(command == "name")      { opponentName = params; } else // optional (name=1, which is default in ICS mode)
+  if(command == "") { ; } else
+  print('Error (unknown command): ' + command + '\n');       // standard error message
+
+  fflush(stdout);  // make sure GUI sees everything
+  return WHATEVER; // no one is looking at this
+}
+
+// called regularly during search (e.g. every 10 msec)
+
+void MustStop()
+{
+  if(activity == THINKING &amp;&amp; GetTime() - startTime &gt; coldTurkeyDeadline(myTimeLeft)) abortFlag = TRUE; // time is up, stop searching
+  // When we already backlogged a command that apparently did not abort search we stop checking for new ones
+  // (should not happen; the GUI should send only commands that are processible during search, or abort the latter)
+  while(!backloggedCommand &amp;&amp; InputPending()) { // execute all pending commands that can be executed
+    if(debug) print('# search interrupted\n');  // example of non-protocol output for debugging purposes
+    if(ExecuteOneCommand()) abortFlag = TRUE;   // type of command (and search) determines whether we abort search
+  }
+}
+
+// main loop
+
+mode = FORCE; // kludge to prevent engine starts doing anything before receiving any commands
+
+while(1) {
+
+  mustPonder = (ponder == ON &amp;&amp; moveNr != 0 &amp;&amp; mode == Opponent(stm)); // ponder in opponent's time, but not in start position
+  startTime = GetTime(); nodeCount = abortFlag = 0;                    // initialize search stats
+  gamePosition = board;                                                // remember current position to have it available during search
+
+  if(mode == ANALYZE || mustPonder &amp;&amp; ponderMove == INVALID) { // analyze or ponder position (search without moving)
+
+    activity = ANALYZE;
+    Search();               // terminates only when input arrives
+
+  } else if(mode == stm || mustPonder) { // think or ponder speculative move (search with intention to move)
+
+    if(mustPonder) {        // make the opponent move speculatively
+      activity = PONDER;
+      MakeMove(ponderMove); // this flips stm, so that it now always is the engine's turn!
+      print('Hint: ' + MoveToText(ponderMove) + '\n');
+    } else activity = THINK;
+
+    score = Search(&amp;bestMove, &amp;bestReply); // sets bestMove and ponderMove
+
+    if(activity == THINK) { // is also the case when ponder hit changed activity from PONDER to THINK during search!
+      ponderMove = bestReply;
+      if(score &lt; -600 &amp;&amp; resign) print('resign\n'); else {        // resign without making move!
+        if(score &lt; 0 &amp;&amp; drawOfferPending) print('offer draw\n');  // accept draw offer
+        print('move ' + MoveToText(bestMove) + '\n'); fflush(stdout);// print move (and make sure GUI sees it!)
+        MakeMove(bestMove);                                          // and make it
+        myTimeLeft -= GetTime() - startTime;                         // if we don't want to rely on 'time' command
+        drawOfferPending = FALSE;                                    // offer expires as we move
+        result = DetermineResult();
+        if(result == Unfinished) continue;  // test if we must ponder before hanging on input
+        print((result == WhiteWins ? '1-0' : result == BlackWins ? '0-1' : '1/2-1/2') + '\n');
+      }
+      mode = FORCE;
+    } else {    // ponder search was aborted (or finished by itself when there was not enough to ponder on)
+      UnMake(); // take back the speculatively performed ponderMove (true opponent move will still be backlogged)
+    }
+
+  }
+  activity = IDLE;     // to let ExecuteOneCommand() it was called from main loop
+
+  fflush(stdout);      // flush output buffer, to be sure everything is sent to GUI before we hang waiting for input
+  ExecuteOneCommand(); // this could be the backlogged command that arrived during search
+
+}
+</pre>
+<h3>APPENDIX D: SAMPLE DIALOG</h3>
+<pre>GUI says:          engine says:
+
+xboard
+protover 2
+                   feature done=0 ping=1 memory=1 usermove=1 setboard=1 debug=1 sigint=0 sigterm=0
+                   feature variants="normal,king-of-the-hill,light-brigade"
+                   feature option="resign threshold -spin 0 0 10000"
+                   feature done=1
+level 40 5 0
+memory 64
+new
+variant light-brigade
+                   setup (P...QKpn...k) 8x8+0_fairy nnnnknnn/pppppppp/8/8/8/8/PPPPPPPP/1Q1QK1Q1 w - - 0 1
+hard
+post
+ping 1
+force
+usermove e2e4
+usermove e7e5
+usermove d1h5
+time 30000
+otim 30000
+go
+                   pong 1
+                   # start searching
+                   1 30 0 33 b8c6
+                   2 29 0 216 g8f6 h5
+                   move g8f6
+                   Hint: 
+
+
+</pre>
+<h3>APPENDIX D: LIST OF FEATURES</h3>
+<p>
+The following table list all currently defined features with their default value.
+Most features are 'boolean', and can only have value 0 or 1.
+In this case the description tells what the option would do when the value is set to 1.
+A question mark indicates no default value is defined.
+'Must haves' are shaded in red; practically useless features
+(enabling redundant, undesirable or very specialized commands, or disabling commands you might as well ignore) in yellow.
+Features shaded in green are only useful for engines that play variants.
+</p>
+<table><tbody><tr style="background:#FFB0B0"><td>
+  done=?
+ </td><td>
+  Tells the GUI no more features will follow (done=1) or (with done=0) 
+that the GUI must wait for done=1 no matter how long that takes.
+  Always use done=1 as the last feature.
+</td></tr><tr style="background:#FFB0B0"><td>
+  sigint=1
+ </td><td>
+  Enables the sending of SIGINT to the engine on Linux. Always use sigint=0.
+</td></tr><tr style="background:#FFB0B0"><td>
+  sigterm=1
+ </td><td>
+  Enables the sending of SIGTERM to the engine on Linux. Always use sigterm=0.
+</td></tr><tr style="background:#FFB0B0"><td>
+  ping=0
+ </td><td>
+  Enables use of the 'ping' command to resolve timing-induced ambiguity in the communication. Always use ping=1.
+</td></tr><tr style="background:#FFB0B0"><td>
+  setboard=0
+ </td><td>
+  Requests use of the 'setboard' command instead of the 'edit' command to set up positions.
+  Always use setboard=1.
+</td></tr><tr style="background:#FFB0B0"><td>
+  myname="???"
+ </td><td>
+  Conveys the name of the engine. Always use.
+</td></tr><tr style="background:#FFB0B0"><td>
+  memory=0
+ </td><td>
+  Enables use of the 'memory' command to specify maximum memory usage. Always use memory=1 on engines with hash table.
+</td></tr><tr style="background:#FFD8D8"><td>
+  smp=0
+ </td><td>
+  Enables use of the 'cores' command to specify the maximum number of 
+search threads. Always use smp=1 on engines with parallel search.
+</td></tr><tr style="background:#FFD8D8"><td>
+  egt=""
+ </td><td>
+  Specifies (as a comma-separated list) which end-game tables the engine can use,
+  so that the GUI can send 'egtpath' commands for each type to tell the engine where to find the associated files.
+  Commonly used type are 'scorpio' (bitbases), 'nalimov', 'gaviota' and 'syzygy',
+  but any other name would be allowed too.
+</td></tr><tr><td>
+  reuse=1
+ </td><td>
+  Controls if the engine can be used to play multiple games (reuse=1),
+  or whether a new process has to be started for each game (reuse=0).
+</td></tr><tr><td>
+  usermove=0
+ </td><td>
+  Enables usage of the "usermove " prefix on moves.
+</td></tr><tr><td>
+  debug=0
+ </td><td>
+  Requests the GUI to completely ignore lines starting with a '#' character. Recommended method for printing debug output.
+</td></tr><tr><td>
+  draw=1
+ </td><td>
+  Enables use of the 'draw' command for offering draws to the engine.
+</td></tr><tr><td>
+  option="???"
+ </td><td>
+  Defines an option command the GUI could use later to alter a non-standard engine parameter.
+  Option features accumulate rather than redefine the previous occurrence,
+  and by default the GUI's list of engine-defined options is empty.
+</td></tr><tr><td>
+  pause=0
+ </td><td>
+  Enables use of the 'pause' and 'resume' commands for instanly pausing the engine.
+</td></tr><tr><td>
+  nps=1
+ </td><td>
+  Enables use of the 'nps' command for selecting node-based time controls.
+</td></tr><tr style="background:#C0C0FF"><td>
+  analyze=1
+ </td><td>
+  Enables use of the engine for interactive analysis through the 'analyze' command.
+</td></tr><tr style="background:#C0C0FF"><td>
+  exclude=0
+ </td><td>
+  Enables use of the 'include' and 'exclude' commands for excluding moves from analysis.
+</td></tr><tr style="background:#C0C0FF"><td>
+  setscore=0
+ </td><td>
+  Enables use of the setscore command for defining the evaluation of the current position.
+</td></tr><tr style="background:#80FF80"><td>
+  variants="???"
+ </td><td>
+  Restricts the GUI's use of the 'variant' command to the mentioned variants.
+  The value is a comma-separated list of variant names, and although no default is defined,
+  most Chess GUIs are likely to assume an engine plays only "normal" (i.e. orthodox Chess).
+</td></tr><tr style="background:#80FF80"><td>
+  highlight=0
+ </td><td>
+  Enables use of the 'lift', 'put' and 'hover' commands to make the engine aware of user piece manipulation.
+</td></tr><tr style="background:#80FF80"><td>
+  dice=0
+ </td><td>
+  Enables use of the 'pips' command to the engine and the 'dice' command to the GUI, for virtual dice rolls.
+</td></tr><tr style="background:#80FF80"><td>
+  deck=0
+ </td><td>
+  Enables use of the 'cards' command to the engine and the 'deck' command to the GUI, for drawing cards from a vrtual deck.
+</td></tr><tr style="background:#FFFF80"><td>
+  playother=0
+ </td><td>
+  Enables use of the 'playother' command for setting the engine playing.
+</td></tr><tr style="background:#FFFF80"><td>
+  ics=0
+ </td><td>
+  Enables use of the 'ics' command for telling the engine the name of the ICS it is playing on.
+</td></tr><tr style="background:#FFFF80"><td>
+  name=?
+ </td><td>
+  Enables use of the 'name' command for telling the engine the opponent's name.
+  By default the GUI might send the 'name' command only in some cases.
+</td></tr><tr style="background:#FFFF80"><td>
+  colors=1
+ </td><td>
+  Enables use of the 'white' and 'black' commands.
+</td></tr><tr style="background:#FFFF80"><td>
+  times=1
+ </td><td>
+  Enables use of the 'time' and 'otim' commands. (Never disable them!)
+</td></tr><tr style="background:#FFFF80"><td>
+  san=0
+ </td><td>
+  Requests the GUI to send moves in SAN format rather than coordinate notation. Use of SAN is not recommended.
+</td></tr></tbody></table>
+
+<h3>APPENDIX E: PieceToCharTable (for variants only)</h3>
+<p>
+The basic purpose of the PIECETOCHAR element in the 'setup' command is to define a mapping between piece IDs
+(as used in the FEN if the initial setup, and the move definitions in the 'piece' commands)
+and images used by the GUI.
+This is done through a character string, where each position corresponds to one of the GUI's images in a predefined order,
+and where the letter written in that position will be used as ID for the piece represented by that image. 
+The order of the images always starts with the orthodox pieces Pawn, Knight, Bishop, Rook and Queen, and ends with King.
+The unorthodox pieces come between Queen and and King.
+The first half of the PIECETOCHAR string will be interpreted as white pieces, the second half as black pieces.
+Positions corresponding to images not used for any pieces in the variant must contain a '.' (period).
+E.g. for a variant that would use an Elephant (with ID 'E') instead of a Bishop,
+the PIECETOCHAR string would be PN.RQ.EKpn.rq.ek , as the Elephant image is XBoard's 7th image,
+and the third image (Bishop) does not participate.
+</p><p>
+The PIECETOCHAR string can be used to relay other information as well:
+it can indicate that some pieces are the fixed 'promotion partner' of others
+(Shogi-style promotion).
+The old (legacy) way to do this is that each image in the second group of 11
+can be used as the promoted form of the corresponding image in the first group of 11.
+This is then indicated by using a '+' sign for the promoted image instead of a letter ID.
+Such pieces will be referred to by the GUI as +L in SAN or FEN, where L is the ID of the unpromoted form.
+Promotion moves will use promotion character '+' for such pieces.
+A newer, more flexible way allows any position in the PIECETOCHAR string to contain a letter prefixed with '^',
+to indicate it is the promoted form of the piece that has the mentioned letter as its ID.
+This way any image can be used for the promoted version of any other image;
+e.g. if we want a game with only Knights and Kings, where the Knights promote to Rooks,
+we could use a PIECETOCHAR string .N.^NK.n.^nk , where the +N will use the Rook image.
+</p><p>
+For CrazyHouse-type variants it is important to distinguish promoted Pawns from primordial pieces of the same type;
+this can be achieved by using images from the second group of 11 for the promoted Pawns,
+and putting a '~' (tilde) in the corresponding location of the PIECETOCHAR string.
+Such pieces will use the same ID as the corresponding piece in the first group of 11 images in SAN,
+but will have this ID suffixed with '~' in FEN.
+</p><p>
+A piece ID in the PIECETOCHAR string can be suffixed with an '=' plus a letter,
+to define that letter as an alias for that piece.
+This can be useful to simplify notations that otherwise would be complex (like +L),
+e.g. for the purpose of nicer SAN or being able to use it as promotion suffix.
+</p></body></html>

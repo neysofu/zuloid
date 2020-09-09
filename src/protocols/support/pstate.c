@@ -19,6 +19,7 @@ pstate_new(const char *str, const struct PCommand commands[], size_t count)
 	char *str_w = exit_if_null(malloc(strlen(str) + 1));
 	strcpy(str_w, str);
 	*pstate = (struct PState){
+		.original = str,
 		.str = str_w,
 		.token = NULL,
 		.saveptr = NULL,
@@ -48,4 +49,46 @@ const char *
 pstate_next(struct PState *pstate)
 {
 	return strtok_r_whitespace(NULL, &pstate->saveptr);
+}
+
+int
+pstate_skip(struct PState *pstate, const char *expected) {
+	const char *str = pstate_next(pstate);
+	if (!str) {
+		return 0;
+	} else if (strcmp(str, expected) == 0) {
+		return 1;
+	} else {
+		return -1;
+	}
+}
+
+const char *
+pstate_next_sep(struct PState *pstate, const char *sep)
+{
+	if (!pstate->saveptr) {
+		return NULL;
+	}
+	char *token = pstate->saveptr;
+	pstate->saveptr = strstr(pstate->saveptr, sep);
+	if (pstate->saveptr) {
+		*pstate->saveptr = '\0';
+		pstate->saveptr += strlen(sep);
+	} else {
+		pstate->saveptr = NULL;
+	}
+	return strtrim(token, WHITESPACE);
+}
+
+const char *
+pstate_next_all(struct PState *pstate) {
+	if (!pstate->saveptr) {
+		return NULL;
+	}
+	const char *str = pstate->saveptr + strspn(pstate->saveptr, WHITESPACE);
+	pstate->saveptr = NULL;
+	if (!*str) {
+		return NULL;
+	}
+	return strtrim(str, WHITESPACE);
 }

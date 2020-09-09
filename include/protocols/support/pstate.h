@@ -13,6 +13,7 @@ struct PCommand
 };
 
 struct PState {
+	const char *original;
 	char *str;
 	char *token;
 	char *saveptr;
@@ -25,8 +26,17 @@ pstate_new(const char *str, const struct PCommand commands[], size_t count);
 void
 pstate_free(struct PState *pstate);
 
+int
+pstate_skip(struct PState *pstate, const char *expected);
+
 const char *
 pstate_next(struct PState *pstate);
+
+const char *
+pstate_next_sep(struct PState *pstate, const char *sep);
+
+const char *
+pstate_next_all(struct PState *pstate);
 
 void
 display_err_syntax(FILE *stream);

@@ -16,6 +16,7 @@
 #include "meta.h"
 #include "protocols/support/err.h"
 #include "protocols/support/pstate.h"
+#include "protocols/support/uci_options.h"
 #include "rating.h"
 #include "switches.h"
 #include "utils.h"
@@ -189,8 +190,7 @@ engine_call_uci_position(struct Engine *engine, struct PState *pstate)
 	} else if (strcmp(token, "current") != 0) {
 		display_err_syntax(engine->config.output);
 	}
-	token = pstate_next(pstate);
-	if (token && strcmp(token, "moves") != 0) {
+	if (pstate_skip(pstate, "moves") == -1) {
 		display_err_syntax(engine->config.output);
 		return;
 	}
@@ -222,59 +222,18 @@ engine_call_uci_d(struct Engine *engine, struct PState *pstate)
 }
 
 void
-engine_call_uci_setoption(struct Engine *engine, struct PState *pstate)
-{
+engine_call_uci_setoption(struct Engine *engine, struct PState *pstate) {
 	if (engine->status != STATUS_IDLE) {
 		display_err_unspecified(engine->config.output);
 		return;
 	}
-	XXH64_hash_t hash = 0;
-	char *token = NULL;
-	while ((token = strtok_whitespace(NULL))) {
-		if (strcmp(token, "value") == 0) {
-			return;
-		}
-		/* From the UCI protocol specification (April 2004):
-		 * > The name of the option in  should not be case sensitive and can inludes
-		 * spaces > like also the value. */
-		for (char *ptr = token; *ptr; ptr++) {
-			*ptr = tolower(*ptr);
-		}
-		// XOR combine the hashes. Simple yet effective.
-		hash ^= XXH64(token, strlen(token), 0);
+	if (pstate_skip(pstate, "name") != 1) {
+		display_err_syntax(engine->config.output);
+		return;
 	}
-	// Option support is quite hairy and messy. I don't want to break pre-existing
-	// scripts and configs originally written for other engines.
-	//
-	// Please see:
-	//  - https://komodochess.com/Komodo-11-README.html
-	//  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
-	//
-	// No worries in case the links above die, just search for a list of UCI
-	// settings for popular chess engines. I don't commit to 100% feature parity
-	// with any engine; I just try and use my better judgement.
-	switch (hash) {
-		case 49865: // "hash"
-			break;
-		case 33256: // "nalimovpath"
-			break;
-		case 14447: // "nalimovcache"
-			break;
-		case 29613: // "ponder"
-			engine->config.ponder = true;
-			break;
-		case 868: // "ownbook"
-			break;
-		case 37547: // "uci_showcurrline"
-			break;
-		case 38426: // "uci_showrefutations"
-			break;
-		case 61491: // "uci_limitstrength"
-			break;
-		// TODO: many, many more.
-		default:
-			ENGINE_LOGF(engine, "[ERROR] No such option.\n");
-	}
+	struct UciOption option;
+	const char *name = pstate_next_sep(pstate, "value");
+	const char *value = pstate_next_all(pstate);
 }
 
 void
@@ -302,37 +261,13 @@ void
 engine_call_uci_uci(struct Engine *engine, struct PState *pstate)
 {
 	UNUSED(pstate);
-	const char *options[] = {
-		"option name Analysis Contempt type combo default Both var Off var White "
-		"var Black var Both",
-		"option name Clear Hash type button",
-		"option name Contempt type spin default 24 min -100 max 100",
-		"option name Debug Log File type string default",
-		"option name Hash type spin default 64 min 0 max 131072",
-		"option name Minimum Thinking Time type spin default 20 min 0 max 5000",
-		"option name Move Overhead type spin default 30 min 0 max 60000",
-		"option name nodestime type spin default 0 min 0 max 10000",
-		"option name Ponder type check default false",
-		"option name Skill Level type spin default 20 min 0 max 20",
-		"option name Slow Mover type spin default 84 min 10 max 1000",
-		"option name SyzygyPath type string default <empty>",
-		"option name SyzygyProbeDepth type spin default 1 min 1 max 100",
-		"option name Syzygy50MoveRule type check default true",
-		"option name SyzygyProbeLimit type spin default 7 min 0 max 7",
-		"option name Threads type spin default 1 min 1 max 512",
-		"option name UCI_Chess960 type check default false",
-		"option name UCI_AnalyseMode type check default false",
-		"option name UCI_LimitStrength type check default false",
-		"option name UCI_Elo type spin default 1350 min 1350 max 2850",
-	};
 	engine->config.protocol = engine_call_uci;
 	fprintf(engine->config.output,
 	        "id name Zuloid %s\n"
 	        "id author Filippo Costa\n",
 	        ZULOID_VERSION);
-	for (size_t i = 0; i < ARRAY_SIZE(options); i++) {
-		fputs(options[i], engine->config.output);
-		putc('\n', engine->config.output);
+	for (size_t i = 0; i < ARRAY_SIZE(UCI_OPTIONS); i++) {
+		ucioption_fprint(UCI_OPTIONS + i, engine->config.output);
 	}
 	init_threats();
 	fputs("uciok\n", engine->config.output);
