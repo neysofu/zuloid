@@ -188,22 +188,6 @@ gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitbo
 			emit_move(moves++, source, source - 16);
 		}
 	}
-	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {
-	//	position_flip_side_to_move(pos);
-	//	mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
-	//	maskk = mask;
-	//	POP_LSB(foo, maskk);
-	//	POP_MSB(foo, maskk);
-	//	if (!(position_occupancy(pos) & maskk)) {
-	//		// struct Move dummy[255];
-	//		// if (!gen_attacks_against(dummy, pos, mask)) {
-	//		EMIT_MOVE(moves,
-	//		          bb_to_square(pos->bb[PIECE_TYPE_KING] & pos->bb[pos->side_to_move]),
-	//		          square_new(2, color_home_rank(pos->side_to_move)));
-	//		//}
-	//	}
-	//	position_flip_side_to_move(pos);
-	//}
 	return moves - ptr;
 }
 
@@ -230,7 +214,7 @@ gen_attacks_against_from(struct Move moves[],
 	  moves, pieces & pos->bb[PIECE_TYPE_ROOK], victims, position_occupancy(pos));
 	moves += gen_king_moves(moves, pieces & pos->bb[PIECE_TYPE_KING], victims);
 	if (castle) {
-		moves += gen_king_castles(moves, pos, victims, pieces & pos->bb[PIECE_TYPE_KING]);
+		moves += gen_king_castles(moves, pos, attacker, pieces & pos->bb[PIECE_TYPE_KING]);
 	}
 	return moves - ptr;
 }
