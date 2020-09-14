@@ -12,11 +12,13 @@
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "chess/threats.h"
+#include "core/eval.h"
 #include "engine.h"
 #include "meta.h"
+#include "protocols/cecp.h"
 #include "protocols/support/err.h"
 #include "protocols/support/pstate.h"
-#include "protocols/support/uci_options.h"
+#include "protocols/support/uci_option.h"
 #include "rating.h"
 #include "switches.h"
 #include "utils.h"
@@ -25,8 +27,107 @@
 #include <stdio.h>
 #include <string.h>
 
+int
+engine_set_ponder(struct Engine *engine, bool val)
+{
+	engine->config.ponder = val;
+	return 0;
+}
+
+int
+engine_set_contempt(struct Engine *engine, long val)
+{
+	engine->config.contempt = (float)(val - 100) / 200.0;
+	return 0;
+}
+
+int
+engine_set_skill_level(struct Engine *engine, long val)
+{
+	engine->config.contempt = 1.00;
+	return 0;
+}
+
+int
+engine_set_hash(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
+// Option support is quite hairy and messy. I don't want to break pre-existing
+// scripts and configs originally written for other engines.
+//
+// Please see:
+//  - https://komodochess.com/Komodo-11-README.html
+//  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+static const struct UciOption UCI_OPTIONS[] = {
+	{ .name = "Analysis Contempt",
+	  .type = UCI_OPTION_TYPE_COMBO,
+	  .data.string = { .default_val = "Both",
+	                   .combo_variants = "[Off][White][Black][Both]" } },
+	{ .name = "Clear Hash",
+	  .type = UCI_OPTION_TYPE_BUTTON,
+	  .data.button = { .setter = NULL } },
+	{ .name = "Contempt",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 24, .min = -100, .max = 100 } },
+	{ .name = "Debug Log File",
+	  .type = UCI_OPTION_TYPE_STRING,
+	  .data.string = { .default_val = "/tmp/zuloid-tmp" } },
+	{ .name = "Hash",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data
+	    .spin = { .default_val = 64, .min = 0, .max = 131072, .setter = engine_set_hash } },
+	{ .name = "Minimum Thinking Time",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 20, .min = 0, .max = 5000 } },
+	{ .name = "Move Overhead",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 30, .min = 30, .max = 60000 } },
+	{ .name = "nodestime",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 0, .min = 0, .max = 10000 } },
+	{ .name = "Ponder",
+	  .type = UCI_OPTION_TYPE_CHECK,
+	  .data.check = { .default_val = false, .setter = engine_set_ponder } },
+	{ .name = "Skill Level",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 20,
+	                 .min = 0,
+	                 .max = 20,
+	                 .setter = engine_set_skill_level } },
+	{ .name = "Slow Mover",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 84, .min = 10, .max = 1000 } },
+	{ .name = "SyzygyPath",
+	  .type = UCI_OPTION_TYPE_STRING,
+	  .data.string = { .default_val = "<empty>" } },
+	{ .name = "SyzygyProbeDepth",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 1, .min = 1, .max = 100 } },
+	{ .name = "Syzygy50MoveRule",
+	  .type = UCI_OPTION_TYPE_CHECK,
+	  .data.check = { .default_val = true } },
+	{ .name = "SyzygyProbeLimit",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 7, .min = 0, .max = 7 } },
+	{ .name = "Threads",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 1, .min = 1, .max = 512 } },
+	{ .name = "UCI_Chess960",
+	  .type = UCI_OPTION_TYPE_CHECK,
+	  .data.check = { .default_val = false } },
+	{ .name = "UCI_Elo",
+	  .type = UCI_OPTION_TYPE_SPIN,
+	  .data.spin = { .default_val = 1350, .min = 1350, .max = 2850 } },
+	{ .name = "UCI_LimitStrength",
+	  .type = UCI_OPTION_TYPE_CHECK,
+	  .data.check = { .default_val = false } },
+};
+
 extern void
-engine_call_cecp_xboard(struct Engine *engine);
+engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate);
 
 void
 engine_call_uci_eval(struct Engine *engine, struct PState *pstate)
@@ -169,7 +270,7 @@ engine_call_uci_position(struct Engine *engine, struct PState *pstate)
 	} else if (strcmp(token, "startpos") == 0) {
 		engine->board = POSITION_INIT;
 	} else if (strcmp(token, "fen") == 0) {
-		char *fen_fields[6] = { NULL };
+		const char *fen_fields[6] = { NULL };
 		for (size_t i = 0; i < 6; i++) {
 			token = pstate_next(pstate);
 			if (!token) {
@@ -234,14 +335,13 @@ engine_call_uci_setoption(struct Engine *engine, struct PState *pstate)
 		return;
 	}
 	const char *value = pstate_next_all(pstate);
+	if (!value) {
+		value = "";
+	}
 	const struct UciOption *option =
 	  ucioption_find(UCI_OPTIONS, ARRAY_SIZE(UCI_OPTIONS), name);
 	if (!option) {
 		display_err_unspecified(engine->config.output);
-		return;
-	}
-	if (!value && option->type != UCI_OPTION_TYPE_BUTTON) {
-		display_err_syntax(engine->config.output);
 		return;
 	}
 	switch (option->type) {
@@ -259,7 +359,7 @@ engine_call_uci_setoption(struct Engine *engine, struct PState *pstate)
 			break;
 		case UCI_OPTION_TYPE_COMBO:
 			if (ucioption_combo_allows(option, value)) {
-				option->data.combo.setter(engine, value);
+				option->data.string.setter(engine, value);
 			} else {
 				display_err_unspecified(engine->config.output);
 			}

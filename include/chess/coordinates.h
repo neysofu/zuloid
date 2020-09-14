@@ -6,8 +6,8 @@
 typedef int8_t File;
 typedef int8_t Rank;
 
-// Squares are enumerated in a little-endian and file-first fashion, with the
-// following compass rose:
+// Squares are enumerated in a little-endian and file-first fashion (also known
+// as LEFR), with the following compass rose:
 //
 //   +---------------+
 //   |  -7  +1  +9   |
@@ -16,8 +16,7 @@ typedef int8_t Rank;
 //   |    /  |  \    |
 //   |  -9  -1  +7   |
 //   +---------------+
-//
-typedef int8_t Square;
+typedef int_fast8_t Square;
 typedef uint64_t Bitboard;
 
 enum

@@ -20,15 +20,14 @@
 #include <stdio.h>
 #include <string.h>
 
-extern void
-engine_call_uci_uci(struct Engine *engine);
-
 void
-engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate)
-{
+engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate) {
 	UNUSED(pstate);
 	engine->config.protocol = engine_call_cecp;
 }
+
+extern void
+engine_call_uci_uci(struct Engine *engine, struct PState *pstate);
 
 void
 engine_call_cecp_protover(struct Engine *engine, struct PState *pstate)
@@ -50,9 +49,10 @@ engine_call_cecp_protover(struct Engine *engine, struct PState *pstate)
 void
 engine_call_cecp_ping(struct Engine *engine, struct PState *pstate)
 {
-	UNUSED(pstate);
 	const char *token = pstate_next(pstate);
-	if (token) {
+	if (!token) {
+		fprintf(engine->config.output, "pong\n");
+	} else {
 		fprintf(engine->config.output, "pong %d\n", atoi(token));
 	}
 }
@@ -79,7 +79,7 @@ engine_call_cecp_setboard(struct Engine *engine, struct PState *pstate)
 		display_err_syntax(engine->config.output);
 		return;
 	}
-	char *fen_fields[6] = { NULL };
+	const char *fen_fields[6] = { NULL };
 	for (size_t i = 0; i < 6; i++) {
 		token = pstate_next(pstate);
 		if (!token) {

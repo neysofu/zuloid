@@ -26,16 +26,6 @@ read_line(FILE *stream)
 	return buffer;
 }
 
-uint16_t
-djb_hash(const char *str)
-{
-	uint16_t hash = 5381;
-	for (size_t i = 0; str[i]; i++) {
-		hash += (hash << 5) + str[i];
-	}
-	return hash;
-}
-
 void *
 exit_if_null(void *ptr)
 {

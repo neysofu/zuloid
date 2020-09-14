@@ -32,18 +32,11 @@
 #include <stdio.h>
 #include <string.h>
 
-#define EMIT_MOVE(m, a, b)                                                                 \
-	(m)->source = (a);                                                                     \
-	(m)->target = (b);                                                                     \
-	(m)->promotion = 0;                                                                    \
-	(m)++;
-
-void
-emit_move(struct Move *move, Square source, Square target)
-{
-	move->source = source;
-	move->target = target;
-	move->promotion = PIECE_TYPE_NONE;
+inline void
+emit_move(struct Move *restrict mv, Square source, Square target) {
+	mv->source = source;
+	mv->target = target;
+	mv->promotion = PIECE_TYPE_NONE;
 }
 
 /* Generates all pseudolegal moves by pawns located on 'sources' to 'targets'
@@ -51,14 +44,14 @@ emit_move(struct Move *move, Square source, Square target)
  * determining pawn pushes and captures. Finally, 'side_to_move' determines in
  * which direction pawn moves happen. */
 size_t
-gen_pawn_moves(struct Move moves[],
+gen_pawn_moves(struct Move *restrict moves,
                Bitboard sources,
                Bitboard targets,
                Bitboard all,
                Bitboard en_passant_target,
                enum Color side_to_move)
 {
-	struct Move *ptr = moves;
+	struct Move *restrict ptr = moves;
 	Bitboard single_pushes =
 	  (side_to_move == COLOR_WHITE ? sources << 1 : sources >> 1) & ~all;
 	Bitboard double_pushes =
@@ -114,32 +107,32 @@ gen_pawn_moves(struct Move moves[],
 }
 
 size_t
-gen_knight_moves(struct Move moves[], Bitboard sources, Bitboard mask)
+gen_knight_moves(struct Move *restrict moves, Bitboard sources, Bitboard mask)
 {
-	struct Move *ptr = moves;
+	struct Move *restrict ptr = moves;
 	Square source, target;
 	while (sources) {
 		POP_LSB(source, sources);
 		Bitboard targets = threats_by_knight(source) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
-			EMIT_MOVE(moves, source, target);
+			emit_move(moves++, source, target);
 		}
 	}
 	return moves - ptr;
 }
 
 size_t
-gen_bishop_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard occupancy)
+gen_bishop_moves(struct Move *restrict moves, Bitboard sources, Bitboard mask, Bitboard occupancy)
 {
-	struct Move *ptr = moves;
+	struct Move *restrict ptr = moves;
 	int source, target;
 	while (sources) {
 		POP_LSB(source, sources);
 		Bitboard targets = threats_by_bishop(source, occupancy) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
-			EMIT_MOVE(moves, source, target);
+			emit_move(moves++, source, target);
 		}
 	}
 	return moves - ptr;
@@ -155,7 +148,7 @@ gen_rook_moves(struct Move moves[], Bitboard sources, Bitboard mask, Bitboard al
 		Bitboard targets = threats_by_rook(source, all) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
-			EMIT_MOVE(moves, source, target);
+			emit_move(moves++, source, target);
 		}
 	}
 	return moves - ptr;
@@ -171,7 +164,7 @@ gen_king_moves(struct Move *moves, Bitboard sources, Bitboard mask)
 		Bitboard targets = threats_by_king(source) & mask;
 		while (targets) {
 			POP_LSB(target, targets);
-			EMIT_MOVE(moves, source, target);
+			emit_move(moves++, source, target);
 		}
 	}
 	return moves - ptr;
@@ -185,14 +178,14 @@ gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitbo
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
-			EMIT_MOVE(moves, source, source + 16);
+			emit_move(moves++, source, source + 16);
 		}
 	}
 	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << color)) {
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
-			EMIT_MOVE(moves, source, source - 16);
+			emit_move(moves++, source, source - 16);
 		}
 	}
 	// if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << pos->side_to_move)) {

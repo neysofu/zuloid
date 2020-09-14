@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "agent.h"
+#include "meta.h"
 #include "cache/cache.h"
 #include "chess/fen.h"
 #include "chess/position.h"
@@ -17,7 +18,7 @@ const struct Config CONFIG_DEFAULT;
 void
 init_subsystems(void)
 {
-	init_genrand64(0xd895643full);
+	init_genrand64(ZULOID_PRNG_SEED);
 	p_libsys_init();
 	// UCI (and CECP as well, for that matter) is a line-oriented protocol; so
 	// we want to turn line buffering on.

@@ -36,6 +36,9 @@ struct Board
 void
 position_init_960(struct Board *position);
 
+void
+position_zobrist(const struct Board *position);
+
 /* Removes a piece from the board and replaces it with another one. */
 void
 position_set_piece_at_square(struct Board *position, Square square, struct Piece piece);

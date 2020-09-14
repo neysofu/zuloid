@@ -51,6 +51,11 @@ position_flip_side_to_move(struct Board *pos)
 }
 
 void
+position_zobrist(const struct Board *position) {
+
+}
+
+void
 position_set_piece_at_square(struct Board *position, Square square, struct Piece piece)
 {
 	Bitboard bb = square_to_bb(square);

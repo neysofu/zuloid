@@ -1,11 +1,11 @@
 #include "base64/base64.h"
 #include "cJSON/cJSON.h"
+#include "cache/cache.h"
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core/eval.h"
 #include "engine.h"
-#include "cache/cache.h"
 #include "eval.h"
 #include "libpopcnt/libpopcnt.h"
 #include "mt-64/mt-64.h"
@@ -63,7 +63,8 @@ ssearch_stack_new(const struct Engine *engine)
 {
 	assert(engine->config.max_depth > 0);
 	struct SSearchStack stack;
-	stack.plies = exit_if_null(malloc(engine->config.max_depth * sizeof(struct SSearchStackPlie)));
+	stack.plies =
+	  exit_if_null(malloc(engine->config.max_depth * sizeof(struct SSearchStackPlie)));
 	stack.cache = engine->cache;
 	stack.desired_depth = engine->config.max_depth - 1;
 	stack.current_depth = 0;
@@ -102,11 +103,17 @@ ssearch_stack_print_lines(struct SSearchStack *stack)
 {
 	printf("  info line");
 	for (int i = 1; i < stack->desired_depth; i++) {
-		char buf[6] = {'\0'};
+		char buf[6] = { '\0' };
 		move_to_string(stack->plies[i].moves[stack->plies[i].best_child_i_so_far], buf);
 		printf(" %s", buf);
 	}
 	puts("");
+}
+
+int
+score_to_centipawns(float score)
+{
+	return (int)(score * 100);
 }
 
 void
@@ -118,16 +125,19 @@ ssearch_stack_pop(struct SSearchStack *stack)
 	stack->current_depth--;
 	last_plie--;
 	if (stack->current_depth == 0) {
-		char buf[6] = {'\0'};
+		char buf[6] = { '\0' };
 		move_to_string(last_plie->moves[last_plie->child_i], buf);
-		printf("depth 0, with eval %f @ %s:\n", -eval, buf);
+		printf("info depth 0 nodes %u currmove %s score cp %d\n",
+		       0,
+		       buf,
+		       score_to_centipawns(-eval));
 	}
 	ssearch_stack_plie_supply_eval(last_plie, -eval);
-	struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
-	if (cache_entry) {
-		cache_entry->evaluation = -eval;
-		cache_entry->dispersion = stack->current_depth;
-	}
+	// struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
+	// if (cache_entry) {
+	//	cache_entry->evaluation = -eval;
+	//	cache_entry->dispersion = stack->current_depth;
+	//}
 }
 
 void
@@ -143,12 +153,12 @@ ssearch_stack_push(struct SSearchStack *stack)
 	position_do_move_and_flip(&stack->board, &last_plie->generator);
 	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
 	// Check cache, if found pop immediately.
-	struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
-	if (cache_entry && cache_entry->dispersion <= stack->current_depth) {
-		last_plie->best_eval_so_far = cache_entry->evaluation;
-		// CACHE HIT!
-		ssearch_stack_pop(stack);
-	}
+	// struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
+	// if (cache_entry && cache_entry->dispersion <= stack->current_depth) {
+	//	last_plie->best_eval_so_far = cache_entry->evaluation;
+	//	// CACHE HIT!
+	//	ssearch_stack_pop(stack);
+	//}
 }
 
 void
@@ -194,8 +204,9 @@ finish_search(const struct Engine *engine, const struct SSearchStack *stack)
 void
 engine_start_search(struct Engine *engine)
 {
-	fprintf(engine->config.output, "info depth score cp %f\n", position_eval(&engine->board));
-	engine->config.max_depth = 4;
+	fprintf(
+	  engine->config.output, "info depth score cp %f\n", position_eval(&engine->board));
+	engine->config.max_depth = 5;
 	struct SSearchStack stack = ssearch_stack_new(engine);
 	while (true) {
 		struct SSearchStackPlie *last_plie = ssearch_stack_last(&stack);

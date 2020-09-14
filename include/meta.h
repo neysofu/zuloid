@@ -7,6 +7,7 @@
 extern const char *const ZULOID_BUILD_DATE;
 extern const char *const ZULOID_VERSION;
 extern const char *const ZULOID_VERSION_VERBOSE;
+extern const unsigned long long ZULOID_PRNG_SEED;
 
 #define MAX_DEPTH 20
 

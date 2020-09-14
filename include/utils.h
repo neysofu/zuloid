@@ -29,9 +29,6 @@ strtok_whitespace(char *str);
 void *
 exit_if_null(void *ptr);
 
-uint16_t
-djb_hash(const char *str);
-
 static const char *const WHITESPACE = " \t\v\r\n";
 
 char *

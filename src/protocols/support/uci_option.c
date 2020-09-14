@@ -1,4 +1,5 @@
-#include "protocols/support/uci_options.h"
+#include "engine.h"
+#include "protocols/support/uci_option.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -21,23 +22,20 @@ ucioption_fprint(const struct UciOption *option, FILE *stream)
 			        option->data.spin.min,
 			        option->data.spin.max);
 			break;
-		case UCI_OPTION_TYPE_COMBO:
-			fprintf(stream, "combo default %s", option->data.combo.default_val);
-			const char *start = option->data.combo.variants;
-			while (*start == '[') {
-				start++;
-				const char *end = strchr(start, ']');
-				assert(end);
-				fprintf(stream, " var %.*s", (int)(end - start), start);
-				start = end + 1;
-			}
-			assert(!*start);
-			fputc('\n', stream);
-			break;
 		case UCI_OPTION_TYPE_CHECK:
 			fprintf(stream,
 			        "check default %s\n",
 			        option->data.check.default_val ? "true" : "false");
+			break;
+		case UCI_OPTION_TYPE_COMBO:
+			fprintf(stream, "combo default %s", option->data.string.default_val);
+			const char *start = option->data.string.combo_variants;
+			while (*start++ == '[') {
+				const int length = strcspn(start, "]");
+				fprintf(stream, " var %.*s", length, start);
+				start += length + 1;
+			}
+			fputc('\n', stream);
 			break;
 		case UCI_OPTION_TYPE_STRING:
 			fprintf(stream, "string default %s\n", option->data.string.default_val);
@@ -58,8 +56,8 @@ ucioption_cmp(const void *opt1, const void *opt2)
 bool
 ucioption_combo_allows(const struct UciOption *option, const char *variant)
 {
-	const char *pos = strstr(option->data.combo.variants, variant);
-	return pos > option->data.combo.variants && *(pos - 1) == '[' &&
+	const char *pos = strstr(option->data.string.combo_variants, variant);
+	return pos > option->data.string.combo_variants && *(pos - 1) == '[' &&
 	       *(pos + strlen(variant) + 1) == ']';
 }
 
