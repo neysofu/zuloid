@@ -37,6 +37,8 @@ emit_move(struct Move *restrict mv, Square source, Square target) {
 	mv->source = source;
 	mv->target = target;
 	mv->promotion = PIECE_TYPE_NONE;
+	mv->capture = false;
+	mv->castling = false;
 }
 
 /* Generates all pseudolegal moves by pawns located on 'sources' to 'targets'
@@ -178,14 +180,18 @@ gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitbo
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
-			emit_move(moves++, source, source + 16);
+			emit_move(moves, source, source + 16);
+			moves->castling = true;
+			moves++;
 		}
 	}
 	if (pos->castling_rights & (CASTLING_RIGHT_QUEENSIDE << color)) {
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_QUEENSIDE);
 		if (!(position_occupancy(pos) & (mask ^ king))) {
 			Square source = bb_to_square(king);
-			emit_move(moves++, source, source - 16);
+			emit_move(moves, source, source - 16);
+			moves->castling = true;
+			moves++;
 		}
 	}
 	return moves - ptr;

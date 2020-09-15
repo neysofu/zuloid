@@ -19,6 +19,8 @@ struct Move
 	Square target;
 	enum PieceType promotion;
 	enum PieceType capture;
+	bool castling;
+	int castling_side;
 };
 
 const struct Move MOVE_IDENTITY;

@@ -22,12 +22,20 @@ move_to_string(struct Move mv, char *buf)
 {
 	assert(buf);
 	size_t i = 0;
-	buf[i++] = file_to_char(square_file(mv.source));
-	buf[i++] = rank_to_char(square_rank(mv.source));
-	buf[i++] = file_to_char(square_file(mv.target));
-	buf[i++] = rank_to_char(square_rank(mv.target));
-	if (mv.promotion) {
-		buf[i++] = piece_to_char((struct Piece){ .type = mv.promotion });
+	if (mv.castling && mv.source > mv.target) {
+		strcpy(buf, "0-0-0");
+		i = strlen(buf);
+	} else if (mv.castling && mv.source < mv.target) {
+		strcpy(buf, "0-0");
+		i = strlen(buf);
+	} else {
+		buf[i++] = file_to_char(square_file(mv.source));
+		buf[i++] = rank_to_char(square_rank(mv.source));
+		buf[i++] = file_to_char(square_file(mv.target));
+		buf[i++] = rank_to_char(square_rank(mv.target));
+		if (mv.promotion) {
+			buf[i++] = piece_to_char((struct Piece){ .type = mv.promotion });
+		}
 	}
 	return i;
 }
@@ -46,6 +54,15 @@ string_to_move(const char *str, struct Move *mv)
 {
 	assert(str);
 	assert(mv);
+	if (strcmp(str, "0-0") == 0) {
+		mv->castling = true;
+		mv->castling_side = CASTLING_RIGHT_KINGSIDE;
+		return 3;
+	} else if (strcmp(str, "0-0-0") == 0) {
+		mv->castling = true;
+		mv->castling_side = CASTLING_RIGHT_QUEENSIDE;
+		return 5;
+	}
 	if (strlen(str) < 4) {
 		return 0;
 	}
@@ -59,6 +76,14 @@ void
 position_do_move(struct Board *pos, struct Move *mv)
 {
 	pos->en_passant_target = false;
+	if (mv->castling) {
+		if (mv->castling_side == CASTLING_RIGHT_KINGSIDE) {
+			// 
+		} else if (mv->castling_side == CASTLING_RIGHT_QUEENSIDE) {
+			// 
+		}
+		pos->castling_rights ^= mv->castling_side << pos->side_to_move;
+	}
 	bool is_pawn = pos->bb[PIECE_TYPE_PAWN] & square_to_bb(mv->source);
 	mv->capture = position_piece_at_square(pos, mv->target).type;
 	position_set_piece_at_square(
