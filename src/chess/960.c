@@ -5,7 +5,7 @@
 #include "chess/position.h"
 #include <ctype.h>
 
-struct Chess960InitializationState
+struct Chess960SetupState
 {
 	struct Board *position;
 	File available_files[FILES_COUNT];
@@ -29,7 +29,7 @@ files_compare(const void *f1, const void *f2)
 }
 
 static void
-init_file(struct Chess960InitializationState *state, File i, enum PieceType ptype)
+init_file(struct Chess960SetupState *state, File i, enum PieceType ptype)
 {
 	set_pieces_at_home_rank(state->position, state->available_files[i], ptype);
 	state->available_files[i] = state->available_files[--state->available_files_count];
@@ -39,7 +39,7 @@ void
 position_init_960(struct Board *position)
 {
 	position_init_from_fen(position, "8/pppppppp/8/8/8/8/PPPPPPPP/8 w KQkq - 0 1");
-	struct Chess960InitializationState state = {
+	struct Chess960SetupState state = {
 		.position = position,
 		.available_files = { 0, 1, 2, 3, 4, 5, 6, 7 },
 		.available_files_count = 8,

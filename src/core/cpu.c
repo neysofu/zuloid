@@ -26,6 +26,8 @@ struct SSearchStack
 	int desired_depth;
 	int current_depth;
 	struct Board board;
+	float alpha;
+	float beta;
 };
 
 struct SSearchStackPlie
