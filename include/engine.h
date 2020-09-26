@@ -6,8 +6,8 @@
 #include "chess/termination.h"
 #include "eval.h"
 #include "time/game_clock.h"
-#include <stdio.h>
 #include <stdbool.h>
+#include <stdio.h>
 #include <stdlib.h>
 
 #define ENGINE_LOGF(engine, ...)                                                           \

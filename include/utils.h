@@ -1,10 +1,10 @@
 #ifndef ZULOID_UTILS_H
 #define ZULOID_UTILS_H
 
-#include <stdint.h>
-#include <stdio.h>
 #include <ctype.h>
 #include <limits.h>
+#include <stdint.h>
+#include <stdio.h>
 
 #define UNUSED(x) (void)(x)
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -83,9 +83,8 @@ done:
 	return ret_code;
 }
 
-
-
-struct Strings {
+struct Strings
+{
 	const char **buffers;
 	const int count;
 	const int i;

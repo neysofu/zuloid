@@ -224,7 +224,7 @@ engine_call_uci_go(struct Engine *engine, struct PState *pstate)
 			engine->time_controls[COLOR_WHITE]->max_moves_count = atoi(token);
 			engine->time_controls[COLOR_BLACK]->max_moves_count = atoi(token);
 		} else if (strcmp(token, "depth") == 0) {
-			token = strtok_whitespace(NULL);
+			token = pstate_next(pstate);
 			engine->config.max_depth = atoi(token);
 		} else if (strcmp(token, "mate") == 0) {
 			engine_call_uci_go_mate(engine, pstate_next(pstate));
@@ -232,6 +232,8 @@ engine_call_uci_go(struct Engine *engine, struct PState *pstate)
 			engine_call_uci_go_mate(engine, pstate_next(pstate));
 		} else if (strcmp(token, "movetime") == 0) {
 			engine_call_uci_go_movetime(engine, pstate_next(pstate));
+		} else {
+			ENGINE_LOGF(engine, "# Unrecognized 'go' option '%s'\n", token);
 		}
 	}
 	engine_start_search(engine);

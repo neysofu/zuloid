@@ -1,10 +1,10 @@
 #include "utils.h"
+#include <ctype.h>
+#include <limits.h>
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <ctype.h>
-#include <limits.h>
 
 char *
 read_line(FILE *stream)
@@ -69,7 +69,10 @@ strtok_r(char *restrict s, const char *restrict sep, char **restrict p)
 char *
 strtrim(char *str, const char *trimmable)
 {
+	// Skip any initial characters in the `trimmable` set.
 	str += strspn(str, trimmable);
+	// Start from the end and set every byte to the null terminator until a
+	// "good" (i.e. non-`trimmmable`) character is found.
 	for (char *ptr = str + strlen(str); strchr(trimmable, *ptr); ptr--) {
 		*ptr = '\0';
 	}

@@ -32,8 +32,9 @@
 #include <stdio.h>
 #include <string.h>
 
-inline void
-emit_move(struct Move *restrict mv, Square source, Square target) {
+void
+emit_move(struct Move *restrict mv, Square source, Square target)
+{
 	mv->source = source;
 	mv->target = target;
 	mv->promotion = PIECE_TYPE_NONE;
@@ -125,7 +126,10 @@ gen_knight_moves(struct Move *restrict moves, Bitboard sources, Bitboard mask)
 }
 
 size_t
-gen_bishop_moves(struct Move *restrict moves, Bitboard sources, Bitboard mask, Bitboard occupancy)
+gen_bishop_moves(struct Move *restrict moves,
+                 Bitboard sources,
+                 Bitboard mask,
+                 Bitboard occupancy)
 {
 	struct Move *restrict ptr = moves;
 	int source, target;

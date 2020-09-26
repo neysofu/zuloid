@@ -47,10 +47,4 @@ position_is_illegal(struct Board *pos);
 bool
 position_is_stalemate(struct Board *pos);
 
-size_t
-position_perft(FILE *stream, struct Board *pos, size_t depth);
-
-size_t
-position_improved_perft(struct Board *pos, int depth);
-
 #endif

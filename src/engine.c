@@ -1,9 +1,9 @@
 #include "engine.h"
 #include "agent.h"
-#include "meta.h"
 #include "cache/cache.h"
 #include "chess/fen.h"
 #include "chess/position.h"
+#include "meta.h"
 #include "mt-64/mt-64.h"
 #include "protocols/uci.h"
 #include "utils.h"
@@ -91,4 +91,3 @@ const struct Config CONFIG_DEFAULT = {
 	.protocol = engine_call_uci,
 	.output = NULL,
 };
-

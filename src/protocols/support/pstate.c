@@ -33,7 +33,6 @@ pstate_new(const char *str, const struct PCommand commands[], size_t count)
 		};
 		pstate->cmd = (struct PCommand *)(bsearch(
 		  &key, commands, count, sizeof(struct PCommand), pcommand_cmp));
-
 	}
 	return pstate;
 }
@@ -52,7 +51,8 @@ pstate_next(struct PState *pstate)
 }
 
 int
-pstate_skip(struct PState *pstate, const char *expected) {
+pstate_skip(struct PState *pstate, const char *expected)
+{
 	const char *str = pstate_next(pstate);
 	if (!str) {
 		return 0;
@@ -81,7 +81,8 @@ pstate_next_sep(struct PState *pstate, const char *sep)
 }
 
 const char *
-pstate_next_all(struct PState *pstate) {
+pstate_next_all(struct PState *pstate)
+{
 	if (!pstate->saveptr) {
 		return NULL;
 	}

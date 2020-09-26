@@ -1,5 +1,6 @@
 #include <math.h>
 
+// Estimated score in the CCRL 40/15 listing: <https://ccrl.chessdom.com/ccrl/4040/>.
 const unsigned CCRL_4015_RATING = 1400;
 
 float

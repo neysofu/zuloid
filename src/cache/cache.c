@@ -15,7 +15,6 @@ const size_t CACHE_BUCKET_SIZE = 32;
 
 const int ADDRESS_SIZE = sizeof(void *) * CHAR_BIT;
 
-
 /* We strive for 8 bytes for each position. */
 struct CacheSlot
 {
@@ -37,7 +36,8 @@ struct Cache
 };
 
 void
-cache_init_slots(struct Cache *cache) {
+cache_init_slots(struct Cache *cache)
+{
 	memset(cache->slots, 0, cache->capacity / sizeof(struct CacheSlot) + CACHE_BUCKET_SIZE);
 }
 

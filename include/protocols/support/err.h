@@ -1,8 +1,8 @@
 #ifndef ZULOID_PROTOCOLS_SUPPORT_ERR_H
 #define ZULOID_PROTOCOLS_SUPPORT_ERR_H
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 void
 display_err_syntax(FILE *stream);

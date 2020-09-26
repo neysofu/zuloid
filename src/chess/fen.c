@@ -82,7 +82,8 @@ fen_from_position(char *fen, const struct Board *position, char sep)
 }
 
 int
-position_init_piece_placement(struct Board *pos, const char *token) {
+position_init_piece_placement(struct Board *pos, const char *token)
+{
 	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
 		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX;
@@ -101,7 +102,8 @@ position_init_piece_placement(struct Board *pos, const char *token) {
 }
 
 int
-position_init_side_to_move(struct Board *pos, const char *token) {
+position_init_side_to_move(struct Board *pos, const char *token)
+{
 	switch (tolower(*token)) {
 		case 'w':
 			pos->side_to_move = COLOR_WHITE;
@@ -115,21 +117,24 @@ position_init_side_to_move(struct Board *pos, const char *token) {
 }
 
 int
-position_init_en_passant(struct Board *pos, const char *token) {
+position_init_en_passant(struct Board *pos, const char *token)
+{
 	if (token && strlen(token) >= 2) {
 		pos->en_passant_target = square_from_str(token);
 	}
 }
 
 int
-position_init_rev_moves_count(struct Board *pos, const char *token) {
+position_init_rev_moves_count(struct Board *pos, const char *token)
+{
 	if (token) {
 		pos->reversible_moves_count = strtol(token, NULL, 10);
 	}
 }
 
 int
-position_init_total_moves_count(struct Board *pos, const char *token) {
+position_init_total_moves_count(struct Board *pos, const char *token)
+{
 	if (token) {
 		pos->moves_count = strtol(token, NULL, 10);
 	}

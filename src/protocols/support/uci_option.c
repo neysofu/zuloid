@@ -1,5 +1,5 @@
-#include "engine.h"
 #include "protocols/support/uci_option.h"
+#include "engine.h"
 #include "utils.h"
 #include <assert.h>
 #include <stdbool.h>
@@ -62,7 +62,8 @@ ucioption_combo_allows(const struct UciOption *option, const char *variant)
 }
 
 bool
-ucioption_spin_allows(const struct UciOption *option, long val) {
+ucioption_spin_allows(const struct UciOption *option, long val)
+{
 	return val >= option->data.spin.min && val <= option->data.spin.max;
 }
 

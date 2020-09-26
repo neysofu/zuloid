@@ -12,7 +12,8 @@ struct PCommand
 	void (*handler)(struct Engine *, struct PState *);
 };
 
-struct PState {
+struct PState
+{
 	const char *original;
 	char *str;
 	char *token;

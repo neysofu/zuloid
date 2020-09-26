@@ -21,7 +21,8 @@
 #include <string.h>
 
 void
-engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate) {
+engine_call_cecp_xboard(struct Engine *engine, struct PState *pstate)
+{
 	UNUSED(pstate);
 	engine->config.protocol = engine_call_cecp;
 }

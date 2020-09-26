@@ -78,9 +78,9 @@ position_do_move(struct Board *pos, struct Move *mv)
 	pos->en_passant_target = false;
 	if (mv->castling) {
 		if (mv->castling_side == CASTLING_RIGHT_KINGSIDE) {
-			// 
+			//
 		} else if (mv->castling_side == CASTLING_RIGHT_QUEENSIDE) {
-			// 
+			//
 		}
 		pos->castling_rights ^= mv->castling_side << pos->side_to_move;
 	}
