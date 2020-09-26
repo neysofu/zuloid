@@ -13,13 +13,13 @@ typedef unsigned long long perft_counter;
 
 struct DfsStack
 {
-	struct DfsStackPlieIter *plies;
+	struct PlieIter *plies;
 	int desired_depth;
 	int current_depth;
 	struct Board board;
 };
 
-struct DfsStackPlieIter
+struct PlieIter
 {
 	struct Move generator;
 	struct Move *moves;
@@ -27,11 +27,16 @@ struct DfsStackPlieIter
 	int child_i;
 };
 
+bool
+plieiter_has_next(const struct PlieIter *plie) {
+	return plie->child_i < plie->children_count;
+}
+
 struct DfsStack
 dfsstack_new(size_t depth)
 {
 	struct DfsStack stack;
-	stack.plies = exit_if_null(malloc((depth + 1) * sizeof(struct DfsStackPlieIter)));
+	stack.plies = exit_if_null(malloc((depth + 1) * sizeof(struct PlieIter)));
 	stack.desired_depth = depth;
 	stack.current_depth = 1;
 	for (size_t i = 0; i < depth + 1; i++) {
@@ -49,8 +54,8 @@ dfsstack_delete(struct DfsStack *stack)
 	free(stack->plies);
 }
 
-struct DfsStackPlieIter *
-dfsstack_last(struct DfsStack *stack)
+struct PlieIter *
+dfsstack_last(const struct DfsStack *stack)
 {
 	return stack->plies + stack->current_depth;
 }
@@ -58,23 +63,18 @@ dfsstack_last(struct DfsStack *stack)
 void
 dfsstack_pop(struct DfsStack *stack)
 {
-	struct DfsStackPlieIter *last_plie = dfsstack_last(stack);
+	struct PlieIter *last_plie = dfsstack_last(stack);
 	assert(stack->current_depth > 0);
-	assert(last_plie->child_i == last_plie->children_count);
+	assert(!plieiter_has_next(last_plie));
 	position_undo_move_and_flip(&stack->board, &last_plie->generator);
 	stack->current_depth--;
-}
-
-bool
-dfsstackplieiter_has_next(struct DfsStackPlieIter *plie) {
-	return plie->child_i < plie->children_count;
 }
 
 void
 dfsstack_push(struct DfsStack *stack)
 {
-	struct DfsStackPlieIter *last_plie = dfsstack_last(stack);
-	assert(last_plie->child_i < last_plie->children_count);
+	struct PlieIter *last_plie = dfsstack_last(stack);
+	assert(plieiter_has_next(last_plie));
 	struct Move generator = last_plie->moves[last_plie->child_i++];
 	stack->current_depth++;
 	last_plie++;
@@ -89,8 +89,8 @@ dfsstack_count(struct DfsStack *stack)
 {
 	unsigned long long result = 0;
 	while (true) {
-		struct DfsStackPlieIter *last_plie = dfsstack_last(stack);
-		if (!dfsstackplieiter_has_next(last_plie)) {
+		struct PlieIter *last_plie = dfsstack_last(stack);
+		if (!plieiter_has_next(last_plie)) {
 			if (stack->current_depth == 1) {
 				return result;
 			} else {
