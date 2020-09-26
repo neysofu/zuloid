@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "time/time_control.h"
 #include "cJSON/cJSON.h"
 #include <assert.h>

@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "cache/cache.h"
 #include "cache/fast_range.h"
 #include "switches.h"

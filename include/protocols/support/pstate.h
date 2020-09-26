@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_PROTOCOLS_SUPPORT_PSTATE_H
 #define ZULOID_PROTOCOLS_SUPPORT_PSTATE_H
 
@@ -38,12 +40,5 @@ pstate_next_sep(struct PState *pstate, const char *sep);
 
 const char *
 pstate_next_all(struct PState *pstate);
-
-void
-display_err_syntax(FILE *stream);
-void
-display_err_unspecified(FILE *stream);
-void
-display_err_invalid_command(FILE *stream);
 
 #endif

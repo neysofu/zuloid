@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 // Resources:
 //  - http://wbec-ridderkerk.nl/html/UCIProtocol.html
 //  - https://www.chessprogramming.org/UCI
@@ -55,12 +57,13 @@ engine_set_hash(struct Engine *engine, long val)
 	return 0;
 }
 
-// Option support is quite hairy and messy. I don't want to break pre-existing
-// scripts and configs originally written for other engines.
-//
-// Please see:
-//  - https://komodochess.com/Komodo-11-README.html
-//  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+/* Option support is quite hairy and messy. I don't want to break pre-existing
+ * scripts and configs originally written for other engines.
+ *
+ * Please see:
+ *  - https://komodochess.com/Komodo-11-README.html
+ *  - http://www.rybkachess.com/index.php?auswahl=Engine+parameters
+ */
 static const struct UciOption UCI_OPTIONS[] = {
 	{ .name = "Analysis Contempt",
 	  .type = UCI_OPTION_TYPE_COMBO,
@@ -469,26 +472,27 @@ engine_call_uci_debug(struct Engine *engine, struct PState *pstate)
 	}
 }
 
+const struct PCommand UCI_COMMANDS[] = {
+	{ "%eval", engine_call_uci_eval },
+	{ "%listmoves", engine_call_uci_listmoves },
+	{ "%magics", engine_call_uci_magics },
+	{ "d", engine_call_uci_d },
+	{ "debug", engine_call_uci_debug },
+	{ "go", engine_call_uci_go },
+	{ "isready", engine_call_uci_isready },
+	{ "position", engine_call_uci_position },
+	{ "quit", engine_call_uci_quit },
+	{ "setoption", engine_call_uci_setoption },
+	{ "stop", engine_call_uci_stop },
+	{ "uci", engine_call_uci_uci },
+	{ "ucinewgame", engine_call_uci_ucinewgame },
+	{ "xboard", engine_call_cecp_xboard },
+};
+
 void
 engine_call_uci(struct Engine *engine, const char *str)
 {
-	const struct PCommand commands[] = {
-		{ "%eval", engine_call_uci_eval },
-		{ "%listmoves", engine_call_uci_listmoves },
-		{ "%magics", engine_call_uci_magics },
-		{ "d", engine_call_uci_d },
-		{ "debug", engine_call_uci_debug },
-		{ "go", engine_call_uci_go },
-		{ "isready", engine_call_uci_isready },
-		{ "position", engine_call_uci_position },
-		{ "quit", engine_call_uci_quit },
-		{ "setoption", engine_call_uci_setoption },
-		{ "stop", engine_call_uci_stop },
-		{ "uci", engine_call_uci_uci },
-		{ "ucinewgame", engine_call_uci_ucinewgame },
-		{ "xboard", engine_call_cecp_xboard },
-	};
-	struct PState *pstate = pstate_new(str, commands, ARRAY_SIZE(commands));
+	struct PState *pstate = pstate_new(str, UCI_COMMANDS, ARRAY_SIZE(UCI_COMMANDS));
 	if (!pstate->token) {
 		;
 	} else if (pstate->cmd) {

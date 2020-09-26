@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 // Resources:
 //  - http://hgm.nubati.net/CECP.html
 

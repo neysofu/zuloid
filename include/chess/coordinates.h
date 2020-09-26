@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_CHESS_COORDINATES_H
 #define ZULOID_CHESS_COORDINATES_H
 
@@ -6,16 +8,20 @@
 typedef int8_t File;
 typedef int8_t Rank;
 
-// Squares are enumerated in a little-endian and file-first fashion (also known
-// as LEFR), with the following compass rose:
-//
-//   +---------------+
-//   |  -7  +1  +9   |
-//   |    \  |  /    |
-//   | -8 <- 0 -> +8 |
-//   |    /  |  \    |
-//   |  -9  -1  +7   |
-//   +---------------+
+/* Squares are enumerated in a little-endian and file-first fashion (also known
+ * as LEFR[1]), with the following compass rose:
+ *
+ *    noWe         nort         noEa
+ *            -7    +1    +9
+ *                \  |  /
+ *    west    -8 <-  0 -> +8    east
+ *                /  |  \
+ *            -9    -1    +7
+ *    soWe         sout         soEa
+ *
+ * 1:
+ * <https://www.chessprogramming.org/Square_Mapping_Considerations#Little-Endian_File-Rank_Mapping>
+ */
 typedef int_fast8_t Square;
 typedef uint64_t Bitboard;
 

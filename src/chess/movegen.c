@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 /* Copyright (C) 2014 Michael Fogleman
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy

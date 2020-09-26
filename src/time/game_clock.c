@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "time/game_clock.h"
 #include "time/time_control.h"
 #include <plibsys.h>

@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_PROTOCOLS_CECP_H
 #define ZULOID_PROTOCOLS_CECP_H
 

@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/fen.h"
 #include "chess/color.h"
 #include "chess/coordinates.h"
@@ -84,8 +86,8 @@ fen_from_position(char *fen, const struct Board *position, char sep)
 int
 position_init_piece_placement(struct Board *pos, const char *token)
 {
-	/* Ranks are marked by slashed, so we need fen++ to get past them. */
 	for (Rank rank = RANK_MAX; rank >= 0; rank--) {
+		/* Ranks are marked by slashed, so we need `token++` to get past them. */
 		for (File file = 0; *token && !isspace(*token) && file <= FILE_MAX;
 		     token++, file++) {
 			if (isdigit(*token)) {

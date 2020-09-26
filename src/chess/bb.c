@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/bb.h"
 #include "debug.h"
 #include "mt-64/mt-64.h"

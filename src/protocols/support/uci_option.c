@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "protocols/support/uci_option.h"
 #include "engine.h"
 #include "utils.h"

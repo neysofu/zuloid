@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "meta.h"
 
 const char *const ZULOID_BUILD_DATE = PROJECT_BUILD_DATE;

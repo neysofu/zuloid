@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_AGENT_H
 #define ZULOID_AGENT_H
 

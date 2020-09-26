@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "engine.h"
 #include "agent.h"
 #include "cache/cache.h"

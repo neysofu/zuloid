@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "switches.h"
 #include <stdarg.h>
 #include <stdio.h>

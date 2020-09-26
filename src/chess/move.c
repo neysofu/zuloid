@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/move.h"
 #include "chess/coordinates.h"
 #include "chess/pieces.h"

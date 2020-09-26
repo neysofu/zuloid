@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_CHESS_DIAGONALS_H
 #define ZULOID_CHESS_DIAGONALS_H
 

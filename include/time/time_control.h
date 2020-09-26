@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #ifndef ZULOID_TIME_TIME_CONTROL_H
 #define ZULOID_TIME_TIME_CONTROL_H
 

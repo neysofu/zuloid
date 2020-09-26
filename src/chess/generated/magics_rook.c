@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/generated/magics_rook.h"
 
 const struct Magic MAGICS_ROOK[SQUARES_COUNT] = {

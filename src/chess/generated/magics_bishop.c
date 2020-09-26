@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/generated/magics_bishop.h"
 
 const struct Magic MAGICS_BISHOP[SQUARES_COUNT] = {

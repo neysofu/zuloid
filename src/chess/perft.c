@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "chess/bb.h"
 #include "chess/color.h"
 #include "chess/fen.h"

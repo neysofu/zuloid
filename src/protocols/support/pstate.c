@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "protocols/support/pstate.h"
 #include "utils.h"
 #include <stdlib.h>

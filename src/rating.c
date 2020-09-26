@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include <math.h>
 
 // Estimated score in the CCRL 40/15 listing: <https://ccrl.chessdom.com/ccrl/4040/>.

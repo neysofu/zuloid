@@ -1,3 +1,5 @@
+/* SPDX-License-Identifier: GPL-3.0-only */
+
 #include "agent.h"
 #include "base64/base64.h"
 #include "cJSON/cJSON.h"
