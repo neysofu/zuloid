@@ -1,6 +1,3 @@
-#!/bin/sh
+#!/usr/bin/env bash
 
-# https://stackoverflow.com/questions/28896909/
-find include src test -name "*.h" -o -name "*.c" | xargs clang-format -i;
-
-exit 0;
+find include src test -name "*.h" -o -name "*.c" | xargs clang-format -i
