@@ -1,5 +1,8 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 
+#ifndef ZULOID_CHESS_MNEMONICS_H
+#define ZULOID_CHESS_MNEMONICS_H
+
 #include "chess/coordinates.h"
 
 enum
@@ -93,3 +96,5 @@ enum
 	SQ_H7,
 	SQ_H8,
 };
+
+#endif
