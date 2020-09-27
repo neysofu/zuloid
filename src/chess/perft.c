@@ -30,7 +30,8 @@ struct PlieIter
 };
 
 bool
-plieiter_has_next(const struct PlieIter *plie) {
+plieiter_has_next(const struct PlieIter *plie)
+{
 	return plie->child_i < plie->children_count;
 }
 
