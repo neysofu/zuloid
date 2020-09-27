@@ -1,7 +1,7 @@
 #include "chess/bb.h"
 #include "chess/fen.h"
 #include "chess/magic.h"
-#include "chess/movegen.h"
+#include "chess/perft.h"
 #include "chess/position.h"
 #include "chess/threats.h"
 #include "engine.h"
