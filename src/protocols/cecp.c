@@ -200,7 +200,7 @@ engine_call_cecp_time(struct Engine *engine, struct PState *pstate)
 }
 
 void
-engine_call_cecp_otim(struct Engine *engine, struct Pstate *pstate)
+engine_call_cecp_otim(struct Engine *engine, struct PState *pstate)
 {
 	const char *token = pstate_next(pstate);
 	if (token) {
