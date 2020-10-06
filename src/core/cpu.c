@@ -7,6 +7,7 @@
 #include "chess/movegen.h"
 #include "chess/position.h"
 #include "core/eval.h"
+#include "core/sstack.h"
 #include "engine.h"
 #include "eval.h"
 #include "libpopcnt/libpopcnt.h"
@@ -26,7 +27,7 @@ struct SStack
 	struct SStackPlieIter *plies;
 	struct Cache *cache;
 	int desired_depth;
-	int current_depth;
+	int plie_i;
 	struct Board board;
 	float alpha;
 	float beta;
@@ -34,32 +35,35 @@ struct SStack
 
 struct SStackPlieIter
 {
-	struct Move generator;
-	struct Move *moves;
-	int children_count;
-	int child_i;
 	int best_child_i_so_far;
 	float best_eval_so_far;
+	float multiplier;
+	struct PlieIter iter;
 };
 
 void
-sstack_plie_init(struct SStackPlieIter *plie)
+ssplieiter_reset(struct SStackPlieIter *plie)
 {
-	plie->moves = exit_if_null(malloc(220 * sizeof(struct Move)));
-	plie->child_i = 0;
 	plie->best_child_i_so_far = -1;
-	plie->children_count = -1;
-	plie->best_eval_so_far = -FLT_MAX;
+	plie->best_eval_so_far = -1000000.0;
+	plie->iter.child_i = 0;
 }
 
 void
-sstack_plie_supply_eval(struct SStackPlieIter *plie, float eval)
+ssplieiter_init(struct SStackPlieIter *plie)
+{
+	plieiter_init(&plie->iter);
+	ssplieiter_reset(plie);
+}
+
+void
+ssplieiter_supply_eval(struct SStackPlieIter *plie, float eval)
 {
 	if (eval > plie->best_eval_so_far) {
 		plie->best_eval_so_far = eval;
-		plie->best_child_i_so_far = plie->child_i;
+		plie->best_child_i_so_far = plie->iter.child_i;
 	}
-	plie->child_i++;
+	plie->iter.child_i++;
 }
 
 struct SStack
@@ -68,38 +72,35 @@ sstack_new(const struct Engine *engine)
 	assert(engine->config.max_depth > 0);
 	struct SStack stack;
 	stack.plies =
-	  exit_if_null(malloc(engine->config.max_depth * sizeof(struct SStackPlieIter)));
+	  exit_if_null(malloc((engine->config.max_depth + 1) * sizeof(struct SStackPlieIter)));
 	stack.cache = engine->cache;
 	stack.desired_depth = engine->config.max_depth - 1;
-	stack.current_depth = 0;
+	stack.plie_i = 0;
 	stack.board = engine->board;
-	for (int i = 0; i <= stack.desired_depth; i++) {
-		sstack_plie_init(stack.plies);
+	for (size_t i = 0; i <= engine->config.max_depth; i++) {
+		ssplieiter_init(&stack.plies[i]);
+		stack.plies[i].multiplier =
+		  ((engine->board.side_to_move == COLOR_WHITE) ^ (i % 2 == 1)) ? 1.0 : -1.0;
 	}
-	stack.plies[0].children_count = gen_legal_moves(stack.plies[0].moves, &stack.board);
+	stack.plies[0].iter.children_count =
+	  gen_legal_moves(stack.plies[0].iter.moves, &stack.board);
 	return stack;
 }
 
 void
 sstack_delete(struct SStack *stack)
 {
-	for (int i = 0; i <= stack->desired_depth; i++) {
-		free(stack->plies[i].moves);
+	for (int i = 0; i <= stack->desired_depth + 1; i++) {
+		plieiter_delete(&stack->plies[i].iter);
 	}
 	free(stack->plies);
+	stack->plies = NULL;
 }
 
 struct SStackPlieIter *
 sstack_last(struct SStack *stack)
 {
-	return stack->plies + stack->current_depth;
-}
-
-float
-normalize_score(float score, enum Color side_to_move)
-{
-	const float multipliers[COLORS_COUNT] = { 1.0, -1.0 };
-	return score * multipliers[side_to_move];
+	return stack->plies + stack->plie_i;
 }
 
 void
@@ -108,7 +109,8 @@ sstack_print_lines(struct SStack *stack)
 	printf("  info line");
 	for (int i = 1; i < stack->desired_depth; i++) {
 		char buf[6] = { '\0' };
-		move_to_string(stack->plies[i].moves[stack->plies[i].best_child_i_so_far], buf);
+		move_to_string(stack->plies[i].iter.moves[stack->plies[i].best_child_i_so_far],
+		               buf);
 		printf(" %s", buf);
 	}
 	puts("");
@@ -125,55 +127,41 @@ sstack_pop(struct SStack *stack)
 {
 	struct SStackPlieIter *last_plie = sstack_last(stack);
 	float eval = last_plie->best_eval_so_far;
-	position_undo_move_and_flip(&stack->board, &last_plie->generator);
-	stack->current_depth--;
+	position_undo_move_and_flip(&stack->board, &last_plie->iter.generator);
+	stack->plie_i--;
 	last_plie--;
-	if (stack->current_depth == 0) {
+	ssplieiter_supply_eval(last_plie, -eval);
+	if (stack->plie_i == 0) {
 		char buf[6] = { '\0' };
-		move_to_string(last_plie->moves[last_plie->child_i], buf);
+		move_to_string((last_plie+1)->iter.generator, buf);
 		printf("info depth 0 nodes %u currmove %s score cp %d\n",
 		       0,
 		       buf,
-		       score_to_centipawns(-eval));
+		       score_to_centipawns(eval));
 	}
-	sstack_plie_supply_eval(last_plie, -eval);
-	// struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
-	// if (cache_entry) {
-	//	cache_entry->evaluation = -eval;
-	//	cache_entry->dispersion = stack->current_depth;
-	//}
 }
 
 void
 sstack_push(struct SStack *stack)
 {
 	struct SStackPlieIter *last_plie = sstack_last(stack);
-	assert(last_plie->child_i < last_plie->children_count);
-	struct Move generator = last_plie->moves[last_plie->child_i];
-	stack->current_depth++;
+	assert(plieiter_has_next(&last_plie->iter));
+	struct Move generator = last_plie->iter.moves[last_plie->iter.child_i];
+	stack->plie_i++;
 	last_plie++;
-	sstack_plie_init(last_plie);
-	last_plie->generator = generator;
-	position_do_move_and_flip(&stack->board, &last_plie->generator);
-	last_plie->children_count = gen_legal_moves(last_plie->moves, &stack->board);
-	// Check cache, if found pop immediately.
-	// struct CacheEntry *cache_entry = cache_get(stack->cache, &stack->board);
-	// if (cache_entry && cache_entry->dispersion <= stack->current_depth) {
-	//	last_plie->best_eval_so_far = cache_entry->evaluation;
-	//	// CACHE HIT!
-	//	sstack_pop(stack);
-	//}
+	ssplieiter_reset(last_plie);
+	last_plie->iter.generator = generator;
+	position_do_move_and_flip(&stack->board, &last_plie->iter.generator);
+	last_plie->iter.children_count = gen_legal_moves(last_plie->iter.moves, &stack->board);
 }
 
 void
-sstack_eval_leaf(struct SStack *stack)
+ssplieiter_eval_leaf(struct SStackPlieIter *leaf, struct Board *board)
 {
-	struct SStackPlieIter *last_plie = sstack_last(stack);
-	enum Color evaluator = stack->board.side_to_move;
-	position_do_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
-	float eval = normalize_score(position_eval(&stack->board), evaluator);
-	position_undo_move_and_flip(&stack->board, &last_plie->moves[last_plie->child_i]);
-	sstack_plie_supply_eval(last_plie, eval);
+	position_do_move_and_flip(board, &leaf->iter.moves[leaf->iter.child_i]);
+	float eval = position_eval(board);
+	position_undo_move_and_flip(board, &leaf->iter.moves[leaf->iter.child_i]);
+	ssplieiter_supply_eval(leaf, eval);
 }
 
 struct SearchResults
@@ -187,7 +175,7 @@ void
 search_results_init(struct SearchResults *results, const struct SStack *stack)
 {
 	*results = (struct SearchResults){
-		.best_move = stack->plies[0].moves[stack->plies[0].best_child_i_so_far],
+		.best_move = stack->plies[0].iter.moves[stack->plies[0].best_child_i_so_far],
 		// FIXME: `.ponder_move` is the best-scoring move in the subtree of the
 		// best-scoring move of the first plie.
 		.ponder_move = stack->plies[1].best_child_i_so_far,
@@ -203,33 +191,30 @@ finish_search(const struct Engine *engine, const struct SStack *stack)
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	move_to_string(result.best_move, buf);
 	fprintf(engine->config.output, "bestmove %s\n", buf);
+	fprintf(engine->config.output, "info depth score cp %f\n", result.centipawns);
 }
 
 void
 engine_start_search(struct Engine *engine)
 {
-	fprintf(
-	  engine->config.output, "info depth score cp %f\n", position_eval(&engine->board));
-	engine->config.max_depth = 4;
 	struct SStack stack = sstack_new(engine);
 	while (true) {
 		struct SStackPlieIter *last_plie = sstack_last(&stack);
 		// We use depth-first search (DFS) to explore the game tree.
-		if (last_plie->child_i == last_plie->children_count) {
-			if (stack.current_depth == 0) {
+		if (!plieiter_has_next(&last_plie->iter)) {
+			if (stack.plie_i == 0) {
 				break;
 			} else {
 				sstack_pop(&stack);
 			}
-		} else if (stack.current_depth == stack.desired_depth) {
-			while (last_plie->child_i < last_plie->children_count) {
-				sstack_eval_leaf(&stack);
-			}
+		} else if (stack.plie_i == stack.desired_depth) {
+			ssplieiter_eval_leaf(last_plie, &stack.board);
 		} else {
 			sstack_push(&stack);
 		}
 	}
 	finish_search(engine, &stack);
+	sstack_delete(&stack);
 }
 
 void

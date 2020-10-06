@@ -5,6 +5,7 @@
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
+#include "core/sstack.h"
 #include "meta.h"
 #include "utils.h"
 #include <assert.h>
@@ -21,20 +22,6 @@ struct DfsStack
 	struct Board board;
 };
 
-struct PlieIter
-{
-	struct Move generator;
-	struct Move *moves;
-	int children_count;
-	int child_i;
-};
-
-bool
-plieiter_has_next(const struct PlieIter *plie)
-{
-	return plie->child_i < plie->children_count;
-}
-
 struct DfsStack
 dfsstack_new(size_t depth)
 {
@@ -43,7 +30,7 @@ dfsstack_new(size_t depth)
 	stack.desired_depth = depth;
 	stack.current_depth = 1;
 	for (size_t i = 0; i < depth + 1; i++) {
-		stack.plies[i].moves = exit_if_null(malloc(220 * sizeof(struct Move)));
+		plieiter_init(&stack.plies[i]);
 	}
 	return stack;
 }
@@ -52,7 +39,7 @@ void
 dfsstack_delete(struct DfsStack *stack)
 {
 	for (int i = 0; i < stack->desired_depth; i++) {
-		free(stack->plies[i].moves);
+		plieiter_delete(&stack->plies[i]);
 	}
 	free(stack->plies);
 }

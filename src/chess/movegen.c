@@ -1,25 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 
-/* Copyright (C) 2014 Michael Fogleman
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy
- * of this software and associated documentation files (the "Software"), to deal
- * in the Software without restriction, including without limitation the rights
- * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- * copies of the Software, and to permit persons to whom the Software is
- * furnished to do so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in
- * all copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
- * DEALINGS IN THE SOFTWARE. */
-
 #include "chess/movegen.h"
 #include "chess/bb.h"
 #include "chess/color.h"
@@ -182,6 +162,16 @@ size_t
 gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitboard king)
 {
 	struct Move *ptr = moves;
+	struct Move castle_buf[MAX_MOVES];
+	bool is_check = gen_attacks_against_from(castle_buf,
+	                                         pos,
+	                                         pos->bb[color] & pos->bb[PIECE_TYPE_KING],
+	                                         color_other(color),
+	                                         pos->en_passant_target,
+	                                         false) != 0;
+	if (is_check) {
+		return 0;
+	}
 	if (pos->castling_rights & (CASTLING_RIGHT_KINGSIDE << color)) {
 		Bitboard mask = position_castle_mask(pos, CASTLING_RIGHT_KINGSIDE);
 		if (!(position_occupancy(pos) & (mask ^ king))) {

@@ -11,13 +11,11 @@
 #include <plibsys.h>
 #endif
 
-struct Engine engine;
-
 int
 main(int argc, char **argv)
 {
 	init_subsystems();
-	engine_init(&engine);
+	struct Engine *engine = engine_new();
 	// The number sign ensures minimal possibility of accidental evaluation by
 	// the client.
 	printf("# Zuloid %s (%s)\n", ZULOID_VERSION_VERBOSE, ZULOID_BUILD_DATE);
@@ -25,14 +23,15 @@ main(int argc, char **argv)
 #ifdef SWITCH_SHOW_PID
 	printf("# Process ID: %d\n", p_process_get_current_pid());
 #endif
-	for (int i = 1; i < argc && engine.status != STATUS_EXIT; i++) {
-		engine.config.protocol(&engine, argv[i]);
+	for (int i = 1; i < argc && engine->status != STATUS_EXIT; i++) {
+		engine->config.protocol(engine, argv[i]);
 	}
-	while (engine.status != STATUS_EXIT) {
+	while (engine->status != STATUS_EXIT) {
 		char *line = read_line(stdin);
-		engine.config.protocol(&engine, line);
+		engine->config.protocol(engine, line);
 		free(line);
 	}
+	engine_delete(engine);
 	p_libsys_shutdown();
 	return EXIT_SUCCESS;
 }

@@ -192,7 +192,7 @@ engine_call_uci_go_movetime(struct Engine *engine, const char *token)
 {
 	if (token) {
 		float time = (float)(atol(token) * 1000);
-		engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time;
+		//engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time;
 	} else {
 		display_err_syntax(engine->config.output);
 	}
