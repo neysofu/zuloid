@@ -7,7 +7,7 @@
 void
 debug_printf(const char *format, ...)
 {
-#if SWITCH_DEBUG_MESSAGES
+#if ZULOID_ENABLE_DEBUG_MESSAGES
 	va_list args;
 	va_start(args, format);
 	fprintf(stdout, "[DEBUG] ");
