@@ -63,7 +63,7 @@ position_empty(struct Board *position);
 
 // Pretty printing to FILE stream for debug purposes.
 void
-position_pprint(struct Board *pos, FILE *stream);
+position_pprint(const struct Board *pos, FILE *stream);
 
 extern const struct Board POSITION_INIT;
 

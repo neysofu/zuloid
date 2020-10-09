@@ -6,6 +6,7 @@
 #include "chess/fen.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
+#include "chess/mnemonics.h"
 #include "core/eval.h"
 #include "core/sstack.h"
 #include "engine.h"
@@ -123,10 +124,25 @@ score_to_centipawns(float score)
 }
 
 void
+sstack_log(const struct SStack *stack) {
+	for (int i = 0; i <= stack->plie_i; i++) {
+		char buf[6] = { '\0' };
+		move_to_string(stack->plies[i].iter.generator, buf);
+		printf("%d %s %d\n", i, buf, stack->plies[i].iter.children_count);
+	}
+	position_pprint(&stack->board, stdout);
+}
+
+void
 sstack_pop(struct SStack *stack)
 {
 	struct SStackPlieIter *last_plie = sstack_last(stack);
 	float eval = last_plie->best_eval_so_far;
+	if (fabsf(eval) > 100000) {
+		printf("%d %d %d %d\n", last_plie->best_child_i_so_far, last_plie->iter.child_i, last_plie->iter.children_count, stack->plie_i);
+		sstack_log(stack);
+		exit(1);
+	}
 	position_undo_move_and_flip(&stack->board, &last_plie->iter.generator);
 	stack->plie_i--;
 	last_plie--;
@@ -153,6 +169,18 @@ sstack_push(struct SStack *stack)
 	last_plie->iter.generator = generator;
 	position_do_move_and_flip(&stack->board, &last_plie->iter.generator);
 	last_plie->iter.children_count = gen_legal_moves(last_plie->iter.moves, &stack->board);
+	switch (last_plie->iter.children_count) {
+		case 0: // stalemate
+			last_plie->best_eval_so_far = 0.0;
+			sstack_pop(stack);
+			break;
+		case -1: // checkmate
+			last_plie->best_eval_so_far = last_plie->multiplier * 100000;
+			sstack_pop(stack);
+			break;
+		default:
+			break;
+	}
 }
 
 void
@@ -197,6 +225,9 @@ finish_search(const struct Engine *engine, const struct SStack *stack)
 void
 engine_start_search(struct Engine *engine)
 {
+	if (engine->config.max_depth == 0) {
+		engine->config.max_depth = 4;
+	}
 	struct SStack stack = sstack_new(engine);
 	while (true) {
 		struct SStackPlieIter *last_plie = sstack_last(&stack);
