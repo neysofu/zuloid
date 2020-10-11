@@ -70,12 +70,11 @@ ssplieiter_supply_eval(struct SStackPlieIter *plie, float eval)
 struct SStack
 sstack_new(const struct Engine *engine)
 {
-	assert(engine->config.max_depth > 0);
 	struct SStack stack;
 	stack.plies =
 	  exit_if_null(malloc((engine->config.max_depth + 1) * sizeof(struct SStackPlieIter)));
 	stack.cache = engine->cache;
-	stack.desired_depth = engine->config.max_depth - 1;
+	stack.desired_depth = engine->config.max_depth;
 	stack.plie_i = 0;
 	stack.board = engine->board;
 	for (size_t i = 0; i <= engine->config.max_depth; i++) {
@@ -187,7 +186,7 @@ void
 ssplieiter_eval_leaf(struct SStackPlieIter *leaf, struct Board *board)
 {
 	position_do_move_and_flip(board, &leaf->iter.moves[leaf->iter.child_i]);
-	float eval = position_eval(board);
+	float eval = position_eval(board) * leaf->multiplier;
 	position_undo_move_and_flip(board, &leaf->iter.moves[leaf->iter.child_i]);
 	ssplieiter_supply_eval(leaf, eval);
 }
@@ -219,15 +218,12 @@ finish_search(const struct Engine *engine, const struct SStack *stack)
 	char buf[MOVE_STRING_MAX_LENGTH] = { '\0' };
 	move_to_string(result.best_move, buf);
 	fprintf(engine->config.output, "bestmove %s\n", buf);
-	fprintf(engine->config.output, "info depth score cp %f\n", result.centipawns);
 }
 
 void
 engine_start_search(struct Engine *engine)
 {
-	if (engine->config.max_depth == 0) {
-		engine->config.max_depth = 4;
-	}
+	engine->config.max_depth = 3;
 	struct SStack stack = sstack_new(engine);
 	while (true) {
 		struct SStackPlieIter *last_plie = sstack_last(&stack);

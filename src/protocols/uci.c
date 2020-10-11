@@ -57,6 +57,69 @@ engine_set_hash(struct Engine *engine, long val)
 	return 0;
 }
 
+int
+engine_set_uci_limit_strength(struct Engine *engine, bool val)
+{
+	engine->config.contempt = 0.5; // FIXME
+	return 0;
+}
+
+int
+engine_set_slow_mover(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
+int
+engine_set_syzygy_path(struct Engine *engine, const char *val)
+{
+	// TODO
+	return 0;
+}
+
+int
+engine_set_syzygy_50_move_rule(struct Engine *engine, bool val)
+{
+	engine->config.contempt = 0.5; // FIXME
+	return 0;
+}
+
+int
+engine_set_syzygy_probe_depth(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
+int
+engine_set_syzygy_probe_limit(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
+int
+engine_set_threads(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
+int
+engine_set_uci_chess960(struct Engine *engine, bool val)
+{
+	engine->config.contempt = 0.5; // FIXME
+	return 0;
+}
+
+int
+engine_set_uci_elo(struct Engine *engine, long val)
+{
+	// TODO
+	return 0;
+}
+
 /* Option support is quite hairy and messy. I don't want to break pre-existing
  * scripts and configs originally written for other engines.
  *
@@ -102,31 +165,44 @@ static const struct UciOption UCI_OPTIONS[] = {
 	                 .setter = engine_set_skill_level } },
 	{ .name = "Slow Mover",
 	  .type = UCI_OPTION_TYPE_SPIN,
-	  .data.spin = { .default_val = 84, .min = 10, .max = 1000 } },
+	  .data.spin = { .default_val = 84,
+	                 .min = 10,
+	                 .max = 1000,
+	                 .setter = engine_set_slow_mover } },
 	{ .name = "SyzygyPath",
 	  .type = UCI_OPTION_TYPE_STRING,
-	  .data.string = { .default_val = "<empty>" } },
+	  .data.string = { .default_val = "<empty>", .setter = engine_set_syzygy_path } },
 	{ .name = "SyzygyProbeDepth",
 	  .type = UCI_OPTION_TYPE_SPIN,
-	  .data.spin = { .default_val = 1, .min = 1, .max = 100 } },
+	  .data.spin = { .default_val = 1,
+	                 .min = 1,
+	                 .max = 100,
+	                 .setter = engine_set_syzygy_probe_depth } },
 	{ .name = "Syzygy50MoveRule",
 	  .type = UCI_OPTION_TYPE_CHECK,
-	  .data.check = { .default_val = true } },
+	  .data.check = { .default_val = true, .setter = engine_set_syzygy_50_move_rule } },
 	{ .name = "SyzygyProbeLimit",
 	  .type = UCI_OPTION_TYPE_SPIN,
-	  .data.spin = { .default_val = 7, .min = 0, .max = 7 } },
+	  .data.spin = { .default_val = 7,
+	                 .min = 0,
+	                 .max = 7,
+	                 .setter = engine_set_syzygy_probe_limit } },
 	{ .name = "Threads",
 	  .type = UCI_OPTION_TYPE_SPIN,
-	  .data.spin = { .default_val = 1, .min = 1, .max = 512 } },
+	  .data
+	    .spin = { .default_val = 1, .min = 1, .max = 512, .setter = engine_set_threads } },
 	{ .name = "UCI_Chess960",
 	  .type = UCI_OPTION_TYPE_CHECK,
-	  .data.check = { .default_val = false } },
+	  .data.check = { .default_val = false, .setter = engine_set_uci_chess960 } },
 	{ .name = "UCI_Elo",
 	  .type = UCI_OPTION_TYPE_SPIN,
-	  .data.spin = { .default_val = 1350, .min = 1350, .max = 2850 } },
+	  .data.spin = { .default_val = 1350,
+	                 .min = 1350,
+	                 .max = 2850,
+	                 .setter = engine_set_uci_elo } },
 	{ .name = "UCI_LimitStrength",
 	  .type = UCI_OPTION_TYPE_CHECK,
-	  .data.check = { .default_val = false } },
+	  .data.check = { .default_val = false, .setter = engine_set_uci_limit_strength } },
 };
 
 extern void
@@ -192,7 +268,7 @@ engine_call_uci_go_movetime(struct Engine *engine, const char *token)
 {
 	if (token) {
 		float time = (float)(atol(token) * 1000);
-		//engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time;
+		// engine->game_clocks[engine->board.side_to_move].time_left_in_seconds = time;
 	} else {
 		display_err_syntax(engine->config.output);
 	}
