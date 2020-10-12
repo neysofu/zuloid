@@ -4,9 +4,9 @@
 #include "cJSON/cJSON.h"
 #include "cache/cache.h"
 #include "chess/fen.h"
+#include "chess/mnemonics.h"
 #include "chess/movegen.h"
 #include "chess/position.h"
-#include "chess/mnemonics.h"
 #include "core/eval.h"
 #include "core/sstack.h"
 #include "engine.h"
@@ -67,17 +67,28 @@ ssplieiter_supply_eval(struct SStackPlieIter *plie, float eval)
 	plie->iter.child_i++;
 }
 
+int
+depth_from_times(float wtime, float btime)
+{
+	UNUSED(wtime);
+	UNUSED(btime);
+	return 4; // TODO, this is a good default for now.
+}
+
 struct SStack
 sstack_new(const struct Engine *engine)
 {
 	struct SStack stack;
+	int max_depth = 
+	  depth_from_times(engine->time_controls[COLOR_WHITE]->time_limit_in_seconds,
+	                   engine->time_controls[COLOR_BLACK]->time_limit_in_seconds);
 	stack.plies =
-	  exit_if_null(malloc((engine->config.max_depth + 1) * sizeof(struct SStackPlieIter)));
+	  exit_if_null(malloc((max_depth + 1) * sizeof(struct SStackPlieIter)));
 	stack.cache = engine->cache;
-	stack.desired_depth = engine->config.max_depth;
+	stack.desired_depth = max_depth;
 	stack.plie_i = 0;
 	stack.board = engine->board;
-	for (size_t i = 0; i <= engine->config.max_depth; i++) {
+	for (size_t i = 0; i <= (size_t)(max_depth); i++) {
 		ssplieiter_init(&stack.plies[i]);
 		stack.plies[i].multiplier =
 		  ((engine->board.side_to_move == COLOR_WHITE) ^ (i % 2 == 1)) ? 1.0 : -1.0;
@@ -90,7 +101,7 @@ sstack_new(const struct Engine *engine)
 void
 sstack_delete(struct SStack *stack)
 {
-	for (int i = 0; i <= stack->desired_depth + 1; i++) {
+	for (int i = 0; i <= stack->desired_depth; i++) {
 		plieiter_delete(&stack->plies[i].iter);
 	}
 	free(stack->plies);
@@ -123,7 +134,8 @@ score_to_centipawns(float score)
 }
 
 void
-sstack_log(const struct SStack *stack) {
+sstack_log(const struct SStack *stack)
+{
 	for (int i = 0; i <= stack->plie_i; i++) {
 		char buf[6] = { '\0' };
 		move_to_string(stack->plies[i].iter.generator, buf);
@@ -137,18 +149,13 @@ sstack_pop(struct SStack *stack)
 {
 	struct SStackPlieIter *last_plie = sstack_last(stack);
 	float eval = last_plie->best_eval_so_far;
-	if (fabsf(eval) > 100000) {
-		printf("%d %d %d %d\n", last_plie->best_child_i_so_far, last_plie->iter.child_i, last_plie->iter.children_count, stack->plie_i);
-		sstack_log(stack);
-		exit(1);
-	}
 	position_undo_move_and_flip(&stack->board, &last_plie->iter.generator);
 	stack->plie_i--;
 	last_plie--;
 	ssplieiter_supply_eval(last_plie, -eval);
 	if (stack->plie_i == 0) {
 		char buf[6] = { '\0' };
-		move_to_string((last_plie+1)->iter.generator, buf);
+		move_to_string((last_plie + 1)->iter.generator, buf);
 		printf("info depth 0 nodes %u currmove %s score cp %d\n",
 		       0,
 		       buf,
@@ -223,7 +230,6 @@ finish_search(const struct Engine *engine, const struct SStack *stack)
 void
 engine_start_search(struct Engine *engine)
 {
-	engine->config.max_depth = 3;
 	struct SStack stack = sstack_new(engine);
 	while (true) {
 		struct SStackPlieIter *last_plie = sstack_last(&stack);

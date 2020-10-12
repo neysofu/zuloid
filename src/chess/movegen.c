@@ -260,13 +260,13 @@ gen_legal_moves(struct Move moves[], struct Board *pos)
 			i++;
 		}
 	}
-	if (i == 0) {
-		position_flip_side_to_move(pos);
-		if (position_is_illegal(pos)) { // is checkmate
-			i = -1;
-		}
-		position_flip_side_to_move(pos);
-	}
+	//if (i == 0) {
+	//	position_flip_side_to_move(pos);
+	//	if (position_is_illegal(pos)) { // is checkmate
+	//		i = -1;
+	//	}
+	//	position_flip_side_to_move(pos);
+	//}
 	return i;
 }
 

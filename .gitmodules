@@ -16,3 +16,6 @@
 [submodule "lib/libpopcnt"]
 	path = lib/libpopcnt
 	url = git@github.com:kimwalisch/libpopcnt.git
+[submodule "lib/gaviota"]
+	path = lib/gaviota
+	url = git@github.com:michiguel/Gaviota-Tablebases.git
