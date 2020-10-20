@@ -22,7 +22,7 @@
 #include "protocols/support/pstate.h"
 #include "protocols/support/uci_option.h"
 #include "rating.h"
-#include "switches.h"
+#include "feature_flags.h"
 #include "utils.h"
 #include "xxHash/xxhash.h"
 #include <ctype.h>

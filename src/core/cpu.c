@@ -6,6 +6,7 @@
 #include "chess/fen.h"
 #include "chess/mnemonics.h"
 #include "chess/movegen.h"
+#include "feature_flags.h"
 #include "chess/position.h"
 #include "core/eval.h"
 #include "core/sstack.h"
@@ -42,6 +43,23 @@ struct SStackPlieIter
 	struct PlieIter iter;
 };
 
+typedef void (*DfsDebugger)(const struct SStack *stack, const struct SStackPlieIter *plie);
+
+void
+debugger_do_nothing(const struct SStack *stack, const struct SStackPlieIter *plie) {
+	UNUSED(stack);
+	UNUSED(plie);
+	struct Move m2;
+	string_to_move("d5e3", &m2);
+	if (moves_eq(&stack->plies[1].iter.generator, &m2)) {
+		puts("lol");
+	}
+}
+
+const DfsDebugger DEBUGGERS[] = {
+	debugger_do_nothing
+};
+
 void
 ssplieiter_reset(struct SStackPlieIter *plie)
 {
@@ -67,7 +85,7 @@ ssplieiter_supply_eval(struct SStackPlieIter *plie, float eval)
 	plie->iter.child_i++;
 }
 
-int
+unsigned
 depth_from_times(float wtime, float btime)
 {
 	UNUSED(wtime);
@@ -79,16 +97,15 @@ struct SStack
 sstack_new(const struct Engine *engine)
 {
 	struct SStack stack;
-	int max_depth = 
+	unsigned max_depth =
 	  depth_from_times(engine->time_controls[COLOR_WHITE]->time_limit_in_seconds,
 	                   engine->time_controls[COLOR_BLACK]->time_limit_in_seconds);
-	stack.plies =
-	  exit_if_null(malloc((max_depth + 1) * sizeof(struct SStackPlieIter)));
+	stack.plies = exit_if_null(malloc((max_depth + 1) * sizeof(struct SStackPlieIter)));
 	stack.cache = engine->cache;
 	stack.desired_depth = max_depth;
 	stack.plie_i = 0;
 	stack.board = engine->board;
-	for (size_t i = 0; i <= (size_t)(max_depth); i++) {
+	for (unsigned i = 0; i <= max_depth; i++) {
 		ssplieiter_init(&stack.plies[i]);
 		stack.plies[i].multiplier =
 		  ((engine->board.side_to_move == COLOR_WHITE) ^ (i % 2 == 1)) ? 1.0 : -1.0;
@@ -114,6 +131,13 @@ sstack_last(struct SStack *stack)
 	return stack->plies + stack->plie_i;
 }
 
+const struct SStackPlieIter *
+sstack_last_const(const struct SStack *stack)
+{
+	return stack->plies + stack->plie_i;
+}
+
+
 void
 sstack_print_lines(struct SStack *stack)
 {
@@ -125,6 +149,14 @@ sstack_print_lines(struct SStack *stack)
 		printf(" %s", buf);
 	}
 	puts("");
+}
+
+void
+sstack_run_debuggers(const struct SStack *stack, const DfsDebugger debuggers[], unsigned count) {
+	const struct SStackPlieIter *last_plie = sstack_last_const(stack);
+	for (unsigned i = 0; i < count; i++) {
+		debuggers[i](stack, last_plie);
+	}
 }
 
 int
@@ -147,6 +179,7 @@ sstack_log(const struct SStack *stack)
 void
 sstack_pop(struct SStack *stack)
 {
+	sstack_run_debuggers(stack, DEBUGGERS, ARRAY_SIZE(DEBUGGERS));
 	struct SStackPlieIter *last_plie = sstack_last(stack);
 	float eval = last_plie->best_eval_so_far;
 	position_undo_move_and_flip(&stack->board, &last_plie->iter.generator);

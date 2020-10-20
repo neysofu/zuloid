@@ -43,6 +43,11 @@ move_to_string(struct Move mv, char *buf)
 }
 
 bool
+moves_eq(const struct Move *m1, const struct Move *m2) {
+	return m1->source == m2->source && m1->target == m2->target;
+}
+
+bool
 string_represents_coordinate_notation_move(const char *str)
 {
 	size_t len = strlen(str);

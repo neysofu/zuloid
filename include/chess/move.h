@@ -28,6 +28,9 @@ struct Move
 const struct Move MOVE_IDENTITY;
 
 bool
+moves_eq(const struct Move *m1, const struct Move *m2);
+
+bool
 string_represents_coordinate_notation_move(const char *str);
 
 size_t

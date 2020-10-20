@@ -1,6 +1,6 @@
 /* SPDX-License-Identifier: GPL-3.0-only */
 
-#include "switches.h"
+#include "feature_flags.h"
 #include <stdarg.h>
 #include <stdio.h>
 

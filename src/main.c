@@ -2,7 +2,7 @@
 
 #include "engine.h"
 #include "meta.h"
-#include "switches.h"
+#include "feature_flags.h"
 #include "utils.h"
 #include <stdio.h>
 #include <stdlib.h>

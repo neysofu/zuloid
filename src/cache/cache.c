@@ -2,7 +2,7 @@
 
 #include "cache/cache.h"
 #include "cache/fast_range.h"
-#include "switches.h"
+#include "feature_flags.h"
 #include "utils.h"
 #include <assert.h>
 #include <math.h>
