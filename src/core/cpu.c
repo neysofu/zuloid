@@ -52,7 +52,7 @@ debugger_do_nothing(const struct SStack *stack, const struct SStackPlieIter *pli
 	struct Move m2;
 	string_to_move("d5e3", &m2);
 	if (moves_eq(&stack->plies[1].iter.generator, &m2)) {
-		puts("lol");
+		//puts("lol");
 	}
 }
 

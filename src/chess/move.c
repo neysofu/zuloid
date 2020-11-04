@@ -3,6 +3,7 @@
 #include "chess/move.h"
 #include "chess/coordinates.h"
 #include "chess/pieces.h"
+#include "chess/mnemonics.h"
 #include "chess/position.h"
 #include "utils.h"
 #include <assert.h>
@@ -98,6 +99,9 @@ position_do_move(struct Board *pos, struct Move *mv)
 	position_set_piece_at_square(pos, mv->source, PIECE_NONE);
 	if (is_pawn && abs(mv->target - mv->source) == 2) {
 		pos->en_passant_target = (mv->target + mv->source) / 2;
+	}
+	if (pos->bb[COLOR_BLACK] & SQ_A1) {
+		position_pprint(pos, stdout);
 	}
 	/* TODO: Castling */
 }

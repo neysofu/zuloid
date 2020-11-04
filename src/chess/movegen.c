@@ -178,6 +178,7 @@ gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitbo
 			Square source = bb_to_square(king);
 			emit_move(moves, source, source + 16);
 			moves->castling = true;
+			moves->castling_side = CASTLING_RIGHT_KINGSIDE;
 			moves++;
 		}
 	}
@@ -187,6 +188,7 @@ gen_king_castles(struct Move moves[], struct Board *pos, enum Color color, Bitbo
 			Square source = bb_to_square(king);
 			emit_move(moves, source, source - 16);
 			moves->castling = true;
+			moves->castling_side = CASTLING_RIGHT_QUEENSIDE;
 			moves++;
 		}
 	}
