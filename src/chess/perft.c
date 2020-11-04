@@ -96,7 +96,7 @@ dfsstack_count(struct DfsStack *stack)
 }
 
 size_t
-position_improved_perft(struct Board *pos, unsigned depth)
+position_perft_inner(struct Board *pos, unsigned depth)
 {
 	if (depth == 0) {
 		return 1;
@@ -125,7 +125,7 @@ position_perft(FILE *stream, const struct Board *pos, size_t depth)
 	for (size_t i = 0; i < root_moves_count; i++) {
 		struct Board board = *pos;
 		position_do_move_and_flip(&board, moves + i);
-		perft_counter children_count = position_improved_perft(&board, depth - 1);
+		perft_counter children_count = position_perft_inner(&board, depth - 1);
 		result += children_count;
 		char mv_as_str[MOVE_STRING_MAX_LENGTH] = { '\0' };
 		move_to_string(moves[i], mv_as_str);

@@ -260,13 +260,6 @@ gen_legal_moves(struct Move moves[], struct Board *pos)
 			i++;
 		}
 	}
-	//if (i == 0) {
-	//	position_flip_side_to_move(pos);
-	//	if (position_is_illegal(pos)) { // is checkmate
-	//		i = -1;
-	//	}
-	//	position_flip_side_to_move(pos);
-	//}
 	return i;
 }
 
@@ -278,7 +271,7 @@ position_is_stalemate(struct Board *pos)
 }
 
 size_t
-position_perft_inner(struct Board *pos, size_t depth)
+position_perft_recursive(struct Board *pos, size_t depth)
 {
 	assert(depth >= 1);
 	struct Move *moves = malloc(sizeof(struct Move) * MAX_MOVES);
